@@ -1,7 +1,7 @@
 use std::str::FromStr;
 use serde::{Deserialize, Serialize};
 
-use crate::{enums::{EventType, Inning}, raw_game::{RawEvent, RawGame, RawWeather, RawZone}};
+use crate::{enums::{EventType, Inning, PitchType}, raw_game::{RawEvent, RawGame, RawWeather, RawZone}};
 
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
@@ -130,14 +130,14 @@ impl From<Event> for RawEvent {
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct Pitch  {
     pub speed: f32,
-    pub pitch_type: String,
+    pub pitch_type: PitchType,
     pub zone: u8,
 }
 impl Pitch {
     pub fn new(pitch_info: String, zone: u8) -> Self {
         let mut iter = pitch_info.split(" MPH ");
         let pitch_speed = iter.next().unwrap().parse().unwrap();
-        let pitch_type = iter.next().unwrap().to_string();
+        let pitch_type = iter.next().unwrap().try_into().unwrap();
         Self { speed: pitch_speed, pitch_type, zone }
     }
 }

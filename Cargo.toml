@@ -9,6 +9,7 @@ required-features = ["main"]
 
 [features]
 main = ["dep:reqwest"]
+parsing_debug = []
 
 [dependencies]
 regex = "1.11.1"

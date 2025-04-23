@@ -130,7 +130,7 @@ pub enum HitDestination {
 }
 
 #[derive(Clone, Copy, EnumString, Display, Debug, Serialize, Deserialize, PartialEq, Eq)]
-pub enum BallType {
+pub enum HitType {
     #[strum(to_string = "ground ball")]
     GroundBall,
     #[strum(to_string = "fly ball")]
@@ -139,4 +139,33 @@ pub enum BallType {
     LineDrive,
     #[strum(to_string = "popup")]
     Popup,
+}
+
+#[derive(Clone, Copy, EnumString, Display, Debug, Serialize, Deserialize, PartialEq, Eq)]
+pub enum PitchType {
+    Fastball,
+    Sinker,
+    Slider,
+    Changeup,
+    Curveball,
+    Cutter,
+    Sweeper,
+    #[strum(to_string = "Knuckle Curve")]
+    KnuckleCurve,
+    Splitter
+}
+
+
+#[derive(Clone, Copy, EnumString, Display, Debug, Serialize, Deserialize, PartialEq, Eq)]
+pub enum StrikeType {
+    #[strum(to_string = "looking")]
+    Looking,
+    #[strum(to_string = "swinging")]
+    Swinging
+}
+
+#[derive(Clone, Copy, EnumString, Display, Debug, Serialize, Deserialize, PartialEq, Eq)]
+pub enum FielderError {
+    Throwing,
+    Fielding
 }

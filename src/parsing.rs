@@ -1,7 +1,7 @@
 use regex::Regex;
 use serde::{Deserialize, Serialize};
 
-use crate::{enums::{BallType, EventType, HitDestination, Position, Side}, game::{Event, Pitch}};
+use crate::{enums::{EventType, FielderError, HitDestination, HitType, Position, Side, StrikeType}, game::{Event, Pitch}};
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub enum ParsedEvent {
@@ -19,9 +19,8 @@ pub enum ParsedEvent {
         arriving_pitcher: String,
     },
     GameOver,
-    Steal(String, u8),
-    RunnerAdvance { runner: String, base: u8 },
-    Error { fielder: String, error: String },
+    RunnerAdvance { runner: String, base: u8, is_steal: bool },
+    Error { fielder: String, error: FielderError },
     Lineup(Side, Vec<(Position, String)>),
     Recordkeeping {
         home_score: u8,
@@ -36,17 +35,16 @@ pub enum ParsedEvent {
     },
     Pitch(Pitch),
     Hit {
-        ball_type: BallType,
+        hit_type: HitType,
         destination: HitDestination
     },
     /// Includes home runs as base = 4.
     BatterToBase {batter: String, base:u8, fielder: Option<(Position, String)>},
     Out {player: String, fielders: Vec<(Position, String)>},
-    Scores {player: String },
+    Scores {player: String},
     Ball,
     FoulBall,
-    Strike {strike_type: String},
-    StruckOut,
+    Strike {strike_type: StrikeType},
     HitByPitch,
     InningEnd {
         number: u8,
@@ -94,6 +92,10 @@ pub fn process_events(events_log: &Vec<Event>) -> Vec<ParsedEvent> {
     let mut events = events_log.into_iter();
     let mut result = Vec::new();
     while let Some(event) = events.next() {
+        #[cfg(feature = "parsing_debug")]
+        {
+            println!("{} {}", event.event, event.message);
+        }
         match event.event {
             EventType::PitchingMatchup => {
                 let mut iter = event.message.split(" vs. ").map(|side| {
@@ -182,9 +184,9 @@ pub fn process_events(events_log: &Vec<Event>) -> Vec<ParsedEvent> {
                     let mut iter =  pitch_hit_split_two.split(iter.next().unwrap());
                     let ball_type = iter.next().unwrap().try_into().unwrap();
                     let destination = iter.next().unwrap().try_into().unwrap();
-                    result.push(ParsedEvent::Hit { ball_type, destination });
+                    result.push(ParsedEvent::Hit { hit_type: ball_type, destination });
                 } else if event.message.contains("Strike") {
-                    let strike_type = event.message.strip_prefix(" ").unwrap().split(" ").skip(1).next().unwrap().strip_suffix(".").unwrap().to_string();
+                    let strike_type = event.message.strip_prefix(" ").unwrap().split(" ").skip(1).next().unwrap().strip_suffix(".").unwrap().try_into().unwrap();
                     result.push(ParsedEvent::Strike { strike_type });
                 } else if event.message.contains("Ball") {
                     result.push(ParsedEvent::Ball);
@@ -193,9 +195,9 @@ pub fn process_events(events_log: &Vec<Event>) -> Vec<ParsedEvent> {
                 } else if let Some(m) = struck_out.find(&event.message) {
                     let mut iter = struck_out_split.split(m.as_str());
                     let batter = iter.next().unwrap().to_string();
-                    let strike_type = iter.next().unwrap().to_string();
+                    let strike_type = iter.next().unwrap().try_into().unwrap();
                     result.push(ParsedEvent::Strike { strike_type });
-                    result.push(ParsedEvent::StruckOut);
+                    result.push(ParsedEvent::Out { player:batter, fielders: Vec::new()});
                 } else if let Some(_) = hit_by_pitch.find(&event.message) {
                     result.push(ParsedEvent::HitByPitch);
                 } else {
@@ -286,7 +288,7 @@ pub fn process_events(events_log: &Vec<Event>) -> Vec<ParsedEvent> {
                 "home" => 4,
                 _ => panic!("don't recognise base")
             };
-            result.push(ParsedEvent::Steal(runner, base))
+            result.push(ParsedEvent::RunnerAdvance{ runner, base, is_steal: false })
         }
         for score in scores.find_iter(&later_sentences) {
             let player = score.as_str().strip_suffix("scores!").unwrap().to_string();
@@ -302,11 +304,11 @@ pub fn process_events(events_log: &Vec<Event>) -> Vec<ParsedEvent> {
                 "home" => 4,
                 _ => panic!("don't recognise base")
             };
-            result.push(ParsedEvent::RunnerAdvance { runner, base })
+            result.push(ParsedEvent::RunnerAdvance { runner, base, is_steal: false })
         }
         for error in errors.find_iter(&later_sentences) {
             let mut iter = error.as_str().split(" error by ");
-            let error = iter.next().unwrap().to_string();
+            let error = iter.next().unwrap().try_into().unwrap();
             let fielder = iter.next().unwrap().to_string();
             result.push(ParsedEvent::Error { fielder, error })
         }
