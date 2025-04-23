@@ -634,6 +634,18 @@ dependencies = [
 ]
 
 [[package]]
+name = "mmolb_parsing"
+version = "0.1.0"
+dependencies = [
+ "regex",
+ "reqwest",
+ "ron",
+ "serde",
+ "serde_json",
+ "strum",
+]
+
+[[package]]
 name = "native-tls"
 version = "0.2.14"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -707,18 +719,6 @@ dependencies = [
  "libc",
  "pkg-config",
  "vcpkg",
-]
-
-[[package]]
-name = "parser"
-version = "0.1.0"
-dependencies = [
- "regex",
- "reqwest",
- "ron",
- "serde",
- "serde_json",
- "strum",
 ]
 
 [[package]]
