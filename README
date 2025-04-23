@@ -1,0 +1,4 @@
+If using as a binary to parse games with id X, Y and Z run:
+```
+cargo run --features=main X Y Z
+```
