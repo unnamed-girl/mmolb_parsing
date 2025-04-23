@@ -12,6 +12,7 @@ pub enum ParsedEvent {
     MoundVisit {
         team: String,
     },
+    MoundVisitRefused,
     PitcherSwap {
         leaving_position: Position,
         leaving_pitcher: String,
@@ -61,11 +62,11 @@ pub fn process_events(events_log: &Vec<Event>) -> Vec<ParsedEvent> {
     // Field Outcomes:
     let homer= Regex::new(r"[^\.<>!,]+ homers on a [\S]+ [\S]+ to [^\.<>!,]+").unwrap();
     let grand_slam = Regex::new(r"[^\.<>!,]+ hits a grand slam on a [\S]+ [\S]+ to [^\.<>!,]+").unwrap();
-    let double_play = Regex::new(r"[^\.<>!,]+ [\S]+ into a double play, [^\.<>!,]+. .*").unwrap();
+    let double_play = Regex::new(r"[^\.<>!,]+ [\S]+ into a (sacrifice )?double play, [^\.<>!,]+. .*").unwrap();
     let multi_fielder_out = Regex::new(r"[^\.<>!,]+ [\S]+ out, [^\.<>!,]+").unwrap();
     let multi_fielder_two = Regex::new(r" [\S]+ out, ").unwrap();
-    let single_fielder_out = Regex::new(r"[^\.<>!,]+ [\S]+ out to [\S]+ [^\.<>!,]+").unwrap();
-    let single_fielder_out_split = Regex::new(r" [\S]+ out to ").unwrap();
+    let single_fielder_out = Regex::new(r"[^\.<>!,]+ [\S]+ out (on a sacrifice [\S]+ )?to [\S]+ [^\.<>!,]+").unwrap();
+    let single_fielder_out_split = Regex::new(r" [\S]+ out (on a sacrifice [\S]+ )?to ").unwrap();
     let reaches_on_choice = Regex::new(r"[^\.<>!,]+ reaches on a fielder's choice, fielded by [\S]+ [^\.<>!,]+").unwrap();
     let reaches_on_choice_split = Regex::new(r" reaches on a fielder's choice, fielded by ").unwrap();
     let reaches_on_error = Regex::new(r"[^\.<>!,]+ reaches on a [\S]+ error by [\S]+ [^\.<>!,]+").unwrap();
@@ -255,6 +256,8 @@ pub fn process_events(events_log: &Vec<Event>) -> Vec<ParsedEvent> {
                     .skip(2); // The
                     let team = iter.take_while(|s| *s != "manager").collect::<Vec<_>>().join(" ");
                     result.push(ParsedEvent::MoundVisit { team });
+                } else if event.message.contains("remains in the game") {
+                    result.push(ParsedEvent::MoundVisitRefused);
                 } else {
                     let (leaving_position, leaving_pitcher, arriving_position, arriving_pitcher) = pitcher_swap(&event.message);   
                     result.push(ParsedEvent::PitcherSwap { leaving_position, leaving_pitcher, arriving_position, arriving_pitcher });

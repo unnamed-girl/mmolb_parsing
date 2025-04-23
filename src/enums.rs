@@ -1,7 +1,7 @@
 use std::fmt::Display;
 
 use serde::{Deserialize, Serialize};
-use strum::{Display, EnumString};
+use strum::{Display, EnumIter, EnumString};
 
 #[derive(Debug, Clone, Copy, Serialize, Deserialize, EnumString, Display, PartialEq, Eq, Hash)]
 pub enum EventType {
@@ -20,17 +20,17 @@ pub enum EventType {
     NowBatting
 }
 
-#[derive(Debug, Clone, Copy, Deserialize, Serialize)]
+#[derive(Debug, Clone, Copy, Deserialize, Serialize, PartialEq, Eq, Hash)]
 pub enum Side {
     Home,
     Away,
 }
 
-#[derive(Debug, Clone, Serialize, Deserialize)]
+#[derive(Debug, Clone, Copy, Serialize, Deserialize, PartialEq, Eq, Hash)]
 pub enum Inning {
     BeforeGame,
     DuringGame {number: u8, side: Side},
-    AfterGame
+    AfterGame { total_inning_count: u8 }
 }
 impl Inning {
     pub fn number(self) -> Option<u8> {
@@ -75,7 +75,7 @@ impl Into<u8> for Side {
     }
 }
 
-#[derive(EnumString, Display, Debug, Serialize, Deserialize, Clone, Copy)]
+#[derive(EnumString, Display, Debug, Serialize, Deserialize, Clone, Copy, EnumIter, PartialEq, Eq, Hash)]
 pub enum Position {
     #[strum(to_string = "P")]
     Pitcher,
@@ -106,7 +106,7 @@ pub enum Position {
 }
 
 
-#[derive(EnumString, Display, Debug, Serialize, Deserialize, Clone, Copy, PartialEq, Eq)]
+#[derive(EnumString, Display, Debug, Serialize, Deserialize, Clone, Copy, PartialEq, Eq, Hash, EnumIter)]
 pub enum HitDestination {
     #[strum(to_string = "the shortstop")]
     ShortStop,
@@ -129,7 +129,7 @@ pub enum HitDestination {
     RightField,
 }
 
-#[derive(Clone, Copy, EnumString, Display, Debug, Serialize, Deserialize, PartialEq, Eq)]
+#[derive(Clone, Copy, EnumString, Display, Debug, Serialize, Deserialize, PartialEq, Eq, Hash, EnumIter)]
 pub enum HitType {
     #[strum(to_string = "ground ball")]
     GroundBall,
@@ -141,7 +141,7 @@ pub enum HitType {
     Popup,
 }
 
-#[derive(Clone, Copy, EnumString, Display, Debug, Serialize, Deserialize, PartialEq, Eq)]
+#[derive(Clone, Copy, EnumString, Display, Debug, Serialize, Deserialize, PartialEq, Eq, Hash, EnumIter)]
 pub enum PitchType {
     Fastball,
     Sinker,
@@ -156,7 +156,7 @@ pub enum PitchType {
 }
 
 
-#[derive(Clone, Copy, EnumString, Display, Debug, Serialize, Deserialize, PartialEq, Eq)]
+#[derive(Clone, Copy, EnumString, Display, Debug, Serialize, Deserialize, PartialEq, Eq, Hash)]
 pub enum StrikeType {
     #[strum(to_string = "looking")]
     Looking,
@@ -164,7 +164,7 @@ pub enum StrikeType {
     Swinging
 }
 
-#[derive(Clone, Copy, EnumString, Display, Debug, Serialize, Deserialize, PartialEq, Eq)]
+#[derive(Clone, Copy, EnumString, Display, Debug, Serialize, Deserialize, PartialEq, Eq, Hash)]
 pub enum FielderError {
     Throwing,
     Fielding

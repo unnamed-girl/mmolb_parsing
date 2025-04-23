@@ -11,6 +11,8 @@ fn main() {
     for game in env::args().skip(1) {
         let resp = reqwest::blocking::get(format!("https://mmolb.com/api/game/{game}"))
         .unwrap()
+        .error_for_status()
+        .unwrap()
         .json::<Game>()
         .unwrap();
         analyse_game(game, resp);

@@ -99,7 +99,7 @@ impl From<RawEvent> for Event {
     fn from(value: RawEvent) -> Self {
         let inning = match (value.inning, value.inning_side) {
             (0, 1) => Inning::BeforeGame,
-            (9, 2) => Inning::AfterGame,
+            (number, 2) => Inning::AfterGame { total_inning_count: number - 1 },
             (number, side) => Inning::DuringGame { number, side: side.try_into().unwrap() }
         };
         let pitch_info = (value.pitch_info != "").then_some(value.pitch_info);
@@ -118,7 +118,7 @@ impl From<Event> for RawEvent {
         let (inning, inning_side) = match value.inning {
             Inning::BeforeGame => (0, 1),
             Inning::DuringGame { number, side } => (number, side.into()),
-            Inning::AfterGame => (9, 2)
+            Inning::AfterGame { total_inning_count } => (total_inning_count + 1, 2)
         };
         let pitch_info = value.pitch.as_ref().map(|pitch| format!("{} MPH {}", pitch.speed, pitch.pitch_type)).unwrap_or_else(|| "".to_string());
         let zone = value.pitch.map(|pitch| RawZone::Number(pitch.zone)).unwrap_or_else(|| RawZone::String("".to_string()));

@@ -4,4 +4,4 @@ pub mod enums;
 pub mod parsing;
 
 pub use game::Game;
-pub use parsing::process_events;
+pub use parsing::{process_events, ParsedEvent};
