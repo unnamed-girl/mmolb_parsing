@@ -1,0 +1,19 @@
+[package]
+name = "parser"
+version = "0.1.0"
+edition = "2021"
+
+[[bin]]
+name = "parser"
+required-features = ["main"]
+
+[features]
+main = ["dep:reqwest"]
+
+[dependencies]
+regex = "1.11.1"
+reqwest = { version = "0.12.15", features = ["blocking", "json"], optional = true }
+ron = "0.10.1"
+serde = { version = "1.0.219", features = ["serde_derive"] }
+serde_json = "1.0.140"
+strum = { version = "0.27.1", features = ["derive"] }
