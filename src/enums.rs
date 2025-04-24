@@ -166,6 +166,8 @@ pub enum StrikeType {
 
 #[derive(Clone, Copy, EnumString, Display, Debug, Serialize, Deserialize, PartialEq, Eq, Hash)]
 pub enum FielderError {
+    #[strum(ascii_case_insensitive)]
     Throwing,
+    #[strum(ascii_case_insensitive)]
     Fielding
 }

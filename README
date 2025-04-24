@@ -2,8 +2,3 @@ If using as a binary to parse games with id X, Y and Z run:
 ```
 cargo run --features=main X Y Z
 ```
-
-If you're getting an error try running with debuging to figure out what is new in your game that wasn't in my 9-game test set. (warning, very verbose)
-```
-cargo run --features=main,parsing_debug X Y Z
-```
