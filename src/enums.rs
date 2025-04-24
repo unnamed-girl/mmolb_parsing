@@ -171,3 +171,23 @@ pub enum FielderError {
     #[strum(ascii_case_insensitive)]
     Fielding
 }
+
+#[derive(Clone, Copy, EnumString, Display, Debug, Serialize, Deserialize, PartialEq, Eq, Hash)]
+pub enum FoulType {
+    #[strum(ascii_case_insensitive)]
+    Tip,
+    #[strum(ascii_case_insensitive)]
+    Ball
+}
+
+#[derive(Clone, Copy, EnumString, Display, Debug, Serialize, Deserialize, PartialEq, Eq, Hash)]
+pub enum Base {
+    #[strum(ascii_case_insensitive)]
+    Home,
+    #[strum(ascii_case_insensitive)]
+    First,
+    #[strum(ascii_case_insensitive)]
+    Second,
+    #[strum(ascii_case_insensitive)]
+    Third,
+}

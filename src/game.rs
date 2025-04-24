@@ -127,7 +127,7 @@ impl From<Event> for RawEvent {
     }
 }
 
-#[derive(Debug, Clone, Serialize, Deserialize)]
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
 pub struct Pitch  {
     pub speed: f32,
     pub pitch_type: PitchType,

@@ -1,11 +1,9 @@
-use std::error::Error;
-
 use regex::Regex;
 use serde::{Deserialize, Serialize};
 
-use crate::{enums::{EventType, FielderError, HitDestination, HitType, Position, Side, StrikeType}, game::{Event, Pitch}};
+use crate::{enums::{Base, EventType, FielderError, FoulType, HitDestination, HitType, Position, Side, StrikeType}, game::{Event, Pitch}};
 
-#[derive(Debug, Clone, Serialize, Deserialize)]
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
 pub enum ParsedEvent {
     PitchingMatchup {
         home_pitcher: String,
@@ -22,7 +20,7 @@ pub enum ParsedEvent {
         arriving_pitcher: String,
     },
     GameOver,
-    RunnerAdvance { runner: String, base: u8, is_steal: bool },
+    RunnerAdvance { runner: String, base: Base, is_steal: bool },
     Error { fielder: String, error: FielderError },
     Lineup(Side, Vec<(Position, String)>),
     Recordkeeping {
@@ -42,11 +40,12 @@ pub enum ParsedEvent {
         destination: HitDestination
     },
     /// Includes home runs as base = 4.
-    BatterToBase {batter: String, base:u8, fielder: Option<(Position, String)>},
+    BatterToBase {batter: String, base: Base, fielder: Option<(Position, String)>},
     Out {player: String, fielders: Vec<(Position, String)>},
     Scores {player: String},
+    Walk,
     Ball,
-    FoulBall,
+    Foul {foul_type: FoulType},
     Strike {strike_type: StrikeType},
     HitByPitch,
     InningEnd {
@@ -60,38 +59,92 @@ pub enum ParsedEvent {
     }
 }
 
-pub fn process_events(events_log: &Vec<Event>) -> Vec<ParsedEvent> {
-    // Field Outcomes:
-    let homer= Regex::new(r"[^\.<>!,]+ homers on a [^\.<>!,]+ to [^\.<>!,]+").unwrap();
-    let grand_slam = Regex::new(r"[^\.<>!,]+ hits a grand slam on a [^\.<>!,]+ to [^\.<>!,]+").unwrap();
-    let double_play = Regex::new(r"[^\.<>!,]+ [\S]+ into a (sacrifice )?double play, [^\.<>!,]+. .*").unwrap();
-    let multi_fielder_out = Regex::new(r"[^\.<>!,]+ [\S]+ out, [^\.<>!,]+").unwrap();
-    let multi_fielder_two = Regex::new(r" [\S]+ out, ").unwrap();
-    let single_fielder_out = Regex::new(r"[^\.<>!,]+ [\S]+ out (on a sacrifice [\S]+ )?to [\S]+ [^\.<>!,]+").unwrap();
-    let single_fielder_out_split = Regex::new(r" [\S]+ out (on a sacrifice [\S]+ )?to ").unwrap();
-    let reaches_on_choice = Regex::new(r"[^\.<>!,]+ reaches on a fielder's choice, fielded by [\S]+ [^\.<>!,]+").unwrap();
-    let reaches_on_choice_split = Regex::new(r" reaches on a fielder's choice, fielded by ").unwrap();
-    let reaches_on_error = Regex::new(r"[^\.<>!,]+ reaches on a [\S]+ error by [\S]+ [^\.<>!,]+").unwrap();
-    let reaches_on_error_split = Regex::new(r" reaches on a [\S]+ error by ").unwrap();
-    let successful_hit = Regex::new(r"[^\.<>!,]+ [\S]+ on a [^\.<>!,]+ to [\S]+ [^\.<>!,]+").unwrap();
-    let successful_hit_find_base = Regex::new(r"[\S]+ on").unwrap();
-    let successful_hit_split = Regex::new(r" [\S]+ on a [^\.<>!,]+ to ").unwrap();
+pub struct MmolbRegexes {
+    homer: Regex,
+    grand_slam: Regex,
+    double_play: Regex,
+    double_play_outs: Regex, 
+    force_out: Regex,
+    force_out_outs : Regex,
+    multi_fielder_out : Regex,
+    single_fielder_out : Regex,
+    choice_out : Regex,
+    choice_out_outs : Regex,
+    reaches_on_choice : Regex,
+    reaches_on_error : Regex,
+    successful_hit : Regex,
 
     // Pitch Outcomes
-    let pitch_hit = Regex::new(r"[^\.<>!, ][^\.<>!,]+ hits a [^\.<>!,]+ to [^\.<>!,]+").unwrap();
-    let pitch_hit_split_one = Regex::new(r" hits a ").unwrap();
-    let pitch_hit_split_two = Regex::new(r" to ").unwrap();
+    pitch_hit : Regex,
+    struck_out : Regex,
+    hit_by_pitch : Regex,
 
-    let struck_out = Regex::new(r"[^\.<>!, ][^\.<>!,]+ struck out [^\.<>!,]+").unwrap();
-    let struck_out_split = Regex::new(r" struck out ").unwrap();
-    let hit_by_pitch = Regex::new(r"[^\.<>!, ][^\.<>!,]+ was hit by the pitch and advances to first base.").unwrap();
+    walks : Regex,
+    strike : Regex,
+    foul : Regex,
+    ball : Regex,
 
     // Things that sometimes get stuffed at the end of other events
-    let base_steals = Regex::new(r"[^\.<>!, ][^\.<>!,]+ steals [\S]+ base").unwrap();
-    let advances = Regex::new(r"[^\.<>!, ][^\.<>!,]+ to [\S]+ base").unwrap();
-    let scores = Regex::new(r"[^\.<>!, ][^\.<>!,]+ scores!").unwrap();
-    let errors = Regex::new(r"[\S]+ error by [^\.<>!,]+").unwrap();
+    base_steals : Regex,
+    caught_stealing : Regex,
+    advances : Regex,
+    scores : Regex,
+    errors : Regex,
+}
+impl MmolbRegexes {
+    pub fn new() -> Self {
+        let name = r"([A-Z]\.|[^ \.]+) ([^ \.]+ ){0,2}?[^ \.]+"; // Names can have up to four words. Names cannot have full stops, with the exception of when the first name is an initial.
+        let raw_position = r"\S\S?";
+        
+        let fielders = format!(r"(?<fielders>{raw_position} {name} unassisted|({raw_position} {name} to )+?{raw_position} {name})");
+        let batter = format!(r"(?<batter>{name})");
+        let runner = format!(r"(?<runner>{name})");
+        let fielder = format!(r"(?<fielder>{name})");
+        let hit_type = r"(?<hit_type>[^ \.]+|[^ \.]+ [^ \.]+)";
+        let destination = r"(?<destination>[^ \.]+ [^ \.]+)";
+        let base = r"(?<base>[^ \.]+)";
+        let error = r"(?<error>[^ \.]+)";
+        let strike_type = r"(?<strike_type>[^ \.]+)";
+        let foul = r"(?<foul_type>[^ \.]+)";
+        let position = format!("(?<position>{raw_position})");
+        
+        // Field Outcomes:
+        let homer= Regex::new(&format!(r"^<strong>{batter} homers on a {hit_type} to {destination}\!</strong>")).unwrap();
+        let grand_slam = Regex::new(&format!(r"^<strong>{batter} hits a grand slam on a {hit_type} to {destination}\!</strong>")).unwrap();
+        let double_play = Regex::new(&format!(r"^{batter} [^ \.]+ into a (?<optional_sacrifice>sacrifice )?double play, {fielders}\.(?<outs>.*)")).unwrap();
+        let double_play_outs = Regex::new(&format!(r"^{runner} out at {base} base.")).unwrap();
+        let force_out = Regex::new(&format!(r"^{batter} [^ \.]+ into a force out, {fielders}\.(?<outs>.*)")).unwrap();
+        let force_out_outs = Regex::new(&format!(r"^{runner} out at {base}.")).unwrap();
+        let multi_fielder_out = Regex::new(&format!(r"^{batter} [^ \.]+ out, {fielders}\.")).unwrap();
+        let single_fielder_out = Regex::new(&format!(r"^{batter} [^ \.]+ out (?<optional_sacrifice>on a sacrifice fly )?to {position} {fielder}\.")).unwrap();
+        let choice_out = Regex::new(&format!(r"^{batter} reaches on a fielder's choice out, {fielders}\.(?<outs>.*)")).unwrap();
+        let choice_out_outs = Regex::new(&format!(r"^{runner} out at {base}.")).unwrap();
+        let reaches_on_choice = Regex::new(&format!(r"^{batter} reaches on a fielder's choice, fielded by {position} {fielder}\.")).unwrap();
+        let reaches_on_error = Regex::new(&format!(r"^{batter} reaches on a {error} error by {position} {fielder}\.")).unwrap();
+        let successful_hit = Regex::new(&format!(r"^{batter} (?<distance>[^ \.]+) on a {hit_type} to {position} {fielder}\.")).unwrap();
+    
+        // Pitch Outcomes
+        let pitch_hit = Regex::new(&format!(r"^ {batter} hits a {hit_type} to {destination}\.")).unwrap();
+        let struck_out = Regex::new(&format!(r"^ (Foul {foul}. )?{batter} struck out {strike_type}\.")).unwrap();
+        let hit_by_pitch = Regex::new(&format!(r"^ {batter} was hit by the pitch and advances to first base\.")).unwrap();
+    
+        let walks = Regex::new(&format!(r"^ Ball 4. {batter} walks.")).unwrap();
+        let strike = Regex::new(&format!(r"^ Strike, {strike_type}. \d-\d.")).unwrap();
+        let foul = Regex::new(&format!(r"^ Foul {foul}. \d-\d.")).unwrap();
+        let ball = Regex::new(r"^ Ball. \d-\d.").unwrap();
+    
+        // Things that sometimes get stuffed at the end of other events
+        let base_steals = Regex::new(&format!(r"(\>|!|\.) {runner} steals {base} base")).unwrap();
+        let caught_stealing = Regex::new(&format!(r"(\>|!|\.) {runner} is caught stealing {base} base")).unwrap();
+        let advances = Regex::new(&format!(r"(>|!|\.) {runner} to {base} base")).unwrap();
+        let scores = Regex::new(&format!(r"(>|!|\.) <strong>{runner} scores!</strong")).unwrap();
+        let errors = Regex::new(&format!(r"(>|!|\.) {error} error by {fielder}")).unwrap();
 
+        Self { homer, grand_slam, double_play, double_play_outs, force_out, force_out_outs, multi_fielder_out, single_fielder_out, choice_out, choice_out_outs, reaches_on_choice, reaches_on_error, successful_hit, pitch_hit, struck_out, hit_by_pitch, walks, strike, foul, ball, base_steals, caught_stealing, advances, scores, errors }
+    }
+}
+
+pub fn process_events(events_log: &Vec<Event>, regexes: &MmolbRegexes) -> Vec<ParsedEvent> {
     let mut events = events_log.into_iter();
     let mut result = Vec::new();
     while let Some(event) = events.next() {
@@ -112,93 +165,98 @@ pub fn process_events(events_log: &Vec<Event>) -> Vec<ParsedEvent> {
                 EventType::AwayLineup => result.push(ParsedEvent::Lineup(Side::Away, parse_lineup(&event.message)?)),
                 EventType::HomeLineup => result.push(ParsedEvent::Lineup(Side::Home, parse_lineup(&event.message)?)),
                 EventType::Field => {
-                    if let Some(m) = homer.find(&event.message) {
-                        // m = [batter name] homers on a [hit type] to [position]
-
-                        let batter = m.as_str().split(" homers").next()?.to_string();
-                        result.push(ParsedEvent::BatterToBase { batter: batter.clone(), base: 4, fielder: None });
+                    if let Some(capture) = regexes.homer.captures(&event.message) {
+                        let batter = capture.name("batter").unwrap().as_str().to_string();
+                        result.push(ParsedEvent::BatterToBase { batter: batter.clone(), base: Base::Home, fielder: None });
                         result.push(ParsedEvent::Scores { player: batter });
-                    } else if let Some(m) = grand_slam.find(&event.message) {
-                        // m = [batter name] hits a grand slam on a [hit type] to [position]
-                        let batter = m.as_str().split(" hits").next()?.to_string();
-                        result.push(ParsedEvent::BatterToBase { batter: batter.clone(), base: 4, fielder: None });
+                    } else if let Some(capture) = regexes.grand_slam.captures(&event.message) {
+                        let batter = capture.name("batter").unwrap().as_str().to_string();
+                        result.push(ParsedEvent::BatterToBase { batter: batter.clone(), base: Base::Home, fielder: None });
                         result.push(ParsedEvent::Scores { player: batter });
-                    } else if let Some(m) = double_play.find(&event.message) {
-                        // m = [batter name] [hit type] into a double play, ([position] [fielder name] to [position] [fielder name]...). [Runner] out at [Base]. [Runner] out at [Base].
-                        let mut iter = m.as_str().split(". ");
-                        let fielders = iter.next()?.split(", ").skip(1).next()?.split(" to ").map(extract_position_and_name).collect::<Option<Vec<_>>>()?;
-                        for out in iter {
-                            let player = out.split(" ").take_while(|s| *s != "out").collect::<Vec<_>>().join(" ");
-                        
+                    } else if let Some(captures) = regexes.double_play.captures(&event.message) {
+                        // let sacrifice = captures.name("optional_sacrifice").is_some();
+                        let fielders = captures.name("fielders").unwrap().as_str().split(" to ").map(extract_position_and_name).collect::<Option<Vec<_>>>()?;
+                        for captures in regexes.double_play_outs.captures_iter(captures.name("outs").unwrap().as_str()) {
+                            let player = captures.name("runner").unwrap().as_str().to_string();
                             result.push(ParsedEvent::Out { player, fielders: fielders.clone() });
                         }
-                    } else if let Some(m) = multi_fielder_out.find(&event.message) { 
-                        // m = [batter name] [hit type] out, ([position] [fielder name] to [position] [fielder name]...) 
-                        
-                        let mut iter = multi_fielder_two.split(m.as_str());
-                        let batter = iter.next()?.to_string();
-                        let fielders = iter.next()?.split(" to ").map(extract_position_and_name).collect::<Option<Vec<_>>>()?;
+                    } else if let Some(captures) = regexes.force_out.captures(&event.message) {
+                        let batter = captures.name("batter").unwrap().as_str().to_string();
+                        let fielders = captures.name("fielders").unwrap().as_str().split(" to ").map(extract_position_and_name).collect::<Option<Vec<_>>>()?;
+                        result.push(ParsedEvent::Out { player: batter, fielders: fielders.clone() });
+                        for captures in regexes.force_out_outs.captures_iter(captures.name("outs").unwrap().as_str()) {
+                            let player = captures.name("runner").unwrap().as_str().to_string();
+                            result.push(ParsedEvent::Out { player, fielders: fielders.clone() });
+                        }
+                    } else if let Some(captures) = regexes.multi_fielder_out.captures(&event.message) { 
+                        let batter = captures.name("batter").unwrap().as_str().to_string();
+                        let fielders = captures.name("fielders").unwrap().as_str().split(" to ").map(extract_position_and_name).collect::<Option<Vec<_>>>()?;
                         result.push(ParsedEvent::Out { player: batter, fielders });
-                    } else if let Some(m) = single_fielder_out.find(&event.message) {
-                        // m = [batter name] [hit type]s out to [position] [fielder name]
-                        
-                        let mut iter = single_fielder_out_split.split(m.as_str());
-                        let batter = iter.next()?.to_string();
-                        let fielder = extract_position_and_name(iter.next()?)?;
-                        result.push(ParsedEvent::Out { player: batter, fielders: vec![fielder] });
-                    } else if let Some(m) = reaches_on_choice.find(&event.message) {
-                        // m = [batter name] reaches on a [error_type] error by [position] [fielder name]
-                        let mut iter = reaches_on_choice_split.split(m.as_str());
-                        let batter = iter.next()?.to_string();
-                        let fielder = extract_position_and_name(iter.next()?)?;
-                        result.push(ParsedEvent::BatterToBase { batter, base: 1, fielder: Some(fielder) })
-                    }   else if let Some(m) = reaches_on_error.find(&event.message) {
-                        // m = [batter name] reaches on a [error_type] error by [position] [fielder name]
-                        let mut iter = reaches_on_error_split.split(m.as_str());
-                        let batter = iter.next()?.to_string();
-                        let fielder = extract_position_and_name(iter.next()?)?;
-                        result.push(ParsedEvent::BatterToBase { batter, base: 1, fielder: Some(fielder) })
-                    } else if let Some(m) = successful_hit.find(&event.message) {
-                        // m = [batter name] [singles/doubles/triples/homers on a [hit] [type] to [position] [fielder name]
-                        let base = match successful_hit_find_base.find(m.as_str())?.as_str().strip_suffix(" on")? {
-                            "singles" => 1,
-                            "doubles" => 2,
-                            "triples" => 3,
+                    } else if let Some(captures) = regexes.single_fielder_out.captures(&event.message) {
+                        // let sacrifice = captures.name("optional_sacrifice").is_some();
+                        let batter = captures.name("batter").unwrap().as_str().to_string();
+                        let fielder_position = captures.name("position").unwrap().as_str().try_into().ok()?;
+                        let fielder = captures.name("fielder").unwrap().as_str().to_string();
+                        result.push(ParsedEvent::Out { player: batter, fielders: vec![(fielder_position, fielder)] });
+                    } else if let Some(captures) = regexes.choice_out.captures(&event.message) {
+                        let batter = captures.name("batter").unwrap().as_str().to_string();
+                        let fielders = captures.name("fielders").unwrap().as_str().split(" to ").map(extract_position_and_name).collect::<Option<Vec<_>>>()?;
+                        result.push(ParsedEvent::BatterToBase { batter, base: Base::First, fielder: Some(fielders.get(0)?.clone()) });
+                        for captures in regexes.choice_out_outs.captures_iter(captures.name("outs").unwrap().as_str()) {
+                            let player = captures.name("runner").unwrap().as_str().to_string();
+                            result.push(ParsedEvent::Out { player, fielders: fielders.clone() });
+                        }
+
+                    } else if let Some(captures) = regexes.reaches_on_choice.captures(&event.message) {
+                        let batter = captures.name("batter").unwrap().as_str().to_string();
+                        let fielder_position = captures.name("position").unwrap().as_str().try_into().ok()?;
+                        let fielder = captures.name("fielder").unwrap().as_str().to_string();
+                        result.push(ParsedEvent::BatterToBase { batter, base: Base::First, fielder: Some((fielder_position, fielder)) })
+                    } else if let Some(captures) = regexes.reaches_on_error.captures(&event.message) {
+                        let batter = captures.name("batter").unwrap().as_str().to_string();
+                        let fielder_position = captures.name("position").unwrap().as_str().try_into().ok()?;
+                        let fielder = captures.name("fielder").unwrap().as_str().to_string();
+                        result.push(ParsedEvent::BatterToBase { batter, base: Base::First, fielder: Some((fielder_position, fielder)) })
+                    } else if let Some(captures) = regexes.successful_hit.captures(&event.message) {
+                        let batter = captures.name("batter").unwrap().as_str().to_string();
+                        let fielder_position = captures.name("position").unwrap().as_str().try_into().ok()?;
+                        let fielder = captures.name("fielder").unwrap().as_str().to_string();
+                        let base = match captures.name("distance").unwrap().as_str() {
+                            "singles" => Base::First,
+                            "doubles" => Base::Second,
+                            "triples" => Base::Third,
                             _ => return None
                         };
-
-                        let mut iter = successful_hit_split.split(m.as_str());
-                        let batter = iter.next()?.to_string();
-                        let fielder = extract_position_and_name(iter.next()?)?;
-                        result.push(ParsedEvent::BatterToBase { batter, base, fielder: Some(fielder) });
+                        result.push(ParsedEvent::BatterToBase { batter, base, fielder: Some((fielder_position, fielder)) });
                     } else {
                         todo!("unrecognised field event: {}", event.message);
                     }
                 },
                 EventType::Pitch => {
                     result.push(ParsedEvent::Pitch(event.pitch.clone()?));
-                    if let Some(m) = pitch_hit.find(&event.message) {
-                        let mut iter = pitch_hit_split_one.split(m.as_str());
-                        let batter = iter.next()?;
-
-                        let mut iter =  pitch_hit_split_two.split(iter.next()?);
-                        let ball_type = iter.next()?.try_into().ok()?;
-                        let destination = iter.next()?.try_into().ok()?;
-                        result.push(ParsedEvent::Hit { hit_type: ball_type, destination });
-                    } else if event.message.contains("Strike") {
-                        let strike_type = event.message.strip_prefix(" ")?.split(" ").skip(1).next()?.strip_suffix(".")?.try_into().ok()?;
+                    if let Some(captures) = regexes.pitch_hit.captures(&event.message) {
+                        // let batter = captures.name("batter").unwrap().as_str().to_string();
+                        let destination = captures.name("destination").unwrap().as_str().try_into().ok()?;
+                        let hit_type = captures.name("hit_type").unwrap().as_str().try_into().ok()?;
+                        result.push(ParsedEvent::Hit { hit_type, destination });
+                    } else if let Some(captures) = regexes.strike.captures(&event.message) {
+                        let strike_type = captures.name("strike_type").unwrap().as_str().try_into().ok()?;
                         result.push(ParsedEvent::Strike { strike_type });
-                    } else if event.message.contains("Ball") {
+                    } else if let Some(_) = regexes.walks.captures(&event.message) {
+                        // let batter = captures.name("batter").unwrap().as_str().to_string();
                         result.push(ParsedEvent::Ball);
-                    } else if event.message.contains("Foul") {
-                        result.push(ParsedEvent::FoulBall);
-                    } else if let Some(m) = struck_out.find(&event.message) {
-                        let mut iter = struck_out_split.split(m.as_str());
-                        let batter = iter.next()?.to_string();
-                        let strike_type = iter.next()?.try_into().ok()?;
+                        result.push(ParsedEvent::Walk);
+                    } else if let Some(_) = regexes.ball.captures(&event.message) {
+                        result.push(ParsedEvent::Ball);
+                    } else if let Some(captures) = regexes.foul.captures(&event.message) {
+                        let foul_type = captures.name("foul_type").unwrap().as_str().try_into().ok()?;
+                        result.push(ParsedEvent::Foul { foul_type });
+                    } else if let Some(captures) = regexes.struck_out.captures(&event.message) {
+                        let batter = captures.name("batter").unwrap().as_str().to_string();
+                        let strike_type = captures.name("strike_type").unwrap().as_str().try_into().ok()?;
                         result.push(ParsedEvent::Strike { strike_type });
                         result.push(ParsedEvent::Out { player:batter, fielders: Vec::new()});
-                    } else if let Some(_) = hit_by_pitch.find(&event.message) {
+                    } else if let Some(_) = regexes.hit_by_pitch.captures(&event.message) {
                         result.push(ParsedEvent::HitByPitch);
                     } else {
                         todo!("Can't parse pitch: {}", event.message)
@@ -231,8 +289,8 @@ pub fn process_events(events_log: &Vec<Event>) -> Vec<ParsedEvent> {
                     let number = iter.next()?
                         .chars().rev().skip(3).collect::<Vec<char>>().into_iter().rev().collect::<String>() // Remove "st.", "nd." or "th." from the end
                         .parse().ok()?;
-                    let mut batting_team = iter.by_ref().take_while(|s| *s != "batting.");
-                    let batting_emoji = batting_team.next()?.to_string();
+                    let batting_team = iter.by_ref().take_while(|s| *s != "batting.");
+                    // let batting_emoji = batting_team.next()?.to_string();
                     let batting_team = batting_team.collect::<Vec<_>>().join(" ");
 
                     if event.message.contains("takes the mound.") {
@@ -242,7 +300,7 @@ pub fn process_events(events_log: &Vec<Event>) -> Vec<ParsedEvent> {
                         result.push(ParsedEvent::InningStart { number, side, batting_team, pitcher: None });
                         result.push(ParsedEvent::PitcherSwap { leaving_position, leaving_pitcher, arriving_position, arriving_pitcher });
                     } else {
-                        let pitching_emoji = iter.next()?.to_string();
+                        // let pitching_emoji = iter.next()?.to_string();
                         let pitcher = iter.take_while(|s| *s != "pitching.")
                             .collect::<Vec<_>>().join(" ");
                         result.push(ParsedEvent::InningStart { number, side, batting_team, pitcher: Some(pitcher) });
@@ -279,39 +337,28 @@ pub fn process_events(events_log: &Vec<Event>) -> Vec<ParsedEvent> {
             };
 
             // -------------- Events that sometimes get stuffed at the end of another event ---------------------------
-            let later_sentences = event.message.split(".").skip(1).collect::<Vec<_>>().join(".");
-            for base_steal in base_steals.find_iter(&later_sentences) {
-                let mut iter = base_steal.as_str().strip_suffix(" base")?.split(" steals ");
-                let runner = iter.next()?.to_string();
-                let base = match iter.next()? {
-                    "first" => 1,
-                    "second" => 2,
-                    "third" => 3,
-                    "home" => 4,
-                    _ => panic!("don't recognise base")
-                };
-                result.push(ParsedEvent::RunnerAdvance{ runner, base, is_steal: false })
+            for captures in regexes.base_steals.captures_iter(&event.message) {
+                let runner = captures.name("runner").unwrap().as_str().to_string();
+                let base = captures.name("base").unwrap().as_str().try_into().ok()?;
+                result.push(ParsedEvent::RunnerAdvance{ runner, base, is_steal: true })
             }
-            for score in scores.find_iter(&later_sentences) {
-                let player = score.as_str().strip_suffix("scores!")?.to_string();
+            for captures in regexes.caught_stealing.captures_iter(&event.message) {
+                let runner = captures.name("runner").unwrap().as_str().to_string();
+                // let base = captures.name("base").unwrap().as_str().try_into().ok()?;
+                result.push(ParsedEvent::Out { player: runner, fielders: Vec::new() });
+            }
+            for captures in regexes.scores.captures_iter(&event.message) {
+                let player = captures.name("runner").unwrap().as_str().to_string();
                 result.push(ParsedEvent::Scores { player });
             }
-            for advances in advances.find_iter(&later_sentences) {
-                let mut iter = advances.as_str().strip_suffix(" base")?.split(" to ");
-                let runner = iter.next()?.to_string();
-                let base = match iter.next()? {
-                    "first" => 1,
-                    "second" => 2,
-                    "third" => 3,
-                    "home" => 4,
-                    _ => panic!("don't recognise base")
-                };
+            for captures in regexes.advances.captures_iter(&event.message) {
+                let runner = captures.name("runner").unwrap().as_str().to_string();
+                let base = captures.name("base").unwrap().as_str().try_into().ok()?;
                 result.push(ParsedEvent::RunnerAdvance { runner, base, is_steal: false })
             }
-            for error in errors.find_iter(&later_sentences) {
-                let mut iter = error.as_str().split(" error by ");
-                let error = iter.next()?.try_into().ok()?;
-                let fielder = iter.next()?.to_string();
+            for captures in regexes.errors.captures_iter(&event.message) {
+                let fielder = captures.name("fielder").unwrap().as_str().to_string();
+                let error = captures.name("error").unwrap().as_str().try_into().ok()?;
                 result.push(ParsedEvent::Error { fielder, error })
             }
 
