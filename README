@@ -1,6 +1,6 @@
 To download and cache all completed games, run:
 ```
-cargo run --release --bin downloader "path to the download cache"
+cargo run --release --features=reqwest,tokio --bin downloader "path to the download cache"
 ```
 
 To parse all games in a folder of cached games:

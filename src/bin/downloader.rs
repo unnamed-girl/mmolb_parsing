@@ -1,5 +1,5 @@
 
-use std::{fs::File, io::{self, Read, Write}};
+use std::{env::args, fs::File, io::{self, Read, Write}};
 
 use futures::StreamExt;
 use serde::{Deserialize, Serialize};
@@ -39,19 +39,25 @@ pub async fn load_or_download(json_cache:&str, game_id: String) -> String {
 
 #[tokio::main]
 async fn main() {
+    let mut args = args().skip(1);
+
     let mut json_cache = String::new();
-    println!("Save json games into:");
-    io::stdin().read_line(&mut json_cache).unwrap();
+    if let Some(cache) = args.next() {
+        println!("Save json games into: {cache}");
+        json_cache = cache;
+    } 
 
     json_cache = json_cache.split_whitespace().next().unwrap().to_string();
     println!("About to download games into {json_cache}");
     io::stdin().read_line(&mut String::new()).unwrap();
 
     let games = async_game_list().await;
-    let mut stream = futures::stream::iter(games).map(|game| load_or_download(&json_cache, game)).buffered(10);
+    let mut stream = futures::stream::iter(games).map(|game| load_or_download(&json_cache, game)).buffered(30);
     let mut i = 0;
     while let Some(_) = stream.next().await {
         i += 1;
-        println!("{i}");
+        if i % 100 == 0 {
+            println!("{i}");
+        }
     }
 }
