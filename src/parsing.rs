@@ -1,5 +1,5 @@
 use nom::{Finish, Parser};
-use nom_language::error::VerboseErrorKind;
+use nom_language::error::{VerboseError, VerboseErrorKind};
 use serde::{Deserialize, Serialize};
 
 use crate::{enums::{Base, EventType, FielderError, FoulType, HitDestination, HitType, Position, Side, StrikeType}, game::{Event, Pitch}, nom_parsing::{parse_field_event, parse_pitch_event, ParsingContext, EXTRACT_FIELDER_NAME}};
@@ -100,27 +100,13 @@ pub fn process_events(events_log: &Vec<Event>) -> Vec<ParsedEvent> {
                 EventType::Field => {
                     match parse_field_event(&parsing_context).parse(&event.message).finish() {
                         Ok((_, events)) => result.extend(events),
-                        Err(err) => {
-                            if err.errors.iter().any(|err| matches!(err, (_, VerboseErrorKind::Context(EXTRACT_FIELDER_NAME)))) {
-                                println!("{err}");
-                                result.push(ParsedEvent::ParseError { event_type: event.event, message: event.message.clone(), reason:EXTRACT_FIELDER_NAME.to_string() });
-                            } else {
-                                panic!("{err}")
-                            }
-                        }
+                        Err(err) => handle_error(&event, err, &mut result),
                     }
                 },
                 EventType::Pitch => {
                     match parse_pitch_event(&parsing_context).parse(&event.message).finish() {
                         Ok((_, events)) => result.extend(events),
-                        Err(err) => {
-                            if err.errors.iter().any(|err| matches!(err, (_, VerboseErrorKind::Context(EXTRACT_FIELDER_NAME)))) {
-                                println!("{err}");
-                                result.push(ParsedEvent::ParseError { event_type: event.event, message: event.message.clone(), reason:EXTRACT_FIELDER_NAME.to_string() });
-                            } else {
-                                panic!("{err}")
-                            }
-                        }
+                        Err(err) => handle_error(&event, err, &mut result),
                     }
                 },
                 EventType::GameOver => result.push(ParsedEvent::GameOver),
@@ -236,4 +222,20 @@ fn extract_position_and_name(position_and_name: &str) -> Option<(Position, Strin
     let position = iter.next()?.try_into().ok()?;
     let name = iter.collect::<Vec<_>>().join(" ");
     Some((position, name))
+}
+
+#[cfg(debug_assertions)]
+fn handle_error(event:&Event, err: VerboseError<&str>, result: &mut Vec<ParsedEvent>) {
+    if err.errors.iter().any(|err| matches!(err, (_, VerboseErrorKind::Context(EXTRACT_FIELDER_NAME)))) {
+        println!("{err}");
+        result.push(ParsedEvent::ParseError { event_type: event.event, message: event.message.clone(), reason:EXTRACT_FIELDER_NAME.to_string() });
+    } else {
+        panic!("{err}")
+    }
+}
+
+#[cfg(not(debug_assertions))]
+fn handle_error(event:&Event, err: VerboseError<&str>, result: &mut Vec<ParsedEvent>) {
+    println!("{err}");
+    result.push(ParsedEvent::ParseError { event_type: event.event, message: event.message.clone(), reason: err.to_string() });
 }
