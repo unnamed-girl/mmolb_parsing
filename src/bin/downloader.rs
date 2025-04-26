@@ -1,5 +1,5 @@
 
-use std::{env::args, fs::File, io::{self, Read, Write}};
+use std::{env::args, fs::File, io::{self, Read, Write}, path::Path};
 
 use futures::StreamExt;
 use serde::{Deserialize, Serialize};
@@ -14,13 +14,9 @@ pub async fn async_game_list() -> impl Iterator<Item =  String> {
     reqwest::get("https://freecashe.ws/api/games").await.unwrap().json::<Vec<CasheGame>>().await.unwrap().into_iter().filter(|game| game.state == "Complete").map(|game| game.game_id)
 }
 
-pub async fn load_or_download(json_cache:&str, game_id: String) -> String {
+pub async fn ensure_in_cache(json_cache:&str, game_id: String) {
     let path = format!(r"{json_cache}/{game_id}.json");
-    let result = if let Ok(mut file) = File::open(&path) {
-        let mut buf = String::new();
-        file.read_to_string(&mut buf).unwrap();
-        buf
-    } else {
+    if !Path::exists(path.as_ref()) {
         let response = reqwest::get(format!("https://mmolb.com/api/game/{game_id}"))
             .await
             .unwrap()
@@ -31,10 +27,7 @@ pub async fn load_or_download(json_cache:&str, game_id: String) -> String {
             .unwrap();
         let mut file = File::create(&path).unwrap();
         write!(file, "{response}").unwrap();
-        response
     };
-
-    result
 }
 
 #[tokio::main]
@@ -52,9 +45,9 @@ async fn main() {
     io::stdin().read_line(&mut String::new()).unwrap();
 
     let games = async_game_list().await;
-    let mut stream = futures::stream::iter(games).map(|game| load_or_download(&json_cache, game)).buffered(30);
+    let mut stream = futures::stream::iter(games).map(|game| ensure_in_cache(&json_cache, game)).buffered(30);
     let mut i = 0;
-    while let Some(_) = stream.next().await {
+    while let Some(()) = stream.next().await {
         i += 1;
         if i % 100 == 0 {
             println!("{i}");

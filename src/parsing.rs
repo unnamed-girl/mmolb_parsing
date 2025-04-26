@@ -1,30 +1,34 @@
+use std::{borrow::Cow, fmt::Debug, marker::PhantomData};
+
 use nom::{Finish, Parser};
 use nom_language::error::{VerboseError, VerboseErrorKind};
 use serde::{Deserialize, Serialize};
 
 use crate::{enums::{Base, EventType, FielderError, FoulType, HitDestination, HitType, Position, Side, StrikeType}, game::{Event, Pitch}, nom_parsing::{parse_field_event, parse_inning_start_event, parse_lineup_event, parse_mound_visit, parse_pitch_event, parse_pitching_matchup_event, ParsingContext, EXTRACT_PLAYER_NAME}, Game};
 
-/// A parsed event. the 'output lifetime is linked to the ParsingContext<'output> used to create this event.
+/// S is the string type used. &'output str is used by the parser, 
+/// but a mutable type is necessary when directly deserializing, because some players have escaped characters in their nameds
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
-pub enum ParsedEvent<'output> {
+pub enum ParsedEvent<S> 
+{
     PitchingMatchup {
-        home_pitcher: &'output str,
-        away_pitcher: &'output str,
+        home_pitcher: S,
+        away_pitcher: S,
     },
     MoundVisit {
-        team: &'output str,
+        team: S,
     },
     MoundVisitRefused,
     PitcherSwap {
         leaving_position: Position,
-        leaving_pitcher: &'output str,
+        leaving_pitcher: S,
         arriving_position: Position,
-        arriving_pitcher: &'output str,
+        arriving_pitcher: S,
     },
     GameOver,
-    RunnerAdvance { runner: &'output str, base: Base, is_steal: bool },
-    Error { fielder: &'output str, error: FielderError },
-    Lineup(Side, Vec<(Position, &'output str)>),
+    RunnerAdvance { runner: S, base: Base, is_steal: bool },
+    Error { fielder: S, error: FielderError },
+    Lineup(Side, Vec<(Position, S)>),
     Recordkeeping {
         home_score: u8,
         away_score: u8,
@@ -33,19 +37,19 @@ pub enum ParsedEvent<'output> {
     InningStart {
         number: u8,
         side: Side,
-        batting_team: &'output str,
-        pitcher: Option<&'output str>,
+        batting_team: S,
+        pitcher: Option<S>,
     },
     Pitch(Pitch),
+    Walk,
     Hit {
         hit_type: HitType,
         destination: HitDestination
     },
     /// Includes home runs as base = 4.
-    BatterToBase {base: Base, fielder: Option<(Position, &'output str)>},
-    Out {player: &'output str, fielders: Vec<(Position, &'output str)>, perfect_catch: bool},
-    Scores {player: &'output str},
-    Walk,
+    BatterToBase {base: Base, fielder: Option<(Position, S)>},
+    Out {player: S, fielders: Vec<(Position, S)>, perfect_catch: bool},
+    Scores {player: S},
     Ball,
     Foul {foul_type: FoulType},
     Strike {strike_type: StrikeType},
@@ -56,7 +60,7 @@ pub enum ParsedEvent<'output> {
     },
     PlayBall,
     NowBatting {
-        batter: &'output str,
+        batter: S,
         first_pa: bool
     },
     ParseError {
@@ -68,7 +72,7 @@ pub enum ParsedEvent<'output> {
 
 /// Processes a game into a list of ParsedEvents.
 /// Note that the game must live longer than the events, as zero copy parsing is used. 
-pub fn process_events<'output>(game: &'output Game) -> Vec<ParsedEvent<'output>> {
+pub fn process_events<'output>(game: &'output Game) -> Vec<ParsedEvent<&'output str>> {
     let mut result = Vec::new();
     let mut parsing_context = ParsingContext::new(&game);
 
@@ -165,7 +169,7 @@ pub fn process_events<'output>(game: &'output Game) -> Vec<ParsedEvent<'output>>
 }
 
 #[cfg(debug_assertions)]
-fn handle_error(event:&Event, err: VerboseError<&str>, result: &mut Vec<ParsedEvent>) {
+fn handle_error(event:&Event, err: VerboseError<&str>, result: &mut Vec<ParsedEvent<&str>>) {
     use crate::nom_parsing::EXTRACT_TEAM_NAME;
 
     if err.errors.iter().any(|err| matches!(err, (_, VerboseErrorKind::Context(EXTRACT_PLAYER_NAME)) | (_, VerboseErrorKind::Context(EXTRACT_TEAM_NAME)))) {
@@ -183,6 +187,6 @@ fn handle_error(event:&Event, err: VerboseError<&str>, result: &mut Vec<ParsedEv
 }
 
 #[cfg(not(debug_assertions))]
-fn handle_error(event:&Event, err: VerboseError<&str>, result: &mut Vec<ParsedEvent>) {
+fn handle_error(event:&Event, err: VerboseError<&str>, result: &mut Vec<ParsedEvent<&str>>) {
     result.push(ParsedEvent::ParseError { event_type: event.event, message: event.message.clone(), reason: err.to_string() });
 }

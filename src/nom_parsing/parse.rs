@@ -7,7 +7,7 @@ use crate::{enums::{Base, Position, Side}, ParsedEvent};
 use super::{shared::{base, batter_run_distance, bold, destination, exclamation, fielders, fielding_error_type, foul_type, hit_type, hit_type_verb_name, ordinal_suffix, out, player_name, position, position_and_name, s_tag, sentence, strike_type, team_emoji, team_emoji_and_name, top_or_bottom, word, Error, IResult}, ParsingContext};
 
 /// Parses the full message for a Field event.
-pub fn parse_field_event<'output, 'parse>(parsing_context: &'parse ParsingContext<'output>) -> impl Parser<&'output str, Output = Vec<ParsedEvent<'output>>, Error = Error<'output>> + 'parse {
+pub fn parse_field_event<'output, 'parse>(parsing_context: &'parse ParsingContext<'output>) -> impl Parser<&'output str, Output = Vec<ParsedEvent<&'output str>>, Error = Error<'output>> + 'parse {
     // Main body of event
     let successful_hit = sentence((player_name(parsing_context), batter_run_distance, delimited(s_tag("on a"), hit_type, s_tag("to")), position_and_name(parsing_context)))
     .map(|(_batter, base, _hit_type, fielder)| {vec![ParsedEvent::BatterToBase { base, fielder: Some(fielder) }]});
@@ -88,17 +88,17 @@ pub fn parse_field_event<'output, 'parse>(parsing_context: &'parse ParsingContex
         .map(|(events, extra)| events.into_iter().chain(extra.into_iter().flatten()).collect()))
 }
 
-fn scores<'output, 'parse>(parsing_context: &'parse ParsingContext<'output>) -> impl Parser<&'output str, Output = Vec<ParsedEvent<'output>>, Error = Error<'output>> + 'parse {
+fn scores<'output, 'parse>(parsing_context: &'parse ParsingContext<'output>) -> impl Parser<&'output str, Output = Vec<ParsedEvent<&'output str>>, Error = Error<'output>> + 'parse {
     bold(exclamation(terminated(player_name(parsing_context), s_tag("scores"))))
     .map(|runner| vec![ParsedEvent::RunnerAdvance { runner: runner, base: Base::Home, is_steal: false }, ParsedEvent::Scores { player: runner }])
 }
 
-fn runner_advance<'output, 'parse>(parsing_context: &'parse ParsingContext<'output>)-> impl Parser<&'output str, Output = Vec<ParsedEvent<'output>>, Error = Error<'output>> + 'parse {
+fn runner_advance<'output, 'parse>(parsing_context: &'parse ParsingContext<'output>)-> impl Parser<&'output str, Output = Vec<ParsedEvent<&'output str>>, Error = Error<'output>> + 'parse {
     sentence((player_name(parsing_context), delimited(s_tag("to"), base, s_tag("base"))))
     .map(|(runner, base)| vec![ParsedEvent::RunnerAdvance { runner: runner, base, is_steal: false }])
 }
 
-pub fn parse_pitch_event<'output, 'parse>(parsing_context: &'parse ParsingContext<'output>) -> impl Parser<&'output str, Output = Vec<ParsedEvent<'output>>, Error = Error<'output>> + 'parse {
+pub fn parse_pitch_event<'output, 'parse>(parsing_context: &'parse ParsingContext<'output>) -> impl Parser<&'output str, Output = Vec<ParsedEvent<&'output str>>, Error = Error<'output>> + 'parse {
     let hit = sentence((player_name(parsing_context), delimited(s_tag("hits a"), hit_type, s_tag("to")), destination))
     .map(|(_batter, hit_type, destination)| vec![ParsedEvent::Hit { hit_type, destination }]);
 
@@ -106,10 +106,10 @@ pub fn parse_pitch_event<'output, 'parse>(parsing_context: &'parse ParsingContex
     .map(|(_foul, (batter, strike_type))| vec![ParsedEvent::Strike { strike_type }, ParsedEvent::Out { player: batter, fielders: Vec::new(), perfect_catch: false }]);
 
     let hit_by_pitch = sentence(terminated(player_name(parsing_context), s_tag("was hit by the pitch and advances to first base")))
-    .map(|_batter| vec![ParsedEvent::HitByPitch]);
+    .map(|_batter| vec![ParsedEvent::HitByPitch, ParsedEvent::BatterToBase { base: Base::First, fielder: None }]);
 
     let walks = preceded(sentence(s_tag("Ball 4")), sentence(terminated(player_name(parsing_context), s_tag("walks"))))
-    .map(|_batter| vec![ParsedEvent::Ball, ParsedEvent::Walk]);
+    .map(|_batter| vec![ParsedEvent::Ball, ParsedEvent::Walk, ParsedEvent::BatterToBase { base: Base::First, fielder: None }]);
 
     let boring_pitch_outcomes = terminated(alt((
         sentence(s_tag("Ball")).map(|_| vec![ParsedEvent::Ball]),
@@ -148,7 +148,7 @@ pub fn parse_pitch_event<'output, 'parse>(parsing_context: &'parse ParsingContex
 }
 
 /// Parse the home and away pitchers from the pitching matchup message.
-pub fn parse_pitching_matchup_event<'output, 'parse>(parsing_context: &'parse ParsingContext<'output>) -> impl Parser<&'output str, Output = Vec<ParsedEvent<'output>>, Error = Error<'output>> + 'parse {
+pub fn parse_pitching_matchup_event<'output, 'parse>(parsing_context: &'parse ParsingContext<'output>) -> impl Parser<&'output str, Output = Vec<ParsedEvent<&'output str>>, Error = Error<'output>> + 'parse {
     context("Parse pitching matchup", all_consuming(
         separated_pair( 
             preceded(team_emoji_and_name(parsing_context), 
@@ -160,13 +160,13 @@ pub fn parse_pitching_matchup_event<'output, 'parse>(parsing_context: &'parse Pa
     ))
 }
 
-pub fn parse_lineup_event<'output, 'parse>(side: Side, _parsing_context: &'parse ParsingContext<'output>) -> impl Parser<&'output str, Output = Vec<ParsedEvent<'output>>, Error = Error<'output>> + 'parse {
+pub fn parse_lineup_event<'output, 'parse>(side: Side, _parsing_context: &'parse ParsingContext<'output>) -> impl Parser<&'output str, Output = Vec<ParsedEvent<&'output str>>, Error = Error<'output>> + 'parse {
     context("Parse lineup", all_consuming(
         many1(delimited((digit1, s_tag(".")), (position, take_until("<br>")), s_tag("<br>")))
     ).map(move |lineup| vec![ParsedEvent::Lineup(side, lineup)]))
 }
 
-pub fn parse_inning_start_event<'output, 'parse>(parsing_context: &'parse ParsingContext<'output>) -> impl Parser<&'output str, Output = Vec<ParsedEvent<'output>>, Error = Error<'output>> + 'parse {
+pub fn parse_inning_start_event<'output, 'parse>(parsing_context: &'parse ParsingContext<'output>) -> impl Parser<&'output str, Output = Vec<ParsedEvent<&'output str>>, Error = Error<'output>> + 'parse {
     let keep_pitcher = sentence(delimited(team_emoji(parsing_context), take_until(" pitching"), s_tag("pitching")));
     
     context("Inning Start", all_consuming(
@@ -194,7 +194,7 @@ fn start_inning<'output, 'parse>(parsing_context: &'parse ParsingContext<'output
     )
 }
 
-pub fn parse_mound_visit<'output, 'parse>(parsing_context: &'parse ParsingContext<'output>) -> impl Parser<&'output str, Output = ParsedEvent<'output>, Error = Error<'output>> + 'parse {
+pub fn parse_mound_visit<'output, 'parse>(parsing_context: &'parse ParsingContext<'output>) -> impl Parser<&'output str, Output = ParsedEvent<&'output str>, Error = Error<'output>> + 'parse {
     let mound_visit_options = alt((
         sentence(preceded(s_tag("The"), terminated(team_emoji_and_name(parsing_context), s_tag("manager is making a mound visit"))))
         .map(|(_emoji, team)| ParsedEvent::MoundVisit { team }),

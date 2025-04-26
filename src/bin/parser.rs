@@ -2,6 +2,7 @@
 use std::{env::args, fs::File, io::{self, Read, Write}};
 
 use mmolb_parsing::{process_events, Game, ParsedEvent};
+use serde::{Deserialize, Serialize};
 
 pub fn downloaded(json_cache: &str) -> impl Iterator<Item = (String, Game)> {
     std::fs::read_dir(json_cache).unwrap()
@@ -16,7 +17,7 @@ pub fn downloaded(json_cache: &str) -> impl Iterator<Item = (String, Game)> {
         )
 }
 
-pub fn save_parsed_events(ron_cache: &str, game_id: &str, events: Vec<ParsedEvent>) {
+pub fn save_parsed_events<'de, S: Serialize + Deserialize<'de>>(ron_cache: &str, game_id: &str, events: Vec<ParsedEvent<S>>) {
     let ron_path = format!(r"{ron_cache}/{game_id}.ron");
     let mut file = File::create(ron_path).unwrap();
     for event in &events {

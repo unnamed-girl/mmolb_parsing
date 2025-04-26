@@ -29,7 +29,7 @@ pub enum Side {
 #[derive(Debug, Clone, Copy, Serialize, Deserialize, PartialEq, Eq, Hash)]
 pub enum Inning {
     BeforeGame,
-    DuringGame {number: u8, side: Side},
+    DuringGame {number: u8, batting_side: Side},
     AfterGame { total_inning_count: u8 }
 }
 impl Inning {
@@ -40,8 +40,8 @@ impl Inning {
             None
         }
     }
-    pub fn side(self) -> Option<Side> {
-        if let Inning::DuringGame { side, .. } = self {
+    pub fn batting_side(self) -> Option<Side> {
+        if let Inning::DuringGame { batting_side: side, .. } = self {
             Some(side)
         } else {
             None
