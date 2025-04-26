@@ -2,28 +2,29 @@ use nom::{Finish, Parser};
 use nom_language::error::{VerboseError, VerboseErrorKind};
 use serde::{Deserialize, Serialize};
 
-use crate::{enums::{Base, EventType, FielderError, FoulType, HitDestination, HitType, Position, Side, StrikeType}, game::{Event, Pitch}, nom_parsing::{parse_field_event, parse_pitch_event, ParsingContext, EXTRACT_FIELDER_NAME}};
+use crate::{enums::{Base, EventType, FielderError, FoulType, HitDestination, HitType, Position, Side, StrikeType}, game::{Event, Pitch}, nom_parsing::{parse_field_event, parse_inning_start_event, parse_lineup_event, parse_mound_visit, parse_pitch_event, parse_pitching_matchup_event, ParsingContext, EXTRACT_PLAYER_NAME}, Game};
 
+/// A parsed event. the 'output lifetime is linked to the ParsingContext<'output> used to create this event.
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
-pub enum ParsedEvent {
+pub enum ParsedEvent<'output> {
     PitchingMatchup {
-        home_pitcher: String,
-        away_pitcher: String,
+        home_pitcher: &'output str,
+        away_pitcher: &'output str,
     },
     MoundVisit {
-        team: String,
+        team: &'output str,
     },
     MoundVisitRefused,
     PitcherSwap {
         leaving_position: Position,
-        leaving_pitcher: String,
+        leaving_pitcher: &'output str,
         arriving_position: Position,
-        arriving_pitcher: String,
+        arriving_pitcher: &'output str,
     },
     GameOver,
-    RunnerAdvance { runner: String, base: Base, is_steal: bool },
-    Error { fielder: String, error: FielderError },
-    Lineup(Side, Vec<(Position, String)>),
+    RunnerAdvance { runner: &'output str, base: Base, is_steal: bool },
+    Error { fielder: &'output str, error: FielderError },
+    Lineup(Side, Vec<(Position, &'output str)>),
     Recordkeeping {
         home_score: u8,
         away_score: u8,
@@ -32,8 +33,8 @@ pub enum ParsedEvent {
     InningStart {
         number: u8,
         side: Side,
-        batting_team: String,
-        pitcher: Option<String>,
+        batting_team: &'output str,
+        pitcher: Option<&'output str>,
     },
     Pitch(Pitch),
     Hit {
@@ -41,9 +42,9 @@ pub enum ParsedEvent {
         destination: HitDestination
     },
     /// Includes home runs as base = 4.
-    BatterToBase {base: Base, fielder: Option<(Position, String)>},
-    Out {player: String, fielders: Vec<(Position, String)>, perfect_catch: bool},
-    Scores {player: String},
+    BatterToBase {base: Base, fielder: Option<(Position, &'output str)>},
+    Out {player: &'output str, fielders: Vec<(Position, &'output str)>, perfect_catch: bool},
+    Scores {player: &'output str},
     Walk,
     Ball,
     Foul {foul_type: FoulType},
@@ -55,7 +56,7 @@ pub enum ParsedEvent {
     },
     PlayBall,
     NowBatting {
-        batter: String,
+        batter: &'output str,
         first_pa: bool
     },
     ParseError {
@@ -65,51 +66,37 @@ pub enum ParsedEvent {
     }
 }
 
-pub fn process_events(events_log: &Vec<Event>) -> Vec<ParsedEvent> {
-    let mut events = events_log.into_iter();
+/// Processes a game into a list of ParsedEvents.
+/// Note that the game must live longer than the events, as zero copy parsing is used. 
+pub fn process_events<'output>(game: &'output Game) -> Vec<ParsedEvent<'output>> {
     let mut result = Vec::new();
-    let mut parsing_context = ParsingContext::new();
+    let mut parsing_context = ParsingContext::new(&game);
 
-    while let Some(event) = events.next() {
+    for event in &game.event_log {
         let mut parse_event = || {
+            let mut new_events = Vec::new();
             match event.event {
-                EventType::PitchingMatchup => {
-                    let mut iter = event.message.split(" vs. ").map(|side| {
-                        let mut words = side.split(" ").collect::<Vec<_>>();
-                        words.reverse();
-                        let mut name = words.into_iter().take(2).collect::<Vec<_>>();
-                        name.reverse();
-                        name.join(" ")
-                    });
-                    let home_pitcher = iter.next()?;
-                    let away_pitcher = iter.next()?;
-                    parsing_context.player_names.insert(home_pitcher.clone());
-                    parsing_context.player_names.insert(away_pitcher.clone());
-                    result.push(ParsedEvent::PitchingMatchup { home_pitcher, away_pitcher })
-                }
-                EventType::AwayLineup => {
-                    let players = parse_lineup(&event.message)?;
-                    parsing_context.player_names.extend(players.iter().map(|(_, name)| name.clone()));
-                    result.push(ParsedEvent::Lineup(Side::Away, players))
-                },
-                EventType::HomeLineup => {
-                    let players = parse_lineup(&event.message)?;
-                    parsing_context.player_names.extend(players.iter().map(|(_, name)| name.clone()));
-                    result.push(ParsedEvent::Lineup(Side::Home, players))
-                },
-                EventType::Field => {
-                    match parse_field_event(&parsing_context).parse(&event.message).finish() {
-                        Ok((_, events)) => result.extend(events),
+                EventType::PitchingMatchup => match parse_pitching_matchup_event(&parsing_context).parse(&event.message).finish() {
+                        Ok((_, events)) => new_events.extend(events),
                         Err(err) => handle_error(&event, err, &mut result),
-                    }
                 },
-                EventType::Pitch => {
-                    match parse_pitch_event(&parsing_context).parse(&event.message).finish() {
-                        Ok((_, events)) => result.extend(events),
+                EventType::AwayLineup => match parse_lineup_event(Side::Away, &parsing_context).parse(&event.message).finish() {
+                        Ok((_, events)) => new_events.extend(events),
                         Err(err) => handle_error(&event, err, &mut result),
-                    }
                 },
-                EventType::GameOver => result.push(ParsedEvent::GameOver),
+                EventType::HomeLineup => match parse_lineup_event(Side::Home, &parsing_context).parse(&event.message).finish() {
+                    Ok((_, events)) => new_events.extend(events),
+                    Err(err) => handle_error(&event, err, &mut result),
+            },
+                EventType::Field => match parse_field_event(&parsing_context).parse(&event.message).finish() {
+                        Ok((_, events)) => new_events.extend(events),
+                        Err(err) => handle_error(&event, err, &mut result),
+                },
+                EventType::Pitch => match parse_pitch_event(&parsing_context).parse(&event.message).finish() {
+                        Ok((_, events)) => new_events.extend(events),
+                        Err(err) => handle_error(&event, err, &mut result),
+                },
+                EventType::GameOver => new_events.push(ParsedEvent::GameOver),
                 EventType::InningEnd => {
                     let mut iter = event.message.split(" ").skip(3);
                     let side = match iter.next()? {
@@ -121,62 +108,23 @@ pub fn process_events(events_log: &Vec<Event>) -> Vec<ParsedEvent> {
                     let number = iter.next()?
                         .chars().rev().skip(3).collect::<Vec<char>>().into_iter().rev().collect::<String>()
                         .parse().ok()?;
-                    result.push(ParsedEvent::InningEnd { number, side });
+                    new_events.push(ParsedEvent::InningEnd { number, side });
                 }
-                EventType::InningStart => {
-                    let mut iter = event.message.split(" ")
-                        .skip(3); // Start of the
-                    let side = match iter.next()? {
-                        "top" => Side::Home,
-                        "bottom" => Side::Away,
-                        _ => return None, 
-                    };
-                    let mut iter = iter
-                        .skip(2); // of the
-                    let number = iter.next()?
-                        .chars().rev().skip(3).collect::<Vec<char>>().into_iter().rev().collect::<String>() // Remove "st.", "nd." or "th." from the end
-                        .parse().ok()?;
-                    let mut batting_team = iter.by_ref().take_while(|s| *s != "batting.");
-                    let _batting_emoji = batting_team.next()?.to_string();
-                    let batting_team = batting_team.collect::<Vec<_>>().join(" ");
-
-                    if event.message.contains("takes the mound.") {
-                        let remaining_message = iter.collect::<Vec<_>>().join(" ");
-                        let (leaving_position, leaving_pitcher, arriving_position, arriving_pitcher) = pitcher_swap(&remaining_message)?;
-                        
-                        parsing_context.player_names.insert(arriving_pitcher.clone());
-
-                        result.push(ParsedEvent::InningStart { number, side, batting_team, pitcher: None });
-                        result.push(ParsedEvent::PitcherSwap { leaving_position, leaving_pitcher, arriving_position, arriving_pitcher });
-                    } else {
-                        let _pitching_emoji = iter.next()?.to_string();
-                        let pitcher = iter.take_while(|s| *s != "pitching.")
-                            .collect::<Vec<_>>().join(" ");
-                        parsing_context.player_names.insert(pitcher.clone());
-                        result.push(ParsedEvent::InningStart { number, side, batting_team, pitcher: Some(pitcher) });
-                    }
-                }
+                EventType::InningStart => match parse_inning_start_event(&parsing_context).parse(&event.message).finish() {
+                    Ok((_, events)) => new_events.extend(events),
+                    Err(err) => handle_error(&event, err, &mut result),
+                },
                 EventType::LiveNow => result.push(ParsedEvent::LiveNow),
-                EventType::MoundVisit => {
-                    if event.message.contains("manager") {
-                        let iter = event.message.split(" ")
-                        .skip(2); // The
-                        let team = iter.take_while(|s| *s != "manager").collect::<Vec<_>>().join(" ");
-                        result.push(ParsedEvent::MoundVisit { team });
-                    } else if event.message.contains("remains in the game") {
-                        result.push(ParsedEvent::MoundVisitRefused);
-                    } else {
-                        let (leaving_position, leaving_pitcher, arriving_position, arriving_pitcher) = pitcher_swap(&event.message)?;   
-                        parsing_context.player_names.insert(arriving_pitcher.clone());
-                        result.push(ParsedEvent::PitcherSwap { leaving_position, leaving_pitcher, arriving_position, arriving_pitcher });
-                    }
-                }
+                EventType::MoundVisit => match parse_mound_visit(&parsing_context).parse(&event.message).finish() {
+                    Ok((_, events)) => new_events.push(events),
+                    Err(err) => handle_error(&event, err, &mut result),
+                },
                 EventType::NowBatting => {
                     let mut message = event.message.strip_prefix("Now batting: ")?.split(" (");
-                    let batter = message.next()?.to_string();
+                    let batter = message.next()?;
                     let first_pa = Some("1st PA of game)") == message.next();
-                    parsing_context.player_names.insert(batter.clone());
-                    result.push(ParsedEvent::NowBatting { batter, first_pa });
+                    parsing_context.player_names.insert(batter);
+                    new_events.push(ParsedEvent::NowBatting { batter, first_pa });
                 }
                 EventType::PlayBall => result.push(ParsedEvent::PlayBall),
                 EventType::Recordkeeping => {
@@ -184,58 +132,57 @@ pub fn process_events(events_log: &Vec<Event>) -> Vec<ParsedEvent> {
                     let mut iter = score.split("-");
                     let home_score = iter.next()?.parse().ok()?;
                     let away_score = iter.next()?.parse().ok()?;
-                    result.push(ParsedEvent::Recordkeeping { home_score, away_score });
+                    new_events.push(ParsedEvent::Recordkeeping { home_score, away_score });
                 }
             };
-            Some(())
+            Some(new_events)
         };
-        if None == parse_event() {
+        if let Some(events) = parse_event() {
+            for event in events {
+                match &event {
+                    ParsedEvent::NowBatting { batter, .. } => {
+                        parsing_context.player_names.insert(batter);
+                    },
+                    ParsedEvent::PitchingMatchup { home_pitcher, away_pitcher } => {
+                        parsing_context.player_names.insert(home_pitcher);
+                        parsing_context.player_names.insert(away_pitcher);
+                    },
+                    ParsedEvent::PitcherSwap { arriving_pitcher, .. } => {
+                        parsing_context.player_names.insert(arriving_pitcher);
+                    },
+                    ParsedEvent::Lineup(_, lineup) => {
+                        parsing_context.player_names.extend(lineup.iter().map(|(_, name)| *name));
+                    }
+                    _ => ()
+                }
+                result.push(event)
+            }
+        } else {
             panic!("Couldn't parse {event:?}")
         };
     }
     result
 }
 
-fn pitcher_swap(message: &String) -> Option<(Position, String, Position, String)> {
-    let mut iter = message.split(" ");
-    let leaving_position = iter.next()?.try_into().ok()?;
-    let leaving_pitcher = iter.by_ref().take_while(|s| *s != "is").collect::<Vec<_>>().join(" ");
-                    
-    let mut iter = iter.skip_while(|s| *s != "game.").skip(1);
-    // is leaving the game
-    let arriving_position = iter.next()?.try_into().ok()?;
-    let arriving_pitcher = iter.take_while(|s| *s != "takes")
-        .collect::<Vec<_>>().join(" ");
-    Some((leaving_position, leaving_pitcher, arriving_position, arriving_pitcher))
-}
-
-fn parse_lineup(message: &str) -> Option<Vec<(Position, String)>> {
-    message.strip_suffix("<br>")?.split("<br>").map(|player| {
-        let mut iter = player.split(" ");
-        let _number = iter.next();
-        extract_position_and_name(&iter.collect::<Vec<_>>().join(" "))
-    }).collect()
-}
-
-fn extract_position_and_name(position_and_name: &str) -> Option<(Position, String)> {
-    let mut iter = position_and_name.split(" ");
-    let position = iter.next()?.try_into().ok()?;
-    let name = iter.collect::<Vec<_>>().join(" ");
-    Some((position, name))
-}
-
 #[cfg(debug_assertions)]
 fn handle_error(event:&Event, err: VerboseError<&str>, result: &mut Vec<ParsedEvent>) {
-    if err.errors.iter().any(|err| matches!(err, (_, VerboseErrorKind::Context(EXTRACT_FIELDER_NAME)))) {
+    use crate::nom_parsing::EXTRACT_TEAM_NAME;
+
+    if err.errors.iter().any(|err| matches!(err, (_, VerboseErrorKind::Context(EXTRACT_PLAYER_NAME)) | (_, VerboseErrorKind::Context(EXTRACT_TEAM_NAME)))) {
         println!("{err}");
-        result.push(ParsedEvent::ParseError { event_type: event.event, message: event.message.clone(), reason:EXTRACT_FIELDER_NAME.to_string() });
+        result.push(ParsedEvent::ParseError { event_type: event.event, message: event.message.clone(), reason:EXTRACT_PLAYER_NAME.to_string() });
     } else {
-        panic!("{err}")
+        panic!("{err} {:?}", err.errors)
     }
+    // if let Some((_, VerboseErrorKind::Context(EXTRACT_PLAYER_NAME))) = err.errors.last() {
+    //     println!("{err} {:?}", err.errors);
+    //     result.push(ParsedEvent::ParseError { event_type: event.event, message: event.message.clone(), reason:EXTRACT_PLAYER_NAME.to_string() });
+    // } else {
+    //     panic!("{err}")
+    // }
 }
 
 #[cfg(not(debug_assertions))]
 fn handle_error(event:&Event, err: VerboseError<&str>, result: &mut Vec<ParsedEvent>) {
-    println!("{err}");
     result.push(ParsedEvent::ParseError { event_type: event.event, message: event.message.clone(), reason: err.to_string() });
 }

@@ -55,12 +55,12 @@ fn main() {
 
     let mut i = 0;
     for (game_id, game) in downloaded(&json_cache) {
-        let events = process_events(&game.event_log);
-        save_parsed_events(&ron_cache, &game_id, events);
-
         i += 1;
         if i % 100 == 0 {
-            println!("{i}");
+            println!("{i}")
         }
+
+        let events = process_events(&game);
+        save_parsed_events(&ron_cache, &game_id, events);
     }
 }

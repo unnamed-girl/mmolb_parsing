@@ -22,8 +22,8 @@ pub enum EventType {
 
 #[derive(Debug, Clone, Copy, Deserialize, Serialize, PartialEq, Eq, Hash)]
 pub enum Side {
-    Home,
     Away,
+    Home,
 }
 
 #[derive(Debug, Clone, Copy, Serialize, Deserialize, PartialEq, Eq, Hash)]
@@ -60,8 +60,8 @@ impl TryFrom<u8> for Side {
     type Error = NotASide;
     fn try_from(value: u8) -> Result<Self, Self::Error> {
         match value {
-            0 => Ok(Self::Home),
-            1 => Ok(Self::Away),
+            0 => Ok(Self::Away),
+            1 => Ok(Self::Home),
             _ => Err(NotASide(value))
         }
     }
@@ -69,8 +69,8 @@ impl TryFrom<u8> for Side {
 impl Into<u8> for Side {
     fn into(self) -> u8 {
         match self {
-            Self::Home => 0,
-            Self::Away => 1,
+            Self::Away => 0,
+            Self::Home => 1,
         }
     }
 }
