@@ -1,70 +1,84 @@
 use std::iter::once;
 
-use nom::{branch::alt, bytes::complete::take_until, character::complete::digit1, combinator::{all_consuming, fail, opt, rest, value}, error::context, multi::{many0, many1}, sequence::{delimited, preceded, separated_pair, terminated}, Parser};
+use nom::{branch::alt, bytes::complete::take_until, character::complete::digit1, combinator::{all_consuming, fail, opt, rest}, error::context, multi::{many0, many1}, sequence::{delimited, preceded, separated_pair, terminated}, Parser};
 
-use crate::{enums::{Base, Position, Side}, ParsedEvent};
+use crate::{enums::{Base, Distance, FoulType, Position, Side}, ParsedEvent};
 
-use super::{shared::{base, batter_run_distance, bold, destination, exclamation, fielders, fielding_error_type, foul_type, hit_type, hit_type_verb_name, ordinal_suffix, out, player_name, position, position_and_name, s_tag, sentence, strike_type, team_emoji, team_emoji_and_name, top_or_bottom, word, Error, IResult}, ParsingContext};
+use super::{shared::{base, batter_run_distance, bold, destination, exclamation, fielders, fielding_error_type, fly_type_verb_name, foul_type, hit_type, hit_type_verb_name, ordinal_suffix, out, player_name, position, position_and_name, s_tag, sentence, strike_type, team_emoji, team_emoji_and_name, top_or_bottom, word, Error, IResult}, ParsingContext};
 
 /// Parses the full message for a Field event.
 pub fn parse_field_event<'output, 'parse>(parsing_context: &'parse ParsingContext<'output>) -> impl Parser<&'output str, Output = Vec<ParsedEvent<&'output str>>, Error = Error<'output>> + 'parse {
     // Main body of event
     let successful_hit = sentence((player_name(parsing_context), batter_run_distance, delimited(s_tag("on a"), hit_type, s_tag("to")), position_and_name(parsing_context)))
-    .map(|(_batter, base, _hit_type, fielder)| {vec![ParsedEvent::BatterToBase { base, fielder: Some(fielder) }]});
+    .map(|(batter, distance, _hit_type, fielder)| {vec![ParsedEvent::BatterToBase { batter, distance, fielder: Some(fielder) }]});
 
-    let homers = bold(exclamation((player_name(parsing_context), preceded(alt((s_tag("homers on a"), s_tag("hits a grand slam on a"))), hit_type), preceded(s_tag("to"), destination))))
-        .map(|(batter, _hit_type, _destination)| vec![ParsedEvent::BatterToBase { base: Base::Home, fielder: None }, ParsedEvent::Scores { player: batter }]);
+    let homers = bold(exclamation((player_name(parsing_context), delimited(alt((s_tag("homers on a"), s_tag("hits a grand slam on a"))), hit_type, s_tag("to")), destination)))
+    .map(|(batter, _hit_type, _destination)| vec![ParsedEvent::BatterToBase { batter, distance: Distance::HomeRun, fielder: None }]);
 
-    let batter_out = sentence((
+    let caught_out = sentence((
         player_name(parsing_context),
-        terminated(hit_type_verb_name, s_tag("out")),
+        terminated(fly_type_verb_name, s_tag("out")),
         opt(s_tag("on a sacrifice fly")).map(|sacrifice| sacrifice.is_some()),
+        preceded(s_tag("to"), position_and_name(parsing_context)),
+    )).and(opt(bold(exclamation(s_tag("Perfect catch")))).map(|perfect| perfect.is_some()))
+    .map(|((batter, fly_type, sacrifice, catcher), perfect)| vec![ParsedEvent::CaughtOut { batter, fly: fly_type, catcher, sacrifice, perfect }]);
+
+    let grounded_out = sentence(separated_pair(
+        player_name(parsing_context),
+        s_tag("grounds out"),
         alt((
             preceded(s_tag("to"), position_and_name(parsing_context)).map(|fielder| vec![fielder]),
             preceded(s_tag(","), fielders(parsing_context))
         ))
     ))
-    .and(opt(bold(exclamation(s_tag("Perfect catch")))).map(|perfect| perfect.is_some()))
-    .map(|((batter, _hit_type, _sacrifice_play, fielders), perfect)|
-        vec![ParsedEvent::Out { player: batter, fielders, perfect_catch: perfect }]
-    );
+    .map(|(batter, fielders)| vec![ParsedEvent::GroundedOut { batter, runner: batter, fielders, base: Base::First, sacrifice: false}]);
 
-    let forced_out = sentence((player_name(parsing_context), hit_type_verb_name, s_tag("into a force out,"), fielders(parsing_context)))
+    let forced_out = sentence((
+        player_name(parsing_context),
+        terminated(hit_type_verb_name, s_tag("into a force out,")),
+        fielders(parsing_context)
+    ))
     .and(many1(sentence(out(parsing_context))))
-    .map(|((_, _, _, fielders), outs)| outs.into_iter().map(|(player, _)| ParsedEvent::Out { player: player, fielders: fielders.clone(), perfect_catch: false }).collect());
+    .map(|((batter, _hit_type, fielders), outs)| 
+        outs.into_iter().map(|(runner, base)| ParsedEvent::GroundedOut { batter, runner, fielders: fielders.clone(), base, sacrifice: false })
+        .collect::<Vec<ParsedEvent<&'output str>>>()
+    );
 
     let reaches_on_fielders_choice_out =  sentence(separated_pair(player_name(parsing_context), s_tag("reaches on a fielder's choice out,"), fielders(parsing_context)))
     .and(many1(sentence(out(parsing_context))))
-    .map(|((_batter, fielders), outs)| {
-        once(ParsedEvent::BatterToBase { base: Base::First, fielder: None }).chain(outs.into_iter().map(|(player, _)| ParsedEvent::Out { player: player, fielders: fielders.clone(), perfect_catch: false })).collect()
+    .map(|((batter, fielders), outs)| {
+        once(ParsedEvent::BatterToBase { batter, distance: Distance::Single, fielder: None })
+        .chain(outs.into_iter().map(|(runner, base)| ParsedEvent::GroundedOut { batter, runner, fielders: fielders.clone(), base, sacrifice: false }))
+        .collect::<Vec<ParsedEvent<&'output str>>>()
     });
 
     let reaches_on_fielders_choice = sentence(separated_pair(player_name(parsing_context), s_tag("reaches on a fielder's choice, fielded by"), position_and_name(parsing_context)))
-    .map(|(_batter, fielder)| {
-        vec![ParsedEvent::BatterToBase { base: Base::First, fielder: Some(fielder) }]
+    .map(|(batter, fielder)| {
+        vec![ParsedEvent::BatterToBase { batter, distance: Distance::Single, fielder: Some(fielder) }]
     });
 
     let reaches_on_error = sentence((player_name(parsing_context), delimited(s_tag("reaches on a"), fielding_error_type, s_tag("error by")), position_and_name(parsing_context)))
-    .map(|(_batter, error, (position, fielder))| {
-        vec![ParsedEvent::Error { fielder, error }, ParsedEvent::BatterToBase { base: Base::First, fielder: Some((position, fielder)) }]
+    .map(|(batter, error, (position, fielder))| {
+        vec![ParsedEvent::FieldingError { fielder, error }, ParsedEvent::BatterToBase { batter, distance: Distance::Single, fielder: Some((position, fielder)) }]
     });
 
     let double_play = sentence((
         player_name(parsing_context),
         hit_type_verb_name,
-        alt((
-            value(true, s_tag("into a sacrifice double play,")),
-            value(false, s_tag("into a double play,")),
-        )),
+        delimited(s_tag("into a"), opt(s_tag("sacrifice")).map(|s| s.is_some()), s_tag("double play,")),
         fielders(parsing_context)
     ))
     .and(many1(sentence(out(parsing_context))))
-    .map(|((_batter, _hit_type, _sacrifice, fielders), outs)| outs.into_iter().map(|(player, _)| ParsedEvent::Out { player: player, fielders: fielders.clone(), perfect_catch: false }).collect());
+    .map(|((batter, _hit_type, sacrifice, fielders), outs)| 
+        outs.into_iter().map(|(runner, base)| ParsedEvent::GroundedOut { batter, runner, fielders: fielders.clone(), base, sacrifice })
+        .collect::<Vec<ParsedEvent<&'output str>>>()
+    );
 
     let fielding_options = alt((
         successful_hit,
         homers,
-        batter_out,
+        caught_out,
+        grounded_out,
         forced_out,
         reaches_on_fielders_choice_out,
         reaches_on_fielders_choice,
@@ -76,7 +90,7 @@ pub fn parse_field_event<'output, 'parse>(parsing_context: &'parse ParsingContex
 
     // Additional sentences
     let throwing_error = sentence(separated_pair(fielding_error_type, s_tag("error by"), player_name(parsing_context)))
-    .map(|(error, fielder)| vec![ParsedEvent::Error { fielder: fielder, error }]);
+    .map(|(error, fielder)| vec![ParsedEvent::FieldingError { fielder, error }]);
 
     let extras = alt((
         runner_advance(parsing_context),
@@ -90,31 +104,50 @@ pub fn parse_field_event<'output, 'parse>(parsing_context: &'parse ParsingContex
 
 fn scores<'output, 'parse>(parsing_context: &'parse ParsingContext<'output>) -> impl Parser<&'output str, Output = Vec<ParsedEvent<&'output str>>, Error = Error<'output>> + 'parse {
     bold(exclamation(terminated(player_name(parsing_context), s_tag("scores"))))
-    .map(|runner| vec![ParsedEvent::RunnerAdvance { runner: runner, base: Base::Home, is_steal: false }, ParsedEvent::Scores { player: runner }])
+    .map(|runner| vec![ParsedEvent::Advance { runner: runner, base: Base::Home }])
 }
 
 fn runner_advance<'output, 'parse>(parsing_context: &'parse ParsingContext<'output>)-> impl Parser<&'output str, Output = Vec<ParsedEvent<&'output str>>, Error = Error<'output>> + 'parse {
     sentence((player_name(parsing_context), delimited(s_tag("to"), base, s_tag("base"))))
-    .map(|(runner, base)| vec![ParsedEvent::RunnerAdvance { runner: runner, base, is_steal: false }])
+    .map(|(runner, base)| vec![ParsedEvent::Advance { runner, base }])
 }
 
 pub fn parse_pitch_event<'output, 'parse>(parsing_context: &'parse ParsingContext<'output>) -> impl Parser<&'output str, Output = Vec<ParsedEvent<&'output str>>, Error = Error<'output>> + 'parse {
-    let hit = sentence((player_name(parsing_context), delimited(s_tag("hits a"), hit_type, s_tag("to")), destination))
-    .map(|(_batter, hit_type, destination)| vec![ParsedEvent::Hit { hit_type, destination }]);
+    let hit = sentence((
+        player_name(parsing_context), 
+        delimited(s_tag("hits a"), hit_type, s_tag("to")),
+        destination
+    ))
+    .map(|(batter, hit, destination)| vec![ParsedEvent::Hit { batter, hit, destination }]);
 
-    let struck_out = (opt(sentence(preceded(s_tag("Foul"), foul_type))), sentence(separated_pair(player_name(parsing_context), s_tag("struck out"), strike_type)))
-    .map(|(_foul, (batter, strike_type))| vec![ParsedEvent::Strike { strike_type }, ParsedEvent::Out { player: batter, fielders: Vec::new(), perfect_catch: false }]);
+    let struck_out = (
+        opt(sentence(s_tag("Foul tip"))).map(|s| s.is_some()),
+        sentence(separated_pair(
+            player_name(parsing_context), 
+            s_tag("struck out"), 
+            strike_type)
+    ))
+    .map(|(foul_tip, (batter, strike))| {
+        if foul_tip {
+            vec![ParsedEvent::Foul { foul: FoulType::Tip }, ParsedEvent::StrikeOut { batter }]
+        } else {
+            vec![ParsedEvent::Strike { strike }, ParsedEvent::StrikeOut { batter }]
+        }
+    });
 
     let hit_by_pitch = sentence(terminated(player_name(parsing_context), s_tag("was hit by the pitch and advances to first base")))
-    .map(|_batter| vec![ParsedEvent::HitByPitch, ParsedEvent::BatterToBase { base: Base::First, fielder: None }]);
+    .map(|batter| vec![ParsedEvent::HitByPitch {batter}]);
 
-    let walks = preceded(sentence(s_tag("Ball 4")), sentence(terminated(player_name(parsing_context), s_tag("walks"))))
-    .map(|_batter| vec![ParsedEvent::Ball, ParsedEvent::Walk, ParsedEvent::BatterToBase { base: Base::First, fielder: None }]);
+    let walks = preceded(
+        sentence(s_tag("Ball 4")),
+        sentence(terminated(player_name(parsing_context), s_tag("walks")))
+    )
+    .map(|batter| vec![ParsedEvent::Ball, ParsedEvent::Walk {batter}]);
 
     let boring_pitch_outcomes = terminated(alt((
         sentence(s_tag("Ball")).map(|_| vec![ParsedEvent::Ball]),
-        sentence(preceded(s_tag("Strike,"), strike_type)).map(|strike_type| vec![ParsedEvent::Strike { strike_type }]),
-        sentence(preceded(s_tag("Foul"), foul_type)).map(|foul_type| vec![ParsedEvent::Foul { foul_type }]),
+        sentence(preceded(s_tag("Strike,"), strike_type)).map(|strike| vec![ParsedEvent::Strike { strike }]),
+        sentence(preceded(s_tag("Foul"), foul_type)).map(|foul| vec![ParsedEvent::Foul { foul }]),
     )), sentence(separated_pair(word, s_tag("-"), word)));
 
     let pitch_options = alt((
@@ -127,13 +160,13 @@ pub fn parse_pitch_event<'output, 'parse>(parsing_context: &'parse ParsingContex
     ));
 
     let home_steal = bold(exclamation(terminated(player_name(parsing_context), s_tag("steals home"))))
-    .map(|runner| vec![ParsedEvent::RunnerAdvance { runner: runner, base:Base::Home, is_steal: true }, ParsedEvent::Scores { player: runner }]);
+    .map(|runner| vec![ParsedEvent::Steal { runner: runner, base:Base::Home }]);
 
     let successful_steal = exclamation((player_name(parsing_context), delimited(s_tag("steals"), base, s_tag("base"))))
-    .map(|(runner, base)| vec![ParsedEvent::RunnerAdvance { runner: runner, base, is_steal: true }]);
+    .map(|(runner, base)| vec![ParsedEvent::Steal { runner: runner, base }]);
 
     let caught_stealing = sentence((player_name(parsing_context), delimited(s_tag("is caught stealing"), base, opt(s_tag("base")))))
-    .map(|(runner, _base)| vec![ParsedEvent::Out { player: runner, fielders: Vec::new(), perfect_catch: false }]);
+    .map(|(runner, base)| vec![ParsedEvent::CaughtStealing { runner, base }]);
 
     let extras = alt((
         home_steal,
@@ -163,7 +196,7 @@ pub fn parse_pitching_matchup_event<'output, 'parse>(parsing_context: &'parse Pa
 pub fn parse_lineup_event<'output, 'parse>(side: Side, _parsing_context: &'parse ParsingContext<'output>) -> impl Parser<&'output str, Output = Vec<ParsedEvent<&'output str>>, Error = Error<'output>> + 'parse {
     context("Parse lineup", all_consuming(
         many1(delimited((digit1, s_tag(".")), (position, take_until("<br>")), s_tag("<br>")))
-    ).map(move |lineup| vec![ParsedEvent::Lineup(side, lineup)]))
+    ).map(move |players| vec![ParsedEvent::Lineup {side, players }]))
 }
 
 pub fn parse_inning_start_event<'output, 'parse>(parsing_context: &'parse ParsingContext<'output>) -> impl Parser<&'output str, Output = Vec<ParsedEvent<&'output str>>, Error = Error<'output>> + 'parse {

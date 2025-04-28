@@ -3,7 +3,7 @@ use std::{collections::HashSet, fmt::Debug, str::FromStr};
 use nom::{branch::alt, bytes::complete::{tag, take_while}, character::complete::{multispace0, space1}, combinator::{cut, opt, recognize}, error::{context, ErrorKind, ParseError}, multi::{count, separated_list1}, sequence::{delimited, separated_pair, terminated}, AsChar, Compare, CompareResult, Parser};
 use nom_language::error::VerboseError;
 
-use crate::{enums::{Base, FielderError, FoulType, HitDestination, HitType, Position, Side, StrikeType}, Game};
+use crate::{enums::{Base, Distance, FielderError, FlyballType, FoulType, HitDestination, HitType, Position, Side, StrikeType}, Game};
 
 pub(super) type Error<'a> = VerboseError<&'a str>;
 pub(super) type IResult<'a, I, O> = nom::IResult<I, O, Error<'a>>;
@@ -93,11 +93,21 @@ pub(super) fn hit_type(i: &str) -> IResult<&str, HitType> {
 /// Verb names for hit types, e.g. "pops"
 pub(super) fn hit_type_verb_name(i: &str) -> IResult<&str, HitType> {
     word.map_opt(|word| match word {
-        "flies" => Some(HitType::FlyBall),
-        "grounds" => Some(HitType::GroundBall),
         "grounded" => Some(HitType::GroundBall),
+        "grounds" => Some(HitType::GroundBall),
+        "flies" => Some(HitType::FlyBall),
         "lines" => Some(HitType::LineDrive),
         "pops" => Some(HitType::Popup),
+        _ => None
+    }).parse(i)
+}
+
+/// Verb names for fly types, e.g. "pops"
+pub(super) fn fly_type_verb_name(i: &str) -> IResult<&str, FlyballType> {
+    word.map_opt(|word| match word {
+        "flies" => Some(FlyballType::Flyball),
+        "lines" => Some(FlyballType::LineDrive),
+        "pops" => Some(FlyballType::Popup),
         _ => None
     }).parse(i)
 }
@@ -176,13 +186,8 @@ pub(super) fn position_and_name<'output, 'parse>(parsing_context: &'parse Parsin
 }
 
 /// A distance a batter runs, e.g. "singles"
-pub(super) fn batter_run_distance(i: &str) -> IResult<&str, Base> {
-    word.map_opt(|w| match w {
-        "singles" => Some(Base::First),
-        "doubles" => Some(Base::Second),
-        "triples" => Some(Base::Third),
-        _ => None
-    }).parse(i)
+pub(super) fn batter_run_distance(i: &str) -> IResult<&str, Distance> {
+    word.map_res(Distance::from_str).parse(i)
 }
 
 /// A base, e.g. "first". Case insensitive

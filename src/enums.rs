@@ -141,6 +141,17 @@ pub enum HitType {
     Popup,
 }
 
+/// HitTypes that aren't grounded
+#[derive(Clone, Copy, EnumString, Display, Debug, Serialize, Deserialize, PartialEq, Eq, Hash, EnumIter)]
+pub enum FlyballType {
+    #[strum(to_string = "fly ball")]
+    Flyball,
+    #[strum(to_string = "line drive")]
+    LineDrive,
+    #[strum(to_string = "popup")]
+    Popup,
+}
+
 #[derive(Clone, Copy, EnumString, Display, Debug, Serialize, Deserialize, PartialEq, Eq, Hash, EnumIter)]
 pub enum PitchType {
     Fastball,
@@ -190,4 +201,16 @@ pub enum Base {
     Second,
     #[strum(ascii_case_insensitive)]
     Third,
+}
+
+#[derive(Clone, Copy, EnumString, Display, Debug, Serialize, Deserialize, PartialEq, Eq, Hash)]
+pub enum Distance {
+    #[strum(to_string = "singles")]
+    Single,
+    #[strum(to_string = "doubles")]
+    Double,
+    #[strum(to_string = "triples")]
+    Triple,
+    #[strum(to_string = "homers")]
+    HomeRun
 }

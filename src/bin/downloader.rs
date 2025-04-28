@@ -1,5 +1,5 @@
 
-use std::{env::args, fs::File, io::{self, Read, Write}, path::Path};
+use std::{env::args, fs::File, io::{self, Write}, path::Path};
 
 use futures::StreamExt;
 use serde::{Deserialize, Serialize};

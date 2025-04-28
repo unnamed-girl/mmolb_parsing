@@ -1,20 +1,55 @@
-use std::{borrow::Cow, fmt::Debug, marker::PhantomData};
 
 use nom::{Finish, Parser};
 use nom_language::error::{VerboseError, VerboseErrorKind};
 use serde::{Deserialize, Serialize};
 
-use crate::{enums::{Base, EventType, FielderError, FoulType, HitDestination, HitType, Position, Side, StrikeType}, game::{Event, Pitch}, nom_parsing::{parse_field_event, parse_inning_start_event, parse_lineup_event, parse_mound_visit, parse_pitch_event, parse_pitching_matchup_event, ParsingContext, EXTRACT_PLAYER_NAME}, Game};
+use crate::{enums::{Base, Distance, EventType, FielderError, FlyballType, FoulType, HitDestination, HitType, Position, Side, StrikeType}, game::{Event, Pitch}, nom_parsing::{parse_field_event, parse_inning_start_event, parse_lineup_event, parse_mound_visit, parse_pitch_event, parse_pitching_matchup_event, ParsingContext, EXTRACT_PLAYER_NAME}, Game};
 
-/// S is the string type used. &'output str is used by the parser, 
-/// but a mutable type is necessary when directly deserializing, because some players have escaped characters in their nameds
+/// S is the string type used. S = &'output str is used by the parser, 
+/// but a mutable type is necessary when directly deserializing, because some players have escaped characters in their names
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
 pub enum ParsedEvent<S> 
 {
+    ParseError {
+        event_type: EventType,
+        message: String,
+    },
+
+    // One off events
+    LiveNow,
     PitchingMatchup {
         home_pitcher: S,
         away_pitcher: S,
     },
+    Lineup {
+        side: Side,
+        players: Vec<(Position, S)>
+    },
+    PlayBall,
+    GameOver,
+    Recordkeeping {
+        home_score: u8,
+        away_score: u8,
+    },
+
+    // inningTiming
+    InningStart {
+        number: u8,
+        side: Side,
+        batting_team: S,
+        /// If none this is followed by a pitcher swap
+        pitcher: Option<S>,
+    },
+    NowBatting {
+        batter: S,
+        first_pa: bool
+    },
+    InningEnd {
+        number: u8,
+        side: Side
+    },
+
+    // Mound visits
     MoundVisit {
         team: S,
     },
@@ -25,48 +60,50 @@ pub enum ParsedEvent<S>
         arriving_position: Position,
         arriving_pitcher: S,
     },
-    GameOver,
-    RunnerAdvance { runner: S, base: Base, is_steal: bool },
-    Error { fielder: S, error: FielderError },
-    Lineup(Side, Vec<(Position, S)>),
-    Recordkeeping {
-        home_score: u8,
-        away_score: u8,
-    },
-    LiveNow,
-    InningStart {
-        number: u8,
-        side: Side,
-        batting_team: S,
-        pitcher: Option<S>,
-    },
-    Pitch(Pitch),
-    Walk,
-    Hit {
-        hit_type: HitType,
-        destination: HitDestination
-    },
-    /// Includes home runs as base = 4.
-    BatterToBase {base: Base, fielder: Option<(Position, S)>},
-    Out {player: S, fielders: Vec<(Position, S)>, perfect_catch: bool},
-    Scores {player: S},
+
+    // Pitch
+    Pitch { pitch: Pitch },
     Ball,
-    Foul {foul_type: FoulType},
-    Strike {strike_type: StrikeType},
-    HitByPitch,
-    InningEnd {
-        number: u8,
-        side: Side
-    },
-    PlayBall,
-    NowBatting {
+    Strike { strike: StrikeType },
+    Foul { foul: FoulType },
+    Walk { batter: S },
+    HitByPitch { batter: S },
+    Hit {
         batter: S,
-        first_pa: bool
-    },
-    ParseError {
-        event_type: EventType,
-        message: String,
-        reason: String
+        hit: HitType,
+        destination: HitDestination
+    },  
+    StrikeOut { batter: S },
+    /// Stealing home scores
+    Steal { runner: S, base: Base },
+    CaughtStealing { runner: S, base: Base },
+
+    // Field
+    /// Scores if home run
+    BatterToBase { batter: S, distance: Distance, fielder: Option<(Position, S)> },
+    CaughtOut { batter: S, fly: FlyballType, catcher: (Position, S), sacrifice: bool, perfect: bool},
+    GroundedOut { batter: S, runner: S, fielders: Vec<(Position, S)>, base: Base, sacrifice: bool},
+    /// Advancing to home scores
+    Advance { runner: S, base: Base },
+    FieldingError { fielder:S, error: FielderError }
+}
+impl<S> ParsedEvent<S> {
+    pub fn out(&self) -> Option<&S> {
+        match self {
+            ParsedEvent::GroundedOut { runner, .. } => Some(runner),
+            ParsedEvent::StrikeOut { batter } => Some(batter),
+            ParsedEvent::CaughtOut { batter, ..} => Some(batter),
+            ParsedEvent::CaughtStealing { runner, .. } => Some(runner),
+            _ => None
+        }
+    }
+    pub fn scores(&self) -> Option<&S> {
+        match self {
+            ParsedEvent::Advance { runner, base:Base::Home } => Some(runner),
+            ParsedEvent::Steal { runner, base:Base::Home } => Some(runner),
+            ParsedEvent::BatterToBase { batter, distance: Distance::HomeRun, .. } => Some(batter),
+            _ => None
+        }
     }
 }
 
@@ -96,9 +133,12 @@ pub fn process_events<'output>(game: &'output Game) -> Vec<ParsedEvent<&'output 
                         Ok((_, events)) => new_events.extend(events),
                         Err(err) => handle_error(&event, err, &mut result),
                 },
-                EventType::Pitch => match parse_pitch_event(&parsing_context).parse(&event.message).finish() {
+                EventType::Pitch => {
+                    new_events.push(ParsedEvent::Pitch { pitch: event.pitch.clone().expect("Pitch to have a pitch") });
+                    match parse_pitch_event(&parsing_context).parse(&event.message).finish() {
                         Ok((_, events)) => new_events.extend(events),
                         Err(err) => handle_error(&event, err, &mut result),
+                    }
                 },
                 EventType::GameOver => new_events.push(ParsedEvent::GameOver),
                 EventType::InningEnd => {
@@ -154,8 +194,8 @@ pub fn process_events<'output>(game: &'output Game) -> Vec<ParsedEvent<&'output 
                     ParsedEvent::PitcherSwap { arriving_pitcher, .. } => {
                         parsing_context.player_names.insert(arriving_pitcher);
                     },
-                    ParsedEvent::Lineup(_, lineup) => {
-                        parsing_context.player_names.extend(lineup.iter().map(|(_, name)| *name));
+                    ParsedEvent::Lineup { players, .. } => {
+                        parsing_context.player_names.extend( players.iter().map(|(_, name)| *name));
                     }
                     _ => ()
                 }
@@ -174,7 +214,7 @@ fn handle_error(event:&Event, err: VerboseError<&str>, result: &mut Vec<ParsedEv
 
     if err.errors.iter().any(|err| matches!(err, (_, VerboseErrorKind::Context(EXTRACT_PLAYER_NAME)) | (_, VerboseErrorKind::Context(EXTRACT_TEAM_NAME)))) {
         println!("{err}");
-        result.push(ParsedEvent::ParseError { event_type: event.event, message: event.message.clone(), reason:EXTRACT_PLAYER_NAME.to_string() });
+        result.push(ParsedEvent::ParseError { event_type: event.event, message: event.message.clone() });
     } else {
         panic!("{err} {:?}", err.errors)
     }
@@ -188,5 +228,5 @@ fn handle_error(event:&Event, err: VerboseError<&str>, result: &mut Vec<ParsedEv
 
 #[cfg(not(debug_assertions))]
 fn handle_error(event:&Event, err: VerboseError<&str>, result: &mut Vec<ParsedEvent<&str>>) {
-    result.push(ParsedEvent::ParseError { event_type: event.event, message: event.message.clone(), reason: err.to_string() });
+    result.push(ParsedEvent::ParseError { event_type: event.event, message: event.message.clone() });
 }
