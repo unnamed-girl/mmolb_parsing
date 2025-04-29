@@ -1,18 +1,13 @@
 use std::{env::args, fs::File, io::{self, Read}};
 
-use mmolb_parsing::{enums::{Inning, Side}, ParsedEvent};
+use mmolb_parsing::ParsedEvent;
 
-pub struct RonFile(String);
-impl RonFile {
-    pub fn new(contents: String) -> Self {
-        Self(contents)
-    }
-    pub fn events<'a>(&'a self) -> impl Iterator<Item = ParsedEvent<String>> + use<'a>{
-        self.0.lines().map(|line| ron::from_str(line).unwrap())
-    }
+pub struct LoadedEvents {
+    pub game_id: String,
+    pub events: Vec<ParsedEvent<String>>
 }
 
-pub fn parsed(ron_cache: &str) -> impl Iterator<Item = (String, Vec<ParsedEvent<String>>)> {
+pub fn parsed(ron_cache: &str) -> impl Iterator<Item = LoadedEvents> {
     std::fs::read_dir(ron_cache).unwrap()
         .map(|entry|  {
                 let entry = entry.unwrap();
@@ -21,8 +16,11 @@ pub fn parsed(ron_cache: &str) -> impl Iterator<Item = (String, Vec<ParsedEvent<
                 let game_id = entry.file_name().to_str().unwrap().strip_suffix(".ron").unwrap().to_string();
                 File::open(entry.path()).unwrap().read_to_string(&mut result).unwrap();
 
-                let result = result.lines().map(|line| ron::from_str(line).unwrap()).collect();
-                (game_id, result)
+                let events = result.lines().map(|line| ron::from_str(line).unwrap()).collect();
+                LoadedEvents {
+                    game_id,
+                    events
+                }
         }
     )
 }
@@ -39,32 +37,15 @@ fn main() {
         ron_cache = ron_cache.split_whitespace().next().unwrap().to_string();
     }
 
-    for (i, (game_id, events)) in parsed(&ron_cache).enumerate() {
-        let mut inning = Inning::BeforeGame;
-        let mut away_perfect = true;
-        let mut home_perfect = true;
-        for event in events {
-            match event {
-                ParsedEvent::InningStart { number, side, .. } => {
-                    inning = Inning::DuringGame { number, batting_side: side }
-                },
-                ParsedEvent::Advance { .. } | ParsedEvent::BatterToBase { .. } | ParsedEvent::Steal {..} => {
-                    match inning.batting_side().unwrap() {
-                        Side::Away => away_perfect = false,
-                        Side::Home => home_perfect = false,
-                    }
-                }
-                _ => ()
-            }
-            if !away_perfect && !home_perfect {
-                break
-            }
-        }
-        if away_perfect || home_perfect {
-            println!("{game_id} {away_perfect} {home_perfect}")
+    let mut result = Vec::new();
+    for (i, mut game) in parsed(&ron_cache).enumerate() {
+        if game.events.len() > 99 {
+            result.push(game.events.remove(99))
         }
         if i % 100 == 0 {
             println!("{i}")
         }
     }
+    println!("{result:?}");
+    println!("{}", result.len());
 }

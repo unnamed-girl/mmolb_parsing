@@ -102,10 +102,10 @@ impl From<RawEvent> for Event {
             (number, 2) => Inning::AfterGame { total_inning_count: number - 1 },
             (number, side) => Inning::DuringGame { number, batting_side: side.try_into().unwrap() }
         };
-        let pitch_info = (value.pitch_info != "").then_some(value.pitch_info);
+        let pitch_info = (!value.pitch_info.is_empty()).then_some(value.pitch_info);
         let zone = if let RawZone::Number(n) = value.zone {Some(n)} else {None};
-        let batter = value.batter.filter(|s| s != "");
-        let on_deck = value.on_deck.filter(|s| s != "");
+        let batter = value.batter.filter(|s| !s.is_empty());
+        let on_deck = value.on_deck.filter(|s| !s.is_empty());
 
         let pitch = pitch_info.zip(zone).map(|(pitch_info, zone)| Pitch::new(pitch_info, zone));
         
