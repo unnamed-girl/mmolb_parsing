@@ -1,12 +1,13 @@
 use std::{fmt::{Display, Write}, iter::once};
 
 use serde::{Deserialize, Serialize};
+use strum::EnumDiscriminants;
 
 use crate::enums::{Base, BaseNameVariants, Distance, EventType, FieldingErrorType, FoulType, HitDestination, HitType, HomeAway, Position, StrikeType, TopBottom};
 
 /// S is the string type used. S = &'output str is used by the parser, 
 /// but a mutable type is necessary when directly deserializing, because some players have escaped characters in their names
-#[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, EnumDiscriminants)]
 pub enum ParsedEvent<S> 
 {
     ParseError {
