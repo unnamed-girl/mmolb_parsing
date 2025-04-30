@@ -28,30 +28,11 @@ pub fn save_parsed_events<'de, S: Serialize + Deserialize<'de>>(ron_cache: &str,
 fn main() {
     let mut args = args().skip(1);
 
-    let mut json_cache = String::new();
-    if let Some(cache) = args.next() {
-        println!("Load json games from: {cache}");
-        json_cache = cache;
-    } else {
-        println!("Load json games from:");
-        io::stdin().read_line(&mut json_cache).unwrap();
-        json_cache = json_cache.split_whitespace().next().unwrap().to_string();
-    }
-
-    let mut ron_cache = String::new();
-    if let Some(cache) = args.next() {
-        println!("Save ron events into: {cache}");
-        ron_cache = cache;
-    } else {
-        println!("Save ron events into:");
-        io::stdin().read_line(&mut ron_cache).unwrap();
-        ron_cache = ron_cache.split_whitespace().next().unwrap().to_string();
-    }
-
-
+    let json_cache = args.next().expect("first argument \"json_cache\" should be present");
+    let ron_cache = args.next().expect("second argument \"ron_cache\" should be present");
 
     let count = std::fs::read_dir(&json_cache).unwrap().count();
-    println!("About to parse {count} games from {json_cache} into {ron_cache}");
+    println!("About to parse {count} games from {json_cache} into {ron_cache}. Press enter to continue");
     io::stdin().read_line(&mut String::new()).unwrap();
 
     let mut i = 0;

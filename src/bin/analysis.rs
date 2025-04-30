@@ -13,7 +13,7 @@ pub fn parsed(ron_cache: &str) -> impl Iterator<Item = LoadedEvents> {
                 let entry = entry.unwrap();
 
                 let mut result = String::new();
-                let game_id = entry.file_name().to_str().unwrap().strip_suffix(".ron").unwrap().to_string();
+                let game_id = entry.file_name().to_str().unwrap().strip_suffix(".ron").expect("Should be passed .ron files").to_string();
                 File::open(entry.path()).unwrap().read_to_string(&mut result).unwrap();
 
                 let events = result.lines().map(|line| ron::from_str(line).unwrap()).collect();
@@ -26,21 +26,13 @@ pub fn parsed(ron_cache: &str) -> impl Iterator<Item = LoadedEvents> {
 }
 fn main() {
     let mut args = args().skip(1);
-
-    let mut ron_cache = String::new();
-    if let Some(cache) = args.next() {
-        println!("Load ron events from: {cache}");
-        ron_cache = cache;
-    } else {
-        println!("Load ron events from:");
-        io::stdin().read_line(&mut ron_cache).unwrap();
-        ron_cache = ron_cache.split_whitespace().next().unwrap().to_string();
-    }
+    
+    let ron_cache = args.next().expect("single argument \"ron_cache\" should be present");
 
     let mut result = Vec::new();
-    for (i, mut game) in parsed(&ron_cache).enumerate() {
-        if game.events.len() > 99 {
-            result.push(game.events.remove(99))
+    for (i, mut events) in parsed(&ron_cache).enumerate() {
+        if events.events.len() > 99 {
+            result.push(events.events.remove(99))
         }
         if i % 100 == 0 {
             println!("{i}")

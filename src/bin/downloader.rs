@@ -34,14 +34,8 @@ pub async fn ensure_in_cache(json_cache:&str, game_id: String) {
 async fn main() {
     let mut args = args().skip(1);
 
-    let mut json_cache = String::new();
-    if let Some(cache) = args.next() {
-        println!("Save json games into: {cache}");
-        json_cache = cache;
-    } 
-
-    json_cache = json_cache.split_whitespace().next().unwrap().to_string();
-    println!("About to download games into {json_cache}");
+    let json_cache = args.next().expect("single argument \"json_cache\" should be present");
+    println!("About to download games into {json_cache}. Press enter to continue");
     io::stdin().read_line(&mut String::new()).unwrap();
 
     let games = async_game_list().await;

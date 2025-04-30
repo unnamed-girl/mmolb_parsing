@@ -1,8 +1,16 @@
+Known parse errors:
+- If a team's name changes midgame, and the team's name is mentioned (e.g. in a mound visit) before they start batting, their name won't be recognised.
+- If a player is relegated midgame, and the new player fields before they bat/pitch, their name won't be recognised.
+
+This is primarily intended as a library crate, but the following barebones binaries are provided for use.
+
+# Download
 To download and cache all completed games, run:
 ```
 cargo run --release --features=reqwest,tokio --bin downloader "path to the download cache"
 ```
 
+# Parse
 To parse all games in a folder of cached games:
 ```
 cargo run --release --bin parser "path to the download cache" "path to where events should be saved"
