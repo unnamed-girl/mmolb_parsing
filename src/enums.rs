@@ -17,7 +17,7 @@ pub enum EventType {
     AwayLineup,
     InningEnd,
     PlayBall,
-    NowBatting
+    NowBatting,
 }
 
 #[derive(Debug, Clone, Copy, Deserialize, Serialize, PartialEq, Eq, Hash, EnumString, Display)]
@@ -25,13 +25,43 @@ pub enum TopBottom {
     #[strum(to_string = "top")]
     Top,
     #[strum(to_string = "bottom")]
-    Bottom
+    Bottom,
+}
+impl TopBottom {
+    pub fn flip(self) -> Self {
+        match self {
+            TopBottom::Top => TopBottom::Bottom,
+            TopBottom::Bottom => TopBottom::Top,
+        }
+    }
+    pub fn homeaway(self) -> HomeAway {
+        match self {
+            TopBottom::Top => HomeAway::Away,
+            TopBottom::Bottom => HomeAway::Home,
+        }
+    }
+    pub fn is_top(self) -> bool {
+        match self {
+            TopBottom::Top => true,
+            TopBottom::Bottom => false,
+        }
+    }
+    pub fn is_bottom(self) -> bool {
+        match self {
+            TopBottom::Top => false,
+            TopBottom::Bottom => true,
+        }
+    }
 }
 #[derive(Debug)]
 pub struct NotASide(u8);
 impl Display for NotASide {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        write!(f, "{} is not 0 or 1 (2 means gameover, should not reach here)", self.0)
+        write!(
+            f,
+            "{} is not 0 or 1 (2 means gameover, should not reach here)",
+            self.0
+        )
     }
 }
 impl TryFrom<u8> for TopBottom {
@@ -40,7 +70,7 @@ impl TryFrom<u8> for TopBottom {
         match value {
             0 => Ok(Self::Top),
             1 => Ok(Self::Bottom),
-            _ => Err(NotASide(value))
+            _ => Err(NotASide(value)),
         }
     }
 }
@@ -62,13 +92,13 @@ impl HomeAway {
     pub fn flip(self) -> Self {
         match self {
             Self::Away => Self::Home,
-            Self::Home => Self::Away
+            Self::Home => Self::Away,
         }
     }
     pub fn topbottom(self) -> TopBottom {
         match self {
             HomeAway::Away => TopBottom::Top,
-            HomeAway::Home => TopBottom::Bottom
+            HomeAway::Home => TopBottom::Bottom,
         }
     }
 }
@@ -76,8 +106,8 @@ impl HomeAway {
 #[derive(Debug, Clone, Copy, Serialize, Deserialize, PartialEq, Eq, Hash)]
 pub enum Inning {
     BeforeGame,
-    DuringGame {number: u8, batting_side: TopBottom},
-    AfterGame { total_inning_count: u8 }
+    DuringGame { number: u8, batting_side: TopBottom },
+    AfterGame { total_inning_count: u8 },
 }
 impl Inning {
     pub fn number(self) -> Option<u8> {
@@ -88,7 +118,10 @@ impl Inning {
         }
     }
     pub fn batting_team(self) -> Option<HomeAway> {
-        if let Inning::DuringGame { batting_side: side, .. } = self {
+        if let Inning::DuringGame {
+            batting_side: side, ..
+        } = self
+        {
             match side {
                 TopBottom::Top => Some(HomeAway::Away),
                 TopBottom::Bottom => Some(HomeAway::Home),
@@ -98,7 +131,10 @@ impl Inning {
         }
     }
     pub fn pitching_team(self) -> Option<HomeAway> {
-        if let Inning::DuringGame { batting_side: side, .. } = self {
+        if let Inning::DuringGame {
+            batting_side: side, ..
+        } = self
+        {
             match side {
                 TopBottom::Top => Some(HomeAway::Home),
                 TopBottom::Bottom => Some(HomeAway::Away),
@@ -109,7 +145,9 @@ impl Inning {
     }
 }
 
-#[derive(EnumString, Display, Debug, Serialize, Deserialize, Clone, Copy, EnumIter, PartialEq, Eq, Hash)]
+#[derive(
+    EnumString, Display, Debug, Serialize, Deserialize, Clone, Copy, EnumIter, PartialEq, Eq, Hash,
+)]
 pub enum Position {
     #[strum(to_string = "P")]
     Pitcher,
@@ -136,11 +174,12 @@ pub enum Position {
     #[strum(to_string = "CL")]
     Closer,
     #[strum(to_string = "DH")]
-    DesignatedHitter
+    DesignatedHitter,
 }
 
-
-#[derive(EnumString, Display, Debug, Serialize, Deserialize, Clone, Copy, PartialEq, Eq, Hash, EnumIter)]
+#[derive(
+    EnumString, Display, Debug, Serialize, Deserialize, Clone, Copy, PartialEq, Eq, Hash, EnumIter,
+)]
 pub enum HitDestination {
     #[strum(to_string = "the shortstop")]
     ShortStop,
@@ -163,7 +202,9 @@ pub enum HitDestination {
     RightField,
 }
 
-#[derive(Clone, Copy, EnumString, Display, Debug, Serialize, Deserialize, PartialEq, Eq, Hash, EnumIter)]
+#[derive(
+    Clone, Copy, EnumString, Display, Debug, Serialize, Deserialize, PartialEq, Eq, Hash, EnumIter,
+)]
 pub enum HitType {
     #[strum(to_string = "ground ball")]
     GroundBall,
@@ -184,7 +225,9 @@ impl HitType {
         }
     }
 }
-#[derive(Clone, Copy, EnumString, Display, Debug, Serialize, Deserialize, PartialEq, Eq, Hash, EnumIter)]
+#[derive(
+    Clone, Copy, EnumString, Display, Debug, Serialize, Deserialize, PartialEq, Eq, Hash, EnumIter,
+)]
 pub enum PitchType {
     Fastball,
     Sinker,
@@ -195,16 +238,15 @@ pub enum PitchType {
     Sweeper,
     #[strum(to_string = "Knuckle Curve")]
     KnuckleCurve,
-    Splitter
+    Splitter,
 }
-
 
 #[derive(Clone, Copy, EnumString, Display, Debug, Serialize, Deserialize, PartialEq, Eq, Hash)]
 pub enum StrikeType {
     #[strum(to_string = "looking")]
     Looking,
     #[strum(to_string = "swinging")]
-    Swinging
+    Swinging,
 }
 
 #[derive(Clone, Copy, EnumString, Display, Debug, Serialize, Deserialize, PartialEq, Eq, Hash)]
@@ -212,7 +254,7 @@ pub enum FieldingErrorType {
     #[strum(ascii_case_insensitive)]
     Throwing,
     #[strum(ascii_case_insensitive)]
-    Fielding
+    Fielding,
 }
 
 #[derive(Clone, Copy, EnumString, Display, Debug, Serialize, Deserialize, PartialEq, Eq, Hash)]
@@ -220,7 +262,7 @@ pub enum FoulType {
     #[strum(to_string = "tip")]
     Tip,
     #[strum(to_string = "ball")]
-    Ball
+    Ball,
 }
 
 #[derive(Clone, Copy, EnumString, Display, Debug, Serialize, Deserialize, PartialEq, Eq, Hash)]
@@ -241,7 +283,7 @@ impl Base {
             Base::First => "first base",
             Base::Second => "second base",
             Base::Third => "third base",
-            Base::Home => "home"
+            Base::Home => "home",
         }
     }
 }
@@ -257,7 +299,7 @@ impl From<BaseNameVariants> for Base {
             BaseNameVariants::Third => Base::Third,
             BaseNameVariants::ThirdBase => Base::Third,
             BaseNameVariants::ThreeB => Base::Third,
-            BaseNameVariants::Home => Base::Home
+            BaseNameVariants::Home => Base::Home,
         }
     }
 }
@@ -305,5 +347,5 @@ pub enum Distance {
     #[strum(to_string = "triples")]
     Triple,
     #[strum(to_string = "homers")]
-    HomeRun
+    HomeRun,
 }
