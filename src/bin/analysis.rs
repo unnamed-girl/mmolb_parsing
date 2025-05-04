@@ -1,4 +1,4 @@
-use std::{env::args, fs::File, io::{self, Read}};
+use std::{env::args, fs::File, io::Read};
 
 use mmolb_parsing::ParsedEvent;
 

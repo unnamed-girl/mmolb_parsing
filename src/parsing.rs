@@ -1,10 +1,8 @@
-use nom_language::error::VerboseErrorKind;
-
-use crate::{nom_parsing::{parse_event, ParsingContext, EXTRACT_PLAYER_NAME, EXTRACT_TEAM_NAME}, parsed_event::{ParsedEvent, StartOfInningPitcher}, Game};
+use crate::{nom_parsing::{parse_event, ParsingContext}, parsed_event::ParsedEvent, Game};
 
 /// Processes a game into a list of ParsedEvents.
 /// Note that the game must live longer than the events, as zero copy parsing is used. 
-pub fn process_events<'output>(game: &'output Game) -> Vec<ParsedEvent<&'output str>> {
+pub fn process_events(game: &Game) -> Vec<ParsedEvent<&str>> {
     let mut result = Vec::new();
     let mut parsing_context = ParsingContext::new(game);
 
@@ -14,12 +12,7 @@ pub fn process_events<'output>(game: &'output Game) -> Vec<ParsedEvent<&'output 
             Err(err) => {
                 #[cfg(debug_assertions)]
                 {
-                    if err.errors.iter().any(|err| matches!(err, (_, VerboseErrorKind::Context(EXTRACT_PLAYER_NAME)) | (_, VerboseErrorKind::Context(EXTRACT_TEAM_NAME)))) {
-                        println!("{err}");
-                        result.push(ParsedEvent::ParseError { event_type: event.event, message: event.message.clone() });
-                    } else {
-                        panic!("{err} {:?}", err.errors)
-                    }
+                    panic!("{err} {:?}", err.errors)
                 }
                 #[cfg(not(debug_assertions))] {
                     result.push(ParsedEvent::ParseError { event_type: event.event, message: event.message.clone() });
@@ -32,25 +25,6 @@ pub fn process_events<'output>(game: &'output Game) -> Vec<ParsedEvent<&'output 
                 assert_eq!(event.message, parsed_event.clone().unparse(), "Raw should equal unparsed. {:?}", parsed_event);
             }    
             match &parsed_event {
-                ParsedEvent::NowBatting { batter, .. } => {
-                    parsing_context.player_names.insert(batter);
-                },
-                ParsedEvent::InningStart { batting_team_name, pitcher_status, .. } => {   
-                    if let StartOfInningPitcher::Different { arriving_pitcher, .. } = pitcher_status {
-                        parsing_context.player_names.insert(arriving_pitcher);
-                    }
-                    parsing_context.team_names.insert(batting_team_name);
-                }
-                ParsedEvent::PitchingMatchup { home_pitcher, away_pitcher, .. } => {
-                    parsing_context.player_names.insert(home_pitcher);
-                    parsing_context.player_names.insert(away_pitcher);
-                },
-                ParsedEvent::PitcherSwap { arriving_pitcher, .. } => {
-                    parsing_context.player_names.insert(arriving_pitcher);
-                },
-                ParsedEvent::Lineup { players, .. } => {
-                    parsing_context.player_names.extend( players.iter().map(|player| player.name));
-                }
                 ParsedEvent::LiveNow { away_team_name, home_team_name, .. } => {
                     parsing_context.team_names.insert(away_team_name);
                     parsing_context.team_names.insert(home_team_name);

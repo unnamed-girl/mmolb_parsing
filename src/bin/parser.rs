@@ -39,7 +39,7 @@ fn main() {
     for (game_id, game) in downloaded(&json_cache) {
         i += 1;
         if i % 100 == 0 {
-            println!("{i}")
+            println!("{i} {game_id}")
         }
 
         let events = process_events(&game);
