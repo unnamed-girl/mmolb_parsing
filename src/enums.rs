@@ -355,6 +355,4 @@ pub enum Distance {
     Double,
     #[strum(to_string = "triples")]
     Triple,
-    #[strum(to_string = "homers")]
-    HomeRun
 }

@@ -8,7 +8,7 @@ use crate::enums::{Base, BaseNameVariants, Distance, EventType, FieldingErrorTyp
 /// S is the string type used. S = &'output str is used by the parser, 
 /// but a mutable type is necessary when directly deserializing, because some players have escaped characters in their names
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq, EnumDiscriminants)]
-pub enum ParsedEvent<S> 
+pub enum ParsedEventMessage<S> 
 {
     ParseError {
         event_type: EventType,
@@ -83,7 +83,7 @@ pub enum ParsedEvent<S>
     Foul { foul: FoulType, steals: Vec<BaseSteal<S>>, count:(u8, u8) },
     Walk { batter: S, scores: Vec<S>, advances: Vec<RunnerAdvance<S>> },
     HitByPitch { batter: S, scores: Vec<S>, advances: Vec<RunnerAdvance<S>> },
-    Hit {
+    FairBall {
         batter: S,
         hit: HitType,
         destination: HitDestination
@@ -92,17 +92,17 @@ pub enum ParsedEvent<S>
 
     // Strike
     BatterToBase { batter: S, distance: Distance, hit: HitType, fielder: PositionedPlayer<S>, scores: Vec<S>, advances: Vec<RunnerAdvance<S>> },
-    Homer { batter: S, hit: HitType, destination: HitDestination, scores: Vec<S> },
+    HomeRun { batter: S, hit: HitType, destination: HitDestination, scores: Vec<S> },
     GrandSlam { batter: S, hit: HitType, destination: HitDestination, scores: Vec<S> },
     CaughtOut { batter: S, hit: HitType, catcher: PositionedPlayer<S>, scores: Vec<S>, advances: Vec<RunnerAdvance<S>>, sacrifice: bool, perfect: bool },
     GroundedOut { batter: S, fielders: Vec<PositionedPlayer<S>>, scores: Vec<S>, advances: Vec<RunnerAdvance<S>> },
     ForceOut { batter: S, fielders: Vec<PositionedPlayer<S>>, hit: HitType, out:RunnerOut<S>, scores: Vec<S>, advances: Vec<RunnerAdvance<S>> },
-    FieldersChoice { batter: S, fielders: Vec<PositionedPlayer<S>>, play:Play<S>, scores: Vec<S>, advances: Vec<RunnerAdvance<S>> },
-    /// If the batter was caught (see hit type), there will only be one play.
-    DoublePlay { batter: S, hit: HitType, fielders: Vec<PositionedPlayer<S>>, plays:Vec<Play<S>>, scores: Vec<S>, advances: Vec<RunnerAdvance<S>>, sacrifice: bool },
-    FieldingError { batter: S, fielder:PositionedPlayer<S>, error: FieldingErrorType, scores: Vec<S>, advances: Vec<RunnerAdvance<S>> }
+    ReachOnFieldersChoice { batter: S, fielders: Vec<PositionedPlayer<S>>, play:Play<S>, scores: Vec<S>, advances: Vec<RunnerAdvance<S>> },
+    DoublePlayGrounded { batter: S, fielders: Vec<PositionedPlayer<S>>, play_one:Play<S>, play_two:Play<S>, scores: Vec<S>, advances: Vec<RunnerAdvance<S>>, sacrifice: bool },
+    DoublePlayCaught { batter: S, hit: HitType, fielders: Vec<PositionedPlayer<S>>, play:Play<S>, scores: Vec<S>, advances: Vec<RunnerAdvance<S>> },
+    ReachOnFieldingError { batter: S, fielder:PositionedPlayer<S>, error: FieldingErrorType, scores: Vec<S>, advances: Vec<RunnerAdvance<S>> }
 }
-impl<S: Display> ParsedEvent<S> {
+impl<S: Display> ParsedEventMessage<S> {
     /// Recreate the event message this ParsedEvent was built out of.
     pub fn unparse(self) -> String {
         match self {
@@ -186,7 +186,7 @@ impl<S: Display> ParsedEvent<S> {
                 let scores_and_advances = unparse_scores_and_advances(scores, advances);
                 format!(" {batter} was hit by the pitch and advances to first base.{scores_and_advances}")
             }
-            Self::Hit { batter, hit, destination } => {
+            Self::FairBall { batter, hit, destination } => {
                 format!(" {batter} hits a {hit} to {destination}.")
             }
             Self::StrikeOut { foul, batter, strike, steals } => {
@@ -202,7 +202,7 @@ impl<S: Display> ParsedEvent<S> {
                 let scores_and_advances = unparse_scores_and_advances(scores, advances);
                 format!("{batter} {distance} on a {hit} to {fielder}.{scores_and_advances}")
             }
-            Self::Homer { batter, hit, destination, scores } => {
+            Self::HomeRun { batter, hit, destination, scores } => {
                 let scores = once(String::new()).chain(scores.into_iter().map(|runner| format!("<strong>{runner} scores!</strong>")))
                     .collect::<Vec<String>>()
                     .join(" ");
@@ -233,7 +233,7 @@ impl<S: Display> ParsedEvent<S> {
                 let hit = hit.verb_name();
                 format!("{batter} {hit} into a force out{fielders}. {out}{scores_and_advances}")
             }
-            Self::FieldersChoice { batter, fielders, play, scores, advances } => {
+            Self::ReachOnFieldersChoice { batter, fielders, play, scores, advances } => {
                 let scores_and_advances = unparse_scores_and_advances(scores, advances);
                 match play {
                     Play::Out {out} => {
@@ -247,15 +247,19 @@ impl<S: Display> ParsedEvent<S> {
                     }
                 }
             }
-            Self::DoublePlay { batter, hit, fielders, plays, scores, advances, sacrifice } => {
-                let hit = if hit == HitType::GroundBall {"grounded"} else {hit.verb_name()};
+            Self::DoublePlayGrounded { batter, fielders, play_one, play_two, scores, advances, sacrifice } => {
                 let fielders = unparse_fielders_for_play(fielders);
-                let plays = once(String::new()).chain(plays.iter().map(Play::to_string)).collect::<Vec<_>>().join(" ");
                 let scores_and_advances = unparse_scores_and_advances(scores, advances);
                 let sacrifice = if sacrifice {"sacrifice "} else {""};
-                format!("{batter} {hit} into a {sacrifice}double play{fielders}.{plays}{scores_and_advances}")
+                format!("{batter} grounded into a {sacrifice}double play{fielders}. {play_one} {play_two}{scores_and_advances}")
             }
-            Self::FieldingError { batter, fielder, error, scores, advances } => {
+            Self::DoublePlayCaught { batter, hit, fielders, play, scores, advances } => {
+                let hit = hit.verb_name();
+                let fielders = unparse_fielders_for_play(fielders);
+                let scores_and_advances = unparse_scores_and_advances(scores, advances);
+                format!("{batter} {hit} into a double play{fielders}. {play}{scores_and_advances}")
+            }
+            Self::ReachOnFieldingError { batter, fielder, error, scores, advances } => {
                 let scores_and_advances = unparse_scores_and_advances(scores, advances);
                 let error = error.to_string().to_lowercase();
                 format!("{batter} reaches on a {error} error by {fielder}.{scores_and_advances}")

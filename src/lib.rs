@@ -7,4 +7,4 @@ pub mod parsed_event;
 
 pub use game::Game;
 pub use parsing::process_events;
-pub use parsed_event::ParsedEvent;
+pub use parsed_event::ParsedEventMessage;

@@ -1,8 +1,8 @@
-use crate::{nom_parsing::{parse_event, ParsingContext}, parsed_event::ParsedEvent, Game};
+use crate::{nom_parsing::{parse_event, ParsingContext}, parsed_event::ParsedEventMessage, Game};
 
 /// Processes a game into a list of ParsedEvents.
 /// Note that the game must live longer than the events, as zero copy parsing is used. 
-pub fn process_events(game: &Game) -> Vec<ParsedEvent<&str>> {
+pub fn process_events(game: &Game) -> Vec<ParsedEventMessage<&str>> {
     let mut result = Vec::new();
     let mut parsing_context = ParsingContext::new(game);
 
@@ -15,7 +15,7 @@ pub fn process_events(game: &Game) -> Vec<ParsedEvent<&str>> {
                     panic!("{err} {:?}", err.errors)
                 }
                 #[cfg(not(debug_assertions))] {
-                    result.push(ParsedEvent::ParseError { event_type: event.event, message: event.message.clone() });
+                    result.push(ParsedEventMessage::ParseError { event_type: event.event, message: event.message.clone() });
                 }
                 None
             }
@@ -25,7 +25,7 @@ pub fn process_events(game: &Game) -> Vec<ParsedEvent<&str>> {
                 assert_eq!(event.message, parsed_event.clone().unparse(), "Raw should equal unparsed. {:?}", parsed_event);
             }    
             match &parsed_event {
-                ParsedEvent::LiveNow { away_team_name, home_team_name, .. } => {
+                ParsedEventMessage::LiveNow { away_team_name, home_team_name, .. } => {
                     parsing_context.team_names.insert(away_team_name);
                     parsing_context.team_names.insert(home_team_name);
                 }

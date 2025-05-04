@@ -1,10 +1,10 @@
 use std::{env::args, fs::File, io::Read};
 
-use mmolb_parsing::ParsedEvent;
+use mmolb_parsing::ParsedEventMessage;
 
 pub struct LoadedEvents {
     pub game_id: String,
-    pub events: Vec<ParsedEvent<String>>
+    pub events: Vec<ParsedEventMessage<String>>
 }
 
 pub fn parsed(ron_cache: &str) -> impl Iterator<Item = LoadedEvents> {
