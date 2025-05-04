@@ -27,6 +27,33 @@ pub enum TopBottom {
     #[strum(to_string = "bottom")]
     Bottom
 }
+impl TopBottom {
+    pub fn flip(self) -> Self {
+        match self {
+            TopBottom::Top => TopBottom::Bottom,
+            TopBottom::Bottom => TopBottom::Top,
+        }
+    }
+    pub fn homeaway(self) -> HomeAway {
+        match self {
+            TopBottom::Top => HomeAway::Away,
+            TopBottom::Bottom => HomeAway::Home,
+        }
+    }
+    pub fn is_top(self) -> bool {
+        match self {
+            TopBottom::Top => true,
+            TopBottom::Bottom => false,
+        }
+    }
+    pub fn is_bottom(self) -> bool {
+        match self {
+            TopBottom::Top => false,
+            TopBottom::Bottom => true,
+        }
+    }
+}
+
 #[derive(Debug)]
 pub struct NotASide(u8);
 impl Display for NotASide {
@@ -53,6 +80,12 @@ impl From<TopBottom> for u8 {
     }
 }
 
+impl From<HomeAway> for TopBottom {
+    fn from(value: HomeAway) -> Self {
+        value.topbottom()
+    }
+}
+
 #[derive(Debug, Clone, Copy, Deserialize, Serialize, PartialEq, Eq, Hash, EnumString, Display)]
 pub enum HomeAway {
     Away,
@@ -70,6 +103,24 @@ impl HomeAway {
             HomeAway::Away => TopBottom::Top,
             HomeAway::Home => TopBottom::Bottom
         }
+    }
+    pub fn is_home(self) -> bool {
+        match self {
+            HomeAway::Home => true,
+            HomeAway::Away => false,
+        }
+    }
+    pub fn is_away(self) -> bool {
+        match self {
+            HomeAway::Home => false,
+            HomeAway::Away => true,
+        }
+    }
+}
+
+impl From<TopBottom> for HomeAway {
+    fn from(value: TopBottom) -> Self {
+        value.homeaway()
     }
 }
 
