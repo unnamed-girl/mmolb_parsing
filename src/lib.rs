@@ -6,5 +6,5 @@ pub mod nom_parsing;
 pub mod parsed_event;
 
 pub use game::Game;
-pub use parsing::process_events;
+pub use parsing::{process_event, process_game};
 pub use parsed_event::ParsedEventMessage;

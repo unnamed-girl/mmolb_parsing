@@ -1,4 +1,4 @@
-use std::{collections::HashSet, fmt::Debug, str::FromStr};
+use std::{fmt::Debug, str::FromStr};
 
 use nom::{branch::alt, bytes::complete::{tag, take, take_till, take_until, take_until1, take_while}, character::complete::{multispace0, space0, space1, u8}, combinator::{all_consuming, recognize, rest, verify}, error::{ErrorKind, ParseError}, multi::{count, many0, many1}, sequence::{delimited, preceded, separated_pair, terminated}, AsChar, Compare, CompareResult, Input, Parser};
 use nom_language::error::VerboseError;
@@ -11,16 +11,11 @@ pub(super) type IResult<'a, I, O> = nom::IResult<I, O, Error<'a>>;
 /// Context necessary for parsing. The 'output lifetime is linked to ParsedEvents parsed in this context.
 #[derive(Clone, Debug)]
 pub struct ParsingContext<'output> {
-    pub team_names: HashSet<&'output str>,
     pub game: &'output Game
 }
 impl<'output> ParsingContext<'output> {
     pub fn new(game: &'output Game) -> Self {
-        let mut team_names = HashSet::new();
-        team_names.insert(game.away_team_name.as_str());
-        team_names.insert(game.home_team_name.as_str());
         Self {
-            team_names,
             game
         }
     }
@@ -139,9 +134,9 @@ pub(super) fn team_emoji_and_name<'output, 'parse>(parsing_context: &'parse Pars
 /// A single team's name, obtained by matching the known team names in the context. e.g. "Antioch Royal Tigers"
 pub(super) fn team_name<'output, 'parse>(parsing_context: &'parse ParsingContext<'output>) -> impl Parser<&'output str, Output = &'output str, Error = Error<'output>> + 'parse {
     strip(move |i: &'output str| {
-        for name in parsing_context.team_names.iter() {
-            let name_len = name.len();
-            if i.compare(*name) == CompareResult::Ok {
+        for name in [parsing_context.game.home_team_name.as_str(), parsing_context.game.away_team_name.as_str()] {
+            let name_len = name.input_len();
+            if i.compare(name) == CompareResult::Ok {
                 return Ok((&i[name_len..], &i[..name_len]))
             }
         }

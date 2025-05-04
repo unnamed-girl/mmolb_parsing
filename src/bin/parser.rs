@@ -1,10 +1,10 @@
 
 use std::{env::args, fs::File, io::{self, Read, Write}};
 
-use mmolb_parsing::{process_events, Game, ParsedEventMessage};
+use mmolb_parsing::{process_game, raw_game::RawGame, Game, ParsedEventMessage};
 use serde::{Deserialize, Serialize};
 
-pub fn downloaded(json_cache: &str) -> impl Iterator<Item = (String, Game)> {
+pub fn downloaded(json_cache: &str) -> impl Iterator<Item = (String, RawGame)> {
     std::fs::read_dir(json_cache).unwrap()
         .map(|entry|  {
                 let entry = entry.unwrap();
@@ -17,7 +17,7 @@ pub fn downloaded(json_cache: &str) -> impl Iterator<Item = (String, Game)> {
         )
 }
 
-pub fn save_parsed_events<'de, S: Serialize + Deserialize<'de>>(ron_cache: &str, game_id: &str, events: Vec<ParsedEventMessage<S>>) {
+pub fn save_parsed_messages<'de, S: Serialize + Deserialize<'de>>(ron_cache: &str, game_id: &str, events: Vec<ParsedEventMessage<S>>) {
     let ron_path = format!(r"{ron_cache}/{game_id}.ron");
     let mut file = File::create(ron_path).unwrap();
     for event in &events {
@@ -36,13 +36,46 @@ fn main() {
     io::stdin().read_line(&mut String::new()).unwrap();
 
     let mut i = 0;
-    for (game_id, game) in downloaded(&json_cache) {
+    for (game_id, raw_game) in downloaded(&json_cache) {
         i += 1;
         if i % 100 == 0 {
             println!("{i} {game_id}")
         }
 
-        let events = process_events(&game);
-        save_parsed_events(&ron_cache, &game_id, events);
+
+        let game = {
+            #[cfg(debug_assertions)]
+            {
+                let game: Game = raw_game.clone().into();
+                let unparsed_game = RawGame::from(game.clone());
+                assert_eq!(unparsed_game.away_sp, raw_game.away_sp, "{game_id}");
+                assert_eq!(unparsed_game.away_team_abbreviation, raw_game.away_team_abbreviation, "{game_id}");
+                assert_eq!(unparsed_game.away_team_color, raw_game.away_team_color, "{game_id}");
+                assert_eq!(unparsed_game.away_team_id, raw_game.away_team_id, "{game_id}");
+                assert_eq!(unparsed_game.away_team_emoji, raw_game.away_team_emoji, "{game_id}");
+                assert_eq!(unparsed_game.away_team_name, raw_game.away_team_name, "{game_id}");
+                assert_eq!(unparsed_game.day, raw_game.day, "{game_id}");
+                assert_eq!(unparsed_game.home_sp, raw_game.home_sp, "{game_id}");
+                assert_eq!(unparsed_game.home_team_abbreviation, raw_game.home_team_abbreviation, "{game_id}");
+                assert_eq!(unparsed_game.home_team_color, raw_game.home_team_color, "{game_id}");
+                assert_eq!(unparsed_game.home_team_emoji, raw_game.home_team_emoji, "{game_id}");
+                assert_eq!(unparsed_game.home_team_id, raw_game.home_team_id, "{game_id}");
+                assert_eq!(unparsed_game.home_team_name, raw_game.home_team_name, "{game_id}");
+                assert_eq!(unparsed_game.season, raw_game.season, "{game_id}");
+                assert_eq!(unparsed_game.state, raw_game.state, "{game_id}");
+
+                for i in 0..unparsed_game.event_log.len() {
+                    assert_eq!(unparsed_game.event_log[i], raw_game.event_log[i], "{game_id}");
+                }
+                game
+            }
+            #[cfg(not(debug_assertions))]
+            {
+                raw_game.into()
+            }
+        };
+
+        let messages = process_game(&game);
+        save_parsed_messages(&ron_cache, &game_id, messages);
     }
 }

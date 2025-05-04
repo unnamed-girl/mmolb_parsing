@@ -1,7 +1,7 @@
 use serde::{Deserialize, Serialize};
 
 
-#[derive(Debug, Serialize, Deserialize)]
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
 #[serde(rename_all = "PascalCase")]
 pub struct RawGame {
     #[serde(rename = "AwaySP")]
@@ -31,7 +31,7 @@ pub struct RawGame {
     pub event_log: Vec<RawEvent>,
 }
 
-#[derive(Debug, Serialize, Deserialize)]
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
 #[serde(rename_all = "PascalCase")]
 pub struct RawWeather {
     pub emoji: String,
@@ -39,7 +39,7 @@ pub struct RawWeather {
     pub tooltip: String
 }
 
-#[derive(Debug, Serialize, Deserialize)]
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
 pub struct RawEvent {
     /// 0 is before the game has started
     pub inning: u8,
@@ -73,7 +73,7 @@ pub struct RawEvent {
 }
 
 
-#[derive(Debug, Serialize, Deserialize)]
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
 #[serde(untagged)]
 pub enum RawZone {
     String(String),
