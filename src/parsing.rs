@@ -16,16 +16,16 @@ pub fn process_event<'output>(event: &'output Event, game: &'output Game) -> Par
     let parsed_event_message = match parse_event(event, &parsing_context) {
         Ok(event) => event,
         Err(err) => {
-            #[cfg(debug_assertions)]
+            #[cfg(feature = "panic_on_parse_error")]
             {
                 panic!("{err} {:?}", err.errors)
             }
-            #[cfg(not(debug_assertions))] {
+            #[cfg(not(feature = "panic_on_parse_error"))] {
                 ParsedEventMessage::ParseError { event_type: event.event, message: event.message.clone() }
             }
         }
     };
-    #[cfg(debug_assertions)] {
+    #[cfg(feature = "panic_on_parse_error")] {
         assert_eq!(event.message, parsed_event_message.clone().unparse(), "Raw should equal unparsed. {:?}", parsed_event_message);
     }
     parsed_event_message

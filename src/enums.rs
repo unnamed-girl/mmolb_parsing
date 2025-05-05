@@ -192,7 +192,7 @@ pub enum Position {
 
 
 #[derive(EnumString, Display, Debug, Serialize, Deserialize, Clone, Copy, PartialEq, Eq, Hash, EnumIter)]
-pub enum HitDestination {
+pub enum FairBallDestination {
     #[strum(to_string = "the shortstop")]
     ShortStop,
     #[strum(to_string = "the catcher")]
@@ -215,7 +215,7 @@ pub enum HitDestination {
 }
 
 #[derive(Clone, Copy, EnumString, Display, Debug, Serialize, Deserialize, PartialEq, Eq, Hash, EnumIter)]
-pub enum HitType {
+pub enum FairBallType {
     #[strum(to_string = "ground ball")]
     GroundBall,
     #[strum(to_string = "fly ball")]
@@ -225,7 +225,7 @@ pub enum HitType {
     #[strum(to_string = "popup")]
     Popup,
 }
-impl HitType {
+impl FairBallType {
     pub fn verb_name(self) -> &'static str {
         match self {
             Self::GroundBall => "grounds",

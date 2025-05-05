@@ -3,7 +3,7 @@ use std::{fmt::{Display, Write}, iter::once};
 use serde::{Deserialize, Serialize};
 use strum::EnumDiscriminants;
 
-use crate::enums::{Base, BaseNameVariants, Distance, EventType, FieldingErrorType, FoulType, HitDestination, HitType, HomeAway, Position, StrikeType, TopBottom};
+use crate::enums::{Base, BaseNameVariants, Distance, EventType, FieldingErrorType, FoulType, FairBallDestination, FairBallType, HomeAway, Position, StrikeType, TopBottom};
 
 /// S is the string type used. S = &'output str is used by the parser, 
 /// but a mutable type is necessary when directly deserializing, because some players have escaped characters in their names
@@ -15,7 +15,6 @@ pub enum ParsedEventMessage<S>
         message: String,
     },
 
-    // One off events
     LiveNow {
         away_team_name: S,
         away_team_emoji: S,
@@ -44,13 +43,13 @@ pub enum ParsedEventMessage<S>
         winning_score: u8,
         losing_score: u8,
     },
-
-    // inningTiming
     InningStart {
         number: u8,
         side: TopBottom,
         batting_team_emoji: S,
         batting_team_name: S,
+        /// This message was only added halfway through season 0. This field does not currently track unannounced automatic runners.
+        automatic_runner: Option<S>,
         pitcher_status: StartOfInningPitcher<S>,
     },
     NowBatting {
@@ -85,21 +84,21 @@ pub enum ParsedEventMessage<S>
     HitByPitch { batter: S, scores: Vec<S>, advances: Vec<RunnerAdvance<S>> },
     FairBall {
         batter: S,
-        hit: HitType,
-        destination: HitDestination
+        fair_ball_type: FairBallType,
+        destination: FairBallDestination
     },  
     StrikeOut { foul: Option<FoulType>, batter: S, strike: StrikeType, steals: Vec<BaseSteal<S>> },
 
-    // Strike
-    BatterToBase { batter: S, distance: Distance, hit: HitType, fielder: PositionedPlayer<S>, scores: Vec<S>, advances: Vec<RunnerAdvance<S>> },
-    HomeRun { batter: S, hit: HitType, destination: HitDestination, scores: Vec<S> },
-    GrandSlam { batter: S, hit: HitType, destination: HitDestination, scores: Vec<S> },
-    CaughtOut { batter: S, hit: HitType, catcher: PositionedPlayer<S>, scores: Vec<S>, advances: Vec<RunnerAdvance<S>>, sacrifice: bool, perfect: bool },
+    // Field
+    BatterToBase { batter: S, distance: Distance, fair_ball_type: FairBallType, fielder: PositionedPlayer<S>, scores: Vec<S>, advances: Vec<RunnerAdvance<S>> },
+    HomeRun { batter: S, fair_ball_type: FairBallType, destination: FairBallDestination, scores: Vec<S> },
+    GrandSlam { batter: S, fair_ball_type: FairBallType, destination: FairBallDestination, scores: Vec<S> },
+    CaughtOut { batter: S, fair_ball_type: FairBallType, caught_by: PositionedPlayer<S>, scores: Vec<S>, advances: Vec<RunnerAdvance<S>>, sacrifice: bool, perfect: bool },
     GroundedOut { batter: S, fielders: Vec<PositionedPlayer<S>>, scores: Vec<S>, advances: Vec<RunnerAdvance<S>> },
-    ForceOut { batter: S, fielders: Vec<PositionedPlayer<S>>, hit: HitType, out:RunnerOut<S>, scores: Vec<S>, advances: Vec<RunnerAdvance<S>> },
+    ForceOut { batter: S, fielders: Vec<PositionedPlayer<S>>, fair_ball_type: FairBallType, out:RunnerOut<S>, scores: Vec<S>, advances: Vec<RunnerAdvance<S>> },
     ReachOnFieldersChoice { batter: S, fielders: Vec<PositionedPlayer<S>>, play:Play<S>, scores: Vec<S>, advances: Vec<RunnerAdvance<S>> },
     DoublePlayGrounded { batter: S, fielders: Vec<PositionedPlayer<S>>, play_one:Play<S>, play_two:Play<S>, scores: Vec<S>, advances: Vec<RunnerAdvance<S>>, sacrifice: bool },
-    DoublePlayCaught { batter: S, hit: HitType, fielders: Vec<PositionedPlayer<S>>, play:Play<S>, scores: Vec<S>, advances: Vec<RunnerAdvance<S>> },
+    DoublePlayCaught { batter: S, fair_ball_type: FairBallType, fielders: Vec<PositionedPlayer<S>>, play:Play<S>, scores: Vec<S>, advances: Vec<RunnerAdvance<S>> },
     ReachOnFieldingError { batter: S, fielder:PositionedPlayer<S>, error: FieldingErrorType, scores: Vec<S>, advances: Vec<RunnerAdvance<S>> }
 }
 impl<S: Display> ParsedEventMessage<S> {
@@ -122,7 +121,7 @@ impl<S: Display> ParsedEventMessage<S> {
             Self::Recordkeeping { winning_team_emoji, winning_team_name, losing_team_emoji, losing_team_name, winning_score, losing_score } => {
                 format!("{winning_team_emoji} {winning_team_name} defeated {losing_team_emoji} {losing_team_name}. Final score: {winning_score}-{losing_score}")
             }
-            Self::InningStart { number, side, batting_team_emoji, batting_team_name, pitcher_status } => {
+            Self::InningStart { number, side, batting_team_emoji, batting_team_name, automatic_runner, pitcher_status } => {
                 let ordinal = match number {
                     0 => panic!("Should not have 0th innings"),
                     1 => "1st".to_string(),
@@ -136,7 +135,11 @@ impl<S: Display> ParsedEventMessage<S> {
                         format!("{leaving_position} {leaving_pitcher} is leaving the game. {arriving_position} {arriving_pitcher} takes the mound.")
                     }
                 };
-                format!("Start of the {side} of the {ordinal}. {batting_team_emoji} {batting_team_name} batting. {pitcher_message}")
+                let automatic_runner = match automatic_runner {
+                    Some(runner) => format!(" {runner} starts the inning on second base."),
+                    None => String::new()
+                };
+                format!("Start of the {side} of the {ordinal}. {batting_team_emoji} {batting_team_name} batting.{automatic_runner} {pitcher_message}")
             },
             Self::NowBatting {batter, stats} => {
                 let stats = stats.map(|stats| format!(" ({stats})")).unwrap_or(String::new());
@@ -186,8 +189,8 @@ impl<S: Display> ParsedEventMessage<S> {
                 let scores_and_advances = unparse_scores_and_advances(scores, advances);
                 format!(" {batter} was hit by the pitch and advances to first base.{scores_and_advances}")
             }
-            Self::FairBall { batter, hit, destination } => {
-                format!(" {batter} hits a {hit} to {destination}.")
+            Self::FairBall { batter, fair_ball_type, destination } => {
+                format!(" {batter} hits a {fair_ball_type} to {destination}.")
             }
             Self::StrikeOut { foul, batter, strike, steals } => {
                 let foul = match foul {
@@ -198,40 +201,40 @@ impl<S: Display> ParsedEventMessage<S> {
                 let steals = steals.join(" ");
                 format!(" {foul}{batter} struck out {strike}.{steals}")
             }
-            Self::BatterToBase { batter, distance, hit, fielder, scores, advances } => {
+            Self::BatterToBase { batter, distance, fair_ball_type, fielder, scores, advances } => {
                 let scores_and_advances = unparse_scores_and_advances(scores, advances);
-                format!("{batter} {distance} on a {hit} to {fielder}.{scores_and_advances}")
+                format!("{batter} {distance} on a {fair_ball_type} to {fielder}.{scores_and_advances}")
             }
-            Self::HomeRun { batter, hit, destination, scores } => {
+            Self::HomeRun { batter, fair_ball_type, destination, scores } => {
                 let scores = once(String::new()).chain(scores.into_iter().map(|runner| format!("<strong>{runner} scores!</strong>")))
                     .collect::<Vec<String>>()
                     .join(" ");
-                format!("<strong>{batter} homers on a {hit} to {destination}!</strong>{scores}")
+                format!("<strong>{batter} homers on a {fair_ball_type} to {destination}!</strong>{scores}")
             }
-            Self::GrandSlam { batter, hit, destination, scores } => {
+            Self::GrandSlam { batter, fair_ball_type, destination, scores } => {
                 let scores = once(String::new()).chain(scores.into_iter().map(|runner| format!("<strong>{runner} scores!</strong>")))
                 .collect::<Vec<String>>()
                 .join(" ");
-                format!("<strong>{batter} hits a grand slam on a {hit} to {destination}!</strong>{scores}")
+                format!("<strong>{batter} hits a grand slam on a {fair_ball_type} to {destination}!</strong>{scores}")
             }
-            Self::CaughtOut { batter, hit, catcher, scores, advances, sacrifice, perfect } => {
-                let hit = hit.verb_name();
+            Self::CaughtOut { batter, fair_ball_type, caught_by: catcher, scores, advances, sacrifice, perfect } => {
+                let fair_ball_type = fair_ball_type.verb_name();
                 let scores_and_advances = unparse_scores_and_advances(scores, advances);
                 let sacrifice = if sacrifice {"on a sacrifice fly "} else {""};
                 let perfect = if perfect {" <strong>Perfect catch!</strong>"} else {""};
                 
-                format!("{batter} {hit} out {sacrifice}to {catcher}.{perfect}{scores_and_advances}")
+                format!("{batter} {fair_ball_type} out {sacrifice}to {catcher}.{perfect}{scores_and_advances}")
             }
             Self::GroundedOut { batter, fielders, scores, advances } => {
                 let scores_and_advances = unparse_scores_and_advances(scores, advances);
                 let fielders = unparse_fielders(fielders);
                 format!("{batter} grounds out{fielders}.{scores_and_advances}")
             }
-            Self::ForceOut { batter, fielders, hit, out, scores, advances } => {
+            Self::ForceOut { batter, fielders, fair_ball_type, out, scores, advances } => {
                 let scores_and_advances = unparse_scores_and_advances(scores, advances);
                 let fielders = unparse_fielders_for_play(fielders);
-                let hit = hit.verb_name();
-                format!("{batter} {hit} into a force out{fielders}. {out}{scores_and_advances}")
+                let fair_ball_type = fair_ball_type.verb_name();
+                format!("{batter} {fair_ball_type} into a force out{fielders}. {out}{scores_and_advances}")
             }
             Self::ReachOnFieldersChoice { batter, fielders, play, scores, advances } => {
                 let scores_and_advances = unparse_scores_and_advances(scores, advances);
@@ -253,11 +256,11 @@ impl<S: Display> ParsedEventMessage<S> {
                 let sacrifice = if sacrifice {"sacrifice "} else {""};
                 format!("{batter} grounded into a {sacrifice}double play{fielders}. {play_one} {play_two}{scores_and_advances}")
             }
-            Self::DoublePlayCaught { batter, hit, fielders, play, scores, advances } => {
-                let hit = hit.verb_name();
+            Self::DoublePlayCaught { batter, fair_ball_type, fielders, play, scores, advances } => {
+                let fair_ball_type = fair_ball_type.verb_name();
                 let fielders = unparse_fielders_for_play(fielders);
                 let scores_and_advances = unparse_scores_and_advances(scores, advances);
-                format!("{batter} {hit} into a double play{fielders}. {play}{scores_and_advances}")
+                format!("{batter} {fair_ball_type} into a double play{fielders}. {play}{scores_and_advances}")
             }
             Self::ReachOnFieldingError { batter, fielder, error, scores, advances } => {
                 let scores_and_advances = unparse_scores_and_advances(scores, advances);

@@ -3,7 +3,7 @@ use std::{fmt::Debug, str::FromStr};
 use nom::{branch::alt, bytes::complete::{tag, take, take_till, take_until, take_until1, take_while}, character::complete::{multispace0, space0, space1, u8}, combinator::{all_consuming, recognize, rest, verify}, error::{ErrorKind, ParseError}, multi::{count, many0, many1}, sequence::{delimited, preceded, separated_pair, terminated}, AsChar, Compare, CompareResult, Input, Parser};
 use nom_language::error::VerboseError;
 
-use crate::{enums::{Base, BaseNameVariants, Distance, FieldingErrorType, FoulType, HitDestination, HitType, Position, StrikeType, TopBottom}, parsed_event::{BaseSteal, Play, PositionedPlayer, RunnerAdvance, RunnerOut}, Game};
+use crate::{enums::{Base, BaseNameVariants, Distance, FieldingErrorType, FoulType, FairBallDestination, FairBallType, Position, StrikeType, TopBottom}, parsed_event::{BaseSteal, Play, PositionedPlayer, RunnerAdvance, RunnerOut}, Game};
 
 pub(super) type Error<'a> = VerboseError<&'a str>;
 pub(super) type IResult<'a, I, O> = nom::IResult<I, O, Error<'a>>;
@@ -66,28 +66,28 @@ pub(super) fn words<'output>(n: usize) -> impl Parser<&'output str, Output = &'o
     strip(recognize((take_while(AsChar::is_alphanum), count((space1, take_while(AsChar::is_alphanum)), n-1))))
 }
 
-/// A type of hit, e.g. "ground ball"
-pub(super) fn hit_type(i: &str) -> IResult<&str, HitType> {
+/// A type of fair ball, e.g. "ground ball"
+pub(super) fn fair_ball_type(i: &str) -> IResult<&str, FairBallType> {
     alt((
-        words(2).map_res(HitType::try_from),
-        word.map_res(HitType::try_from),
+        words(2).map_res(FairBallType::try_from),
+        word.map_res(FairBallType::try_from),
     )).parse(i)
 }
 
-/// Verb names for hit types, e.g. "pops"
-pub(super) fn hit_type_verb_name(i: &str) -> IResult<&str, HitType> {
+/// Verb names for fair ball types, e.g. "pops"
+pub(super) fn fair_ball_type_verb_name(i: &str) -> IResult<&str, FairBallType> {
     word.map_opt(|word| match word {
-        "grounds" => Some(HitType::GroundBall),
-        "flies" => Some(HitType::FlyBall),
-        "lines" => Some(HitType::LineDrive),
-        "pops" => Some(HitType::Popup),
+        "grounds" => Some(FairBallType::GroundBall),
+        "flies" => Some(FairBallType::FlyBall),
+        "lines" => Some(FairBallType::LineDrive),
+        "pops" => Some(FairBallType::Popup),
         _ => None
     }).parse(i)
 }
 
-/// A destination for a hit, e.g. "the shortstop"
-pub(super) fn destination(i: &str) -> IResult<&str, HitDestination> {
-    words(2).map_res(HitDestination::try_from)
+/// A destination for a fair ball, e.g. "the shortstop"
+pub(super) fn destination(i: &str) -> IResult<&str, FairBallDestination> {
+    words(2).map_res(FairBallDestination::try_from)
         .parse(i)
 }
 

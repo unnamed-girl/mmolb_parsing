@@ -2,11 +2,18 @@
 use std::{env::args, fs::File, io::{self, Read, Write}};
 
 use mmolb_parsing::{process_game, raw_game::RawGame, Game, ParsedEventMessage};
+use rand::seq::SliceRandom;
 use serde::{Deserialize, Serialize};
 
 pub fn downloaded(json_cache: &str) -> impl Iterator<Item = (String, RawGame)> {
-    std::fs::read_dir(json_cache).unwrap()
-        .map(|entry|  {
+    let mut entries = std::fs::read_dir(json_cache).unwrap().collect::<Vec<_>>();
+
+    #[cfg(feature = "rand")] {
+        let mut rng = rand::rng();
+        entries.shuffle(&mut rng);
+    }
+
+    entries.into_iter().map(|entry|  {
                 let entry = entry.unwrap();
 
                 let mut result = String::new();
@@ -44,7 +51,7 @@ fn main() {
 
 
         let game = {
-            #[cfg(debug_assertions)]
+            #[cfg(feature = "panic_on_parse_error")]
             {
                 let game: Game = raw_game.clone().into();
                 let unparsed_game = RawGame::from(game.clone());
@@ -69,7 +76,7 @@ fn main() {
                 }
                 game
             }
-            #[cfg(not(debug_assertions))]
+            #[cfg(not(feature = "panic_on_parse_error"))]
             {
                 raw_game.into()
             }
