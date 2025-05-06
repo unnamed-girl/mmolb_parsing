@@ -72,6 +72,8 @@ fn main() {
                 assert_eq!(unparsed_game.home_team_name, raw_game.home_team_name, "{game_id}");
                 assert_eq!(unparsed_game.season, raw_game.season, "{game_id}");
                 assert_eq!(unparsed_game.state, raw_game.state, "{game_id}");
+                assert_eq!(unparsed_game.stats, raw_game.stats, "{game_id}");
+                assert_eq!(unparsed_game.realm, raw_game.realm, "{game_id}");
 
                 for i in 0..unparsed_game.event_log.len() {
                     assert_eq!(unparsed_game.event_log[i], raw_game.event_log[i], "{game_id}");

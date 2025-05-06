@@ -1,7 +1,7 @@
-use std::str::FromStr;
+use std::{collections::HashMap, str::FromStr};
 use serde::{Deserialize, Serialize};
 
-use crate::{enums::{EventType, Inning, PitchType}, raw_game::{RawEvent, RawGame, RawWeather, RawZone}};
+use crate::{enums::{EventType, GameStats, Inning, PitchType}, raw_game::{RawEvent, RawGame, RawWeather, RawZone}};
 
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
@@ -30,6 +30,9 @@ pub struct Game {
     pub state: String,
 
     pub weather: Weather,
+    pub realm_id: String,
+    /// TeamID -> PlayerID -> Stat -> Value
+    pub stats: HashMap<String, HashMap<String, HashMap<GameStats, i32>>>,
 
     pub event_log: Vec<Event>,
 }
@@ -37,9 +40,14 @@ impl From<RawGame> for Game {
     fn from(value: RawGame) -> Self {
         let weather = value.weather.into();
         let event_log = value.event_log.into_iter().map(|event| event.into()).collect();
+        let realm_id = value.realm;
+        let stats  = value.stats.into_iter().map(|(team, players)|
+            (team, players.into_iter().map(|(player, stats)|
+                (player, stats.into_iter().map(|(stat, value)| (GameStats::from_str(&stat).expect(&stat), value)).collect())
+            ).collect())
+        ).collect();
         Self { away_sp: value.away_sp, away_team_abbreviation: value.away_team_abbreviation, away_team_color: value.away_team_color, away_team_emoji: value.away_team_emoji, away_team_id: value.away_team_id, away_team_name: value.away_team_name, home_sp: value.home_sp, home_team_abbreviation: value.home_team_abbreviation, home_team_color: value.home_team_color, home_team_emoji: value.home_team_emoji, home_team_id: value.home_team_id, home_team_name: value.home_team_name, season: value.season, day: value.day, state: value.state, 
-            weather,
-            event_log
+            weather, event_log, realm_id, stats
         }
     }
 }
@@ -47,9 +55,14 @@ impl From<Game> for RawGame {
     fn from(value: Game) -> Self {
         let weather = value.weather.into();
         let event_log = value.event_log.into_iter().map(|event| event.into()).collect();
+        let realm = value.realm_id;
+        let stats  = value.stats.into_iter().map(|(team, players)|
+            (team, players.into_iter().map(|(player, stats)|
+                (player, stats.into_iter().map(|(stat, value)| (stat.to_string(), value)).collect())
+            ).collect())
+        ).collect();
         Self { away_sp: value.away_sp, away_team_abbreviation: value.away_team_abbreviation, away_team_color: value.away_team_color, away_team_emoji: value.away_team_emoji, away_team_id: value.away_team_id, away_team_name: value.away_team_name, home_sp: value.home_sp, home_team_abbreviation: value.home_team_abbreviation, home_team_color: value.home_team_color, home_team_emoji: value.home_team_emoji, home_team_id: value.home_team_id, home_team_name: value.home_team_name, season: value.season, day: value.day, state: value.state, 
-            weather,
-            event_log
+            weather, event_log, realm, stats
         }
     }
 }

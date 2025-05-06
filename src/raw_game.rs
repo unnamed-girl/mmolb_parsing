@@ -1,8 +1,11 @@
+use std::collections::HashMap;
+
 use serde::{Deserialize, Serialize};
 
 
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
 #[serde(rename_all = "PascalCase")]
+#[cfg_attr(feature = "panic_on_parse_error", serde(deny_unknown_fields))]
 pub struct RawGame {
     #[serde(rename = "AwaySP")]
     pub away_sp: String,
@@ -27,6 +30,9 @@ pub struct RawGame {
     pub state: String,
 
     pub weather: RawWeather,
+    pub realm: String,
+    /// TeamID -> PlayerID -> Stat -> Value
+    pub stats: HashMap<String, HashMap<String, HashMap<String, i32>>>,
 
     pub event_log: Vec<RawEvent>,
 }

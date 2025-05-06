@@ -1,8 +1,8 @@
 use nom::{branch::alt, bytes::{complete::{take_till, take_until}, tag}, character::complete::{digit1, u8}, combinator::{all_consuming, cut, fail, opt}, error::context, multi::{many0, many1}, sequence::{delimited, preceded, separated_pair, terminated}, AsChar, Finish, Parser};
 
-use crate::{enums::{EventType, HomeAway, NowBattingBoxScore}, game::Event, parsed_event::{Play, PositionedPlayer, StartOfInningPitcher}, ParsedEventMessage};
+use crate::{enums::{EventType, HomeAway, NowBattingStats}, game::Event, parsed_event::{Play, PositionedPlayer, StartOfInningPitcher}, ParsedEventMessage};
 
-use super::{shared::{all_consuming_sentence_and, base_steal_sentence, bold, destination, distance, emoji_and_name_eof, exclamation, fair_ball_type, fair_ball_type_verb_name, fielders_eof, fielding_error_type, foul_type, name_eof, now_batting_box_score, ordinal_suffix, out, parse_and, parse_terminated, play_eof, position, positioned_player_eof, s_tag, score_update_sentence, scores_and_advances, scores_sentence, sentence, sentence_eof, strike_type, strip, switch_pitcher_sentences, team_emoji_and_name, top_or_bottom, Error}, ParsingContext};
+use super::{shared::{all_consuming_sentence_and, base_steal_sentence, bold, destination, distance, emoji_and_name_eof, exclamation, fair_ball_type, fair_ball_type_verb_name, fielders_eof, fielding_error_type, foul_type, name_eof, now_batting_stats, ordinal_suffix, out, parse_and, parse_terminated, play_eof, position, positioned_player_eof, s_tag, score_update_sentence, scores_and_advances, scores_sentence, sentence, sentence_eof, strike_type, strip, switch_pitcher_sentences, team_emoji_and_name, top_or_bottom, Error}, ParsingContext};
 
 pub fn parse_event<'output>(event: &'output Event, parsing_context: &ParsingContext<'output>) -> Result<ParsedEventMessage<&'output str>, Error<'output>> {
     match event.event {
@@ -60,10 +60,10 @@ fn now_batting<'output>() -> impl Parser<&'output str, Output = ParsedEventMessa
     context("Now Batting", all_consuming(alt((
         (
             preceded(tag("Now batting: "), parse_terminated(" (")), 
-            terminated(now_batting_box_score, tag(")"))
-        ).map(|(batter, stats)| ParsedEventMessage::NowBatting { batter, box_score: stats }),
+            terminated(now_batting_stats, tag(")"))
+        ).map(|(batter, stats)| ParsedEventMessage::NowBatting { batter, stats }),
         preceded(s_tag("Now batting: "), name_eof)
-            .map(|batter| ParsedEventMessage::NowBatting { batter, box_score:NowBattingBoxScore::NoStats }),
+            .map(|batter| ParsedEventMessage::NowBatting { batter, stats:NowBattingStats::NoStats }),
     ))))
 }
 
