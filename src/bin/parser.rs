@@ -2,8 +2,10 @@
 use std::{env::args, fs::File, io::{self, Read, Write}};
 
 use mmolb_parsing::{process_game, raw_game::RawGame, Game, ParsedEventMessage};
-use rand::seq::SliceRandom;
 use serde::{Deserialize, Serialize};
+
+#[cfg(feature = "rand")]
+use rand::seq::SliceRandom;
 
 pub fn downloaded(json_cache: &str) -> impl Iterator<Item = (String, RawGame)> {
     let mut entries = std::fs::read_dir(json_cache).unwrap().collect::<Vec<_>>();
