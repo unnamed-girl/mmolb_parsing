@@ -1,8 +1,8 @@
-use nom::{branch::alt, bytes::{complete::{take_till, take_until}, tag}, character::complete::{digit1, u8}, combinator::{all_consuming, cut, fail, opt, rest}, error::context, multi::{many0, many1}, sequence::{delimited, preceded, separated_pair, terminated}, AsChar, Finish, Parser};
+use nom::{branch::alt, bytes::{complete::{take_till, take_until}, tag}, character::complete::{digit1, u8}, combinator::{all_consuming, cut, fail, opt}, error::context, multi::{many0, many1}, sequence::{delimited, preceded, separated_pair, terminated}, AsChar, Finish, Parser};
 
-use crate::{enums::{EventType, HomeAway}, game::Event, parsed_event::{Play, PositionedPlayer, StartOfInningPitcher}, ParsedEventMessage};
+use crate::{enums::{EventType, HomeAway, NowBattingBoxScore}, game::Event, parsed_event::{Play, PositionedPlayer, StartOfInningPitcher}, ParsedEventMessage};
 
-use super::{shared::{all_consuming_sentence_and, base_steal_sentence, bold, destination, distance, emoji_and_name_eof, exclamation, fielders_eof, fielding_error_type, foul_type, fair_ball_type, fair_ball_type_verb_name, name_eof, ordinal_suffix, out, parse_terminated, parse_and, play_eof, position, positioned_player_eof, s_tag, score_update_sentence, scores_and_advances, scores_sentence, sentence, sentence_eof, strike_type, strip, switch_pitcher_sentences, team_emoji_and_name, top_or_bottom, Error}, ParsingContext};
+use super::{shared::{all_consuming_sentence_and, base_steal_sentence, bold, destination, distance, emoji_and_name_eof, exclamation, fair_ball_type, fair_ball_type_verb_name, fielders_eof, fielding_error_type, foul_type, name_eof, now_batting_box_score, ordinal_suffix, out, parse_and, parse_terminated, play_eof, position, positioned_player_eof, s_tag, score_update_sentence, scores_and_advances, scores_sentence, sentence, sentence_eof, strike_type, strip, switch_pitcher_sentences, team_emoji_and_name, top_or_bottom, Error}, ParsingContext};
 
 pub fn parse_event<'output>(event: &'output Event, parsing_context: &ParsingContext<'output>) -> Result<ParsedEventMessage<&'output str>, Error<'output>> {
     match event.event {
@@ -59,11 +59,11 @@ fn play_ball<'output>() -> impl Parser<&'output str, Output = ParsedEventMessage
 fn now_batting<'output>() -> impl Parser<&'output str, Output = ParsedEventMessage<&'output str>, Error = Error<'output>> {
     context("Now Batting", all_consuming(alt((
         (
-            delimited(s_tag("Now batting:"), take_until(" ("), s_tag("(")),
-             terminated(take_until(")"), s_tag(")"))
-        ).map(|(batter, stats)| ParsedEventMessage::NowBatting { batter, stats: Some(stats) }),
-        preceded(s_tag("Now batting: "), rest)
-            .map(|batter| ParsedEventMessage::NowBatting { batter, stats:None }),
+            preceded(tag("Now batting: "), parse_terminated(" (")), 
+            terminated(now_batting_box_score, tag(")"))
+        ).map(|(batter, stats)| ParsedEventMessage::NowBatting { batter, box_score: stats }),
+        preceded(s_tag("Now batting: "), name_eof)
+            .map(|batter| ParsedEventMessage::NowBatting { batter, box_score:NowBattingBoxScore::NoStats }),
     ))))
 }
 
@@ -246,7 +246,7 @@ fn pitching_matchup<'output, 'parse>(parsing_context: &'parse ParsingContext<'ou
             team_emoji_and_name(parsing_context), 
             terminated(take_until(" vs. "),s_tag("vs.")) , 
             team_emoji_and_name(parsing_context), 
-            rest
+            name_eof
         ).map(|((away_team_emoji, away_team_name), away_pitcher, (home_team_emoji, home_team_name) , home_pitcher)| ParsedEventMessage::PitchingMatchup { home_team_emoji, home_team_name, home_pitcher, away_team_emoji, away_team_name, away_pitcher })
     ))
 }
@@ -308,7 +308,7 @@ fn mound_visit<'output>() -> impl Parser<&'output str, Output = ParsedEventMessa
 
 fn live_now<'output>() -> impl Parser<&'output str, Output = ParsedEventMessage<&'output str>, Error = Error<'output>> {
     context("Live now", all_consuming(
-            separated_pair((strip(take_till(AsChar::is_space)), take_until(" @ ")), s_tag("@"), (strip(take_till(AsChar::is_space)), rest))
+            separated_pair((strip(take_till(AsChar::is_space)), take_until(" @ ")), s_tag("@"), (strip(take_till(AsChar::is_space)), name_eof))
         ).map(|((away_team_emoji, away_team_name), (home_team_emoji, home_team_name))| ParsedEventMessage::LiveNow { away_team_name, away_team_emoji, home_team_name, home_team_emoji })
     )
 }

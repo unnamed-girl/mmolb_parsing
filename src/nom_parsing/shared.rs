@@ -1,9 +1,9 @@
 use std::{fmt::Debug, str::FromStr};
 
-use nom::{branch::alt, bytes::complete::{tag, take, take_till, take_until, take_until1, take_while}, character::complete::{multispace0, space0, space1, u8}, combinator::{all_consuming, recognize, rest, verify}, error::{ErrorKind, ParseError}, multi::{count, many0, many1}, sequence::{delimited, preceded, separated_pair, terminated}, AsChar, Compare, CompareResult, Input, Parser};
+use nom::{branch::alt, bytes::complete::{tag, take, take_till, take_until, take_until1, take_while}, character::complete::{multispace0, space0, space1, u8}, combinator::{all_consuming, recognize, rest, value, verify}, error::{ErrorKind, ParseError}, multi::{count, many0, many1, separated_list1}, sequence::{delimited, preceded, separated_pair, terminated}, AsChar, Compare, CompareResult, Input, Parser};
 use nom_language::error::VerboseError;
 
-use crate::{enums::{Base, BaseNameVariants, Distance, FieldingErrorType, FoulType, FairBallDestination, FairBallType, Position, StrikeType, TopBottom}, parsed_event::{BaseSteal, Play, PositionedPlayer, RunnerAdvance, RunnerOut}, Game};
+use crate::{enums::{Base, BaseNameVariants, Distance, FairBallDestination, FairBallType, FieldingErrorType, FoulType, BatterStat, NowBattingBoxScore, Position, StrikeType, TopBottom}, parsed_event::{BaseSteal, Play, PositionedPlayer, RunnerAdvance, RunnerOut}, Game};
 
 pub(super) type Error<'a> = VerboseError<&'a str>;
 pub(super) type IResult<'a, I, O> = nom::IResult<I, O, Error<'a>>;
@@ -331,7 +331,7 @@ pub(super) fn positioned_player_eof(input: &str) -> IResult<&str, PositionedPlay
 }
 
 pub(super) fn name_eof(input: &str) -> IResult<&str, &str> {
-    verify(rest,  |name: &str| !name.contains(","))
+    verify(rest,  |name: &str| !name.contains(",") && !name.contains("(") && !name.contains(")"))
     .parse(input)
 }
 
@@ -346,4 +346,35 @@ pub(super) fn emoji_and_name_eof(input: &str) -> IResult<&str, (&str, &str)> {
     verify(rest,  |name: &str| !name.contains(","))
     .and_then((strip(take_till(AsChar::is_space)), rest))
     .parse(input)
+}
+
+pub(super) fn batter_stat(input: &str) -> IResult<&str, BatterStat> {
+    alt((
+        terminated(u8, tag(" 1B")).map(BatterStat::FirstBases),
+        terminated(u8, tag(" 2B")).map(BatterStat::SecondBases),
+        terminated(u8, tag(" 3B")).map(BatterStat::ThirdBases),
+        terminated(u8, tag(" LO")).map(BatterStat::LineOuts),
+        terminated(u8, tag(" SO")).map(BatterStat::StrikeOuts),
+        terminated(u8, tag(" FO")).map(BatterStat::ForceOuts),
+        terminated(u8, tag(" HR")).map(BatterStat::HomeRuns),
+        terminated(u8, tag(" FC")).map(BatterStat::FieldersChoices),
+        terminated(u8, tag(" SF")).map(BatterStat::SacrificeFlies),
+        terminated(u8, tag(" F")).map(BatterStat::Fouls),
+        terminated(u8, tag(" BB")).map(BatterStat::BaseOnBalls),
+        terminated(u8, tag(" FC")).map(BatterStat::SacrificeFlies),
+        terminated(u8, tag(" HBP")).map(BatterStat::HitByPitchs),
+        terminated(u8, tag(" GIDP")).map(BatterStat::GroundIntoDoublePlays),
+        terminated(u8, tag(" CDP")).map(BatterStat::CaughtDoublePlays),
+        terminated(u8, tag(" PO")).map(BatterStat::PopOuts),
+        separated_pair(u8, tag(" for "), u8).map(|(hits, at_bats)| BatterStat::HitsForAtBats { hits, at_bats }),
+    ))
+    .parse(input)
+}
+
+/// e.g. "1st PA of game", doesn't include the brackets.
+pub(super) fn now_batting_box_score(input: &str) -> IResult<&str, NowBattingBoxScore> {
+    debugger(alt ((
+        value(NowBattingBoxScore::FirstPA, tag("1st PA of game")),
+        separated_list1(tag(", "), batter_stat).map(|stats| NowBattingBoxScore::Stats { stats } )
+    ))).parse(input)
 }

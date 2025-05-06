@@ -1,7 +1,7 @@
 use std::fmt::Display;
 
 use serde::{Deserialize, Serialize};
-use strum::{Display, EnumIter, EnumString};
+use strum::{Display, EnumDiscriminants, EnumIter, EnumString};
 
 #[derive(Debug, Clone, Copy, Serialize, Deserialize, EnumString, Display, PartialEq, Eq, Hash)]
 pub enum EventType {
@@ -355,4 +355,79 @@ pub enum Distance {
     Double,
     #[strum(to_string = "triples")]
     Triple,
+}
+
+#[derive(Clone, EnumString, Display, Debug, Serialize, Deserialize, PartialEq, Eq, Hash)]
+pub enum NowBattingBoxScore {
+    FirstPA,
+    Stats {
+        stats: Vec<BatterStat>
+    },
+    NoStats
+}
+
+
+#[derive(Clone, Copy, Display, Debug, EnumDiscriminants, Serialize, Deserialize, PartialEq, Eq, Hash)]
+#[strum_discriminants(derive(EnumString, Display))]
+pub enum BatterStat {
+    HitsForAtBats {
+        hits: u8,
+        at_bats: u8
+    },
+    #[strum_discriminants(strum(to_string = "1B"))]
+    FirstBases(u8),
+    #[strum_discriminants(strum(to_string = "2B"))]
+    SecondBases(u8),
+    #[strum_discriminants(strum(to_string = "3B"))]
+    ThirdBases(u8),
+    #[strum_discriminants(strum(to_string = "HR"))]
+    HomeRuns(u8),
+    #[strum_discriminants(strum(to_string = "SF"))]
+    SacrificeFlies(u8),
+    #[strum_discriminants(strum(to_string = "PO"))]
+    PopOuts(u8),
+    #[strum_discriminants(strum(to_string = "LO"))]
+    LineOuts(u8),
+    #[strum_discriminants(strum(to_string = "SO"))]
+    StrikeOuts(u8),
+    #[strum_discriminants(strum(to_string = "FO"))]
+    ForceOuts(u8),
+    #[strum_discriminants(strum(to_string = "BB"))]
+    BaseOnBalls(u8),
+    #[strum_discriminants(strum(to_string = "HBP"))]
+    HitByPitchs(u8),
+    #[strum_discriminants(strum(to_string = "GIDP"))]
+    GroundIntoDoublePlays(u8),
+    #[strum_discriminants(strum(to_string = "CDP"))]
+    CaughtDoublePlays(u8),
+    #[strum_discriminants(strum(to_string = "FC"))]
+    FieldersChoices(u8),
+    #[strum_discriminants(strum(to_string = "F"))]
+    Fouls(u8),
+}
+impl BatterStat {
+    pub fn unparse(self) -> String {
+        match self {
+            BatterStat::FirstBases(count) |
+            BatterStat::SecondBases(count) |
+            BatterStat::ThirdBases(count) |
+            BatterStat::LineOuts(count) |
+            BatterStat::PopOuts(count) |
+            BatterStat::Fouls(count) |
+            BatterStat::ForceOuts(count) |
+            BatterStat::HomeRuns(count) |
+            BatterStat::BaseOnBalls(count) |
+            BatterStat::GroundIntoDoublePlays(count) |
+            BatterStat::SacrificeFlies(count) |
+            BatterStat::CaughtDoublePlays(count) |
+            BatterStat::FieldersChoices(count) |
+            BatterStat::HitByPitchs(count) |
+            BatterStat::StrikeOuts(count) => {
+                format!("{count} {}", BatterStatDiscriminants::from(self))
+            }
+            BatterStat::HitsForAtBats { hits, at_bats } => {
+                format!("{hits} for {at_bats}")
+            }
+        }
+    }
 }

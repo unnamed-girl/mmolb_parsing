@@ -3,7 +3,7 @@ use std::{fmt::{Display, Write}, iter::once};
 use serde::{Deserialize, Serialize};
 use strum::EnumDiscriminants;
 
-use crate::enums::{Base, BaseNameVariants, Distance, EventType, FieldingErrorType, FoulType, FairBallDestination, FairBallType, HomeAway, Position, StrikeType, TopBottom};
+use crate::enums::{Base, BaseNameVariants, Distance, EventType, FairBallDestination, FairBallType, FieldingErrorType, FoulType, HomeAway, BatterStat, NowBattingBoxScore, Position, StrikeType, TopBottom};
 
 /// S is the string type used. S = &'output str is used by the parser, 
 /// but a mutable type is necessary when directly deserializing, because some players have escaped characters in their names
@@ -54,7 +54,7 @@ pub enum ParsedEventMessage<S>
     },
     NowBatting {
         batter: S,
-        stats: Option<S>
+        box_score: NowBattingBoxScore
     },
     InningEnd {
         number: u8,
@@ -141,9 +141,17 @@ impl<S: Display> ParsedEventMessage<S> {
                 };
                 format!("Start of the {side} of the {ordinal}. {batting_team_emoji} {batting_team_name} batting.{automatic_runner} {pitcher_message}")
             },
-            Self::NowBatting {batter, stats} => {
-                let stats = stats.map(|stats| format!(" ({stats})")).unwrap_or(String::new());
-                format!("Now batting: {batter}{stats}")
+            Self::NowBatting {batter, box_score: stats} => {
+                let stats = match stats {
+                    NowBattingBoxScore::FirstPA =>  format!(" (1st PA of game)"),
+                    NowBattingBoxScore::Stats { stats } => {
+                        format!(" ({})", stats.into_iter().map(BatterStat::unparse).collect::<Vec<_>>().join(", "))
+                    }
+                    NowBattingBoxScore::NoStats => {
+                        String::new()
+                    }
+                };
+                format!("Now batting: {batter}{stats}")               
             },
             Self::InningEnd {number, side} => {
                 let ordinal = match number {
