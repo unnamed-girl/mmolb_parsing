@@ -533,5 +533,6 @@ pub enum GameStats {
     ErrorsRisp,
     Runs,
     HitsAllowedRisp,
-    AllowedStolenBasesRisp,    
+    AllowedStolenBasesRisp,
+    PerfectGames
 }
