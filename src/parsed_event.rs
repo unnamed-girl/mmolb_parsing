@@ -3,7 +3,7 @@ use std::{fmt::{Display, Write}, iter::once};
 use serde::{Deserialize, Serialize};
 use strum::EnumDiscriminants;
 
-use crate::enums::{Base, BaseNameVariants, Distance, EventType, FairBallDestination, FairBallType, FieldingErrorType, FoulType, HomeAway, BatterStat, NowBattingStats, Position, StrikeType, TopBottom};
+use crate::enums::{Base, BaseNameVariant, Distance, EventType, FairBallDestination, FairBallType, FieldingErrorType, FoulType, HomeAway, BatterStat, NowBattingStats, Position, StrikeType, TopBottom};
 
 /// S is the string type used. S = &'output str is used by the parser, 
 /// but a mutable type is necessary when directly deserializing, because some players have escaped characters in their names
@@ -91,14 +91,13 @@ pub enum ParsedEventMessage<S>
 
     // Field
     BatterToBase { batter: S, distance: Distance, fair_ball_type: FairBallType, fielder: PositionedPlayer<S>, scores: Vec<S>, advances: Vec<RunnerAdvance<S>> },
-    HomeRun { batter: S, fair_ball_type: FairBallType, destination: FairBallDestination, scores: Vec<S> },
-    GrandSlam { batter: S, fair_ball_type: FairBallType, destination: FairBallDestination, scores: Vec<S> },
+    HomeRun { batter: S, fair_ball_type: FairBallType, destination: FairBallDestination, scores: Vec<S>, grand_slam: bool },
     CaughtOut { batter: S, fair_ball_type: FairBallType, caught_by: PositionedPlayer<S>, scores: Vec<S>, advances: Vec<RunnerAdvance<S>>, sacrifice: bool, perfect: bool },
     GroundedOut { batter: S, fielders: Vec<PositionedPlayer<S>>, scores: Vec<S>, advances: Vec<RunnerAdvance<S>> },
     ForceOut { batter: S, fielders: Vec<PositionedPlayer<S>>, fair_ball_type: FairBallType, out:RunnerOut<S>, scores: Vec<S>, advances: Vec<RunnerAdvance<S>> },
-    ReachOnFieldersChoice { batter: S, fielders: Vec<PositionedPlayer<S>>, play:Play<S>, scores: Vec<S>, advances: Vec<RunnerAdvance<S>> },
-    DoublePlayGrounded { batter: S, fielders: Vec<PositionedPlayer<S>>, play_one:Play<S>, play_two:Play<S>, scores: Vec<S>, advances: Vec<RunnerAdvance<S>>, sacrifice: bool },
-    DoublePlayCaught { batter: S, fair_ball_type: FairBallType, fielders: Vec<PositionedPlayer<S>>, play:Play<S>, scores: Vec<S>, advances: Vec<RunnerAdvance<S>> },
+    ReachOnFieldersChoice { batter: S, fielders: Vec<PositionedPlayer<S>>, result:FieldingAttempt<S>, scores: Vec<S>, advances: Vec<RunnerAdvance<S>> },
+    DoublePlayGrounded { batter: S, fielders: Vec<PositionedPlayer<S>>, out_one:RunnerOut<S>, out_two:RunnerOut<S>, scores: Vec<S>, advances: Vec<RunnerAdvance<S>>, sacrifice: bool },
+    DoublePlayCaught { batter: S, fair_ball_type: FairBallType, fielders: Vec<PositionedPlayer<S>>, out_two:RunnerOut<S>, scores: Vec<S>, advances: Vec<RunnerAdvance<S>> },
     ReachOnFieldingError { batter: S, fielder:PositionedPlayer<S>, error: FieldingErrorType, scores: Vec<S>, advances: Vec<RunnerAdvance<S>> }
 }
 impl<S: Display> ParsedEventMessage<S> {
@@ -213,17 +212,16 @@ impl<S: Display> ParsedEventMessage<S> {
                 let scores_and_advances = unparse_scores_and_advances(scores, advances);
                 format!("{batter} {distance} on a {fair_ball_type} to {fielder}.{scores_and_advances}")
             }
-            Self::HomeRun { batter, fair_ball_type, destination, scores } => {
+            Self::HomeRun { batter, fair_ball_type, destination, scores, grand_slam } => {
                 let scores = once(String::new()).chain(scores.into_iter().map(|runner| format!("<strong>{runner} scores!</strong>")))
                     .collect::<Vec<String>>()
                     .join(" ");
-                format!("<strong>{batter} homers on a {fair_ball_type} to {destination}!</strong>{scores}")
-            }
-            Self::GrandSlam { batter, fair_ball_type, destination, scores } => {
-                let scores = once(String::new()).chain(scores.into_iter().map(|runner| format!("<strong>{runner} scores!</strong>")))
-                .collect::<Vec<String>>()
-                .join(" ");
-                format!("<strong>{batter} hits a grand slam on a {fair_ball_type} to {destination}!</strong>{scores}")
+
+                if !grand_slam {
+                    format!("<strong>{batter} homers on a {fair_ball_type} to {destination}!</strong>{scores}")
+                } else {
+                    format!("<strong>{batter} hits a grand slam on a {fair_ball_type} to {destination}!</strong>{scores}")
+                }
             }
             Self::CaughtOut { batter, fair_ball_type, caught_by: catcher, scores, advances, sacrifice, perfect } => {
                 let fair_ball_type = fair_ball_type.verb_name();
@@ -244,35 +242,36 @@ impl<S: Display> ParsedEventMessage<S> {
                 let fair_ball_type = fair_ball_type.verb_name();
                 format!("{batter} {fair_ball_type} into a force out{fielders}. {out}{scores_and_advances}")
             }
-            Self::ReachOnFieldersChoice { batter, fielders, play, scores, advances } => {
+            Self::ReachOnFieldersChoice { batter, fielders, result, scores, advances } => {
                 let scores_and_advances = unparse_scores_and_advances(scores, advances);
-                match play {
-                    Play::Out {out} => {
+                match result {
+                    FieldingAttempt::Out {out} => {
                         let fielders = unparse_fielders_for_play(fielders);
                         
                         format!("{batter} reaches on a fielder's choice out{fielders}. {out}{scores_and_advances}")
                     }
-                    Play::Error { fielder, error } => {
+                    FieldingAttempt::Error { fielder, error } => {
                         let fielder_long = fielders.first().unwrap();
+                        let error = error.uppercase();
                         format!("{batter} reaches on a fielder's choice, fielded by {fielder_long}.{scores_and_advances} {error} error by {fielder}.")
                     }
                 }
             }
-            Self::DoublePlayGrounded { batter, fielders, play_one, play_two, scores, advances, sacrifice } => {
+            Self::DoublePlayGrounded { batter, fielders, out_one, out_two, scores, advances, sacrifice } => {
                 let fielders = unparse_fielders_for_play(fielders);
                 let scores_and_advances = unparse_scores_and_advances(scores, advances);
                 let sacrifice = if sacrifice {"sacrifice "} else {""};
-                format!("{batter} grounded into a {sacrifice}double play{fielders}. {play_one} {play_two}{scores_and_advances}")
+                format!("{batter} grounded into a {sacrifice}double play{fielders}. {out_one} {out_two}{scores_and_advances}")
             }
-            Self::DoublePlayCaught { batter, fair_ball_type, fielders, play, scores, advances } => {
+            Self::DoublePlayCaught { batter, fair_ball_type, fielders, out_two, scores, advances } => {
                 let fair_ball_type = fair_ball_type.verb_name();
                 let fielders = unparse_fielders_for_play(fielders);
                 let scores_and_advances = unparse_scores_and_advances(scores, advances);
-                format!("{batter} {fair_ball_type} into a double play{fielders}. {play}{scores_and_advances}")
+                format!("{batter} {fair_ball_type} into a double play{fielders}. {out_two}{scores_and_advances}")
             }
             Self::ReachOnFieldingError { batter, fielder, error, scores, advances } => {
                 let scores_and_advances = unparse_scores_and_advances(scores, advances);
-                let error = error.to_string().to_lowercase();
+                let error = error.lowercase();
                 format!("{batter} reaches on a {error} error by {fielder}.{scores_and_advances}")
             }
         }
@@ -312,8 +311,9 @@ pub enum StartOfInningPitcher<S> {
     }
 }
 
+/// Either an Out or an Error - e.g. for a Fielder's Choice.
 #[derive(Debug, Clone, Copy, Serialize, Deserialize, PartialEq)]
-pub enum Play<S> {
+pub enum FieldingAttempt<S> {
     Out {
         out: RunnerOut<S>,
     },
@@ -322,13 +322,14 @@ pub enum Play<S> {
         error: FieldingErrorType
     }
 }
-impl<S:Display> Display for Play<S> {
+impl<S:Display> Display for FieldingAttempt<S> {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         match self {
             Self::Out { out } => {
                 write!(f, "{} out at {}.", out.runner, out.base)
             },
             Self::Error { fielder, error } => {
+                let error = error.uppercase();
                 write!(f, "{error} by {fielder}.")
             }
         }
@@ -348,7 +349,7 @@ impl<S: Display> Display for PositionedPlayer<S> {
 #[derive(Debug, Clone, Copy, Serialize, Deserialize, PartialEq)]
 pub struct RunnerOut<S> {
     pub runner: S,
-    pub base: BaseNameVariants,
+    pub base: BaseNameVariant,
 }
 impl<S: Display> Display for RunnerOut<S> {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
@@ -374,10 +375,10 @@ pub struct BaseSteal<S> {
 impl<S: Display> Display for BaseSteal<S> {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         match self.caught {
-            true => write!(f, "{} is caught stealing {}.", self.runner, self.base.to_base_string()),
+            true => write!(f, "{} is caught stealing {}.", self.runner, self.base.to_base_str()),
             false => match self.base {
-                Base::Home => write!(f, "<strong>{} steals {}!</strong>", self.runner, self.base.to_base_string()),
-                _ => write!(f, "{} steals {}!", self.runner, self.base.to_base_string()),
+                Base::Home => write!(f, "<strong>{} steals {}!</strong>", self.runner, self.base.to_base_str()),
+                _ => write!(f, "{} steals {}!", self.runner, self.base.to_base_str()),
             }
         }
     }
@@ -386,7 +387,7 @@ impl<S> TryFrom<BaseSteal<S>> for RunnerOut<S> {
     type Error = ();
     fn try_from(value: BaseSteal<S>) -> Result<Self, Self::Error> {
         if value.caught {
-            Ok(RunnerOut { runner: value.runner, base: value.base.into() })
+            Ok(RunnerOut { runner: value.runner, base: BaseNameVariant::basic_name(value.base) })
         } else {
             Err(())
         }

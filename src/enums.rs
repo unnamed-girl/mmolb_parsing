@@ -3,6 +3,7 @@ use std::fmt::Display;
 use serde::{Deserialize, Serialize};
 use strum::{Display, EnumDiscriminants, EnumIter, EnumString};
 
+/// Possible values of the "event" field of an mmolb event. 
 #[derive(Debug, Clone, Copy, Serialize, Deserialize, EnumString, Display, PartialEq, Eq, Hash)]
 pub enum EventType {
     PitchingMatchup,
@@ -20,6 +21,23 @@ pub enum EventType {
     NowBatting
 }
 
+/// Top or bottom of an inning.
+/// 
+/// ```
+/// use mmolb_parsing::enums::TopBottom;
+/// use mmolb_parsing::enums::NotASide;
+/// use mmolb_parsing::enums::HomeAway;
+/// 
+/// assert_eq!(TopBottom::Top.flip(), TopBottom::Bottom);
+/// assert_eq!(TopBottom::Top.homeaway(), HomeAway::Away);
+/// assert_eq!(TopBottom::Top.is_top(), true);
+/// assert_eq!(TopBottom::Top.is_bottom(), false);
+/// 
+/// assert_eq!(TopBottom::from(HomeAway::Away), TopBottom::Top);
+/// assert_eq!(TopBottom::try_from(0), Ok(TopBottom::Top));
+/// assert_eq!(TopBottom::try_from(2), Err(NotASide(2)));
+/// assert_eq!(u8::from(TopBottom::Bottom), 1);
+/// ```
 #[derive(Debug, Clone, Copy, Deserialize, Serialize, PartialEq, Eq, Hash, EnumString, Display)]
 pub enum TopBottom {
     #[strum(to_string = "top")]
@@ -34,18 +52,22 @@ impl TopBottom {
             TopBottom::Bottom => TopBottom::Top,
         }
     }
+    
+    /// Who is curently batting.
     pub fn homeaway(self) -> HomeAway {
         match self {
             TopBottom::Top => HomeAway::Away,
             TopBottom::Bottom => HomeAway::Home,
         }
     }
+
     pub fn is_top(self) -> bool {
         match self {
             TopBottom::Top => true,
             TopBottom::Bottom => false,
         }
     }
+
     pub fn is_bottom(self) -> bool {
         match self {
             TopBottom::Top => false,
@@ -54,8 +76,9 @@ impl TopBottom {
     }
 }
 
-#[derive(Debug)]
-pub struct NotASide(u8);
+/// Error for TopBottom's TryFrom<u8> implementation: fails because the given number was not a valid side number.
+#[derive(Debug, PartialEq, Eq, Clone, Copy)]
+pub struct NotASide(pub u8);
 impl Display for NotASide {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         write!(f, "{} is not 0 or 1 (2 means gameover, should not reach here)", self.0)
@@ -86,6 +109,18 @@ impl From<HomeAway> for TopBottom {
     }
 }
 
+/// ```
+/// use mmolb_parsing::enums::TopBottom;
+/// use mmolb_parsing::enums::NotASide;
+/// use mmolb_parsing::enums::HomeAway;
+/// 
+/// assert_eq!(HomeAway::Home.flip(), HomeAway::Away);
+/// assert_eq!(HomeAway::Home.topbottom(), TopBottom::Bottom);
+/// assert_eq!(HomeAway::Home.is_home(), true);
+/// assert_eq!(HomeAway::Home.is_away(), false);
+/// 
+/// assert_eq!(HomeAway::from(TopBottom::Top), HomeAway::Away);
+/// ```
 #[derive(Debug, Clone, Copy, Deserialize, Serialize, PartialEq, Eq, Hash, EnumString, Display)]
 pub enum HomeAway {
     Away,
@@ -98,6 +133,8 @@ impl HomeAway {
             Self::Home => Self::Away
         }
     }
+
+    /// Converts to the side in which this team is batting.
     pub fn topbottom(self) -> TopBottom {
         match self {
             HomeAway::Away => TopBottom::Top,
@@ -124,6 +161,18 @@ impl From<TopBottom> for HomeAway {
     }
 }
 
+/// Possible states for the current inning: before game/during game/after game. Inning number is 1-indexed: inning 0 is before the game.
+/// 
+/// ```
+/// use mmolb_parsing::enums::Inning;
+/// use mmolb_parsing::enums::TopBottom;
+/// use mmolb_parsing::enums::HomeAway;
+/// 
+/// assert_eq!(Inning::DuringGame { number: 5, batting_side: TopBottom::Top }.next(false), Some(Inning::DuringGame { number: 5, batting_side: TopBottom::Bottom }));
+/// assert_eq!(Inning::DuringGame { number: 1, batting_side: TopBottom::Top }.number(), Some(1));
+/// assert_eq!(Inning::DuringGame { number: 1, batting_side: TopBottom::Top }.batting_team(), Some(HomeAway::Away));
+/// assert_eq!(Inning::DuringGame { number: 1, batting_side: TopBottom::Top }.pitching_team(), Some(HomeAway::Home));
+/// ```
 #[derive(Debug, Clone, Copy, Serialize, Deserialize, PartialEq, Eq, Hash)]
 pub enum Inning {
     BeforeGame,
@@ -131,6 +180,43 @@ pub enum Inning {
     AfterGame { total_inning_count: u8 }
 }
 impl Inning {
+    /// The next inning. If `continue_if_overtime`, go to extra innings instead of ending the game at the 9th.
+    /// 
+    /// ```
+    /// use mmolb_parsing::enums::Inning;
+    /// use mmolb_parsing::enums::TopBottom;
+    /// 
+    /// assert_eq!(Inning::BeforeGame.next(false), Some(Inning::DuringGame { number: 1, batting_side: TopBottom::Top }));
+    /// assert_eq!(Inning::DuringGame { number: 9, batting_side: TopBottom::Bottom }.next(false), Some(Inning::AfterGame { total_inning_count:9 }));
+    /// assert_eq!(Inning::DuringGame { number: 9, batting_side: TopBottom::Bottom }.next(true), Some(Inning::DuringGame { number: 10, batting_side: TopBottom::Top }));
+    /// assert_eq!(Inning::AfterGame { total_inning_count: 9 }.next(true), None);
+    /// ```
+    pub fn next(self, continue_if_overtime: bool) -> Option<Self> {
+        match self {
+            Inning::BeforeGame => Some(Inning::DuringGame { number: 1, batting_side: TopBottom::Top }),
+            Inning::DuringGame { number, batting_side } => {
+                if number >= 9 && !continue_if_overtime {
+                    Some(Inning::AfterGame { total_inning_count: number })
+                } else {
+                    match batting_side {
+                        TopBottom::Top => Some(Inning::DuringGame { number, batting_side: batting_side.flip() }),
+                        TopBottom::Bottom => Some(Inning::DuringGame { number: number + 1, batting_side: batting_side.flip() })
+                    }
+                }
+            }
+            Inning::AfterGame { .. } => None
+        }
+    }
+    /// The number of the current inning, during a game.
+    /// 
+    /// ```
+    /// use mmolb_parsing::enums::Inning;
+    /// use mmolb_parsing::enums::TopBottom;
+    /// 
+    /// assert_eq!(Inning::BeforeGame.number(), None);
+    /// assert_eq!(Inning::DuringGame { number: 1, batting_side: TopBottom::Top }.number(), Some(1));
+    /// assert_eq!(Inning::AfterGame {total_inning_count: 9}.number(), None);
+    /// ```
     pub fn number(self) -> Option<u8> {
         if let Inning::DuringGame { number, .. } = self {
             Some(number)
@@ -138,28 +224,56 @@ impl Inning {
             None
         }
     }
+
+    /// The side that is currently batting, during a game.
+    /// 
+    /// ```
+    /// use mmolb_parsing::enums::Inning;
+    /// use mmolb_parsing::enums::TopBottom;
+    /// use mmolb_parsing::enums::HomeAway;
+    /// 
+    /// assert_eq!(Inning::BeforeGame.batting_team(), None);
+    /// assert_eq!(Inning::DuringGame { number: 1, batting_side: TopBottom::Top }.batting_team(), Some(HomeAway::Away));
+    /// assert_eq!(Inning::DuringGame { number: 1, batting_side: TopBottom::Bottom }.batting_team(), Some(HomeAway::Home));
+    /// assert_eq!(Inning::AfterGame {total_inning_count: 9}.batting_team(), None);
+    /// ```
     pub fn batting_team(self) -> Option<HomeAway> {
-        if let Inning::DuringGame { batting_side: side, .. } = self {
-            match side {
-                TopBottom::Top => Some(HomeAway::Away),
-                TopBottom::Bottom => Some(HomeAway::Home),
-            }
+        if let Inning::DuringGame { batting_side, .. } = self {
+            Some(batting_side.homeaway())
         } else {
             None
         }
     }
+
+    /// The side that is currently pitching, during a game.
+    /// 
+    /// ```
+    /// use mmolb_parsing::enums::Inning;
+    /// use mmolb_parsing::enums::TopBottom;
+    /// use mmolb_parsing::enums::HomeAway;
+    /// 
+    /// assert_eq!(Inning::BeforeGame.pitching_team(), None);
+    /// assert_eq!(Inning::DuringGame { number: 1, batting_side: TopBottom::Top }.pitching_team(), Some(HomeAway::Home));
+    /// assert_eq!(Inning::DuringGame { number: 1, batting_side: TopBottom::Bottom }.pitching_team(), Some(HomeAway::Away));
+    /// assert_eq!(Inning::AfterGame {total_inning_count: 9}.pitching_team(), None);
+    /// ```
     pub fn pitching_team(self) -> Option<HomeAway> {
-        if let Inning::DuringGame { batting_side: side, .. } = self {
-            match side {
-                TopBottom::Top => Some(HomeAway::Home),
-                TopBottom::Bottom => Some(HomeAway::Away),
-            }
+        if let Inning::DuringGame { batting_side, .. } = self {
+            Some(batting_side.flip().homeaway())
         } else {
             None
         }
     }
 }
 
+
+/// Player roster/fielding positions.
+/// 
+/// ```
+/// use mmolb_parsing::enums::Position;
+/// 
+/// assert_eq!(Position::FirstBaseman.to_string(), "1B");
+/// ```
 #[derive(EnumString, Display, Debug, Serialize, Deserialize, Clone, Copy, EnumIter, PartialEq, Eq, Hash)]
 pub enum Position {
     #[strum(to_string = "P")]
@@ -190,7 +304,13 @@ pub enum Position {
     DesignatedHitter
 }
 
-
+/// Places that a batter can hit a ball towards.
+/// 
+/// ```
+/// use mmolb_parsing::enums::FairBallDestination;
+/// 
+/// assert_eq!(FairBallDestination::ShortStop.to_string(), "the shortstop");
+/// ```
 #[derive(EnumString, Display, Debug, Serialize, Deserialize, Clone, Copy, PartialEq, Eq, Hash, EnumIter)]
 pub enum FairBallDestination {
     #[strum(to_string = "the shortstop")]
@@ -214,6 +334,15 @@ pub enum FairBallDestination {
     RightField,
 }
 
+
+/// A characterisation of a fair ball.
+///
+/// ```
+/// use mmolb_parsing::enums::FairBallType;
+/// 
+/// assert_eq!(FairBallType::GroundBall.to_string(), "ground ball");
+/// assert_eq!(FairBallType::GroundBall.verb_name(), "grounds");
+/// ```
 #[derive(Clone, Copy, EnumString, Display, Debug, Serialize, Deserialize, PartialEq, Eq, Hash, EnumIter)]
 pub enum FairBallType {
     #[strum(to_string = "ground ball")]
@@ -226,6 +355,11 @@ pub enum FairBallType {
     Popup,
 }
 impl FairBallType {
+    /// ```
+    /// use mmolb_parsing::enums::FairBallType;
+    /// 
+    /// assert_eq!(FairBallType::GroundBall.verb_name(), "grounds");
+    /// ```
     pub fn verb_name(self) -> &'static str {
         match self {
             Self::GroundBall => "grounds",
@@ -235,6 +369,12 @@ impl FairBallType {
         }
     }
 }
+
+/// ```
+/// use mmolb_parsing::enums::PitchType;
+/// 
+/// assert_eq!(PitchType::KnuckleCurve.to_string(), "Knuckle Curve");
+/// ```
 #[derive(Clone, Copy, EnumString, Display, Debug, Serialize, Deserialize, PartialEq, Eq, Hash, EnumIter)]
 pub enum PitchType {
     Fastball,
@@ -249,7 +389,11 @@ pub enum PitchType {
     Splitter
 }
 
-
+/// ```
+/// use mmolb_parsing::enums::StrikeType;
+/// 
+/// assert_eq!(StrikeType::Looking.to_string(), "looking");
+/// ```
 #[derive(Clone, Copy, EnumString, Display, Debug, Serialize, Deserialize, PartialEq, Eq, Hash)]
 pub enum StrikeType {
     #[strum(to_string = "looking")]
@@ -258,14 +402,51 @@ pub enum StrikeType {
     Swinging
 }
 
+/// ```
+/// use mmolb_parsing::enums::FieldingErrorType;
+/// 
+/// assert_eq!(FieldingErrorType::Throwing.to_string(), "Throwing");
+/// assert_eq!(FieldingErrorType::Throwing.uppercase(), "Throwing");
+/// assert_eq!(FieldingErrorType::Throwing.lowercase(), "throwing");
+/// ```
 #[derive(Clone, Copy, EnumString, Display, Debug, Serialize, Deserialize, PartialEq, Eq, Hash)]
 pub enum FieldingErrorType {
-    #[strum(ascii_case_insensitive)]
+    #[strum(to_string="Throwing", serialize="throwing")]
     Throwing,
-    #[strum(ascii_case_insensitive)]
+    #[strum(to_string="Fielding", serialize="fielding")]
     Fielding
 }
+impl FieldingErrorType {
+    /// ```
+    /// use mmolb_parsing::enums::FieldingErrorType;
+    /// 
+    /// assert_eq!(FieldingErrorType::Throwing.lowercase(), "throwing");
+    /// ```
+    pub fn lowercase(self) -> &'static str {
+        match self {
+            Self::Throwing => "throwing",
+            Self::Fielding => "fielding",
+        }
+    }
 
+    /// ```
+    /// use mmolb_parsing::enums::FieldingErrorType;
+    /// 
+    /// assert_eq!(FieldingErrorType::Throwing.uppercase(), "Throwing");
+    /// ```
+    pub fn uppercase(self) -> &'static str {
+        match self {
+            Self::Throwing => "Throwing",
+            Self::Fielding => "Fielding",
+        }
+    }
+}
+
+/// ```
+/// use mmolb_parsing::enums::FoulType;
+/// 
+/// assert_eq!(FoulType::Tip.to_string(), "tip");
+/// ```
 #[derive(Clone, Copy, EnumString, Display, Debug, Serialize, Deserialize, PartialEq, Eq, Hash)]
 pub enum FoulType {
     #[strum(to_string = "tip")]
@@ -274,6 +455,13 @@ pub enum FoulType {
     Ball
 }
 
+/// ```
+/// use mmolb_parsing::enums::Base;
+/// 
+/// assert_eq!(Base::First.to_string(), "first");
+/// assert_eq!(Base::First.to_base_str(), "first base");
+/// assert_eq!(Base::Home.to_base_str(), "home");
+/// ```
 #[derive(Clone, Copy, EnumString, Display, Debug, Serialize, Deserialize, PartialEq, Eq, Hash)]
 pub enum Base {
     #[strum(to_string = "home")]
@@ -285,9 +473,14 @@ pub enum Base {
     #[strum(to_string = "third")]
     Third,
 }
-impl Base {
-    /// To string, such that home is "home" rather than "home base"
-    pub fn to_base_string(self) -> &'static str {
+impl Base { 
+    /// ```
+    /// use mmolb_parsing::enums::Base;
+    /// 
+    /// assert_eq!(Base::First.to_base_str(), "first base");
+    /// assert_eq!(Base::Home.to_base_str(), "home");
+    /// ```
+    pub fn to_base_str(self) -> &'static str {
         match self {
             Base::First => "first base",
             Base::Second => "second base",
@@ -296,25 +489,35 @@ impl Base {
         }
     }
 }
-impl From<BaseNameVariants> for Base {
-    fn from(value: BaseNameVariants) -> Self {
+impl From<BaseNameVariant> for Base {
+    fn from(value: BaseNameVariant) -> Self {
         match value {
-            BaseNameVariants::First => Base::First,
-            BaseNameVariants::FirstBase => Base::First,
-            BaseNameVariants::OneB => Base::First,
-            BaseNameVariants::Second => Base::Second,
-            BaseNameVariants::SecondBase => Base::Second,
-            BaseNameVariants::TwoB => Base::Second,
-            BaseNameVariants::Third => Base::Third,
-            BaseNameVariants::ThirdBase => Base::Third,
-            BaseNameVariants::ThreeB => Base::Third,
-            BaseNameVariants::Home => Base::Home
+            BaseNameVariant::First => Base::First,
+            BaseNameVariant::FirstBase => Base::First,
+            BaseNameVariant::OneB => Base::First,
+            BaseNameVariant::Second => Base::Second,
+            BaseNameVariant::SecondBase => Base::Second,
+            BaseNameVariant::TwoB => Base::Second,
+            BaseNameVariant::Third => Base::Third,
+            BaseNameVariant::ThirdBase => Base::Third,
+            BaseNameVariant::ThreeB => Base::Third,
+            BaseNameVariant::Home => Base::Home
         }
     }
 }
 
+
+/// ```
+/// use mmolb_parsing::enums::BaseNameVariant;
+/// use mmolb_parsing::enums::Base;
+/// 
+/// assert_eq!(BaseNameVariant::First.to_string(), "first");
+/// assert_eq!(BaseNameVariant::OneB.to_string(), "1B");
+/// assert_eq!(BaseNameVariant::basic_name(Base::First), BaseNameVariant::First);
+/// assert_eq!(Base::from(BaseNameVariant::OneB), Base::First);
+/// ```
 #[derive(Clone, Copy, EnumString, Display, Debug, Serialize, Deserialize, PartialEq, Eq, Hash)]
-pub enum BaseNameVariants {
+pub enum BaseNameVariant {
     #[strum(to_string = "first")]
     First,
     #[strum(to_string = "first base")]
@@ -336,17 +539,23 @@ pub enum BaseNameVariants {
     #[strum(to_string = "home")]
     Home,
 }
-impl From<Base> for BaseNameVariants {
-    fn from(value: Base) -> Self {
-        match value {
-            Base::First => BaseNameVariants::First,
-            Base::Second => BaseNameVariants::Second,
-            Base::Third => BaseNameVariants::Third,
-            Base::Home => BaseNameVariants::Home,
+impl BaseNameVariant {
+    /// The most basic name for a given base e.g. ("first")
+    pub fn basic_name(base: Base) -> BaseNameVariant {
+        match base {
+            Base::First => BaseNameVariant::First,
+            Base::Second => BaseNameVariant::Second,
+            Base::Third => BaseNameVariant::Third,
+            Base::Home => BaseNameVariant::Home,
         }
     }
 }
 
+/// ```
+/// use mmolb_parsing::enums::Distance;
+/// 
+/// assert_eq!(Distance::Single.to_string(), "singles");
+/// ```
 #[derive(Clone, Copy, EnumString, Display, Debug, Serialize, Deserialize, PartialEq, Eq, Hash)]
 pub enum Distance {
     #[strum(to_string = "singles")]
@@ -357,7 +566,8 @@ pub enum Distance {
     Triple,
 }
 
-#[derive(Clone, EnumString, Display, Debug, Serialize, Deserialize, PartialEq, Eq, Hash)]
+/// Possible followup to "Now batting: [BATTER]". (e.g. "(1st PA of game)")
+#[derive(Clone, Debug, Serialize, Deserialize, PartialEq, Eq, Hash)]
 pub enum NowBattingStats {
     FirstPA,
     Stats {
@@ -366,8 +576,16 @@ pub enum NowBattingStats {
     NoStats
 }
 
-
-#[derive(Clone, Copy, Display, Debug, EnumDiscriminants, Serialize, Deserialize, PartialEq, Eq, Hash)]
+/// ```
+/// use mmolb_parsing::enums::{BatterStat, BatterStatDiscriminants};
+/// 
+/// assert_eq!(BatterStat::FirstBases(1).unparse(), "1 1B");
+///
+/// // EnumDiscrimanats with display is derived.
+/// assert_eq!(BatterStatDiscriminants::FirstBases.to_string(), "1B");
+/// assert_eq!(BatterStatDiscriminants::HitsForAtBats.to_string(), "HitsForAtBats"); // mmolb implies this stat, it doesn't have an acronym.
+/// ```
+#[derive(Clone, Debug, EnumDiscriminants, Serialize, Deserialize, PartialEq, Eq, Hash)]
 #[strum_discriminants(derive(EnumString, Display))]
 pub enum BatterStat {
     HitsForAtBats {
@@ -406,6 +624,12 @@ pub enum BatterStat {
     Fouls(u8),
 }
 impl BatterStat {
+    /// ```
+    /// use mmolb_parsing::enums::{BatterStat, BatterStatDiscriminants};
+    /// 
+    /// assert_eq!(BatterStat::FirstBases(1).unparse(), "1 1B");
+    /// assert_eq!(BatterStat::HitsForAtBats{hits: 1, at_bats: 1}.unparse(), "1 for 1");
+    /// ```
     pub fn unparse(self) -> String {
         match self {
             BatterStat::FirstBases(count) |
@@ -432,9 +656,14 @@ impl BatterStat {
     }
 }
 
+/// ```
+/// use mmolb_parsing::enums::GameStat;
+/// 
+/// assert_eq!(GameStat::GroundedIntoDoublePlay.to_string(), "grounded_into_double_play");
+/// ```
 #[derive(Clone, Copy, EnumString, Display, Debug, Serialize, Deserialize, PartialEq, Eq, Hash)]
 #[strum(serialize_all = "snake_case")]
-pub enum GameStats {
+pub enum GameStat {
     GroundedIntoDoublePlay,
     LeftOnBaseRisp,
     StrikeoutsRisp,

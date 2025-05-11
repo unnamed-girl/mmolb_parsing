@@ -3,7 +3,7 @@ use std::{fmt::Debug, str::FromStr};
 use nom::{branch::alt, bytes::complete::{tag, take, take_till, take_until, take_until1, take_while}, character::complete::{multispace0, space0, space1, u8}, combinator::{all_consuming, recognize, rest, value, verify}, error::{ErrorKind, ParseError}, multi::{count, many0, many1, separated_list1}, sequence::{delimited, preceded, separated_pair, terminated}, AsChar, Compare, CompareResult, Input, Parser};
 use nom_language::error::VerboseError;
 
-use crate::{enums::{Base, BaseNameVariants, Distance, FairBallDestination, FairBallType, FieldingErrorType, FoulType, BatterStat, NowBattingStats, Position, StrikeType, TopBottom}, parsed_event::{BaseSteal, Play, PositionedPlayer, RunnerAdvance, RunnerOut}, Game};
+use crate::{enums::{Base, BaseNameVariant, Distance, FairBallDestination, FairBallType, FieldingErrorType, FoulType, BatterStat, NowBattingStats, Position, StrikeType, TopBottom}, parsed_event::{BaseSteal, PositionedPlayer, RunnerAdvance, RunnerOut}, Game};
 
 pub(super) type Error<'a> = VerboseError<&'a str>;
 pub(super) type IResult<'a, I, O> = nom::IResult<I, O, Error<'a>>;
@@ -155,10 +155,10 @@ pub(super) fn base(i: &str) -> IResult<&str, Base> {
 }
 
 /// Sometimes bases get called e.g. "1B" instead.
-pub(super) fn base_name_variants(i: &str) -> IResult<&str, BaseNameVariants> {
+pub(super) fn base_name_variant(i: &str) -> IResult<&str, BaseNameVariant> {
     alt((
-        words(2).map_res(BaseNameVariants::try_from),
-        word.map_res(BaseNameVariants::try_from),
+        words(2).map_res(BaseNameVariant::try_from),
+        word.map_res(BaseNameVariant::try_from),
     )).parse(i)
 }
 
@@ -171,7 +171,7 @@ pub(super) fn fielding_error_type(i: &str) -> IResult<&str, FieldingErrorType> {
 pub(super) fn out(input: &str) -> IResult<&str, RunnerOut<&str>> {
     (
         parse_terminated(" out at "),
-        base_name_variants
+        base_name_variant
     )
     .map(|(player, base)| RunnerOut { runner: player, base })
     .parse(input)
@@ -206,16 +206,6 @@ pub(super) fn scores_and_advances(input: &str) -> IResult<&str, (Vec<&str>, Vec<
         many0(scores_sentence),
         many0(runner_advance_sentence)
     )
-    .parse(input)
-}
-
-/// A play from a double play (either an out or an error). Will consume all characters given to it.
-pub(super) fn play_eof(input: &str) -> IResult<&str, Play<&str>> {
-    alt((
-        out.map(|out| Play::Out { out }),
-        separated_pair(fielding_error_type, s_tag("error by"), name_eof)
-            .map(|(error, fielder)| Play::Error { fielder, error })
-    ))
     .parse(input)
 }
 
@@ -331,7 +321,11 @@ pub(super) fn positioned_player_eof(input: &str) -> IResult<&str, PositionedPlay
 }
 
 pub(super) fn name_eof(input: &str) -> IResult<&str, &str> {
-    verify(rest,  |name: &str| !name.contains(",") && !name.contains("(") && !name.contains(")"))
+    verify(rest,  |name: &str| 
+        name.input_len() > 0 &&
+        !name.contains(",") && !name.contains("(") && !name.contains(")")
+        && !['.', ' '].contains(&name.chars().nth(0).unwrap())
+    )
     .parse(input)
 }
 

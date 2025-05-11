@@ -1,8 +1,8 @@
 use nom::{branch::alt, bytes::{complete::{take_till, take_until}, tag}, character::complete::{digit1, u8}, combinator::{all_consuming, cut, fail, opt}, error::context, multi::{many0, many1}, sequence::{delimited, preceded, separated_pair, terminated}, AsChar, Finish, Parser};
 
-use crate::{enums::{EventType, HomeAway, NowBattingStats}, game::Event, parsed_event::{Play, PositionedPlayer, StartOfInningPitcher}, ParsedEventMessage};
+use crate::{enums::{EventType, HomeAway, NowBattingStats}, game::Event, parsed_event::{FieldingAttempt, PositionedPlayer, StartOfInningPitcher}, ParsedEventMessage};
 
-use super::{shared::{all_consuming_sentence_and, base_steal_sentence, bold, destination, distance, emoji_and_name_eof, exclamation, fair_ball_type, fair_ball_type_verb_name, fielders_eof, fielding_error_type, foul_type, name_eof, now_batting_stats, ordinal_suffix, out, parse_and, parse_terminated, play_eof, position, positioned_player_eof, s_tag, score_update_sentence, scores_and_advances, scores_sentence, sentence, sentence_eof, strike_type, strip, switch_pitcher_sentences, team_emoji_and_name, top_or_bottom, Error}, ParsingContext};
+use super::{shared::{all_consuming_sentence_and, base_steal_sentence, bold, destination, distance, emoji_and_name_eof, exclamation, fair_ball_type, fair_ball_type_verb_name, fielders_eof, fielding_error_type, foul_type, name_eof, now_batting_stats, ordinal_suffix, out, parse_and, parse_terminated, position, positioned_player_eof, s_tag, score_update_sentence, scores_and_advances, scores_sentence, sentence, sentence_eof, strike_type, strip, switch_pitcher_sentences, team_emoji_and_name, top_or_bottom, Error}, ParsingContext};
 
 pub fn parse_event<'output>(event: &'output Event, parsing_context: &ParsingContext<'output>) -> Result<ParsedEventMessage<&'output str>, Error<'output>> {
     match event.event {
@@ -78,11 +78,11 @@ fn field<'output>() -> impl Parser<&'output str, Output = ParsedEventMessage<&'o
 
     let homers = bold(exclamation((parse_terminated(" homers on a "), fair_ball_type, preceded(s_tag("to"), destination))))
     .and(many0(scores_sentence))
-    .map(|((batter, fair_ball_type, destination), scores)| ParsedEventMessage::HomeRun { batter, fair_ball_type, destination, scores });
+    .map(|((batter, fair_ball_type, destination), scores)| ParsedEventMessage::HomeRun { batter, fair_ball_type, destination, scores, grand_slam: false });
     
     let grand_slam = bold(exclamation((parse_terminated(" hits a grand slam on a "), fair_ball_type, preceded(s_tag("to"), destination))))
     .and(many0(scores_sentence))
-    .map(|((batter, fair_ball_type, destination), scores)| ParsedEventMessage::GrandSlam { batter, fair_ball_type, destination, scores });
+    .map(|((batter, fair_ball_type, destination), scores)| ParsedEventMessage::HomeRun { batter, fair_ball_type, destination, scores, grand_slam: true });
 
     let caught_out = all_consuming_sentence_and(
         (
@@ -122,7 +122,7 @@ fn field<'output>() -> impl Parser<&'output str, Output = ParsedEventMessage<&'o
         (sentence(out), scores_and_advances)
     )
     .map(|((batter, fielders), (out, (scores, advances)))| {
-        ParsedEventMessage::ReachOnFieldersChoice { batter, fielders, play: Play::Out { out }, scores, advances }
+        ParsedEventMessage::ReachOnFieldersChoice { batter, fielders, result: FieldingAttempt::Out { out }, scores, advances }
     });
 
     let reaches_on_fielders_choice_error = all_consuming_sentence_and(
@@ -130,7 +130,7 @@ fn field<'output>() -> impl Parser<&'output str, Output = ParsedEventMessage<&'o
         (scores_and_advances, sentence_eof(separated_pair(fielding_error_type, s_tag("error by"), name_eof)))
     )
     .map(|((batter, fielder), ((scores, advances), (error, error_fielder)))| {
-        ParsedEventMessage::ReachOnFieldersChoice {batter,  fielders: vec![fielder], play: Play::Error { fielder: error_fielder, error }, scores, advances }
+        ParsedEventMessage::ReachOnFieldersChoice {batter,  fielders: vec![fielder], result: FieldingAttempt::Error { fielder: error_fielder, error }, scores, advances }
     });
 
     let reaches_on_error = all_consuming_sentence_and(
@@ -141,28 +141,24 @@ fn field<'output>() -> impl Parser<&'output str, Output = ParsedEventMessage<&'o
         ParsedEventMessage::ReachOnFieldingError {batter, fielder, error, scores, advances }
     });
 
-    let double_play_grounded = all_consuming_sentence_and((
-        parse_terminated(" grounded "),
-        delimited(s_tag("into a"), opt(s_tag("sacrifice")).map(|s| s.is_some()), s_tag("double play,")),
-        fielders_eof
-    ),
-    all_consuming_sentence_and(
-        play_eof,
-        all_consuming_sentence_and(play_eof,scores_and_advances),
-    ))
-    .map(|((batter, sacrifice, fielders), (play_one, (play_two, (scores, advances))))| 
-        ParsedEventMessage::DoublePlayGrounded { batter, fielders, play_one, play_two, scores, advances, sacrifice }
+    let double_play_grounded = all_consuming_sentence_and(
+        (
+            parse_terminated(" grounded "),
+            delimited(s_tag("into a"), opt(s_tag("sacrifice")).map(|s| s.is_some()), s_tag("double play,")),
+            fielders_eof
+        ),
+        (sentence(out), sentence(out),scores_and_advances)
+    )
+    .map(|((batter, sacrifice, fielders), (out_one, out_two, (scores, advances)))| 
+        ParsedEventMessage::DoublePlayGrounded { batter, fielders, out_one, out_two, scores, advances, sacrifice }
     );
 
-    let double_play_caught = all_consuming_sentence_and((
-        terminated(parse_and( fair_ball_type_verb_name, " "), s_tag("into a double play,")),fielders_eof
-    ),
-    all_consuming_sentence_and(
-        play_eof,
-        scores_and_advances
-    ))
-    .map(|(((batter, fair_ball_type), fielders), (play, (scores, advances)))| 
-        ParsedEventMessage::DoublePlayCaught { batter, fair_ball_type, fielders, play, scores, advances }
+    let double_play_caught = all_consuming_sentence_and(
+        (terminated(parse_and( fair_ball_type_verb_name, " "), s_tag("into a double play,")),fielders_eof),
+        (sentence(out), scores_and_advances)
+    )
+    .map(|(((batter, fair_ball_type), fielders), (out_two, (scores, advances)))| 
+        ParsedEventMessage::DoublePlayCaught { batter, fair_ball_type, fielders, out_two, scores, advances }
     );
 
     let fielding_outcomes = alt((

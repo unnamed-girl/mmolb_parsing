@@ -21,7 +21,8 @@ pub fn downloaded(json_cache: &str) -> impl Iterator<Item = (String, RawGame)> {
                 let mut result = String::new();
                 let game_id = entry.file_name().to_str().unwrap().strip_suffix(".json").unwrap().to_string();
                 File::open(entry.path()).unwrap().read_to_string(&mut result).unwrap();
-                (game_id, serde_json::from_str(&result).unwrap())
+                let game = serde_json::from_str(&result).expect(&game_id);
+                (game_id, game)
             }
         )
 }
