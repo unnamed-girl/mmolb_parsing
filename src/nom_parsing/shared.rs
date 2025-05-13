@@ -323,8 +323,8 @@ pub(super) fn positioned_player_eof(input: &str) -> IResult<&str, PositionedPlay
 pub(super) fn name_eof(input: &str) -> IResult<&str, &str> {
     verify(rest,  |name: &str| 
         name.input_len() > 0 &&
-        !name.contains(",") && !name.contains("(") && !name.contains(")")
-        && !['.', ' '].contains(&name.chars().nth(0).unwrap())
+        !name.chars().any(|c| [',', '(', ')', '!', '<', '>', '\\'].contains(&c)) &&
+        !['.', ' '].contains(&name.chars().nth(0).unwrap())
     )
     .parse(input)
 }
