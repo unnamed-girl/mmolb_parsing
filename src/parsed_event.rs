@@ -86,7 +86,7 @@ pub enum ParsedEventMessage<S>
         batter: S,
         fair_ball_type: FairBallType,
         destination: FairBallDestination
-    },  
+    },
     StrikeOut { foul: Option<FoulType>, batter: S, strike: StrikeType, steals: Vec<BaseSteal<S>> },
 
     // Field
@@ -281,7 +281,7 @@ impl<S: Display> ParsedEventMessage<S> {
 fn unparse_fielders<S:Display>(fielders: Vec<PositionedPlayer<S>>) -> String {
     match fielders.len() {
         0 => panic!("0-fielders"),
-        1 => format!("to {}", fielders.first().unwrap()),
+        1 => format!(" to {}", fielders.first().unwrap()),
         _ => format!(", {}", fielders.iter().map(PositionedPlayer::to_string).collect::<Vec<_>>().join(" to "))
     }
 }

@@ -2,7 +2,7 @@ use nom::{branch::alt, bytes::{complete::{take_till, take_until}, tag}, characte
 
 use crate::{enums::{EventType, HomeAway, NowBattingStats}, game::Event, parsed_event::{FieldingAttempt, PositionedPlayer, StartOfInningPitcher}, ParsedEventMessage};
 
-use super::{shared::{all_consuming_sentence_and, base_steal_sentence, bold, destination, distance, emoji_and_name_eof, exclamation, fair_ball_type, fair_ball_type_verb_name, fielders_eof, fielding_error_type, foul_type, name_eof, now_batting_stats, ordinal_suffix, out, parse_and, parse_terminated, position, positioned_player_eof, s_tag, score_update_sentence, scores_and_advances, scores_sentence, sentence, sentence_eof, strike_type, strip, switch_pitcher_sentences, team_emoji_and_name, top_or_bottom, Error}, ParsingContext};
+use super::{shared::{all_consuming_sentence_and, base_steal_sentence, bold, destination, distance, emoji_and_name_eof, exclamation, fair_ball_type, fair_ball_type_verb_name, fielders_eof, fielding_error_type, fly_ball_type_verb_name, foul_type, name_eof, now_batting_stats, ordinal_suffix, out, parse_and, parse_terminated, position, positioned_player_eof, s_tag, score_update_sentence, scores_and_advances, scores_sentence, sentence, sentence_eof, strike_type, strip, switch_pitcher_sentences, team_emoji_and_name, top_or_bottom, Error}, ParsingContext};
 
 pub fn parse_event<'output>(event: &'output Event, parsing_context: &ParsingContext<'output>) -> Result<ParsedEventMessage<&'output str>, Error<'output>> {
     match event.event {
@@ -86,7 +86,7 @@ fn field<'output>() -> impl Parser<&'output str, Output = ParsedEventMessage<&'o
 
     let caught_out = all_consuming_sentence_and(
         (
-            terminated(parse_and(fair_ball_type_verb_name, " "), s_tag("out")),
+            terminated(parse_and(fly_ball_type_verb_name, " "), s_tag("out")),
             opt(s_tag("on a sacrifice fly")).map(|sacrifice| sacrifice.is_some()),
             preceded(s_tag("to"), positioned_player_eof),
         ),
@@ -165,8 +165,8 @@ fn field<'output>() -> impl Parser<&'output str, Output = ParsedEventMessage<&'o
         batter_to_base,
         homers,
         grand_slam,
-        caught_out,
         grounded_out,
+        caught_out,
         forced_out,
         reaches_on_fielders_choice_out,
         reaches_on_fielders_choice_error,

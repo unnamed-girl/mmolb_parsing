@@ -84,6 +84,15 @@ pub(super) fn fair_ball_type_verb_name(i: &str) -> IResult<&str, FairBallType> {
         _ => None
     }).parse(i)
 }
+/// Verb names for fly ball types, e.g. "pops"
+pub(super) fn fly_ball_type_verb_name(i: &str) -> IResult<&str, FairBallType> {
+    word.map_opt(|word| match word {
+        "flies" => Some(FairBallType::FlyBall),
+        "lines" => Some(FairBallType::LineDrive),
+        "pops" => Some(FairBallType::Popup),
+        _ => None
+    }).parse(i)
+}
 
 /// A destination for a fair ball, e.g. "the shortstop"
 pub(super) fn destination(i: &str) -> IResult<&str, FairBallDestination> {
@@ -323,8 +332,9 @@ pub(super) fn positioned_player_eof(input: &str) -> IResult<&str, PositionedPlay
 pub(super) fn name_eof(input: &str) -> IResult<&str, &str> {
     verify(rest,  |name: &str| 
         name.input_len() > 0 &&
-        !name.chars().any(|c| [',', '(', ')', '!', '<', '>', '\\'].contains(&c)) &&
-        !['.', ' '].contains(&name.chars().nth(0).unwrap())
+        name.chars().any(|c| c == ' ') && // From the API, we know players have first/last name, so there should always be a space
+        !name.chars().any(|c| [',', '(', ')', '!', '<', '>', '\\'].contains(&c)) && // These characters should not be in names
+        !['.', ' '].contains(&name.chars().nth(0).unwrap()) // Vulnerable to "X jr." style name 
     )
     .parse(input)
 }
