@@ -765,3 +765,13 @@ pub enum GameStat {
     AllowedStolenBasesRisp,
     PerfectGames
 }
+
+#[derive(Clone, Copy, EnumString, Display, Debug, Serialize, Deserialize, PartialEq, Eq, Hash)]
+pub enum GameOverMessage {
+    /// Early season 0 "Game over." e.g. 6805db4bac48194de3cd42d2 
+    #[strum(to_string = "Game over.")]
+    GameOver,
+    /// Season 0 "\"GAME OVER.\"" e.g. 680fec59555fc84a67ba0fda
+    #[strum(to_string = "\"GAME OVER.\"")]
+    QuotedGAMEOVER
+}
