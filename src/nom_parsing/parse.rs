@@ -7,7 +7,7 @@ use crate::{enums::{EventType, GameOverMessage, HomeAway, NowBattingStats}, game
 use super::{shared::{all_consuming_sentence_and, base_steal_sentence, bold, destination, distance, emoji_and_name_eof, exclamation, fair_ball_type, fair_ball_type_verb_name, fielders_eof, fielding_error_type, fly_ball_type_verb_name, foul_type, name_eof, now_batting_stats, ordinal_suffix, out, parse_and, parse_terminated, position, positioned_player_eof, s_tag, score_update_sentence, scores_and_advances, scores_sentence, sentence, sentence_eof, strike_type, strip, switch_pitcher_sentences, team_emoji_and_name, top_or_bottom, Error}, ParsingContext};
 
 pub fn parse_event<'output>(event: &'output Event, parsing_context: &ParsingContext<'output>) -> Result<ParsedEventMessage<&'output str>, Error<'output>> {
-    match event.event {
+    match &event.event {
         EventType::PitchingMatchup => pitching_matchup(parsing_context).parse(&event.message),
         EventType::MoundVisit => mound_visit().parse(&event.message),
         EventType::GameOver => game_over().parse(&event.message),
@@ -20,7 +20,8 @@ pub fn parse_event<'output>(event: &'output Event, parsing_context: &ParsingCont
         EventType::AwayLineup => lineup(HomeAway::Away).parse(&event.message),
         EventType::InningEnd => inning_end().parse(&event.message),
         EventType::PlayBall => play_ball().parse(&event.message),
-        EventType::NowBatting => now_batting().parse(&event.message)
+        EventType::NowBatting => now_batting().parse(&event.message),
+        EventType::NotRecognized(event_type) => Ok(("", ParsedEventMessage::ParseError { event_type: event_type.clone(), message: event.message.clone() }))
     }.finish().map(|(_, o)| o)
 }
 

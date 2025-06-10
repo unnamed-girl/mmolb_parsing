@@ -4,7 +4,7 @@ use serde::{Deserialize, Serialize};
 use strum::{Display, EnumDiscriminants, EnumIter, EnumString};
 
 /// Possible values of the "event" field of an mmolb event. 
-#[derive(Debug, Clone, Copy, Serialize, Deserialize, EnumString, Display, PartialEq, Eq, Hash)]
+#[derive(Debug, Clone, Serialize, Deserialize, EnumString, Display, PartialEq, Eq, Hash)]
 pub enum EventType {
     PitchingMatchup,
     MoundVisit,
@@ -18,7 +18,10 @@ pub enum EventType {
     AwayLineup,
     InningEnd,
     PlayBall,
-    NowBatting
+    NowBatting,
+    
+    #[strum(default)]
+    NotRecognized(String)
 }
 
 /// Top or bottom of an inning.
@@ -661,9 +664,13 @@ impl BatterStat {
 /// 
 /// assert_eq!(GameStat::GroundedIntoDoublePlay.to_string(), "grounded_into_double_play");
 /// ```
-#[derive(Clone, Copy, EnumString, Display, Debug, Serialize, Deserialize, PartialEq, Eq, Hash)]
+#[derive(Clone, EnumString, Display, Debug, Serialize, Deserialize, PartialEq, Eq, Hash)]
 #[strum(serialize_all = "snake_case")]
 pub enum GameStat {
+    #[strum(default)]
+    NotRecognized(String),
+
+    // Season 0
     GroundedIntoDoublePlay,
     LeftOnBaseRisp,
     StrikeoutsRisp,
@@ -763,7 +770,7 @@ pub enum GameStat {
     Runs,
     HitsAllowedRisp,
     AllowedStolenBasesRisp,
-    PerfectGames
+    PerfectGames,
 }
 
 #[derive(Clone, Copy, EnumString, Display, Debug, Serialize, Deserialize, PartialEq, Eq, Hash)]

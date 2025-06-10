@@ -21,7 +21,7 @@ pub fn process_event<'output>(event: &'output Event, game: &'output Game) -> Par
                 panic!("{err} {:?}", err.errors)
             }
             #[cfg(not(feature = "panic_on_parse_error"))] {
-                ParsedEventMessage::ParseError { event_type: event.event, message: event.message.clone() }
+                ParsedEventMessage::ParseError { event_type: event.event.to_string(), message: event.message.clone() }
             }
         }
     };

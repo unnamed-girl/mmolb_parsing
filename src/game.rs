@@ -3,6 +3,11 @@ use serde::{Deserialize, Serialize};
 
 use crate::{enums::{EventType, GameStat, Inning, PitchType}, raw_game::{RawEvent, RawGame, RawWeather, RawZone}};
 
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub enum GameParseError {
+    GameStatNotRecognized { stat: String },
+    EventWithParseError { event_index: usize, event: Vec<EventParseError>}
+}
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
 #[serde(from = "RawGame", into = "RawGame")]
@@ -35,20 +40,47 @@ pub struct Game {
     pub stats: HashMap<String, HashMap<String, HashMap<GameStat, i32>>>,
 
     pub event_log: Vec<Event>,
+    pub parse_errors: Vec<GameParseError>
 }
 impl From<RawGame> for Game {
     fn from(value: RawGame) -> Self {
+        let mut parse_errors = Vec::new();
+
         let weather = value.weather.into();
-        let event_log = value.event_log.into_iter().map(|event| event.into()).collect();
+        let event_log: Vec<Event> = value.event_log.into_iter().map(|event| event.into()).collect();
         let realm_id = value.realm;
-        let stats  = value.stats.into_iter().map(|(team, players)|
-            (team, players.into_iter().map(|(player, stats)|
-                (player, stats.into_iter().map(|(stat, value)| (GameStat::from_str(&stat).expect(&stat), value)).collect())
-            ).collect())
+        let stats  = value.stats.into_iter().map(|(team, players)| {
+            let players = players.into_iter().map(|(player, stats)| {
+                let stats = stats.into_iter().map(|(stat, value)| {
+                    let stat = GameStat::from_str(&stat).expect("Has NotRecognized fallback");
+                    if let GameStat::NotRecognized(stat) = &stat {
+                        parse_errors.push(GameParseError::GameStatNotRecognized { stat: stat.clone()});
+                    }
+                    (stat, value)
+                }).collect();
+                (player, stats)
+            }).collect();
+            (team, players)
+            }
         ).collect();
-        Self { away_sp: value.away_sp, away_team_abbreviation: value.away_team_abbreviation, away_team_color: value.away_team_color, away_team_emoji: value.away_team_emoji, away_team_id: value.away_team_id, away_team_name: value.away_team_name, home_sp: value.home_sp, home_team_abbreviation: value.home_team_abbreviation, home_team_color: value.home_team_color, home_team_emoji: value.home_team_emoji, home_team_id: value.home_team_id, home_team_name: value.home_team_name, season: value.season, day: value.day, state: value.state, 
-            weather, event_log, realm_id, stats
+
+        event_log.iter().enumerate().for_each(|(event_index, event)| {
+            if event.parse_errors.len() > 0 {
+                parse_errors.push(GameParseError::EventWithParseError { event_index, event: event.parse_errors.clone() });
+            }
+        }    
+        );
+
+        #[cfg(feature = "panic_on_parse_error")]
+        {
+            if parse_errors.len() > 0 {
+                panic!("Game parse errors: {:?}", parse_errors)
+            }
         }
+
+        Self { away_sp: value.away_sp, away_team_abbreviation: value.away_team_abbreviation, away_team_color: value.away_team_color, away_team_emoji: value.away_team_emoji, away_team_id: value.away_team_id, away_team_name: value.away_team_name, home_sp: value.home_sp, home_team_abbreviation: value.home_team_abbreviation, home_team_color: value.home_team_color, home_team_emoji: value.home_team_emoji, home_team_id: value.home_team_id, home_team_name: value.home_team_name, season: value.season, day: value.day, state: value.state, 
+                    weather, event_log, realm_id, stats, parse_errors
+                }
     }
 }
 impl From<Game> for RawGame {
@@ -56,11 +88,12 @@ impl From<Game> for RawGame {
         let weather = value.weather.into();
         let event_log = value.event_log.into_iter().map(|event| event.into()).collect();
         let realm = value.realm_id;
-        let stats  = value.stats.into_iter().map(|(team, players)|
+        let stats: HashMap<String, HashMap<String, HashMap<String, i32>>>  = value.stats.into_iter().map(|(team, players)|
             (team, players.into_iter().map(|(player, stats)|
                 (player, stats.into_iter().map(|(stat, value)| (stat.to_string(), value)).collect())
             ).collect())
         ).collect();
+
         Self { away_sp: value.away_sp, away_team_abbreviation: value.away_team_abbreviation, away_team_color: value.away_team_color, away_team_emoji: value.away_team_emoji, away_team_id: value.away_team_id, away_team_name: value.away_team_name, home_sp: value.home_sp, home_team_abbreviation: value.home_team_abbreviation, home_team_color: value.home_team_color, home_team_emoji: value.home_team_emoji, home_team_id: value.home_team_id, home_team_name: value.home_team_name, season: value.season, day: value.day, state: value.state, 
             weather, event_log, realm, stats
         }
@@ -86,6 +119,11 @@ impl From<Weather> for RawWeather {
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
+pub enum EventParseError {
+    EventTypeNotRecognized { event_type: String }
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct Event {
     pub inning: Inning,
 
@@ -106,10 +144,14 @@ pub struct Event {
     pub pitch: Option<Pitch>,
 
     pub event: EventType,
-    pub message: String
+    pub message: String,
+
+    pub parse_errors: Vec<EventParseError>
 }
 impl From<RawEvent> for Event {
     fn from(value: RawEvent) -> Self {
+        let mut parse_errors = Vec::new();
+
         let inning = match (value.inning, value.inning_side) {
             (0, 1) => Inning::BeforeGame,
             (number, 2) => Inning::AfterGame { total_inning_count: number - 1 },
@@ -123,8 +165,20 @@ impl From<RawEvent> for Event {
 
         let pitch = pitch_info.zip(zone).map(|(pitch_info, zone)| Pitch::new(pitch_info, zone));
         
-        let event = EventType::from_str(&value.event).expect("Events to be known");
-        Self {inning, pitch, batter, on_deck, event, away_score: value.away_score, home_score: value.home_score, balls: value.balls, strikes: value.strikes, outs: value.outs, on_1b: value.on_1b, on_2b: value.on_2b, on_3b: value.on_3b, message: value.message }
+        let event = EventType::from_str(&value.event).expect("Fall back to NotRecognized");
+
+        if let EventType::NotRecognized(event_type) = &event {
+            parse_errors.push(EventParseError::EventTypeNotRecognized { event_type: event_type.clone() });
+        }
+
+        #[cfg(feature = "panic_on_parse_error")]
+        {
+            if parse_errors.len() > 0 {
+                panic!("Event parse errors: {:?}", parse_errors)
+            }
+        }
+
+        Self {parse_errors, inning, pitch, batter, on_deck, event, away_score: value.away_score, home_score: value.home_score, balls: value.balls, strikes: value.strikes, outs: value.outs, on_1b: value.on_1b, on_2b: value.on_2b, on_3b: value.on_3b, message: value.message }
     }
 }
 impl From<Event> for RawEvent {
@@ -135,10 +189,16 @@ impl From<Event> for RawEvent {
             Inning::AfterGame { total_inning_count } => (total_inning_count + 1, 2)
         };
         let (pitch_info, zone) = value.pitch.map(Pitch::unparse).map(|(pitch, zone)| (pitch, RawZone::Number(zone))).unwrap_or(("".to_string(), RawZone::String("".to_string())));
-        let event = value.event.to_string();
+        let mut event = value.event.to_string();
 
         let batter = value.batter.unparse();
         let on_deck = value.on_deck.unparse();
+
+        for error in value.parse_errors {
+            match error {
+                EventParseError::EventTypeNotRecognized { event_type } => event = event_type,
+            }
+        }
 
         Self {inning, inning_side, pitch_info, zone, event, batter, on_deck, away_score: value.away_score, home_score: value.home_score, balls: value.balls, strikes: value.strikes, outs: value.outs, on_1b: value.on_1b, on_2b: value.on_2b, on_3b: value.on_3b, message: value.message }
     }
