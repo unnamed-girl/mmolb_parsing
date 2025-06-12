@@ -3,7 +3,7 @@ use std::{fmt::Debug, str::FromStr};
 use nom::{branch::alt, bytes::complete::{tag, take, take_till, take_until, take_until1, take_while}, character::complete::{multispace0, space0, space1, u8}, combinator::{all_consuming, recognize, rest, value, verify}, error::{ErrorKind, ParseError}, multi::{count, many0, many1, separated_list1}, sequence::{delimited, preceded, separated_pair, terminated}, AsChar, Compare, CompareResult, Input, Parser};
 use nom_language::error::VerboseError;
 
-use crate::{enums::{Base, BaseNameVariant, Distance, FairBallDestination, FairBallType, FieldingErrorType, FoulType, BatterStat, NowBattingStats, Position, StrikeType, TopBottom}, parsed_event::{BaseSteal, PositionedPlayer, RunnerAdvance, RunnerOut}, Game};
+use crate::{enums::{Base, BaseNameVariant, BatterStat, Distance, FairBallDestination, FairBallType, FieldingErrorType, FoulType, Item, NowBattingStats, Position, StrikeType, TopBottom}, parsed_event::{BaseSteal, PositionedPlayer, RunnerAdvance, RunnerOut}, Game};
 
 pub(super) type Error<'a> = VerboseError<&'a str>;
 pub(super) type IResult<'a, I, O> = nom::IResult<I, O, Error<'a>>;
@@ -51,9 +51,9 @@ pub(super) fn exclamation<'output, E: ParseError<&'output str>, F: Parser<&'outp
     strip(terminated(parser, tag("!")))
 }
 
-/// A single group of alphanumeric characters, discarding whitespace on either side
+/// Discards whitespace then takes until it sees punctuation or a space.
 pub(super) fn word(s: &str) -> IResult<&str, &str> {
-    strip(take_while(AsChar::is_alphanum)).parse(s)
+    strip(take_while(|char| ![',', '.', ' ', '!', '<', '>', ':', ';'].contains(&char))).parse(s)
 }
 
 /// As the tag combinator, but discards whitespace on either side.
@@ -333,7 +333,7 @@ pub(super) fn name_eof(input: &str) -> IResult<&str, &str> {
     verify(rest,  |name: &str| 
         name.input_len() > 0 &&
         name.chars().any(|c| c == ' ') && // From the API, we know players have first/last name, so there should always be a space
-        !name.chars().any(|c| [',', '(', ')', '!', '<', '>', '\\'].contains(&c)) && // These characters should not be in names
+        !name.chars().any(|c| [',', '(', ')', '<', '>', '\\'].contains(&c)) && // These characters should not be in names
         !['.', ' '].contains(&name.chars().nth(0).unwrap()) // Vulnerable to "X jr." style name 
     )
     .parse(input)
@@ -370,6 +370,7 @@ pub(super) fn batter_stat(input: &str) -> IResult<&str, BatterStat> {
         terminated(u8, tag(" GIDP")).map(BatterStat::GroundIntoDoublePlays),
         terminated(u8, tag(" CDP")).map(BatterStat::CaughtDoublePlays),
         terminated(u8, tag(" PO")).map(BatterStat::PopOuts),
+        terminated(u8, tag(" GO")).map(BatterStat::GroundOuts),
         separated_pair(u8, tag(" for "), u8).map(|(hits, at_bats)| BatterStat::HitsForAtBats { hits, at_bats }),
     ))
     .parse(input)
@@ -381,4 +382,9 @@ pub(super) fn now_batting_stats(input: &str) -> IResult<&str, NowBattingStats> {
         value(NowBattingStats::FirstPA, tag("1st PA of game")),
         separated_list1(tag(", "), batter_stat).map(|stats| NowBattingStats::Stats { stats } )
     ))).parse(input)
+}
+
+/// The name of an item, e.g. "T-Shirt"
+pub(super) fn item(i: &str) -> IResult<&str, Item> {
+    word.map_res(Item::try_from).parse(i)
 }

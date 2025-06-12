@@ -6,6 +6,7 @@ use strum::{Display, EnumDiscriminants, EnumIter, EnumString};
 /// Possible values of the "event" field of an mmolb event. 
 #[derive(Debug, Clone, Serialize, Deserialize, EnumString, Display, PartialEq, Eq, Hash)]
 pub enum EventType {
+    // Season 0
     PitchingMatchup,
     MoundVisit,
     GameOver,
@@ -19,6 +20,10 @@ pub enum EventType {
     InningEnd,
     PlayBall,
     NowBatting,
+
+    // Season 1
+    #[strum(to_string = "Weather_Delivery")]
+    WeatherDelivery,
     
     #[strum(default)]
     NotRecognized(String)
@@ -591,6 +596,7 @@ pub enum NowBattingStats {
 #[derive(Clone, Debug, EnumDiscriminants, Serialize, Deserialize, PartialEq, Eq, Hash)]
 #[strum_discriminants(derive(EnumString, Display))]
 pub enum BatterStat {
+    // Season 0
     HitsForAtBats {
         hits: u8,
         at_bats: u8
@@ -625,6 +631,10 @@ pub enum BatterStat {
     FieldersChoices(u8),
     #[strum_discriminants(strum(to_string = "F"))]
     Fouls(u8),
+
+    // Season 1
+    #[strum_discriminants(strum(to_string = "GO"))]
+    GroundOuts(u8),
 }
 impl BatterStat {
     /// ```
@@ -649,7 +659,8 @@ impl BatterStat {
             BatterStat::CaughtDoublePlays(count) |
             BatterStat::FieldersChoices(count) |
             BatterStat::HitByPitchs(count) |
-            BatterStat::StrikeOuts(count) => {
+            BatterStat::StrikeOuts(count) |
+            BatterStat::GroundOuts(count) => {
                 format!("{count} {}", BatterStatDiscriminants::from(self))
             }
             BatterStat::HitsForAtBats { hits, at_bats } => {
@@ -771,6 +782,10 @@ pub enum GameStat {
     HitsAllowedRisp,
     AllowedStolenBasesRisp,
     PerfectGames,
+
+    // Season 1
+    GroundoutsRisp,
+    Groundouts
 }
 
 #[derive(Clone, Copy, EnumString, Display, Debug, Serialize, Deserialize, PartialEq, Eq, Hash)]
@@ -781,4 +796,14 @@ pub enum GameOverMessage {
     /// Season 0 "\"GAME OVER.\"" e.g. 680fec59555fc84a67ba0fda
     #[strum(to_string = "\"GAME OVER.\"")]
     QuotedGAMEOVER
+}
+
+#[derive(Clone, Copy, EnumString, Display, Debug, Serialize, Deserialize, PartialEq, Eq, Hash)]
+pub enum Item {
+    Cap,
+    Gloves,
+    #[strum(to_string = "T-Shirt")]
+    TShirt,
+    Sneakers,
+    Ring
 }

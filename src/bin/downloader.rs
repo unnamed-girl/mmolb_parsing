@@ -5,13 +5,19 @@ use futures::StreamExt;
 use serde::{Deserialize, Serialize};
 
 #[derive(Serialize, Deserialize)]
+pub struct FreeCashewResponse {
+    pub items: Vec<CasheGame>,
+    pub next_page: String
+}
+
+#[derive(Serialize, Deserialize)]
 pub struct CasheGame {
     game_id: String,
     state: String,
 }
 
 pub async fn async_game_list() -> impl Iterator<Item =  String> {
-    reqwest::get("https://freecashe.ws/api/games").await.unwrap().json::<Vec<CasheGame>>().await.unwrap().into_iter().filter(|game| game.state == "Complete").map(|game| game.game_id)
+    reqwest::get("https://freecashe.ws/api/games?season=1").await.unwrap().json::<FreeCashewResponse>().await.unwrap().items.into_iter().filter(|game| game.state == "Complete").map(|game| game.game_id)
 }
 
 pub async fn ensure_in_cache(json_cache:&str, game_id: String) {

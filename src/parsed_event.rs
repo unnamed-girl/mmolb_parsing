@@ -3,12 +3,13 @@ use std::{fmt::{Display, Write}, iter::once};
 use serde::{Deserialize, Serialize};
 use strum::EnumDiscriminants;
 
-use crate::enums::{Base, BaseNameVariant, BatterStat, Distance, FairBallDestination, FairBallType, FieldingErrorType, FoulType, GameOverMessage, HomeAway, NowBattingStats, Position, StrikeType, TopBottom};
+use crate::enums::{Base, BaseNameVariant, BatterStat, Distance, FairBallDestination, FairBallType, FieldingErrorType, FoulType, GameOverMessage, HomeAway, Item, NowBattingStats, Position, StrikeType, TopBottom};
 
 /// S is the string type used. S = &'output str is used by the parser, 
 /// but a mutable type is necessary when directly deserializing, because some players have escaped characters in their names
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq, EnumDiscriminants)]
 pub enum ParsedEventMessage<S> {
+    // Season 0
     ParseError {
         event_type: String,
         message: String,
@@ -99,7 +100,10 @@ pub enum ParsedEventMessage<S> {
     ReachOnFieldersChoice { batter: S, fielders: Vec<PositionedPlayer<S>>, result:FieldingAttempt<S>, scores: Vec<S>, advances: Vec<RunnerAdvance<S>> },
     DoublePlayGrounded { batter: S, fielders: Vec<PositionedPlayer<S>>, out_one:RunnerOut<S>, out_two:RunnerOut<S>, scores: Vec<S>, advances: Vec<RunnerAdvance<S>>, sacrifice: bool },
     DoublePlayCaught { batter: S, fair_ball_type: FairBallType, fielders: Vec<PositionedPlayer<S>>, out_two:RunnerOut<S>, scores: Vec<S>, advances: Vec<RunnerAdvance<S>> },
-    ReachOnFieldingError { batter: S, fielder:PositionedPlayer<S>, error: FieldingErrorType, scores: Vec<S>, advances: Vec<RunnerAdvance<S>> }
+    ReachOnFieldingError { batter: S, fielder:PositionedPlayer<S>, error: FieldingErrorType, scores: Vec<S>, advances: Vec<RunnerAdvance<S>> },
+
+    // Season 1
+    WeatherDelivery { team: S, team_emoji: S, player: S, item_emoji: S, item :Item },
 }
 impl<S: Display> ParsedEventMessage<S> {
     /// Recreate the event message this ParsedEvent was built out of.
@@ -274,6 +278,9 @@ impl<S: Display> ParsedEventMessage<S> {
                 let scores_and_advances = unparse_scores_and_advances(scores, advances);
                 let error = error.lowercase();
                 format!("{batter} reaches on a {error} error by {fielder}.{scores_and_advances}")
+            }
+            Self::WeatherDelivery { team, team_emoji, player, item_emoji, item } => {
+                format!("{team} {team_emoji} {player} received a {item_emoji} {item} Delivery.")
             }
         }
     }
