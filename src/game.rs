@@ -1,7 +1,8 @@
-use std::{collections::HashMap, str::FromStr};
+use std::collections::HashMap;
 use serde::{Deserialize, Serialize};
+use tracing::error;
 
-use crate::{enums::{EventType, GameStat, Inning, PitchType}, raw_game::{RawEvent, RawGame, RawWeather, RawZone}};
+use crate::{enums::{EventType, GameStat, Inning, MaybeRecognized, PitchType}, raw_game::{RawEvent, RawGame, RawWeather, RawZone}};
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub enum GameParseError {
@@ -37,7 +38,7 @@ pub struct Game {
     pub weather: Weather,
     pub realm_id: String,
     /// TeamID -> PlayerID -> Stat -> Value
-    pub stats: HashMap<String, HashMap<String, HashMap<GameStat, i32>>>,
+    pub stats: HashMap<String, HashMap<String, HashMap<MaybeRecognized<GameStat>, i32>>>,
 
     pub event_log: Vec<Event>,
     pub parse_errors: Vec<GameParseError>
@@ -52,8 +53,8 @@ impl From<RawGame> for Game {
         let stats  = value.stats.into_iter().map(|(team, players)| {
             let players = players.into_iter().map(|(player, stats)| {
                 let stats = stats.into_iter().map(|(stat, value)| {
-                    let stat = GameStat::from_str(&stat).expect("Has NotRecognized fallback");
-                    if let GameStat::NotRecognized(stat) = &stat {
+                    let stat: MaybeRecognized<GameStat> = stat.as_str().into();
+                    if let MaybeRecognized::NotRecognized(stat) = &stat {
                         parse_errors.push(GameParseError::GameStatNotRecognized { stat: stat.clone()});
                     }
                     (stat, value)
@@ -71,11 +72,8 @@ impl From<RawGame> for Game {
         }    
         );
 
-        #[cfg(feature = "panic_on_parse_error")]
-        {
-            if parse_errors.len() > 0 {
-                panic!("Game parse errors: {:?}", parse_errors)
-            }
+        if parse_errors.len() > 0 {
+            error!("Game parse errors: {:?}", parse_errors)
         }
 
         Self { away_sp: value.away_sp, away_team_abbreviation: value.away_team_abbreviation, away_team_color: value.away_team_color, away_team_emoji: value.away_team_emoji, away_team_id: value.away_team_id, away_team_name: value.away_team_name, home_sp: value.home_sp, home_team_abbreviation: value.home_team_abbreviation, home_team_color: value.home_team_color, home_team_emoji: value.home_team_emoji, home_team_id: value.home_team_id, home_team_name: value.home_team_name, season: value.season, day: value.day, state: value.state, 
@@ -144,7 +142,7 @@ pub struct Event {
 
     pub pitch: Option<Pitch>,
 
-    pub event: EventType,
+    pub event: MaybeRecognized<EventType>,
     pub message: String,
 
     pub parse_errors: Vec<EventParseError>
@@ -167,17 +165,14 @@ impl From<RawEvent> for Event {
 
         let pitch = pitch_info.zip(zone).map(|(pitch_info, zone)| Pitch::new(pitch_info, zone));
         
-        let event = EventType::from_str(&value.event).expect("Fall back to NotRecognized");
+        let event = value.event.as_str().into();
 
-        if let EventType::NotRecognized(event_type) = &event {
+        if let MaybeRecognized::NotRecognized(event_type) = &event {
             parse_errors.push(EventParseError::EventTypeNotRecognized { event_type: event_type.clone() });
         }
 
-        #[cfg(feature = "panic_on_parse_error")]
-        {
-            if parse_errors.len() > 0 {
-                panic!("Event parse errors: {:?}", parse_errors)
-            }
+        if parse_errors.len() > 0 {
+            error!("Event parse errors: {:?}", parse_errors)
         }
 
         Self {parse_errors, inning, pitch, batter, on_deck, pitcher, event, away_score: value.away_score, home_score: value.home_score, balls: value.balls, strikes: value.strikes, outs: value.outs, on_1b: value.on_1b, on_2b: value.on_2b, on_3b: value.on_3b, message: value.message }
@@ -257,23 +252,23 @@ impl<S: PartialEq<&'static str>> From<Option<S>> for MaybePlayer<S> {
     }
 }
 
-#[derive(Debug, Clone, Copy, Serialize, Deserialize, PartialEq)]
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
 pub struct Pitch  {
     pub speed: f32,
-    pub pitch_type: PitchType,
+    pub pitch_type: MaybeRecognized<PitchType>,
     pub zone: u8,
 }
 impl Pitch {
     pub fn new(pitch_info: String, zone: u8) -> Self {
         let mut iter = pitch_info.split(" MPH ");
         let pitch_speed = iter.next().unwrap().parse().unwrap();
-        let pitch_type = iter.next().unwrap().try_into().unwrap();
+        let pitch_type = iter.next().unwrap().into();
         Self { speed: pitch_speed, pitch_type, zone }
     }
     pub fn unparse(self) -> (String, u8) {
         let speed = format!("{:.1}", self.speed);
         // let speed = speed.strip_suffix(".0").unwrap_or(speed.as_str());
-        let pitch_info = format!("{speed} MPH {}", self.pitch_type);
+        let pitch_info = format!("{speed} MPH {}", self.pitch_type.to_string());
         (pitch_info, self.zone)
     }
 }

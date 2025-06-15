@@ -2,7 +2,7 @@ use std::str::FromStr;
 
 use nom::{branch::alt, bytes::{complete::{take_till, take_until}, tag}, character::complete::{digit1, u8}, combinator::{all_consuming, cut, fail, opt, rest}, error::context, multi::{many0, many1}, sequence::{delimited, preceded, separated_pair, terminated}, AsChar, Finish, Parser};
 
-use crate::{enums::{EventType, GameOverMessage, HomeAway, NowBattingStats}, game::Event, nom_parsing::shared::try_from_word, parsed_event::{FieldingAttempt, PositionedPlayer, StartOfInningPitcher}, ParsedEventMessage};
+use crate::{enums::{EventType, GameOverMessage, HomeAway, MaybeRecognized, NowBattingStats}, game::Event, nom_parsing::shared::try_from_word, parsed_event::{FieldingAttempt, PositionedPlayer, StartOfInningPitcher}, ParsedEventMessage};
 
 use super::{shared::{all_consuming_sentence_and, base_steal_sentence, bold, destination, emoji_and_name_eof, exclamation, fair_ball_type, fair_ball_type_verb_name, fielders_eof, fielding_error_type, fly_ball_type_verb_name, name_eof, now_batting_stats, ordinal_suffix, out, parse_and, parse_terminated, positioned_player_eof, s_tag, score_update_sentence, scores_and_advances, scores_sentence, sentence, sentence_eof, strip, switch_pitcher_sentences, team_emoji_and_name, Error}, ParsingContext};
 
@@ -10,7 +10,12 @@ trait GameEventParser<'output>: Parser<&'output str, Output = ParsedEventMessage
 impl<'output, T: Parser<&'output str, Output = ParsedEventMessage<&'output str>, Error = Error<'output>>> GameEventParser<'output> for T {}
 
 pub fn parse_event<'output>(event: &'output Event, parsing_context: &ParsingContext<'output>) -> Result<ParsedEventMessage<&'output str>, Error<'output>> {
-    match &event.event {
+    let event_type = match &event.event {
+        MaybeRecognized::Recognized(event_type) => event_type,
+        MaybeRecognized::NotRecognized(event_type) => return Ok(ParsedEventMessage::ParseError { event_type: event_type.clone(), message: event.message.clone() })
+    };
+    
+    match event_type {
         EventType::PitchingMatchup => pitching_matchup(parsing_context).parse(&event.message),
         EventType::MoundVisit => mound_visit().parse(&event.message),
         EventType::GameOver => game_over().parse(&event.message),
@@ -25,7 +30,6 @@ pub fn parse_event<'output>(event: &'output Event, parsing_context: &ParsingCont
         EventType::PlayBall => play_ball().parse(&event.message),
         EventType::NowBatting => now_batting().parse(&event.message),
         EventType::WeatherDelivery => weather_delivery(parsing_context).parse(&event.message),
-        EventType::NotRecognized(event_type) => Ok(("", ParsedEventMessage::ParseError { event_type: event_type.clone(), message: event.message.clone() }))
     }.finish().map(|(_, o)| o)
 }
 

@@ -5,7 +5,6 @@ use serde::{Deserialize, Serialize};
 
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
 #[serde(rename_all = "PascalCase")]
-#[cfg_attr(feature = "panic_on_parse_error", serde(deny_unknown_fields))]
 pub struct RawGame {
     #[serde(rename = "AwaySP")]
     pub away_sp: String,

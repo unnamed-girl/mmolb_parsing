@@ -1,10 +1,10 @@
-use std::fmt::Display;
+use std::{fmt::Display, str::FromStr};
 
 use serde::{Deserialize, Serialize};
 use strum::{Display, EnumDiscriminants, EnumIter, EnumString};
 
 /// Possible values of the "event" field of an mmolb event. 
-#[derive(Debug, Clone, Serialize, Deserialize, EnumString, Display, PartialEq, Eq, Hash)]
+#[derive(Debug, Clone, Copy, Serialize, Deserialize, EnumString, Display, PartialEq, Eq, Hash)]
 pub enum EventType {
     // Season 0
     PitchingMatchup,
@@ -24,9 +24,6 @@ pub enum EventType {
     // Season 1
     #[strum(to_string = "Weather_Delivery")]
     WeatherDelivery,
-    
-    #[strum(default)]
-    NotRecognized(String)
 }
 
 /// Top or bottom of an inning.
@@ -675,12 +672,9 @@ impl BatterStat {
 /// 
 /// assert_eq!(GameStat::GroundedIntoDoublePlay.to_string(), "grounded_into_double_play");
 /// ```
-#[derive(Clone, EnumString, Display, Debug, Serialize, Deserialize, PartialEq, Eq, Hash)]
+#[derive(Clone, Copy, EnumString, Display, Debug, Serialize, Deserialize, PartialEq, Eq, Hash)]
 #[strum(serialize_all = "snake_case")]
 pub enum GameStat {
-    #[strum(default)]
-    NotRecognized(String),
-
     // Season 0
     GroundedIntoDoublePlay,
     LeftOnBaseRisp,
@@ -806,4 +800,160 @@ pub enum Item {
     TShirt,
     Sneakers,
     Ring
+}
+
+#[derive(Deserialize, Serialize)]
+#[serde(transparent)] 
+struct DisplayDeserializer(String);
+impl<T: Display> From<T> for DisplayDeserializer {
+    fn from(value: T) -> Self {
+        Self(value.to_string())
+    }
+}
+
+#[derive(Debug, Clone, Copy, Serialize, Deserialize, EnumString, Display, PartialEq, Eq, Hash)]
+#[serde(try_from = "&str", into = "DisplayDeserializer")]
+#[strum(serialize_all = "lowercase")]
+pub enum FeedEventType {
+    Game,
+    Augment,
+}
+
+
+#[derive(Debug, Clone, Copy, Serialize, Deserialize, EnumString, Display, PartialEq, Eq, Hash)]
+#[serde(try_from = "&str", into = "DisplayDeserializer")]
+pub enum FeedEventStatus {
+    #[strum(to_string = "Regular Season")]
+    RegularSeason,
+    #[strum(to_string = "Superstar Break")]
+    SuperstarBreak
+}
+
+#[derive(Debug, Clone, Copy, Serialize, Deserialize, PartialEq, Eq, Hash)]
+pub enum FeedEventDay {
+    #[serde(rename = "Superstar Break")]
+    SuperstarBreak,
+    #[serde(untagged)]
+    Day(u8),
+}
+
+impl Display for FeedEventDay {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        match self {
+            Self::SuperstarBreak => "Superstar Break".fmt(f),
+            Self::Day(d) => d.fmt(f)
+        }
+    }
+}
+
+#[derive(Debug, Clone, Copy, Serialize, Deserialize, EnumString, Display, PartialEq, Eq, Hash)]
+#[serde(try_from = "&str", into = "DisplayDeserializer")]
+pub enum RecordType {
+    #[strum(to_string = "Regular Season")]
+    RegularSeason,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize, EnumString, Display, PartialEq, Eq, Hash)]
+#[serde(try_from = "&str", into = "DisplayDeserializer")]
+pub enum PositionType {
+    Pitcher,
+    Batter,
+}
+
+#[derive(Debug, Clone, PartialEq, Eq, Hash)]
+pub enum MaybeRecognized<T> {
+    Recognized(T),
+    NotRecognized(String)
+}
+
+impl<T> MaybeRecognized<T> {
+    pub fn inner(&self) -> Option<&T> {
+        match self {
+            MaybeRecognized::Recognized(t) => Some(t),
+            MaybeRecognized::NotRecognized(_) => None
+        }
+    }
+}
+
+impl<T: FromStr> From<&str> for MaybeRecognized<T> {
+    fn from(value: &str) -> Self {
+        T::from_str(value).map(MaybeRecognized::Recognized)
+            .unwrap_or(MaybeRecognized::NotRecognized(value.to_string()))
+    }
+}
+
+impl<T: ToString> ToString for MaybeRecognized<T> {
+    fn to_string(&self) -> String {
+        match self {
+            MaybeRecognized::Recognized(t) => t.to_string(),
+            MaybeRecognized::NotRecognized(s) => s.to_string()
+        }
+    }
+}
+
+impl<'de, T: FromStr> Deserialize<'de> for MaybeRecognized<T> {
+    fn deserialize<D>(deserializer: D) -> Result<Self, D::Error>
+        where
+            D: serde::Deserializer<'de> {
+        let s = String::deserialize(deserializer)?;
+        let result = match T::from_str(&s) {
+            Ok(t) => MaybeRecognized::Recognized(t),
+            Err(_) => MaybeRecognized::NotRecognized(s)
+        };
+        Ok(result)
+    }
+}
+
+impl<T: ToString> Serialize for MaybeRecognized<T> {
+    fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error>
+        where
+            S: serde::Serializer {
+        let s = self.to_string();
+        s.serialize(serializer)
+    }
+}
+
+
+#[derive(EnumString, Display, Debug, Serialize, Deserialize, Clone, Copy, EnumIter, PartialEq, Eq, Hash)]
+pub enum Slot {
+}
+
+#[derive(EnumString, Display, Debug, Serialize, Deserialize, Clone, Copy, EnumIter, PartialEq, Eq, Hash)]
+pub enum Attribute {
+    Priority,
+    Luck,
+    Aiming,
+    Contact,
+    Cunning,
+    Discipline,
+    Insight,
+    Intimidation,
+    Lift,
+    Vision,
+    Determination,
+    Wisdom,
+    Muscle,
+    Selflessness,
+    Accuracy,
+    Rotation,
+    Presence,
+    Persuasion,
+    Stamina,
+    Velocity,
+    Control,
+    Stuff,
+    Defiance,
+    Acrobatics,
+    Agility,
+    Arm,
+    Awareness,
+    Composure,
+    Dexterity,
+    Patience,
+    Reaction,
+    Greed,
+    Performance,
+    Speed,
+    Stealth,
+    Guts
 }
