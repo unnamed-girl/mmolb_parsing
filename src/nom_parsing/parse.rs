@@ -2,9 +2,12 @@ use std::str::FromStr;
 
 use nom::{branch::alt, bytes::{complete::{take_till, take_until}, tag}, character::complete::{digit1, u8}, combinator::{all_consuming, cut, fail, opt, rest}, error::context, multi::{many0, many1}, sequence::{delimited, preceded, separated_pair, terminated}, AsChar, Finish, Parser};
 
-use crate::{enums::{EventType, GameOverMessage, HomeAway, NowBattingStats}, game::Event, nom_parsing::shared::item, parsed_event::{FieldingAttempt, PositionedPlayer, StartOfInningPitcher}, ParsedEventMessage};
+use crate::{enums::{EventType, GameOverMessage, HomeAway, NowBattingStats}, game::Event, nom_parsing::shared::try_from_word, parsed_event::{FieldingAttempt, PositionedPlayer, StartOfInningPitcher}, ParsedEventMessage};
 
-use super::{shared::{all_consuming_sentence_and, base_steal_sentence, bold, destination, distance, emoji_and_name_eof, exclamation, fair_ball_type, fair_ball_type_verb_name, fielders_eof, fielding_error_type, fly_ball_type_verb_name, foul_type, name_eof, now_batting_stats, ordinal_suffix, out, parse_and, parse_terminated, position, positioned_player_eof, s_tag, score_update_sentence, scores_and_advances, scores_sentence, sentence, sentence_eof, strike_type, strip, switch_pitcher_sentences, team_emoji_and_name, top_or_bottom, Error}, ParsingContext};
+use super::{shared::{all_consuming_sentence_and, base_steal_sentence, bold, destination, emoji_and_name_eof, exclamation, fair_ball_type, fair_ball_type_verb_name, fielders_eof, fielding_error_type, fly_ball_type_verb_name, name_eof, now_batting_stats, ordinal_suffix, out, parse_and, parse_terminated, positioned_player_eof, s_tag, score_update_sentence, scores_and_advances, scores_sentence, sentence, sentence_eof, strip, switch_pitcher_sentences, team_emoji_and_name, Error}, ParsingContext};
+
+trait GameEventParser<'output>: Parser<&'output str, Output = ParsedEventMessage<&'output str>, Error = Error<'output>> {}
+impl<'output, T: Parser<&'output str, Output = ParsedEventMessage<&'output str>, Error = Error<'output>>> GameEventParser<'output> for T {}
 
 pub fn parse_event<'output>(event: &'output Event, parsing_context: &ParsingContext<'output>) -> Result<ParsedEventMessage<&'output str>, Error<'output>> {
     match &event.event {
@@ -32,7 +35,7 @@ fn weather_delivery<'output, 'parse>(parsing_context: &'parse ParsingContext<'ou
             team_emoji_and_name(parsing_context),
             parse_terminated(" received a "),
             strip(take_till(AsChar::is_space)),
-            terminated(item, tag("Delivery")),
+            terminated(try_from_word, tag("Delivery")),
         )).map(|((team, team_emoji), player, item_emoji, item)| ParsedEventMessage::WeatherDelivery { team, team_emoji, player, item_emoji, item })
     ))
 }
@@ -59,7 +62,7 @@ fn record_keeping<'output>() -> impl Parser<&'output str, Output = ParsedEventMe
 fn inning_end<'output>() -> impl Parser<&'output str, Output = ParsedEventMessage<&'output str>, Error = Error<'output>> {
     context("Inning End", all_consuming(
         sentence((
-            preceded(s_tag("End of the"), top_or_bottom),
+            preceded(s_tag("End of the"), try_from_word),
             delimited(s_tag("of the"), u8, ordinal_suffix)
         )).map(|(side, number)| ParsedEventMessage::InningEnd { number, side })
     ))
@@ -84,7 +87,7 @@ fn now_batting<'output>() -> impl Parser<&'output str, Output = ParsedEventMessa
 
 fn field<'output>() -> impl Parser<&'output str, Output = ParsedEventMessage<&'output str>, Error = Error<'output>> {
     let batter_to_base = all_consuming_sentence_and(
-        (parse_and(distance, " "), preceded(s_tag("on a"), fair_ball_type), preceded(s_tag("to"), positioned_player_eof)),
+        (parse_and(try_from_word, " "), preceded(s_tag("on a"), fair_ball_type), preceded(s_tag("to"), positioned_player_eof)),
     scores_and_advances
     )
     .map(|(((batter, distance), fair_ball_type, fielder), (scores, advances))| {
@@ -117,9 +120,12 @@ fn field<'output>() -> impl Parser<&'output str, Output = ParsedEventMessage<&'o
                 preceded(s_tag(","), fielders_eof)
             ))
         ),
-        scores_and_advances
+        (
+            scores_and_advances,
+            opt(bold(exclamation(s_tag("Perfect catch")))).map(|perfect| perfect.is_some())
+        )
     )
-    .map(|((batter, fielders), (scores, advances))| ParsedEventMessage::GroundedOut { batter, fielders, scores, advances });
+    .map(|((batter, fielders), ((scores, advances), perfect))| ParsedEventMessage::GroundedOut { batter, fielders, scores, advances, perfect });
 
     let forced_out = all_consuming_sentence_and(
         (
@@ -203,10 +209,10 @@ fn pitch<'output>() -> impl Parser<&'output str, Output = ParsedEventMessage<&'o
     .map(|(batter, fair_ball_type, destination)| ParsedEventMessage::FairBall { batter, fair_ball_type, destination });
 
     let struck_out = (
-        opt(sentence(preceded(s_tag("Foul"), foul_type))),
+        opt(sentence(preceded(s_tag("Foul"), try_from_word))),
         sentence((
             parse_terminated(" struck out "), 
-            strike_type)
+            try_from_word)
     ))
     .and(many0(base_steal_sentence))
     .map(|((foul, (batter, strike)), steals)|
@@ -227,11 +233,11 @@ fn pitch<'output>() -> impl Parser<&'output str, Output = ParsedEventMessage<&'o
     .and(many0(base_steal_sentence))
     .map(|(count, steals)| ParsedEventMessage::Ball { steals, count });
 
-    let strike = sentence(preceded(s_tag("Strike,"), strike_type))
+    let strike = sentence(preceded(s_tag("Strike,"), try_from_word))
     .and(cut((score_update_sentence, many0(base_steal_sentence))))
     .map(|(strike, (count, steals))| ParsedEventMessage::Strike { strike, steals, count });
 
-    let foul = sentence(preceded(s_tag("Foul"), foul_type))
+    let foul = sentence(preceded(s_tag("Foul"), try_from_word))
     .and(score_update_sentence)
     .and(many0(base_steal_sentence))
     .map(|((foul, count), steals)| ParsedEventMessage::Foul { foul, steals, count });
@@ -251,7 +257,7 @@ fn pitch<'output>() -> impl Parser<&'output str, Output = ParsedEventMessage<&'o
 }
 
 /// Parse the home and away pitchers from the pitching matchup message.
-fn pitching_matchup<'output, 'parse>(parsing_context: &'parse ParsingContext<'output>) -> impl Parser<&'output str, Output = ParsedEventMessage<&'output str>, Error = Error<'output>> + 'parse {
+fn pitching_matchup<'output, 'parse>(parsing_context: &'parse ParsingContext<'output>) -> impl GameEventParser<'output> + 'parse {
     context("Pitching matchup", all_consuming(
         ( 
             team_emoji_and_name(parsing_context), 
@@ -262,18 +268,18 @@ fn pitching_matchup<'output, 'parse>(parsing_context: &'parse ParsingContext<'ou
     ))
 }
 
-fn lineup<'output>(side: HomeAway) -> impl Parser<&'output str, Output = ParsedEventMessage<&'output str>, Error = Error<'output>> {
+fn lineup<'output>(side: HomeAway) -> impl GameEventParser<'output> {
     context("Lineup", all_consuming(
         many1(delimited(
             (digit1, s_tag(".")), 
-            (position, take_until("<br>")),
+            (try_from_word, take_until("<br>")),
              s_tag("<br>")
             ).map(|(position, player)| PositionedPlayer {position, name: player})
             )
     ).map(move |players| ParsedEventMessage::Lineup {side, players }))
 }
 
-fn inning_start<'output>() -> impl Parser<&'output str, Output = ParsedEventMessage<&'output str>, Error = Error<'output>> {
+fn inning_start<'output>() -> impl GameEventParser<'output> {
     let keep_pitcher = sentence((strip(take_till(AsChar::is_space)), parse_terminated(" pitching")))
     .map(|(emoji, name)| StartOfInningPitcher::Same { emoji, name });
 
@@ -282,7 +288,7 @@ fn inning_start<'output>() -> impl Parser<&'output str, Output = ParsedEventMess
 
     let start_inning = (
         sentence((
-            preceded(s_tag("Start of the"), top_or_bottom), 
+            preceded(s_tag("Start of the"), try_from_word), 
             delimited(s_tag("of the"), u8, ordinal_suffix))),
         sentence((strip(take_till(AsChar::is_space)), parse_terminated(" batting")))
     );
@@ -303,7 +309,7 @@ fn inning_start<'output>() -> impl Parser<&'output str, Output = ParsedEventMess
     )
 }
 
-fn mound_visit<'output>() -> impl Parser<&'output str, Output = ParsedEventMessage<&'output str>, Error = Error<'output>> {
+fn mound_visit<'output>() -> impl GameEventParser<'output> {
     let mound_visit_options = alt((
         sentence(preceded(s_tag("The"), parse_terminated(" manager is making a mound visit").and_then((strip(take_till(AsChar::is_space)), name_eof))))
         .map(|(emoji, team)| ParsedEventMessage::MoundVisit { emoji, team }),
@@ -317,7 +323,7 @@ fn mound_visit<'output>() -> impl Parser<&'output str, Output = ParsedEventMessa
     context("Mound visit", all_consuming(mound_visit_options))
 }
 
-fn live_now<'output>() -> impl Parser<&'output str, Output = ParsedEventMessage<&'output str>, Error = Error<'output>> {
+fn live_now<'output>() -> impl GameEventParser<'output> {
     context("Live now", all_consuming(
             separated_pair((strip(take_till(AsChar::is_space)), take_until(" @ ")), s_tag("@"), (strip(take_till(AsChar::is_space)), name_eof))
         ).map(|((away_team_emoji, away_team_name), (home_team_emoji, home_team_name))| ParsedEventMessage::LiveNow { away_team_name, away_team_emoji, home_team_name, home_team_emoji })

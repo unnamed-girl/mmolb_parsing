@@ -95,7 +95,7 @@ pub enum ParsedEventMessage<S> {
     BatterToBase { batter: S, distance: Distance, fair_ball_type: FairBallType, fielder: PositionedPlayer<S>, scores: Vec<S>, advances: Vec<RunnerAdvance<S>> },
     HomeRun { batter: S, fair_ball_type: FairBallType, destination: FairBallDestination, scores: Vec<S>, grand_slam: bool },
     CaughtOut { batter: S, fair_ball_type: FairBallType, caught_by: PositionedPlayer<S>, scores: Vec<S>, advances: Vec<RunnerAdvance<S>>, sacrifice: bool, perfect: bool },
-    GroundedOut { batter: S, fielders: Vec<PositionedPlayer<S>>, scores: Vec<S>, advances: Vec<RunnerAdvance<S>> },
+    GroundedOut { batter: S, fielders: Vec<PositionedPlayer<S>>, scores: Vec<S>, advances: Vec<RunnerAdvance<S>>, perfect: bool },
     ForceOut { batter: S, fielders: Vec<PositionedPlayer<S>>, fair_ball_type: FairBallType, out:RunnerOut<S>, scores: Vec<S>, advances: Vec<RunnerAdvance<S>> },
     ReachOnFieldersChoice { batter: S, fielders: Vec<PositionedPlayer<S>>, result:FieldingAttempt<S>, scores: Vec<S>, advances: Vec<RunnerAdvance<S>> },
     DoublePlayGrounded { batter: S, fielders: Vec<PositionedPlayer<S>>, out_one:RunnerOut<S>, out_two:RunnerOut<S>, scores: Vec<S>, advances: Vec<RunnerAdvance<S>>, sacrifice: bool },
@@ -236,10 +236,11 @@ impl<S: Display> ParsedEventMessage<S> {
                 
                 format!("{batter} {fair_ball_type} out {sacrifice}to {catcher}.{perfect}{scores_and_advances}")
             }
-            Self::GroundedOut { batter, fielders, scores, advances } => {
+            Self::GroundedOut { batter, fielders, scores, advances, perfect } => {
                 let scores_and_advances = unparse_scores_and_advances(scores, advances);
                 let fielders = unparse_fielders(fielders);
-                format!("{batter} grounds out{fielders}.{scores_and_advances}")
+                let perfect = if perfect {" <strong>Perfect catch!</strong>"} else {""};
+                format!("{batter} grounds out{fielders}.{scores_and_advances}{perfect}")
             }
             Self::ForceOut { batter, fielders, fair_ball_type, out, scores, advances } => {
                 let scores_and_advances = unparse_scores_and_advances(scores, advances);

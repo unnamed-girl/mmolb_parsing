@@ -3,7 +3,7 @@ use std::{fmt::Debug, str::FromStr};
 use nom::{branch::alt, bytes::complete::{tag, take, take_till, take_until, take_until1, take_while}, character::complete::{multispace0, space0, space1, u8}, combinator::{all_consuming, recognize, rest, value, verify}, error::{ErrorKind, ParseError}, multi::{count, many0, many1, separated_list1}, sequence::{delimited, preceded, separated_pair, terminated}, AsChar, Compare, CompareResult, Input, Parser};
 use nom_language::error::VerboseError;
 
-use crate::{enums::{Base, BaseNameVariant, BatterStat, Distance, FairBallDestination, FairBallType, FieldingErrorType, FoulType, Item, NowBattingStats, Position, StrikeType, TopBottom}, parsed_event::{BaseSteal, PositionedPlayer, RunnerAdvance, RunnerOut}, Game};
+use crate::{enums::{Base, BaseNameVariant, BatterStat, FairBallDestination, FairBallType, FieldingErrorType, NowBattingStats, Position}, parsed_event::{BaseSteal, PositionedPlayer, RunnerAdvance, RunnerOut}, Game};
 
 pub(super) type Error<'a> = VerboseError<&'a str>;
 pub(super) type IResult<'a, I, O> = nom::IResult<I, O, Error<'a>>;
@@ -100,24 +100,8 @@ pub(super) fn destination(i: &str) -> IResult<&str, FairBallDestination> {
         .parse(i)
 }
 
-/// The acronym for a player's position, e.g. "SP"
-pub(super) fn position(i: &str) -> IResult<&str, Position> {
-    word.map_res(Position::try_from).parse(i)
-}
-
-/// A foul type, e.g. "Ball"
-pub(super) fn foul_type(i: &str) -> IResult<&str, FoulType> {
-    word.map_res(FoulType::try_from).parse(i)
-}
-
-/// Top or bottom of the inning, e.g. "top"
-pub(super) fn top_or_bottom(i: &str) -> IResult<&str, TopBottom> {
-    word.map_res(TopBottom::try_from).parse(i)
-}
-
-/// A strike type, e.g. "Swinging"
-pub(super) fn strike_type(i: &str) -> IResult<&str, StrikeType> {
-    word.map_res(StrikeType::try_from).parse(i)
+pub(super) fn try_from_word<'output, T:TryFrom<&'output str>>(i: &'output str) -> IResult<'output,&'output str, T> {
+    word.map_res(T::try_from).parse(i)
 }
 
 /// A list of fielders involved in a catch, e.g. "P Niblet Hornsby to 1B Geo Kerr to 3B Joffrey Nishida"
@@ -137,7 +121,7 @@ pub(super) fn fielders_eof(input: &str) -> IResult<&str, Vec<PositionedPlayer<&s
 
 /// A team's emoji and name, e.g. "\ud83d\udc2f Antioch Royal Tigers".
 pub(super) fn team_emoji_and_name<'output, 'parse>(parsing_context: &'parse ParsingContext<'output>) -> impl Parser<&'output str, Output = (&'output str, &'output str), Error = Error<'output>> + 'parse {
-    (strip(take_till(AsChar::is_space)), team_name(parsing_context))
+    (emoji, team_name(parsing_context))
 }
 
 /// A single team's name, obtained by matching the known team names in the context. e.g. "Antioch Royal Tigers"
@@ -151,16 +135,6 @@ pub(super) fn team_name<'output, 'parse>(parsing_context: &'parse ParsingContext
         }
         IResult::Err(nom::Err::Error(VerboseError::from_error_kind(i, ErrorKind::Tag)))
     })
-}
-
-/// A distance a batter runs, e.g. "singles"
-pub(super) fn distance(i: &str) -> IResult<&str, Distance> {
-    word.map_res(Distance::from_str).parse(i)
-}
-
-/// A base, e.g. "first". Case insensitive
-pub(super) fn base(i: &str) -> IResult<&str, Base> {
-    word.map_res(Base::try_from).parse(i)
 }
 
 /// Sometimes bases get called e.g. "1B" instead.
@@ -194,7 +168,7 @@ pub(super) fn scores_sentence(input: &str) -> IResult<&str, &str> {
 
 // A single instance of a runner advancing, e.g. "Franklin shoebill to third base."
 pub fn runner_advance_sentence(input: &str) -> IResult<&str, RunnerAdvance<&str>> {
-    sentence((parse_terminated(" to "), terminated(base, s_tag("base"))))
+    sentence((parse_terminated(" to "), terminated(try_from_word, s_tag("base"))))
     .map(|(runner, base)| RunnerAdvance {runner, base})
     .parse(input)
 }
@@ -222,13 +196,13 @@ pub(super) fn base_steal_sentence(input: &str) -> IResult<&str, BaseSteal<&str>>
     let home_steal = bold(exclamation(parse_terminated(" steals home")))
     .map(|runner| BaseSteal { runner, base:Base::Home, caught:false });
 
-    let successful_steal = exclamation((parse_terminated(" steals "), terminated(base, s_tag("base"))))
+    let successful_steal = exclamation((parse_terminated(" steals "), terminated(try_from_word, s_tag("base"))))
     .map(|(runner, base)| BaseSteal {runner, base, caught: false });
 
     let caught_stealing_home = sentence(parse_terminated(" is caught stealing home"))
     .map(|runner| BaseSteal {runner, base:Base::Home, caught: true });
 
-    let caught_stealing = sentence((parse_terminated(" is caught stealing "), terminated(base, s_tag("base"))))
+    let caught_stealing = sentence((parse_terminated(" is caught stealing "), terminated(try_from_word, s_tag("base"))))
     .map(|(runner, base)| BaseSteal {runner, base, caught: true });
 
     alt((
@@ -246,8 +220,8 @@ pub(super) fn score_update_sentence(i: &str) -> IResult<&str, (u8, u8)> {
 
 pub(super) fn switch_pitcher_sentences(i: &str) -> IResult<&str, ((Position, &str), (Position, &str))> {
     (
-        terminated((position, take_until(" is leaving the game")), s_tag("is leaving the game.")),
-        terminated((position, take_until(" takes the mound")), s_tag("takes the mound."))
+        terminated((try_from_word, take_until(" is leaving the game")), s_tag("is leaving the game.")),
+        terminated((try_from_word, take_until(" takes the mound")), s_tag("takes the mound."))
     )
     .parse(i)
 }
@@ -324,7 +298,7 @@ pub(super) fn parse_terminated(tag_content: &str) -> impl Fn(&str) -> IResult<&s
 }
 
 pub(super) fn positioned_player_eof(input: &str) -> IResult<&str, PositionedPlayer<&str>> {
-    (position, name_eof)
+    (try_from_word, name_eof)
     .map(|(position, name)| PositionedPlayer { name, position })
     .parse(input)
 }
@@ -346,9 +320,14 @@ pub(super) fn sentence_eof<'output, E: ParseError<&'output str> + Debug, F: Pars
     }))
 }
 
+
+pub(super) fn emoji(input: &str) -> IResult<&str, &str> {
+    strip(take_till(AsChar::is_space)).parse(input)
+}
+
 pub(super) fn emoji_and_name_eof(input: &str) -> IResult<&str, (&str, &str)> {
     verify(rest,  |name: &str| !name.contains(","))
-    .and_then((strip(take_till(AsChar::is_space)), rest))
+    .and_then((emoji, rest))
     .parse(input)
 }
 
@@ -382,9 +361,4 @@ pub(super) fn now_batting_stats(input: &str) -> IResult<&str, NowBattingStats> {
         value(NowBattingStats::FirstPA, tag("1st PA of game")),
         separated_list1(tag(", "), batter_stat).map(|stats| NowBattingStats::Stats { stats } )
     ))).parse(input)
-}
-
-/// The name of an item, e.g. "T-Shirt"
-pub(super) fn item(i: &str) -> IResult<&str, Item> {
-    word.map_res(Item::try_from).parse(i)
 }
