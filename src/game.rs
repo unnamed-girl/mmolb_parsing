@@ -140,6 +140,7 @@ pub struct Event {
     
     pub on_deck: MaybePlayer<String>,
     pub batter: MaybePlayer<String>,
+    pub pitcher: MaybePlayer<String>,
 
     pub pitch: Option<Pitch>,
 
@@ -162,6 +163,7 @@ impl From<RawEvent> for Event {
 
         let batter = value.batter.into();
         let on_deck = value.on_deck.into();
+        let pitcher = value.pitcher.into();
 
         let pitch = pitch_info.zip(zone).map(|(pitch_info, zone)| Pitch::new(pitch_info, zone));
         
@@ -178,7 +180,7 @@ impl From<RawEvent> for Event {
             }
         }
 
-        Self {parse_errors, inning, pitch, batter, on_deck, event, away_score: value.away_score, home_score: value.home_score, balls: value.balls, strikes: value.strikes, outs: value.outs, on_1b: value.on_1b, on_2b: value.on_2b, on_3b: value.on_3b, message: value.message }
+        Self {parse_errors, inning, pitch, batter, on_deck, pitcher, event, away_score: value.away_score, home_score: value.home_score, balls: value.balls, strikes: value.strikes, outs: value.outs, on_1b: value.on_1b, on_2b: value.on_2b, on_3b: value.on_3b, message: value.message }
     }
 }
 impl From<Event> for RawEvent {
@@ -193,6 +195,7 @@ impl From<Event> for RawEvent {
 
         let batter = value.batter.unparse();
         let on_deck = value.on_deck.unparse();
+        let pitcher = value.pitcher.unparse();
 
         for error in value.parse_errors {
             match error {
@@ -200,7 +203,7 @@ impl From<Event> for RawEvent {
             }
         }
 
-        Self {inning, inning_side, pitch_info, zone, event, batter, on_deck, away_score: value.away_score, home_score: value.home_score, balls: value.balls, strikes: value.strikes, outs: value.outs, on_1b: value.on_1b, on_2b: value.on_2b, on_3b: value.on_3b, message: value.message }
+        Self {inning, inning_side, pitch_info, zone, event, batter, on_deck, pitcher, away_score: value.away_score, home_score: value.home_score, balls: value.balls, strikes: value.strikes, outs: value.outs, on_1b: value.on_1b, on_2b: value.on_2b, on_3b: value.on_3b, message: value.message }
     }
 }
 

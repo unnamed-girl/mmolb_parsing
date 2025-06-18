@@ -64,10 +64,12 @@ pub struct RawEvent {
     pub on_2b: bool,
     pub on_3b: bool,
     
-    /// Empty string when game hasn't started
+    /// Empty string between innings, null before game
     pub on_deck: Option<String>,
-    /// Empty string when game hasn't started
+    /// Empty string between innings, null before game
     pub batter: Option<String>,
+    /// Empty string between innings, null before game
+    pub pitcher: Option<String>,
 
     /// Empty if none
     pub pitch_info: String,
