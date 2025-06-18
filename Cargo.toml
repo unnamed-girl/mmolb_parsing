@@ -7,9 +7,6 @@ edition = "2021"
 name = "parser"
 required-features = ["bin"]
 
-[profile.dev]
-opt-level = 3
-
 [features]
 rand = ["dep:rand"]
 bin = ["dep:clap", "dep:tracing-subscriber", "dep:tokio", "dep:futures", "dep:reqwest", "dep:reqwest-middleware", "dep:http-cache-reqwest"]

@@ -1,4 +1,5 @@
 use crate::{game::Event, nom_parsing::{parse_event, ParsingContext}, parsed_event::ParsedEventMessage, Game};
+use tracing::error;
 
 /// Convenience method to call process_event for every event in a game
 pub fn process_game(game: &Game) -> Vec<ParsedEventMessage<&str>> {
@@ -19,5 +20,8 @@ pub fn process_event<'output>(event: &'output Event, game: &'output Game) -> Par
             ParsedEventMessage::ParseError { event_type: event.event.to_string(), message: event.message.clone() }
         }
     };
+    if let ParsedEventMessage::ParseError { event_type, message } = &parsed_event_message {
+        error!("Parse error for {event_type}: {message}");
+    }
     parsed_event_message
 }

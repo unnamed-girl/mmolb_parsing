@@ -914,6 +914,7 @@ impl<T: ToString> Serialize for MaybeRecognized<T> {
 }
 
 
+// TODO
 #[derive(EnumString, Display, Debug, Serialize, Deserialize, Clone, Copy, EnumIter, PartialEq, Eq, Hash)]
 pub enum Slot {
 }

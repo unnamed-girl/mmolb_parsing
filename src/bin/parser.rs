@@ -1,9 +1,9 @@
 
-use std::{fs::File, io::Write};
+use std::{fs::File, io::Write, path::PathBuf};
 
 use clap::Parser;
 use futures::StreamExt;
-use mmolb_parsing::{nom_parsing::{parse_event, ParsingContext}, raw_game::RawGame, Game, ParsedEventMessage};
+use mmolb_parsing::{process_event, raw_game::RawGame, Game};
 use serde::{Deserialize, Serialize};
 
 use http_cache_reqwest::{CACacheManager, Cache, CacheMode, HttpCache, HttpCacheOptions};
@@ -13,11 +13,13 @@ use tracing::{error, info, Level};
 use tracing_subscriber::fmt::writer::MakeWriterExt;
 
 
-pub fn get_caching_http_client() -> ClientWithMiddleware {
+pub fn get_caching_http_client(cache: Option<PathBuf>) -> ClientWithMiddleware {
     ClientBuilder::new(Client::new())
         .with(Cache(HttpCache {
             mode: CacheMode::ForceCache,
-            manager: CACacheManager::default(),
+            manager: cache.map(|cache| CACacheManager {
+                path: cache.join("http-cacache"),
+            }).unwrap_or_default(),
             options: HttpCacheOptions::default(),
         }))
         .build()
@@ -44,6 +46,10 @@ struct Args {
     /// Where objects are saved to
     output_file: Option<String>,
 
+    /// Parent folder which the cache folder will be created in/loaded from
+    #[arg(long)]
+    http_cache: Option<String>,
+
     /// Season
     #[arg(short = 's', long, default_value_t = 1)]
     season: u8,
@@ -64,14 +70,14 @@ async fn main() {
     let args = Args::parse();
     let output_file = args.output_file.as_ref().map(String::as_str);
 
-    let client = get_caching_http_client();
+    let client = get_caching_http_client(args.http_cache.map(Into::into));
     
     info!("Fetching games list");
 
     let mut games = Vec::new();
     let mut url = format!("https://freecashe.ws/api/games?season={}", args.season);
     loop {
-        let response = client.get(&url).send().await.unwrap().json::<FreeCashewResponse>().await.unwrap();
+        let response = client.get(&url).with_extension(CacheMode::Default).send().await.unwrap().json::<FreeCashewResponse>().await.unwrap();
         if response.next_page.is_none() {
             break;
         }
@@ -101,16 +107,9 @@ async fn ingest_game(client: &ClientWithMiddleware, game_info: CasheGame, output
         let ron_path = format!(r"{cache}/{}.ron", game_info.game_id);
         File::create(ron_path).unwrap()
     });
-    let parsing_context = ParsingContext::new(&game);
 
     for event in &game.event_log {
-        let parsed_event_message = match parse_event(event, &parsing_context) {
-            Ok(event) => event,
-            Err(err) => {
-                error!("{} s{}d{} parse error: {err:?}", game_info.game_id, game_info.season, game_info.day);
-                ParsedEventMessage::ParseError { event_type: event.event.to_string(), message: event.message.clone() }
-            }
-        };
+        let parsed_event_message = process_event(event, &game);
         if tracing::enabled!(Level::ERROR) {
             if event.message != parsed_event_message.clone().unparse() {
                 error!("{} s{}d{}: event round trip failure '{}'", game_info.game_id, game.season, game.day, event.message);
