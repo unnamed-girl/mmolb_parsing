@@ -1,4 +1,4 @@
-use std::{collections::HashSet, path::PathBuf};
+use std::path::PathBuf;
 
 use clap::Parser;
 use futures::StreamExt;
@@ -52,22 +52,18 @@ async fn main() {
 
     let args = Args::parse();
 
-    let mut modifications = HashSet::new();
-
     info!("Fetching teams list");
     let client = get_caching_http_client(args.http_cache.map(Into::into), CacheMode::Default);
     let teams = client.get("https://freecashe.ws/api/teams").send()
         .await.unwrap().json::<Response>().await.unwrap();
 
     let mut stream = futures::stream::iter(teams.items).map(|team_info| parse_team(&client, team_info)).buffered(30);
-    while let Some(mods) = stream.next().await {modifications.extend(mods);}
-
-    println!("{modifications:?}");
+    while let Some(()) = stream.next().await {}
 
     drop(guard);
 }
 
-async fn parse_team(client: &ClientWithMiddleware, team: Response2) -> HashSet<String> {
+async fn parse_team(client: &ClientWithMiddleware, team: Response2) {
     let team = client.get(format!("https://mmolb.com/api/team/{}", team.team_id)).send()
         .await.unwrap().json::<Team>().await.unwrap();
 
@@ -94,9 +90,5 @@ async fn parse_team(client: &ClientWithMiddleware, team: Response2) -> HashSet<S
             error!("Extra fields on player: {:?}", player.extra_fields);
             break;
         }
-    }
-    
-    let mut result = HashSet::new();
-    result.extend(team.modifications.iter().map(ToString::to_string));
-    result
+    }    
 }
