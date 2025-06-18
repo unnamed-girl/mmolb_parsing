@@ -867,6 +867,12 @@ pub enum MaybeRecognized<T> {
 }
 
 impl<T> MaybeRecognized<T> {
+    pub fn into_inner(self) -> Option<T> {
+        match self {
+            MaybeRecognized::Recognized(t) => Some(t),
+            MaybeRecognized::NotRecognized(_) => None
+        }  
+    }
     pub fn inner(&self) -> Option<&T> {
         match self {
             MaybeRecognized::Recognized(t) => Some(t),
