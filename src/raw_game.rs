@@ -5,7 +5,6 @@ use serde::{Deserialize, Serialize};
 
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
 #[serde(rename_all = "PascalCase")]
-#[cfg_attr(feature = "panic_on_parse_error", serde(deny_unknown_fields))]
 pub struct RawGame {
     #[serde(rename = "AwaySP")]
     pub away_sp: String,
@@ -35,6 +34,9 @@ pub struct RawGame {
     pub stats: HashMap<String, HashMap<String, HashMap<String, i32>>>,
 
     pub event_log: Vec<RawEvent>,
+
+    #[serde(flatten)]
+    pub extra_fields: serde_json::Map<String, serde_json::Value>,
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
@@ -42,7 +44,10 @@ pub struct RawGame {
 pub struct RawWeather {
     pub emoji: String,
     pub name: String,
-    pub tooltip: String
+    pub tooltip: String,
+
+    #[serde(flatten)]
+    pub extra_fields: serde_json::Map<String, serde_json::Value>,
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
@@ -78,6 +83,9 @@ pub struct RawEvent {
 
     pub event: String,
     pub message: String,
+
+    #[serde(flatten)]
+    pub extra_fields: serde_json::Map<String, serde_json::Value>,
 }
 
 

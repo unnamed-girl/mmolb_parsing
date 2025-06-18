@@ -1,93 +1,125 @@
 
-use std::{env::args, fs::File, io::{self, Read, Write}};
+use std::{fs::File, io::Write, path::PathBuf};
 
-use mmolb_parsing::{process_game, raw_game::RawGame, Game, ParsedEventMessage};
+use clap::Parser;
+use futures::StreamExt;
+use mmolb_parsing::{process_event, raw_game::RawGame, Game};
 use serde::{Deserialize, Serialize};
 
-#[cfg(feature = "rand")]
-use rand::seq::SliceRandom;
+use http_cache_reqwest::{CACacheManager, Cache, CacheMode, HttpCache, HttpCacheOptions};
+use reqwest::Client;
+use reqwest_middleware::{ClientBuilder, ClientWithMiddleware};
+use tracing::{error, info, Level};
+use tracing_subscriber::fmt::writer::MakeWriterExt;
 
-pub fn downloaded(json_cache: &str) -> impl Iterator<Item = (String, RawGame)> {
-    let mut entries = std::fs::read_dir(json_cache).unwrap().collect::<Vec<_>>();
 
-    #[cfg(feature = "rand")] {
-        let mut rng = rand::rng();
-        entries.shuffle(&mut rng);
+pub fn get_caching_http_client(cache: Option<PathBuf>) -> ClientWithMiddleware {
+    ClientBuilder::new(Client::new())
+        .with(Cache(HttpCache {
+            mode: CacheMode::ForceCache,
+            manager: cache.map(|cache| CACacheManager {
+                path: cache.join("http-cacache"),
+            }).unwrap_or_default(),
+            options: HttpCacheOptions::default(),
+        }))
+        .build()
+}
+
+#[derive(Serialize, Deserialize)]
+pub struct FreeCashewResponse {
+    pub items: Vec<CasheGame>,
+    pub next_page: Option<String>
+}
+
+#[derive(Serialize, Deserialize)]
+pub struct CasheGame {
+    game_id: String,
+    state: String,
+    season: u8,
+    day: u16,
+    home_team_id: String,
+    away_team_id: String
+}
+
+#[derive(Parser, Debug)]
+struct Args {
+    /// Where objects are saved to
+    output_file: Option<String>,
+
+    /// Parent folder which the cache folder will be created in/loaded from
+    #[arg(long)]
+    http_cache: Option<String>,
+
+    /// Season
+    #[arg(short = 's', long, default_value_t = 1)]
+    season: u8,
+    /// Earliest day
+    #[arg(short = 'd', long)]
+    from_day: Option<u16>,
+}
+
+#[tokio::main]
+async fn main() {
+    let writer = std::io::stderr.with_max_level(Level::WARN).and(std::io::stdout);
+
+    let subscriber = tracing_subscriber::fmt()
+        .with_writer(writer)
+        .finish();
+    let guard = tracing::subscriber::set_default(subscriber);
+
+    let args = Args::parse();
+    let output_file = args.output_file.as_ref().map(String::as_str);
+
+    let client = get_caching_http_client(args.http_cache.map(Into::into));
+    
+    info!("Fetching games list");
+
+    let mut games = Vec::new();
+    let mut url = format!("https://freecashe.ws/api/games?season={}", args.season);
+    loop {
+        let response = client.get(&url).with_extension(CacheMode::Default).send().await.unwrap().json::<FreeCashewResponse>().await.unwrap();
+        if response.next_page.is_none() {
+            break;
+        }
+        games.extend(response.items.into_iter().filter(|game_info| game_info.state == "Complete" && args.from_day.is_none_or(|day| game_info.day >= day)));        
+        url = format!("https://freecashe.ws/api/games?season={}&page={}", args.season, response.next_page.unwrap());
     }
 
-    entries.into_iter().map(|entry|  {
-                let entry = entry.unwrap();
+    if let Some(output_file) = output_file {
+        info!("Parsing {} games into {output_file}", games.len());
+    } else {
+        info!("Parsing {} games",  games.len())
+    }
 
-                let mut result = String::new();
-                let game_id = entry.file_name().to_str().unwrap().strip_suffix(".json").unwrap().to_string();
-                File::open(entry.path()).unwrap().read_to_string(&mut result).unwrap();
-                let game = serde_json::from_str(&result).expect(&game_id);
-                (game_id, game)
+    let mut stream = futures::stream::iter(games).map(|game_info| ingest_game(&client, game_info, output_file)).buffered(30);
+
+    while let Some(()) = stream.next().await {}
+
+    drop(guard);
+}
+
+async fn ingest_game(client: &ClientWithMiddleware, game_info: CasheGame, output_file: Option<&str>) {
+    let raw_game = client.get(format!("https://mmolb.com/api/game/{}", game_info.game_id)).send().await.unwrap().json::<RawGame>().await.unwrap();
+
+    let game: Game = raw_game.clone().into();
+
+    let mut file = output_file.map(|cache| {
+        let ron_path = format!(r"{cache}/{}.ron", game_info.game_id);
+        File::create(ron_path).unwrap()
+    });
+
+    for event in &game.event_log {
+        let parsed_event_message = process_event(event, &game);
+        if tracing::enabled!(Level::ERROR) {
+            if event.message != parsed_event_message.clone().unparse() {
+                error!("{} s{}d{}: event round trip failure '{}'", game_info.game_id, game.season, game.day, event.message);
             }
-        )
-}
-
-pub fn save_parsed_messages<'de, S: Serialize + Deserialize<'de>>(ron_cache: &str, game_id: &str, events: Vec<ParsedEventMessage<S>>) {
-    let ron_path = format!(r"{ron_cache}/{game_id}.ron");
-    let mut file = File::create(ron_path).unwrap();
-    for event in &events {
-        writeln!(file, "{}", ron::to_string(&event).unwrap()).unwrap()
-    }
-}
-
-fn main() {
-    let mut args = args().skip(1);
-
-    let json_cache = args.next().expect("first argument \"json_cache\" should be present");
-    let ron_cache = args.next().expect("second argument \"ron_cache\" should be present");
-
-    let count = std::fs::read_dir(&json_cache).unwrap().count();
-    println!("About to parse {count} games from {json_cache} into {ron_cache}. Press enter to continue");
-    io::stdin().read_line(&mut String::new()).unwrap();
-
-    let mut i = 0;
-    for (game_id, raw_game) in downloaded(&json_cache) {
-        i += 1;
-        if i % 100 == 0 {
-            println!("{i} {game_id}")
         }
 
-
-        let game = {
-            #[cfg(feature = "panic_on_parse_error")]
-            {
-                let game: Game = raw_game.clone().into();
-                let unparsed_game = RawGame::from(game.clone());
-                assert_eq!(unparsed_game.away_sp, raw_game.away_sp, "{game_id}");
-                assert_eq!(unparsed_game.away_team_abbreviation, raw_game.away_team_abbreviation, "{game_id}");
-                assert_eq!(unparsed_game.away_team_color, raw_game.away_team_color, "{game_id}");
-                assert_eq!(unparsed_game.away_team_id, raw_game.away_team_id, "{game_id}");
-                assert_eq!(unparsed_game.away_team_emoji, raw_game.away_team_emoji, "{game_id}");
-                assert_eq!(unparsed_game.away_team_name, raw_game.away_team_name, "{game_id}");
-                assert_eq!(unparsed_game.day, raw_game.day, "{game_id}");
-                assert_eq!(unparsed_game.home_sp, raw_game.home_sp, "{game_id}");
-                assert_eq!(unparsed_game.home_team_abbreviation, raw_game.home_team_abbreviation, "{game_id}");
-                assert_eq!(unparsed_game.home_team_color, raw_game.home_team_color, "{game_id}");
-                assert_eq!(unparsed_game.home_team_emoji, raw_game.home_team_emoji, "{game_id}");
-                assert_eq!(unparsed_game.home_team_id, raw_game.home_team_id, "{game_id}");
-                assert_eq!(unparsed_game.home_team_name, raw_game.home_team_name, "{game_id}");
-                assert_eq!(unparsed_game.season, raw_game.season, "{game_id}");
-                assert_eq!(unparsed_game.state, raw_game.state, "{game_id}");
-                assert_eq!(unparsed_game.stats, raw_game.stats, "{game_id}");
-                assert_eq!(unparsed_game.realm, raw_game.realm, "{game_id}");
-
-                for i in 0..unparsed_game.event_log.len() {
-                    assert_eq!(unparsed_game.event_log[i], raw_game.event_log[i], "{game_id}");
-                }
-                game
-            }
-            #[cfg(not(feature = "panic_on_parse_error"))]
-            {
-                raw_game.into()
-            }
-        };
-
-        let messages = process_game(&game);
-        save_parsed_messages(&ron_cache, &game_id, messages);
+        if let Some(file) = file.as_mut() {
+            writeln!(file, "{}", ron::to_string(&parsed_event_message).unwrap()).unwrap();
+        }
     }
+
+    info!("{} s{}d{} parsed", game_info.game_id, game_info.season, game_info.day);
 }
