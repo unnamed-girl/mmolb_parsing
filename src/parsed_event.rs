@@ -104,6 +104,7 @@ pub enum ParsedEventMessage<S> {
 
     // Season 1
     WeatherDelivery { team: S, team_emoji: S, player: S, item_emoji: S, item :Item },
+    WeatherDeliveryDiscard { item_emoji: S, item :Item },
 }
 impl<S: Display> ParsedEventMessage<S> {
     /// Recreate the event message this ParsedEvent was built out of.
@@ -282,6 +283,9 @@ impl<S: Display> ParsedEventMessage<S> {
             }
             Self::WeatherDelivery { team, team_emoji, player, item_emoji, item } => {
                 format!("{team} {team_emoji} {player} received a {item_emoji} {item} Delivery.")
+            },
+            Self::WeatherDeliveryDiscard { item_emoji, item } => {
+                format!("{item_emoji} {item} was discarded as no player had space.")
             }
         }
     }
