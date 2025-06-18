@@ -6,7 +6,7 @@ use crate::{enums::{EventType, GameStat, Inning, MaybeRecognized, PitchType}, ra
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub enum GameDeserializeError {
-    GameStatNotRecognized { stat: String },
+    GameStatNotRecognized
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
@@ -54,8 +54,8 @@ impl From<RawGame> for Game {
             let players = players.into_iter().map(|(player, stats)| {
                 let stats = stats.into_iter().map(|(stat, value)| {
                     let stat: MaybeRecognized<GameStat> = stat.as_str().into();
-                    if let MaybeRecognized::NotRecognized(stat) = &stat {
-                        deserialization_error.push(GameDeserializeError::GameStatNotRecognized { stat: stat.clone()});
+                    if let MaybeRecognized::NotRecognized(_) = &stat {
+                        deserialization_error.push(GameDeserializeError::GameStatNotRecognized);
                     }
                     (stat, value)
                 }).collect();
@@ -120,7 +120,8 @@ impl From<Weather> for RawWeather {
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub enum EventDeserializeError {
-    EventTypeNotRecognized { event_type: String }
+    EventTypeNotRecognized,
+    PitchTypeNotRecognized
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
@@ -170,8 +171,14 @@ impl From<RawEvent> for Event {
         
         let event = value.event.as_str().into();
 
-        if let MaybeRecognized::NotRecognized(event_type) = &event {
-            deserialization_error.push(EventDeserializeError::EventTypeNotRecognized { event_type: event_type.clone() });
+        if let MaybeRecognized::NotRecognized(_) = &event {
+            deserialization_error.push(EventDeserializeError::EventTypeNotRecognized);
+        }
+
+        if let Some(pitch) = &pitch {
+            if let MaybeRecognized::NotRecognized(_) = &pitch.pitch_type {
+                deserialization_error.push(EventDeserializeError::PitchTypeNotRecognized);
+            }
         }
 
         if deserialization_error.len() > 0 {
@@ -192,17 +199,11 @@ impl From<Event> for RawEvent {
             Inning::AfterGame { total_inning_count } => (total_inning_count + 1, 2)
         };
         let (pitch_info, zone) = value.pitch.map(Pitch::unparse).map(|(pitch, zone)| (pitch, RawZone::Number(zone))).unwrap_or(("".to_string(), RawZone::String("".to_string())));
-        let mut event = value.event.to_string();
+        let event = value.event.to_string();
 
         let batter = value.batter.unparse();
         let on_deck = value.on_deck.unparse();
         let pitcher = value.pitcher.unparse();
-
-        for error in value.deserialization_error {
-            match error {
-                EventDeserializeError::EventTypeNotRecognized { event_type } => event = event_type,
-            }
-        }
 
         Self {inning, inning_side, pitch_info, zone, event, batter, on_deck, pitcher, away_score: value.away_score, home_score: value.home_score, balls: value.balls, strikes: value.strikes, outs: value.outs, on_1b: value.on_1b, on_2b: value.on_2b, on_3b: value.on_3b, message: value.message, extra_fields: value.extra_fields }
     }
