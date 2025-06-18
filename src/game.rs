@@ -41,7 +41,8 @@ pub struct Game {
     pub stats: HashMap<String, HashMap<String, HashMap<MaybeRecognized<GameStat>, i32>>>,
 
     pub event_log: Vec<Event>,
-    pub parse_errors: Vec<GameParseError>
+    pub parse_errors: Vec<GameParseError>,
+    pub extra_fields: serde_json::Map<String, serde_json::Value>,
 }
 impl From<RawGame> for Game {
     fn from(value: RawGame) -> Self {
@@ -76,7 +77,11 @@ impl From<RawGame> for Game {
             error!("Game parse errors: {:?}", parse_errors)
         }
 
-        Self { away_sp: value.away_sp, away_team_abbreviation: value.away_team_abbreviation, away_team_color: value.away_team_color, away_team_emoji: value.away_team_emoji, away_team_id: value.away_team_id, away_team_name: value.away_team_name, home_sp: value.home_sp, home_team_abbreviation: value.home_team_abbreviation, home_team_color: value.home_team_color, home_team_emoji: value.home_team_emoji, home_team_id: value.home_team_id, home_team_name: value.home_team_name, season: value.season, day: value.day, state: value.state, 
+        if value.extra_fields.len() > 0 {
+            error!("Extra fields: {:?}", value.extra_fields)
+        }
+
+        Self { extra_fields: value.extra_fields, away_sp: value.away_sp, away_team_abbreviation: value.away_team_abbreviation, away_team_color: value.away_team_color, away_team_emoji: value.away_team_emoji, away_team_id: value.away_team_id, away_team_name: value.away_team_name, home_sp: value.home_sp, home_team_abbreviation: value.home_team_abbreviation, home_team_color: value.home_team_color, home_team_emoji: value.home_team_emoji, home_team_id: value.home_team_id, home_team_name: value.home_team_name, day: value.day, state: value.state, season: value.season,
                     weather, event_log, realm_id, stats, parse_errors
                 }
     }
@@ -92,8 +97,8 @@ impl From<Game> for RawGame {
             ).collect())
         ).collect();
 
-        Self { away_sp: value.away_sp, away_team_abbreviation: value.away_team_abbreviation, away_team_color: value.away_team_color, away_team_emoji: value.away_team_emoji, away_team_id: value.away_team_id, away_team_name: value.away_team_name, home_sp: value.home_sp, home_team_abbreviation: value.home_team_abbreviation, home_team_color: value.home_team_color, home_team_emoji: value.home_team_emoji, home_team_id: value.home_team_id, home_team_name: value.home_team_name, season: value.season, day: value.day, state: value.state, 
-            weather, event_log, realm, stats
+        Self { away_sp: value.away_sp, away_team_abbreviation: value.away_team_abbreviation, away_team_color: value.away_team_color, away_team_emoji: value.away_team_emoji, away_team_id: value.away_team_id, away_team_name: value.away_team_name, home_sp: value.home_sp, home_team_abbreviation: value.home_team_abbreviation, home_team_color: value.home_team_color, home_team_emoji: value.home_team_emoji, home_team_id: value.home_team_id, home_team_name: value.home_team_name, day: value.day, state: value.state, season: value.season,
+            weather, event_log, realm, stats, extra_fields: value.extra_fields
         }
     }
 }
@@ -103,16 +108,21 @@ impl From<Game> for RawGame {
 pub struct Weather {
     pub emoji: String,
     pub name: String,
-    pub tooltip: String
+    pub tooltip: String,
+
+    pub extra_fields: serde_json::Map<String, serde_json::Value>,
 }
 impl From<RawWeather> for Weather {
     fn from(value: RawWeather) -> Self {
-        Self { emoji: value.emoji, name: value.name, tooltip: value.tooltip }
+        if value.extra_fields.len() > 0 {
+            error!("Extra fields: {:?}", value.extra_fields)
+        }
+        Self { emoji: value.emoji, name: value.name, tooltip: value.tooltip, extra_fields: value.extra_fields }
     }
 }
 impl From<Weather> for RawWeather {
     fn from(value: Weather) -> Self {
-        Self { emoji: value.emoji, name: value.name, tooltip: value.tooltip }
+        Self { emoji: value.emoji, name: value.name, tooltip: value.tooltip, extra_fields: value.extra_fields }
     }
 }
 
@@ -145,7 +155,8 @@ pub struct Event {
     pub event: MaybeRecognized<EventType>,
     pub message: String,
 
-    pub parse_errors: Vec<EventParseError>
+    pub parse_errors: Vec<EventParseError>,
+    pub extra_fields: serde_json::Map<String, serde_json::Value>,
 }
 impl From<RawEvent> for Event {
     fn from(value: RawEvent) -> Self {
@@ -174,8 +185,11 @@ impl From<RawEvent> for Event {
         if parse_errors.len() > 0 {
             error!("Event parse errors: {:?}", parse_errors)
         }
+        if value.extra_fields.len() > 0 {
+            error!("Extra fields: {:?}", value.extra_fields)
+        }
 
-        Self {parse_errors, inning, pitch, batter, on_deck, pitcher, event, away_score: value.away_score, home_score: value.home_score, balls: value.balls, strikes: value.strikes, outs: value.outs, on_1b: value.on_1b, on_2b: value.on_2b, on_3b: value.on_3b, message: value.message }
+        Self {parse_errors, inning, pitch, batter, pitcher, on_deck, event, away_score: value.away_score, home_score: value.home_score, balls: value.balls, strikes: value.strikes, outs: value.outs, on_1b: value.on_1b, on_2b: value.on_2b, on_3b: value.on_3b, message: value.message, extra_fields: value.extra_fields }
     }
 }
 impl From<Event> for RawEvent {
@@ -198,7 +212,7 @@ impl From<Event> for RawEvent {
             }
         }
 
-        Self {inning, inning_side, pitch_info, zone, event, batter, on_deck, pitcher, away_score: value.away_score, home_score: value.home_score, balls: value.balls, strikes: value.strikes, outs: value.outs, on_1b: value.on_1b, on_2b: value.on_2b, on_3b: value.on_3b, message: value.message }
+        Self {inning, inning_side, pitch_info, zone, event, batter, on_deck, pitcher, away_score: value.away_score, home_score: value.home_score, balls: value.balls, strikes: value.strikes, outs: value.outs, on_1b: value.on_1b, on_2b: value.on_2b, on_3b: value.on_3b, message: value.message, extra_fields: value.extra_fields }
     }
 }
 

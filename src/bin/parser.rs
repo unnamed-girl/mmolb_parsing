@@ -42,10 +42,10 @@ pub struct CasheGame {
 #[derive(Parser, Debug)]
 struct Args {
     /// Where objects are saved to
-    parse_store: String,
+    output_file: Option<String>,
 
     /// Season
-    #[arg(short, long, default_value_t = 1)]
+    #[arg(short = 's', long, default_value_t = 1)]
     season: u8,
     /// Earliest day
     #[arg(short = 'd', long)]
@@ -62,10 +62,12 @@ async fn main() {
     let guard = tracing::subscriber::set_default(subscriber);
 
     let args = Args::parse();
-    let ron_cache = args.parse_store;
+    let output_file = args.output_file.as_ref().map(String::as_str);
 
     let client = get_caching_http_client();
     
+    info!("Fetching games list");
+
     let mut games = Vec::new();
     let mut url = format!("https://freecashe.ws/api/games?season={}", args.season);
     loop {
@@ -77,23 +79,28 @@ async fn main() {
         url = format!("https://freecashe.ws/api/games?season={}&page={}", args.season, response.next_page.unwrap());
     }
 
+    if let Some(output_file) = output_file {
+        info!("Parsing {} games into {output_file}", games.len());
+    } else {
+        info!("Parsing {} games",  games.len())
+    }
 
-    info!("Parsing {} games into {ron_cache}", games.len());
-
-    let mut stream = futures::stream::iter(games).map(|game_info| ingest_game(&client, game_info, &ron_cache)).buffered(30);
+    let mut stream = futures::stream::iter(games).map(|game_info| ingest_game(&client, game_info, output_file)).buffered(30);
 
     while let Some(()) = stream.next().await {}
 
     drop(guard);
 }
 
-async fn ingest_game(client: &ClientWithMiddleware, game_info: CasheGame, ron_cache: &str) {
+async fn ingest_game(client: &ClientWithMiddleware, game_info: CasheGame, output_file: Option<&str>) {
     let raw_game = client.get(format!("https://mmolb.com/api/game/{}", game_info.game_id)).send().await.unwrap().json::<RawGame>().await.unwrap();
 
     let game: Game = raw_game.clone().into();
 
-    let ron_path = format!(r"{ron_cache}/{}.ron", game_info.game_id);
-    let mut file = File::create(ron_path).unwrap();
+    let mut file = output_file.map(|cache| {
+        let ron_path = format!(r"{cache}/{}.ron", game_info.game_id);
+        File::create(ron_path).unwrap()
+    });
     let parsing_context = ParsingContext::new(&game);
 
     for event in &game.event_log {
@@ -109,7 +116,10 @@ async fn ingest_game(client: &ClientWithMiddleware, game_info: CasheGame, ron_ca
                 error!("{} s{}d{}: event round trip failure '{}'", game_info.game_id, game.season, game.day, event.message);
             }
         }
-        writeln!(file, "{}", ron::to_string(&parsed_event_message).unwrap()).unwrap();
+
+        if let Some(file) = file.as_mut() {
+            writeln!(file, "{}", ron::to_string(&parsed_event_message).unwrap()).unwrap();
+        }
     }
 
     info!("{} s{}d{} parsed", game_info.game_id, game_info.season, game_info.day);
