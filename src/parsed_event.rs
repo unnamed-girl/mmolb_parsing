@@ -16,16 +16,12 @@ pub enum ParsedEventMessage<S> {
     },
 
     LiveNow {
-        away_team_name: S,
-        away_team_emoji: S,
-        home_team_name: S,
-        home_team_emoji: S,
+        away_team: EmojiTeam<S>,
+        home_team: EmojiTeam<S>
     },
     PitchingMatchup {
-        away_team_name: S,
-        away_team_emoji: S,
-        home_team_name: S,
-        home_team_emoji: S,
+        away_team: EmojiTeam<S>,
+        home_team: EmojiTeam<S>,
         home_pitcher: S,
         away_pitcher: S,
     },
@@ -38,18 +34,15 @@ pub enum ParsedEventMessage<S> {
         message: GameOverMessage
     },
     Recordkeeping {
-        winning_team_emoji: S,
-        winning_team_name: S,
-        losing_team_emoji: S,
-        losing_team_name: S,
+        winning_team: EmojiTeam<S>,
+        losing_team: EmojiTeam<S>,
         winning_score: u8,
         losing_score: u8,
     },
     InningStart {
         number: u8,
         side: TopBottom,
-        batting_team_emoji: S,
-        batting_team_name: S,
+        batting_team: EmojiTeam<S>,
         /// This message was only added halfway through season 0. This field does not currently track unannounced automatic runners.
         automatic_runner: Option<S>,
         pitcher_status: StartOfInningPitcher<S>,
@@ -65,17 +58,14 @@ pub enum ParsedEventMessage<S> {
 
     // Mound visits
     MoundVisit {
-        emoji: S,
-        team: S,
+        team: EmojiTeam<S>
     },
     PitcherRemains {
         remaining_pitcher: PositionedPlayer<S>,
     },
     PitcherSwap {
-        leaving_position: Position,
-        leaving_pitcher: S,
-        arriving_position: Position,
-        arriving_pitcher: S,
+        leaving_pitcher: PositionedPlayer<S>,
+        arriving_pitcher: PositionedPlayer<S>,
     },
 
     // Pitch
@@ -103,7 +93,7 @@ pub enum ParsedEventMessage<S> {
     ReachOnFieldingError { batter: S, fielder:PositionedPlayer<S>, error: FieldingErrorType, scores: Vec<S>, advances: Vec<RunnerAdvance<S>> },
 
     // Season 1
-    WeatherDelivery { team: S, team_emoji: S, player: S, item_emoji: S, item :Item },
+    WeatherDelivery { team: EmojiTeam<S>, player: S, item_emoji: S, item :Item },
     WeatherDeliveryDiscard { item_emoji: S, item :Item },
 }
 impl<S: Display> ParsedEventMessage<S> {
@@ -113,8 +103,8 @@ impl<S: Display> ParsedEventMessage<S> {
             Self::ParseError { event_type: _, message } => {
                 message
             },
-            Self::LiveNow { away_team_name, away_team_emoji, home_team_name, home_team_emoji } => format!("{} {} @ {} {}", away_team_emoji, away_team_name, home_team_emoji, home_team_name),
-            Self::PitchingMatchup { away_team_name, away_team_emoji, home_team_name, home_team_emoji, home_pitcher, away_pitcher } => format!("{} {} {away_pitcher} vs. {} {} {home_pitcher}", away_team_emoji, away_team_name, home_team_emoji, home_team_name),
+            Self::LiveNow { away_team, home_team } => format!("{} @ {}", away_team, home_team),
+            Self::PitchingMatchup { away_team, home_team, home_pitcher, away_pitcher } => format!("{away_team} {away_pitcher} vs. {home_team} {home_pitcher}"),
             Self::Lineup { side: _, players } => {
                 players.into_iter().enumerate().fold(String::new(), |mut acc, (index, player)| {
                     let _ = write!(acc, "{}. {player}<br>", index + 1);
@@ -123,10 +113,10 @@ impl<S: Display> ParsedEventMessage<S> {
             },
             Self::PlayBall => "\"PLAY BALL.\"".to_string(),
             Self::GameOver { message } => message.to_string(),
-            Self::Recordkeeping { winning_team_emoji, winning_team_name, losing_team_emoji, losing_team_name, winning_score, losing_score } => {
-                format!("{winning_team_emoji} {winning_team_name} defeated {losing_team_emoji} {losing_team_name}. Final score: {winning_score}-{losing_score}")
+            Self::Recordkeeping { winning_team, losing_team, winning_score, losing_score } => {
+                format!("{winning_team} defeated {losing_team}. Final score: {winning_score}-{losing_score}")
             }
-            Self::InningStart { number, side, batting_team_emoji, batting_team_name, automatic_runner, pitcher_status } => {
+            Self::InningStart { number, side, batting_team, automatic_runner, pitcher_status } => {
                 let ordinal = match number {
                     0 => panic!("Should not have 0th innings"),
                     1 => "1st".to_string(),
@@ -136,15 +126,15 @@ impl<S: Display> ParsedEventMessage<S> {
                 };
                 let pitcher_message = match pitcher_status {
                     StartOfInningPitcher::Same { emoji, name } => format!("{emoji} {name} pitching."),
-                    StartOfInningPitcher::Different { leaving_position, leaving_pitcher, arriving_position, arriving_pitcher } => {
-                        format!("{leaving_position} {leaving_pitcher} is leaving the game. {arriving_position} {arriving_pitcher} takes the mound.")
+                    StartOfInningPitcher::Different { leaving_pitcher, arriving_pitcher } => {
+                        format!("{leaving_pitcher} is leaving the game. {arriving_pitcher} takes the mound.")
                     }
                 };
                 let automatic_runner = match automatic_runner {
                     Some(runner) => format!(" {runner} starts the inning on second base."),
                     None => String::new()
                 };
-                format!("Start of the {side} of the {ordinal}. {batting_team_emoji} {batting_team_name} batting.{automatic_runner} {pitcher_message}")
+                format!("Start of the {side} of the {ordinal}. {batting_team} batting.{automatic_runner} {pitcher_message}")
             },
             Self::NowBatting {batter, stats} => {
                 let stats = match stats {
@@ -168,14 +158,14 @@ impl<S: Display> ParsedEventMessage<S> {
                 };
                 format!("End of the {side} of the {ordinal}.")
             },        
-            Self::MoundVisit {emoji, team } => {
-                format!("The {emoji} {team} manager is making a mound visit.")
+            Self::MoundVisit {team } => {
+                format!("The {team} manager is making a mound visit.")
             },
             Self::PitcherRemains { remaining_pitcher } => {
                 format!("{remaining_pitcher} remains in the game.")
             },
-            Self::PitcherSwap { leaving_position, leaving_pitcher, arriving_position, arriving_pitcher } => {
-                format!("{leaving_position} {leaving_pitcher} is leaving the game. {arriving_position} {arriving_pitcher} takes the mound.")
+            Self::PitcherSwap { leaving_pitcher, arriving_pitcher } => {
+                format!("{leaving_pitcher} is leaving the game. {arriving_pitcher} takes the mound.")
             },
 
             Self::Ball { steals, count } => {
@@ -281,8 +271,8 @@ impl<S: Display> ParsedEventMessage<S> {
                 let error = error.lowercase();
                 format!("{batter} reaches on a {error} error by {fielder}.{scores_and_advances}")
             }
-            Self::WeatherDelivery { team, team_emoji, player, item_emoji, item } => {
-                format!("{team} {team_emoji} {player} received a {item_emoji} {item} Delivery.")
+            Self::WeatherDelivery { team, player, item_emoji, item } => {
+                format!("{team} {player} received a {item_emoji} {item} Delivery.")
             },
             Self::WeatherDeliveryDiscard { item_emoji, item } => {
                 format!("{item_emoji} {item} was discarded as no player had space.")
@@ -317,10 +307,8 @@ fn unparse_scores_and_advances<S: Display>(scores: Vec<S>, advances:Vec<RunnerAd
 pub enum StartOfInningPitcher<S> {
     Same {emoji: S, name: S},
     Different {
-        leaving_position: Position,
-        leaving_pitcher: S,
-        arriving_position: Position,
-        arriving_pitcher: S,
+        leaving_pitcher: PositionedPlayer<S>,
+        arriving_pitcher: PositionedPlayer<S>,
     }
 }
 
@@ -349,6 +337,18 @@ impl<S:Display> Display for FieldingAttempt<S> {
     }
 }
 
+/// A team's emoji and name, which is how teams are usually presented in mmolb.
+#[derive(Debug, Clone, Copy, Serialize, Deserialize, PartialEq)]
+pub struct EmojiTeam<S> {
+    pub emoji: S,
+    pub name: S
+}
+impl<S: Display> Display for EmojiTeam<S> {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        write!(f, "{} {}", self.emoji, self.name)
+    }
+}
+
 #[derive(Debug, Clone, Copy, Serialize, Deserialize, PartialEq)]
 pub struct PositionedPlayer<S> {
     pub name: S,
@@ -359,6 +359,7 @@ impl<S: Display> Display for PositionedPlayer<S> {
         write!(f, "{} {}", self.position, self.name)
     }
 }
+
 #[derive(Debug, Clone, Copy, Serialize, Deserialize, PartialEq)]
 pub struct RunnerOut<S> {
     pub runner: S,

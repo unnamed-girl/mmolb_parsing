@@ -3,7 +3,7 @@ use std::{fmt::Debug, str::FromStr};
 use nom::{branch::alt, bytes::complete::{tag, take, take_till, take_until, take_until1, take_while}, character::complete::{multispace0, space0, space1, u8}, combinator::{all_consuming, recognize, rest, value, verify}, error::{ErrorKind, ParseError}, multi::{count, many0, many1, separated_list1}, sequence::{delimited, preceded, separated_pair, terminated}, AsChar, Compare, CompareResult, Input, Parser};
 use nom_language::error::VerboseError;
 
-use crate::{enums::{Base, BaseNameVariant, BatterStat, FairBallDestination, FairBallType, FieldingErrorType, NowBattingStats, Position}, parsed_event::{BaseSteal, PositionedPlayer, RunnerAdvance, RunnerOut}, Game};
+use crate::{enums::{Base, BaseNameVariant, BatterStat, FairBallDestination, FairBallType, FieldingErrorType, NowBattingStats}, parsed_event::{BaseSteal, EmojiTeam, PositionedPlayer, RunnerAdvance, RunnerOut}, Game};
 
 pub(super) type Error<'a> = VerboseError<&'a str>;
 pub(super) type IResult<'a, I, O> = nom::IResult<I, O, Error<'a>>;
@@ -120,8 +120,8 @@ pub(super) fn fielders_eof(input: &str) -> IResult<&str, Vec<PositionedPlayer<&s
 }
 
 /// A team's emoji and name, e.g. "\ud83d\udc2f Antioch Royal Tigers".
-pub(super) fn team_emoji_and_name<'output, 'parse>(parsing_context: &'parse ParsingContext<'output>) -> impl Parser<&'output str, Output = (&'output str, &'output str), Error = Error<'output>> + 'parse {
-    (emoji, team_name(parsing_context))
+pub(super) fn emoji_team<'output, 'parse>(parsing_context: &'parse ParsingContext<'output>) -> impl Parser<&'output str, Output = EmojiTeam<&'output str>, Error = Error<'output>> + 'parse {
+    (emoji, team_name(parsing_context)).map(|(emoji, name)| EmojiTeam { emoji, name })
 }
 
 /// A single team's name, obtained by matching the known team names in the context. e.g. "Antioch Royal Tigers"
@@ -218,10 +218,10 @@ pub(super) fn score_update_sentence(i: &str) -> IResult<&str, (u8, u8)> {
     .parse(i)
 }
 
-pub(super) fn switch_pitcher_sentences(i: &str) -> IResult<&str, ((Position, &str), (Position, &str))> {
+pub(super) fn switch_pitcher_sentences(i: &str) -> IResult<&str, (PositionedPlayer<&str>, PositionedPlayer<&str>)> {
     (
-        terminated((try_from_word, take_until(" is leaving the game")), s_tag("is leaving the game.")),
-        terminated((try_from_word, take_until(" takes the mound")), s_tag("takes the mound."))
+        parse_terminated(" is leaving the game. ").and_then(positioned_player_eof),
+        parse_terminated(" takes the mound.").and_then(positioned_player_eof),
     )
     .parse(i)
 }
@@ -325,9 +325,9 @@ pub(super) fn emoji(input: &str) -> IResult<&str, &str> {
     strip(take_till(AsChar::is_space)).parse(input)
 }
 
-pub(super) fn emoji_and_name_eof(input: &str) -> IResult<&str, (&str, &str)> {
-    verify(rest,  |name: &str| !name.contains(","))
-    .and_then((emoji, rest))
+pub(super) fn emoji_team_eof(input: &str) -> IResult<&str, EmojiTeam<&str>> {
+    (emoji, name_eof)
+    .map(|(emoji, name)| EmojiTeam { emoji, name })
     .parse(input)
 }
 
