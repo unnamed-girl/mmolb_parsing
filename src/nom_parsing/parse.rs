@@ -12,7 +12,10 @@ impl<'output, T: Parser<&'output str, Output = ParsedEventMessage<&'output str>,
 pub fn parse_event<'output>(event: &'output Event, parsing_context: &ParsingContext<'output>) -> Result<ParsedEventMessage<&'output str>, Error<'output>> {
     let event_type = match &event.event {
         MaybeRecognized::Recognized(event_type) => event_type,
-        MaybeRecognized::NotRecognized(event_type) => return Ok(ParsedEventMessage::ParseError { event_type: event_type.clone(), message: event.message.clone() })
+        MaybeRecognized::NotRecognized(event_type) => {
+            tracing::error!("Event type {event_type} not recognized");
+            return Ok(ParsedEventMessage::ParseError { event_type: event_type.clone(), message: event.message.clone() })
+        }
     };
     
     match event_type {

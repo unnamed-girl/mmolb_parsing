@@ -16,12 +16,10 @@ pub fn process_event<'output>(event: &'output Event, game: &'output Game) -> Par
     let parsing_context = ParsingContext::new(game);
     let parsed_event_message = match parse_event(event, &parsing_context) {
         Ok(event) => event,
-        Err(_) => {
+        Err(e) => {
+            error!("Parse error: for {:?}: {e}", &event.event);
             ParsedEventMessage::ParseError { event_type: event.event.to_string(), message: event.message.clone() }
         }
     };
-    if let ParsedEventMessage::ParseError { event_type, message } = &parsed_event_message {
-        error!("Parse error for {event_type}: {message}");
-    }
     parsed_event_message
 }

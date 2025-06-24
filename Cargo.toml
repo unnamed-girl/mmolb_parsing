@@ -9,16 +9,17 @@ required-features = ["bin"]
 
 [features]
 rand = ["dep:rand"]
-bin = ["dep:clap", "dep:tracing-subscriber", "dep:tokio", "dep:futures", "dep:reqwest", "dep:reqwest-middleware", "dep:http-cache-reqwest"]
+bin = ["dep:clap", "dep:tracing-subscriber", "dep:tokio", "dep:futures", "dep:reqwest", "dep:reqwest-middleware", "dep:http-cache-reqwest", "dep:async-stream"]
 
 [dependencies]
+async-stream = { version = "0.3.6", optional = true }
 clap = { version = "4.5.40", features = ["derive"], optional = true }
 futures = { version = "0.3.31", optional = true }
 http-cache-reqwest = { version = "0.15.1", optional = true }
 nom = "8.0.0"
 nom-language = "0.1.0"
 rand = { version = "0.9.1", optional = true }
-reqwest = { version = "0.12.15", features = ["blocking", "json"], optional = true }
+reqwest = { version = "0.12.15", features = ["blocking", "brotli", "gzip", "json"], optional = true }
 reqwest-middleware = { version = "0.4.2", optional = true }
 ron = "0.10.1"
 serde = { version = "1.0.219", features = ["serde_derive"] }
