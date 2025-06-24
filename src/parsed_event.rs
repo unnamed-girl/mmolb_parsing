@@ -3,7 +3,7 @@ use std::{fmt::{Display, Write}, iter::once};
 use serde::{Deserialize, Serialize};
 use strum::EnumDiscriminants;
 
-use crate::enums::{Base, BaseNameVariant, BatterStat, Distance, FairBallDestination, FairBallType, FieldingErrorType, FoulType, GameOverMessage, HomeAway, Item, NowBattingStats, Position, StrikeType, TopBottom};
+use crate::enums::{Base, BaseNameVariant, BatterStat, Distance, FairBallDestination, FairBallType, FieldingErrorType, FoulType, GameOverMessage, HomeAway, ItemType, ItemPrefix, ItemSuffix, NowBattingStats, Position, StrikeType, TopBottom};
 
 /// S is the string type used. S = &'output str is used by the parser, 
 /// but a mutable type is necessary when directly deserializing, because some players have escaped characters in their names
@@ -93,8 +93,16 @@ pub enum ParsedEventMessage<S> {
     ReachOnFieldingError { batter: S, fielder:PositionedPlayer<S>, error: FieldingErrorType, scores: Vec<S>, advances: Vec<RunnerAdvance<S>> },
 
     // Season 1
-    WeatherDelivery { team: EmojiTeam<S>, player: S, item_emoji: S, item :Item },
-    WeatherDeliveryDiscard { item_emoji: S, item :Item },
+    WeatherDelivery { delivery: Delivery<S> },
+    WeatherDeliveryDiscard { item_emoji: S, item :ItemType },
+
+    // Season 2
+    WeatherShipment {
+        deliveries: Vec<Delivery<S>>
+    },
+    WeatherSpecialDelivery {
+        delivery: Delivery<S>
+    },
 }
 impl<S: Display> ParsedEventMessage<S> {
     /// Recreate the event message this ParsedEvent was built out of.
@@ -271,11 +279,17 @@ impl<S: Display> ParsedEventMessage<S> {
                 let error = error.lowercase();
                 format!("{batter} reaches on a {error} error by {fielder}.{scores_and_advances}")
             }
-            Self::WeatherDelivery { team, player, item_emoji, item } => {
-                format!("{team} {player} received a {item_emoji} {item} Delivery.")
+            Self::WeatherDelivery {delivery } => {
+                delivery.unparse("Delivery")
             },
             Self::WeatherDeliveryDiscard { item_emoji, item } => {
                 format!("{item_emoji} {item} was discarded as no player had space.")
+            },
+            Self::WeatherShipment { deliveries } => {
+                deliveries.iter().map(|d| d.unparse("Shipment")).collect::<Vec<String>>().join(" ")
+            }
+            Self::WeatherSpecialDelivery { delivery } => {
+                delivery.unparse("Special Delivery")
             }
         }
     }
@@ -415,5 +429,49 @@ impl<S> TryFrom<BaseSteal<S>> for RunnerAdvance<S> {
         } else {
             Err(())
         }
+    }
+}
+
+#[derive(Debug, Clone, Copy, Serialize, Deserialize, PartialEq)]
+pub struct Item<S> {
+    pub item_emoji: S,
+    pub prefix: Option<ItemPrefix>,
+    pub item: ItemType,
+    pub suffix: Option<ItemSuffix>,
+}
+impl<S: Display> Display for Item<S> {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        let Item { item_emoji, prefix, item, suffix } = self;
+        let prefix = match prefix {
+            Some(prefix) => format!("{prefix} "),
+            None => String::new()
+        };
+        let suffix = match suffix {
+            Some(suffix) => format!(" of {suffix}"),
+            None => String::new()
+        };
+
+        write!(f, "{item_emoji} {prefix}{item}{suffix}")
+    }
+}
+
+#[derive(Debug, Clone, Copy, Serialize, Deserialize, PartialEq)]
+pub struct Delivery<S> {
+    pub team: EmojiTeam<S>,
+    pub player: S,
+    pub item: Item<S>,
+    pub discarded: Option<Item<S>>
+}
+impl<S: Display> Delivery<S> {
+    pub fn unparse(&self, delivery_label: &str) -> String {
+        let Delivery { team, player, item, discarded} = self;
+
+        let discarded = match discarded {
+            Some(discarded) => format!(" They discarded their {discarded}."),
+            None => String::new(),
+        };
+
+
+        format!("{team} {player} received a {item} {delivery_label}.{discarded}")
     }
 }

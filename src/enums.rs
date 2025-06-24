@@ -24,6 +24,12 @@ pub enum EventType {
     // Season 1
     #[strum(to_string = "Weather_Delivery")]
     WeatherDelivery,
+
+    // Season 2
+    #[strum(to_string = "Weather_Shipment")]
+    WeatherShipment,
+    #[strum(to_string = "Weather_SpecialDelivery")]
+    WeatherSpecialDelivery
 }
 
 /// Top or bottom of an inning.
@@ -793,7 +799,7 @@ pub enum GameOverMessage {
 }
 
 #[derive(Clone, Copy, EnumString, Display, Debug, Serialize, Deserialize, PartialEq, Eq, Hash)]
-pub enum Item {
+pub enum ItemType {
     Cap,
     Gloves,
     #[strum(to_string = "T-Shirt")]
@@ -963,4 +969,53 @@ pub enum Attribute {
     Speed,
     Stealth,
     Guts
+}
+
+#[derive(EnumString, Display, Debug, Serialize, Deserialize, Clone, Copy, EnumIter, PartialEq, Eq, Hash)]
+#[serde(try_from = "&str", into = "DisplayDeserializer")]
+pub enum ItemPrefix {
+    Sharp,
+    Consistent,
+    Clever,
+    Steadfast,
+    Insightful,
+    Menacing,
+    Lofty,
+    #[strum(to_string = "Eagle-Eyed")]
+    EagleEyed,
+    Stalwart,
+    Wise,
+    Mighty, 
+    Selfless,
+    True,
+    Commanding,
+    Charming,
+    Courageous,
+    Rebellious,
+    Enduring,
+    Rapid,
+    Precise,
+    Whirling,
+    Filthy,
+    Avaricious,
+    Dazzling,
+    Swift,
+    Sneaky,
+}
+
+#[derive(EnumString, Display, Debug, Serialize, Deserialize, Clone, Copy, EnumIter, PartialEq, Eq, Hash)]
+#[serde(try_from = "&str", into = "DisplayDeserializer")]
+pub enum ItemSuffix {
+    #[strum(to_string = "the Acrobat")]
+    Acrobat,
+    #[strum(to_string = "the Cat")]
+    Cat,
+    #[strum(to_string = "the Cannon")]
+    Cannon,
+    Awareness,
+    Calm,
+    Skill,
+    Patience,
+    Reflexes,
+    Fortune
 }

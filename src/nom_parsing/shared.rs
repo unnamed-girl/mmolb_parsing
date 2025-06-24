@@ -1,12 +1,15 @@
-use std::{fmt::Debug, str::FromStr};
+use std::fmt::Debug;
 
-use nom::{branch::alt, bytes::complete::{tag, take, take_till, take_until, take_until1, take_while}, character::complete::{multispace0, space0, space1, u8}, combinator::{all_consuming, recognize, rest, value, verify}, error::{ErrorKind, ParseError}, multi::{count, many0, many1, separated_list1}, sequence::{delimited, preceded, separated_pair, terminated}, AsChar, Compare, CompareResult, Input, Parser};
+use nom::{branch::alt, bytes::complete::{tag, take, take_till, take_until, take_until1, take_while}, character::complete::{one_of, space0, u8}, combinator::{all_consuming, opt, recognize, rest, value, verify}, error::{ErrorKind, ParseError}, multi::{count, many0, many1, separated_list1}, sequence::{delimited, preceded, separated_pair, terminated}, AsChar, Compare, CompareResult, Input, Parser};
 use nom_language::error::VerboseError;
 
-use crate::{enums::{Base, BaseNameVariant, BatterStat, FairBallDestination, FairBallType, FieldingErrorType, NowBattingStats}, parsed_event::{BaseSteal, EmojiTeam, PositionedPlayer, RunnerAdvance, RunnerOut}, Game};
+use crate::{enums::{Base, BatterStat, FairBallDestination, FairBallType, NowBattingStats}, parsed_event::{BaseSteal, EmojiTeam, Item, PositionedPlayer, RunnerAdvance, RunnerOut, Delivery}, Game};
 
 pub(super) type Error<'a> = VerboseError<&'a str>;
 pub(super) type IResult<'a, I, O> = nom::IResult<I, O, Error<'a>>;
+pub(super) trait MyParser<'output, T>: Parser<&'output str, Output = T, Error = Error<'output>> {}
+impl<'output, T, P: Parser<&'output str, Output = T, Error = Error<'output>>> MyParser<'output, T> for P {}
+
 
 /// Context necessary for parsing. The 'output lifetime is linked to ParsedEvents parsed in this context.
 #[derive(Clone, Debug)]
@@ -26,20 +29,18 @@ pub(super) fn debugger<'output, E: ParseError<&'output str> + Debug, F: Parser<&
     let mut r = parser;
     move |i| {
         match r.parse(i) {
-            r @ Err(_) => dbg!(r),
+            r @ Err(_) => {
+                tracing::error!("{r:?}");
+                r
+            },
             o => o 
         }
     }
 }
 
-/// Discare whitespace around a child parser
-pub(super) fn strip<'output, E: ParseError<&'output str>, F: Parser<&'output str, Output = O, Error = E>, O>(parser: F) -> impl Parser<&'output str, Output =  O, Error = E> {
-    delimited(multispace0, parser, multispace0)
-}
-
 /// Discards \<strong>\</strong> tags and whitespace from around the child parser.
 pub(super) fn bold<'output, E: ParseError<&'output str>, F: Parser<&'output str, Output = O, Error = E>, O>(parser: F) -> impl Parser<&'output str, Output =  O, Error = E> {
-    strip(delimited(tag("<strong>"), parser, tag("</strong>")))
+    delimited((space0, tag("<strong>")), parser, tag("</strong>"))
 }
 /// Discards whitespace and a terminating full stop from around the child parser.
 pub(super) fn sentence<'output, E: ParseError<&'output str>, F: Parser<&'output str, Output = O, Error = E>, O>(parser: F) -> impl Parser<&'output str, Output =  O, Error = E> {
@@ -48,30 +49,18 @@ pub(super) fn sentence<'output, E: ParseError<&'output str>, F: Parser<&'output 
 
 /// Discards whitespace and a terminating exclamation mark from around the child parser.
 pub(super) fn exclamation<'output, E: ParseError<&'output str>, F: Parser<&'output str, Output = O, Error = E>, O>(parser: F) -> impl Parser<&'output str, Output =  O, Error = E> {
-    strip(terminated(parser, tag("!")))
+    delimited(space0, parser, tag("!"))
 }
 
-/// Discards whitespace then takes until it sees punctuation or a space.
+/// Takes until it sees punctuation or a space.
 pub(super) fn word(s: &str) -> IResult<&str, &str> {
-    strip(take_while(|char| ![',', '.', ' ', '!', '<', '>', ':', ';'].contains(&char))).parse(s)
+    take_while(|char| ![',', '.', ' ', '!', '<', '>', ':', ';'].contains(&char)).parse(s)
 }
 
-/// As the tag combinator, but discards whitespace on either side.
-pub(super) fn s_tag<'output, Error: ParseError<&'output str> + Debug>(tag_str: &'output str) -> impl Parser<&'output str, Output = &'output str, Error = Error> {
-    strip(tag(tag_str))
-}
-
-/// n groups of space-separated aphamuric characters, outputed as a single str. Discards whitespace on either side
+/// n groups of space-separated words. Will get stuck on punctuation
 pub(super) fn words<'output>(n: usize) -> impl Parser<&'output str, Output = &'output str, Error = Error<'output>> {
-    strip(recognize((take_while(AsChar::is_alphanum), count((space1, take_while(AsChar::is_alphanum)), n-1))))
-}
-
-/// A type of fair ball, e.g. "ground ball"
-pub(super) fn fair_ball_type(i: &str) -> IResult<&str, FairBallType> {
-    alt((
-        words(2).map_res(FairBallType::try_from),
-        word.map_res(FairBallType::try_from),
-    )).parse(i)
+    recognize((word, count((one_of(" "), word), n-1)))
+        .map(str::trim)
 }
 
 /// Verb names for fair ball types, e.g. "pops"
@@ -104,29 +93,42 @@ pub(super) fn try_from_word<'output, T:TryFrom<&'output str>>(i: &'output str) -
     word.map_res(T::try_from).parse(i)
 }
 
+/// n > m
+pub(super) fn try_from_words_m_n<'output, T:TryFrom<&'output str>>(m: usize, n:usize) -> impl MyParser<'output, T> {
+    move |input: &'output str| {
+        for i in (m..=n).rev() {
+            match words(i).map_res(T::try_from).parse(input) {
+                Ok(o) => return Ok(o),
+                Err(_) => ()
+            }
+        }
+        Err(nom::Err::Error(VerboseError::<&str>::from_error_kind(input, ErrorKind::MapRes)))
+    }
+}
+
 /// A list of fielders involved in a catch, e.g. "P Niblet Hornsby to 1B Geo Kerr to 3B Joffrey Nishida"
 pub(super) fn fielders_eof(input: &str) -> IResult<&str, Vec<PositionedPlayer<&str>>> {
-    alt((
+    all_consuming(alt((
         (
             many1(parse_terminated(" to ").and_then(positioned_player_eof)),
-            rest.and_then(positioned_player_eof)
+            positioned_player_eof
         ).map(|(mut fielders, last)| {
             fielders.push(last);
             fielders
         }),
         parse_terminated(" unassisted").and_then(positioned_player_eof).map(|fielder| vec![fielder])
-    ))
+    )))
     .parse(input)
 }
 
 /// A team's emoji and name, e.g. "\ud83d\udc2f Antioch Royal Tigers".
 pub(super) fn emoji_team<'output, 'parse>(parsing_context: &'parse ParsingContext<'output>) -> impl Parser<&'output str, Output = EmojiTeam<&'output str>, Error = Error<'output>> + 'parse {
-    (emoji, team_name(parsing_context)).map(|(emoji, name)| EmojiTeam { emoji, name })
+    separated_pair(emoji, tag(" "), team_name(parsing_context)).map(|(emoji, name)| EmojiTeam { emoji, name })
 }
 
 /// A single team's name, obtained by matching the known team names in the context. e.g. "Antioch Royal Tigers"
 pub(super) fn team_name<'output, 'parse>(parsing_context: &'parse ParsingContext<'output>) -> impl Parser<&'output str, Output = &'output str, Error = Error<'output>> + 'parse {
-    strip(move |i: &'output str| {
+    move |i: &'output str| {
         for name in [parsing_context.game.home_team_name.as_str(), parsing_context.game.away_team_name.as_str()] {
             let name_len = name.input_len();
             if i.compare(name) == CompareResult::Ok {
@@ -134,27 +136,14 @@ pub(super) fn team_name<'output, 'parse>(parsing_context: &'parse ParsingContext
             }
         }
         IResult::Err(nom::Err::Error(VerboseError::from_error_kind(i, ErrorKind::Tag)))
-    })
-}
-
-/// Sometimes bases get called e.g. "1B" instead.
-pub(super) fn base_name_variant(i: &str) -> IResult<&str, BaseNameVariant> {
-    alt((
-        words(2).map_res(BaseNameVariant::try_from),
-        word.map_res(BaseNameVariant::try_from),
-    )).parse(i)
-}
-
-/// A type fielding error e.g. "throwing". Case insensitive
-pub(super) fn fielding_error_type(i: &str) -> IResult<&str, FieldingErrorType> {
-    word.map_res(FieldingErrorType::from_str).parse(i)
+    }
 }
 
 /// A single instance of an out, e.g. "Franklin Shoebill out at home"
 pub(super) fn out(input: &str) -> IResult<&str, RunnerOut<&str>> {
     (
         parse_terminated(" out at "),
-        base_name_variant
+        try_from_words_m_n(1,2)
     )
     .map(|(player, base)| RunnerOut { runner: player, base })
     .parse(input)
@@ -168,7 +157,7 @@ pub(super) fn scores_sentence(input: &str) -> IResult<&str, &str> {
 
 // A single instance of a runner advancing, e.g. "Franklin shoebill to third base."
 pub fn runner_advance_sentence(input: &str) -> IResult<&str, RunnerAdvance<&str>> {
-    sentence((parse_terminated(" to "), terminated(try_from_word, s_tag("base"))))
+    sentence((parse_terminated(" to "), terminated(try_from_word, tag(" base"))))
     .map(|(runner, base)| RunnerAdvance {runner, base})
     .parse(input)
 }
@@ -196,13 +185,13 @@ pub(super) fn base_steal_sentence(input: &str) -> IResult<&str, BaseSteal<&str>>
     let home_steal = bold(exclamation(parse_terminated(" steals home")))
     .map(|runner| BaseSteal { runner, base:Base::Home, caught:false });
 
-    let successful_steal = exclamation((parse_terminated(" steals "), terminated(try_from_word, s_tag("base"))))
+    let successful_steal = exclamation((parse_terminated(" steals "), terminated(try_from_word, tag(" base"))))
     .map(|(runner, base)| BaseSteal {runner, base, caught: false });
 
     let caught_stealing_home = sentence(parse_terminated(" is caught stealing home"))
     .map(|runner| BaseSteal {runner, base:Base::Home, caught: true });
 
-    let caught_stealing = sentence((parse_terminated(" is caught stealing "), terminated(try_from_word, s_tag("base"))))
+    let caught_stealing = sentence((parse_terminated(" is caught stealing "), terminated(try_from_word, tag(" base"))))
     .map(|(runner, base)| BaseSteal {runner, base, caught: true });
 
     alt((
@@ -213,15 +202,15 @@ pub(super) fn base_steal_sentence(input: &str) -> IResult<&str, BaseSteal<&str>>
     )).parse(input)
 }
 
-pub(super) fn score_update_sentence(i: &str) -> IResult<&str, (u8, u8)> {
-    sentence(strip(separated_pair(u8, s_tag("-"), u8)))
+pub(super) fn score_update(i: &str) -> IResult<&str, (u8, u8)> {
+    separated_pair(u8, tag("-"), u8)
     .parse(i)
 }
 
 pub(super) fn switch_pitcher_sentences(i: &str) -> IResult<&str, (PositionedPlayer<&str>, PositionedPlayer<&str>)> {
     (
-        parse_terminated(" is leaving the game. ").and_then(positioned_player_eof),
-        parse_terminated(" takes the mound.").and_then(positioned_player_eof),
+        sentence(parse_terminated(" is leaving the game").and_then(positioned_player_eof)),
+        sentence(parse_terminated(" takes the mound").and_then(positioned_player_eof)),
     )
     .parse(i)
 }
@@ -250,12 +239,15 @@ pub(super) fn all_consuming_sentence_and<'output, F: Parser<&'output str, Output
             }
 
             if i >= 10 {
-                panic!("infinite depth oh no")
+                return IResult::Err(nom::Err::Error(VerboseError::from_error_kind(input, ErrorKind::Tag)))
             }
         }
     }
 }
 
+
+/// Keeps searching for the delimiter until it finds an instance immediately followed by a valid input to the child parser.
+/// Returns everything up to the delimiter and the output of the child parser. 
 pub fn parse_and<'output, F, O>(
     mut f: F,
     delimiter: &'output str,
@@ -264,7 +256,7 @@ pub fn parse_and<'output, F, O>(
     F: Parser<&'output str, Output = O, Error = Error<'output>>,
 {
     move |input: &'output str| {
-        let mut i = 0usize;
+        let mut i = 1usize;
         let delimiter_len = delimiter.input_len();
 
         loop {
@@ -298,7 +290,7 @@ pub(super) fn parse_terminated(tag_content: &str) -> impl Fn(&str) -> IResult<&s
 }
 
 pub(super) fn positioned_player_eof(input: &str) -> IResult<&str, PositionedPlayer<&str>> {
-    (try_from_word, name_eof)
+    separated_pair(try_from_word, tag(" "), name_eof)
     .map(|(position, name)| PositionedPlayer { name, position })
     .parse(input)
 }
@@ -322,11 +314,11 @@ pub(super) fn sentence_eof<'output, E: ParseError<&'output str> + Debug, F: Pars
 
 
 pub(super) fn emoji(input: &str) -> IResult<&str, &str> {
-    strip(take_till(AsChar::is_space)).parse(input)
+    take_till(AsChar::is_space).parse(input)
 }
 
 pub(super) fn emoji_team_eof(input: &str) -> IResult<&str, EmojiTeam<&str>> {
-    (emoji, name_eof)
+    separated_pair(emoji, tag(" "), name_eof)
     .map(|(emoji, name)| EmojiTeam { emoji, name })
     .parse(input)
 }
@@ -357,8 +349,48 @@ pub(super) fn batter_stat(input: &str) -> IResult<&str, BatterStat> {
 
 /// Doesn't include the brackets. e.g. "1st PA of game" or "1 for 2, 1 1B, 1 FO"
 pub(super) fn now_batting_stats(input: &str) -> IResult<&str, NowBattingStats> {
-    debugger(alt ((
+    alt ((
         value(NowBattingStats::FirstPA, tag("1st PA of game")),
         separated_list1(tag(", "), batter_stat).map(|stats| NowBattingStats::Stats { stats } )
-    ))).parse(input)
+    )).parse(input)
+}
+
+pub(super) fn item(input: &str) -> IResult<&str, Item<&str>> {
+    (
+        emoji,
+        opt(preceded(tag(" "), try_from_word)),
+        preceded(tag(" "), try_from_word),
+        opt(preceded(tag(" of "), try_from_words_m_n(1,2)))
+    ).map(|(item_emoji, prefix, item, suffix)| Item { item_emoji, prefix, item, suffix})
+    .parse(input)
+}
+
+pub(super) fn delivery<'parse, 'output>(parsing_context: &'parse ParsingContext<'output>, label: &'output str) -> impl MyParser<'output, Delivery<&'output str>> + 'parse {
+        (
+            separated_pair(emoji_team(parsing_context), tag(" "), parse_terminated(" received a ")),
+            terminated(item, (tag(" "), tag(label), tag("."))),
+            opt(delimited(tag(" They discarded their "), item, tag(".")))
+        ).map(|((team, player), item, discarded)| Delivery {team, player, item, discarded} )
+}
+
+#[cfg(test)]
+mod test {
+    use nom::Parser;
+    use crate::{enums::{BaseNameVariant, FairBallType, TopBottom}, nom_parsing::shared::{out, parse_and, try_from_word, try_from_words_m_n}, parsed_event::RunnerOut};
+
+    #[test]
+    fn test_parse_and() {
+        assert_eq!(Ok((" wow", ("hi hi", TopBottom::Top))), parse_and(try_from_word::<TopBottom>, " ").parse("hi hi top wow"));
+        assert!(parse_and(try_from_word::<TopBottom>, " ").parse("top wow").is_err());
+    }
+
+    #[test]
+    fn test_try_from_words() {
+        assert_eq!(Ok((" blah", FairBallType::LineDrive)), try_from_words_m_n(1,2).parse("line drive blah"));
+    }
+
+    #[test]
+    fn test_out() {
+        assert_eq!(Ok(("", RunnerOut {runner: "Dolorenine Lomidze", base :BaseNameVariant::ThirdBase})), out("Dolorenine Lomidze out at third base"));
+    }
 }

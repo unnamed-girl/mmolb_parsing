@@ -2,7 +2,7 @@ use std::collections::HashMap;
 use serde::{Deserialize, Serialize};
 use tracing::error;
 
-use crate::{enums::{EventType, GameStat, Inning, MaybeRecognized, PitchType}, raw_game::{RawEvent, RawGame, RawWeather, RawZone}};
+use crate::{enums::{EventType, GameStat, Inning, MaybeRecognized, PitchType}, raw_game::{RawEvent, RawGame, RawWeather}};
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub enum GameDeserializeError {
@@ -148,6 +148,9 @@ pub struct Event {
     pub event: MaybeRecognized<EventType>,
     pub message: String,
 
+    /// Event Index, introduced in S2
+    pub index: Option<u16>,
+
     pub deserialization_error: Vec<EventDeserializeError>,
     pub extra_fields: serde_json::Map<String, serde_json::Value>,
 }
@@ -161,13 +164,12 @@ impl From<RawEvent> for Event {
             (number, side) => Inning::DuringGame { number, batting_side: side.try_into().unwrap() }
         };
         let pitch_info = (!value.pitch_info.is_empty()).then_some(value.pitch_info);
-        let zone = if let RawZone::Number(n) = value.zone {Some(n)} else {None};
 
         let batter = value.batter.into();
         let on_deck = value.on_deck.into();
         let pitcher = value.pitcher.into();
 
-        let pitch = pitch_info.zip(zone).map(|(pitch_info, zone)| Pitch::new(pitch_info, zone));
+        let pitch = pitch_info.zip(value.zone).map(|(pitch_info, zone)| Pitch::new(pitch_info, zone));
         
         let event = value.event.as_str().into();
 
@@ -188,7 +190,7 @@ impl From<RawEvent> for Event {
             error!("Deserialization found extra fields: {:?}", value.extra_fields)
         }
 
-        Self {deserialization_error, inning, pitch, batter, pitcher, on_deck, event, away_score: value.away_score, home_score: value.home_score, balls: value.balls, strikes: value.strikes, outs: value.outs, on_1b: value.on_1b, on_2b: value.on_2b, on_3b: value.on_3b, message: value.message, extra_fields: value.extra_fields }
+        Self {deserialization_error, inning, pitch, batter, pitcher, on_deck, event, away_score: value.away_score, home_score: value.home_score, balls: value.balls, strikes: value.strikes, outs: value.outs, on_1b: value.on_1b, on_2b: value.on_2b, on_3b: value.on_3b, message: value.message, extra_fields: value.extra_fields, index: value.index }
     }
 }
 impl From<Event> for RawEvent {
@@ -198,14 +200,14 @@ impl From<Event> for RawEvent {
             Inning::DuringGame { number, batting_side: side } => (number, side.into()),
             Inning::AfterGame { total_inning_count } => (total_inning_count + 1, 2)
         };
-        let (pitch_info, zone) = value.pitch.map(Pitch::unparse).map(|(pitch, zone)| (pitch, RawZone::Number(zone))).unwrap_or(("".to_string(), RawZone::String("".to_string())));
+        let (pitch_info, zone) = value.pitch.map(Pitch::unparse).map(|(pitch, zone)| (pitch, Some(zone))).unwrap_or(("".to_string(), None));
         let event = value.event.to_string();
 
         let batter = value.batter.unparse();
         let on_deck = value.on_deck.unparse();
         let pitcher = value.pitcher.unparse();
 
-        Self {inning, inning_side, pitch_info, zone, event, batter, on_deck, pitcher, away_score: value.away_score, home_score: value.home_score, balls: value.balls, strikes: value.strikes, outs: value.outs, on_1b: value.on_1b, on_2b: value.on_2b, on_3b: value.on_3b, message: value.message, extra_fields: value.extra_fields }
+        Self {inning, inning_side, pitch_info, zone, event, batter, on_deck, pitcher, away_score: value.away_score, home_score: value.home_score, balls: value.balls, strikes: value.strikes, outs: value.outs, on_1b: value.on_1b, on_2b: value.on_2b, on_3b: value.on_3b, message: value.message, extra_fields: value.extra_fields, index: value.index }
     }
 }
 

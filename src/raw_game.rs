@@ -2,7 +2,6 @@ use std::collections::HashMap;
 
 use serde::{Deserialize, Serialize};
 
-
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
 #[serde(rename_all = "PascalCase")]
 pub struct RawGame {
@@ -78,20 +77,46 @@ pub struct RawEvent {
 
     /// Empty if none
     pub pitch_info: String,
-    // RawZone::String("") when none, else RawZone::Number(n)
-    pub zone: RawZone,
+
+    #[serde(with = "none_as_empty_string")]
+    pub zone: Option<u8>,
 
     pub event: String,
     pub message: String,
+
+    #[serde(with = "none_as_empty_string")]
+    pub index: Option<u16>,
 
     #[serde(flatten)]
     pub extra_fields: serde_json::Map<String, serde_json::Value>,
 }
 
+mod none_as_empty_string {
+    use serde::{de::Error, Deserialize, Deserializer, Serialize, Serializer};
 
-#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
-#[serde(untagged)]
-pub enum RawZone {
-    String(String),
-    Number(u8)
+    pub fn deserialize<'de, T: Deserialize<'de>, D>(d: D) -> Result<Option<T>, D::Error>
+    where
+        D: Deserializer<'de>,
+    {
+        #[derive(Deserialize)]
+        #[serde(untagged)]
+        enum MyHelper<'a, T> {
+            S(&'a str),
+            R(T),
+        }
+
+        match MyHelper::deserialize(d) {
+            Ok(MyHelper::R(r)) => Ok(Some(r)),
+            Ok(MyHelper::S(s)) if s.is_empty() => Ok(None),
+            Ok(MyHelper::S(_)) => Err(D::Error::custom("only empty strings may be provided")),
+            Err(err) => Err(err),
+        }
+    }
+
+    pub fn serialize<S, T: Serialize>(value: &Option<T>, serializer: S) -> Result<S::Ok, S::Error> where S: Serializer {
+        match value {
+            Some(t) => t.serialize(serializer),
+            None => "".serialize(serializer)
+        }
+    }
 }

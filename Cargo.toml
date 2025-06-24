@@ -3,6 +3,9 @@ name = "mmolb_parsing"
 version = "0.1.0"
 edition = "2021"
 
+[profile.dev]
+opt-level = 3
+
 [[bin]]
 name = "parser"
 required-features = ["bin"]
