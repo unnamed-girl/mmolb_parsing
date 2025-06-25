@@ -1,10 +1,11 @@
 use std::collections::HashMap;
 
 use serde::{Deserialize, Serialize};
+use strum::EnumDiscriminants;
 
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
 #[serde(rename_all = "PascalCase")]
-pub struct RawGame {
+pub(crate) struct RawGame {
     #[serde(rename = "AwaySP")]
     pub away_sp: String,
     pub away_team_abbreviation: String,
@@ -40,7 +41,7 @@ pub struct RawGame {
 
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
 #[serde(rename_all = "PascalCase")]
-pub struct RawWeather {
+pub(crate) struct RawWeather {
     pub emoji: String,
     pub name: String,
     pub tooltip: String,
@@ -50,7 +51,7 @@ pub struct RawWeather {
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
-pub struct RawEvent {
+pub(crate) struct RawEvent {
     /// 0 is before the game has started
     pub inning: u8,
     
@@ -84,11 +85,35 @@ pub struct RawEvent {
     pub event: String,
     pub message: String,
 
-    #[serde(with = "none_as_empty_string")]
-    pub index: Option<u16>,
+    #[serde(default, skip_serializing_if = "APIHistory::is_missing")]
+    pub index: IndexHistory,
 
     #[serde(flatten)]
     pub extra_fields: serde_json::Map<String, serde_json::Value>,
+}
+
+trait APIHistory {
+    fn is_missing(&self) -> bool;
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, EnumDiscriminants, Default)]
+#[strum_discriminants(derive(Serialize, Deserialize))]
+#[serde(untagged)]
+pub(crate) enum IndexHistory {
+    #[default]
+    Season0,
+    #[serde(with = "none_as_empty_string")]
+    Season2(Option<u16>)
+}
+
+impl APIHistory for IndexHistory {
+    fn is_missing(&self) -> bool {
+        if let IndexHistory::Season0 = self {
+            true
+        } else {
+            false
+        }
+    }
 }
 
 mod none_as_empty_string {
@@ -100,15 +125,18 @@ mod none_as_empty_string {
     {
         #[derive(Deserialize)]
         #[serde(untagged)]
-        enum MyHelper<'a, T> {
+        enum ValueOrEmptyString<'a, T> {
+            String(String),
             S(&'a str),
             R(T),
         }
 
-        match MyHelper::deserialize(d) {
-            Ok(MyHelper::R(r)) => Ok(Some(r)),
-            Ok(MyHelper::S(s)) if s.is_empty() => Ok(None),
-            Ok(MyHelper::S(_)) => Err(D::Error::custom("only empty strings may be provided")),
+        match ValueOrEmptyString::deserialize(d) {
+            Ok(ValueOrEmptyString::R(r)) => Ok(Some(r)),
+            Ok(ValueOrEmptyString::S(s)) if s.is_empty() => Ok(None),
+            Ok(ValueOrEmptyString::S(_)) => Err(D::Error::custom("only empty strings may be provided")),
+            Ok(ValueOrEmptyString::String(s)) if s.is_empty() => Ok(None),
+            Ok(ValueOrEmptyString::String(_)) => Err(D::Error::custom("only empty strings may be provided")),
             Err(err) => Err(err),
         }
     }

@@ -3,7 +3,7 @@ use std::{fs::File, io::Write, path::PathBuf, pin::pin};
 
 use clap::Parser;
 use futures::{Stream, StreamExt};
-use mmolb_parsing::{process_event, raw_game::RawGame, Game};
+use mmolb_parsing::{process_event, Game};
 use serde::{Deserialize, Serialize};
 
 use http_cache_reqwest::{CACacheManager, Cache, CacheMode, HttpCache, HttpCacheOptions};
@@ -57,8 +57,11 @@ struct Args {
     #[arg(short = 'd', long)]
     from_day: Option<u16>,
 
-    #[clap(long, short, action)]
-    refetch_games: bool
+    #[clap(long, action)]
+    refetch_games: bool,
+
+    #[clap(long, action)]
+    round_trip: bool
 }
 
 fn cashews_fetch<'a>(client: &'a ClientWithMiddleware, season: u8) -> impl Stream<Item = Vec<CasheGame>> + 'a {
@@ -102,7 +105,7 @@ async fn main() {
             info!("{} game infos fetched from cashews", games.len());
             futures::stream::iter(games)
         })
-        .map(|game_info| ingest_game(&client, game_info, output_file))
+        .map(|game_info| ingest_game(&client, game_info, output_file, args.round_trip))
         .buffered(10);
 
     while let Some(()) = stream.next().await {}
@@ -110,10 +113,20 @@ async fn main() {
     drop(guard);
 }
 
-async fn ingest_game(client: &ClientWithMiddleware, game_info: CasheGame, output_file: Option<&str>) {
-    let raw_game = client.get(format!("https://mmolb.com/api/game/{}", game_info.game_id)).send().await.unwrap().json::<RawGame>().await.unwrap();
-
-    let game: Game = raw_game.clone().into();
+async fn ingest_game(client: &ClientWithMiddleware, game_info: CasheGame, output_file: Option<&str>, round_trip: bool) {
+    let game_value = client.get(format!("https://mmolb.com/api/game/{}", game_info.game_id)).send().await.unwrap().json::<serde_json::Value>().await.unwrap();
+    
+    let (game, round_tripped) = if round_trip {
+        let game: Game = serde_json::from_value(game_value.clone()).unwrap();
+        let round_tripped = serde_json::to_value(&game).unwrap();
+        if game_value != round_tripped {
+            error!("{} s{}d{}: round trip failed.", game_info.game_id, game_info.season, game_info.day);
+        }
+        (game, true)
+    } else {
+        (serde_json::from_value(game_value.clone()).unwrap(), false)
+    };
+    
 
     let mut file = output_file.map(|cache| {
         let ron_path = format!(r"{cache}/{}.ron", game_info.game_id);
@@ -134,5 +147,7 @@ async fn ingest_game(client: &ClientWithMiddleware, game_info: CasheGame, output
         }
     }
 
-    info!("{} s{}d{} parsed", game_info.game_id, game_info.season, game_info.day);
+    let round_tripped = round_tripped.then_some(" with round trip").unwrap_or_default();
+
+    info!("{} s{}d{} parsed{round_tripped}", game_info.game_id, game_info.season, game_info.day);
 }

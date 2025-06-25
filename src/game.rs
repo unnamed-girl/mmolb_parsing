@@ -1,8 +1,9 @@
 use std::collections::HashMap;
 use serde::{Deserialize, Serialize};
+use strum::IntoDiscriminant;
 use tracing::error;
 
-use crate::{enums::{EventType, GameStat, Inning, MaybeRecognized, PitchType}, raw_game::{RawEvent, RawGame, RawWeather}};
+use crate::{enums::{EventType, GameStat, Inning, MaybeRecognized, PitchType}, raw_game::{IndexHistory, IndexHistoryDiscriminants, RawEvent, RawGame, RawWeather}};
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub enum GameDeserializeError {
@@ -149,6 +150,7 @@ pub struct Event {
     pub message: String,
 
     /// Event Index, introduced in S2
+    index_format: IndexHistoryDiscriminants,
     pub index: Option<u16>,
 
     pub deserialization_error: Vec<EventDeserializeError>,
@@ -190,7 +192,13 @@ impl From<RawEvent> for Event {
             error!("Deserialization found extra fields: {:?}", value.extra_fields)
         }
 
-        Self {deserialization_error, inning, pitch, batter, pitcher, on_deck, event, away_score: value.away_score, home_score: value.home_score, balls: value.balls, strikes: value.strikes, outs: value.outs, on_1b: value.on_1b, on_2b: value.on_2b, on_3b: value.on_3b, message: value.message, extra_fields: value.extra_fields, index: value.index }
+        let index = match value.index {
+            IndexHistory::Season0 => None,
+            IndexHistory::Season2(index) => index
+        };
+        let index_format = value.index.discriminant();
+
+        Self {index_format, deserialization_error, inning, pitch, batter, pitcher, on_deck, event, away_score: value.away_score, home_score: value.home_score, balls: value.balls, strikes: value.strikes, outs: value.outs, on_1b: value.on_1b, on_2b: value.on_2b, on_3b: value.on_3b, message: value.message, extra_fields: value.extra_fields, index }
     }
 }
 impl From<Event> for RawEvent {
@@ -207,7 +215,12 @@ impl From<Event> for RawEvent {
         let on_deck = value.on_deck.unparse();
         let pitcher = value.pitcher.unparse();
 
-        Self {inning, inning_side, pitch_info, zone, event, batter, on_deck, pitcher, away_score: value.away_score, home_score: value.home_score, balls: value.balls, strikes: value.strikes, outs: value.outs, on_1b: value.on_1b, on_2b: value.on_2b, on_3b: value.on_3b, message: value.message, extra_fields: value.extra_fields, index: value.index }
+        let index = match value.index_format {
+            IndexHistoryDiscriminants::Season0 => IndexHistory::Season0,
+            IndexHistoryDiscriminants::Season2 => IndexHistory::Season2(value.index)
+        };
+
+        Self {inning, inning_side, pitch_info, zone, event, batter, on_deck, pitcher, away_score: value.away_score, home_score: value.home_score, balls: value.balls, strikes: value.strikes, outs: value.outs, on_1b: value.on_1b, on_2b: value.on_2b, on_3b: value.on_3b, message: value.message, extra_fields: value.extra_fields, index }
     }
 }
 
