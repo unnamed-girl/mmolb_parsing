@@ -1,6 +1,6 @@
 use std::fmt::Debug;
 
-use nom::{branch::alt, bytes::complete::{tag, take, take_till, take_until, take_until1, take_while}, character::complete::{one_of, space0, u8}, combinator::{all_consuming, opt, recognize, rest, value, verify}, error::{ErrorKind, ParseError}, multi::{count, many0, many1, separated_list1}, sequence::{delimited, preceded, separated_pair, terminated}, AsChar, Compare, CompareResult, Input, Parser};
+use nom::{branch::alt, bytes::complete::{tag, take, take_till, take_until, take_until1, take_while}, character::complete::{one_of, space0, u8}, combinator::{all_consuming, opt, recognize, rest, value, verify}, error::{ErrorKind, ParseError}, multi::{count, many0, many1, separated_list1}, sequence::{delimited, preceded, separated_pair, terminated}, AsChar, Input, Parser};
 use nom_language::error::VerboseError;
 
 use crate::{enums::{Base, BatterStat, FairBallDestination, FairBallType, NowBattingStats}, parsed_event::{BaseSteal, EmojiTeam, Item, PositionedPlayer, RunnerAdvance, RunnerOut, Delivery}, Game};
@@ -121,21 +121,19 @@ pub(super) fn fielders_eof(input: &str) -> IResult<&str, Vec<PositionedPlayer<&s
     .parse(input)
 }
 
-/// A team's emoji and name, e.g. "\ud83d\udc2f Antioch Royal Tigers".
-pub(super) fn emoji_team<'output, 'parse>(parsing_context: &'parse ParsingContext<'output>) -> impl Parser<&'output str, Output = EmojiTeam<&'output str>, Error = Error<'output>> + 'parse {
-    separated_pair(emoji, tag(" "), team_name(parsing_context)).map(|(emoji, name)| EmojiTeam { emoji, name })
+pub(super) fn home_emoji_team<'output, 'parse>(parsing_context: &'parse ParsingContext<'output>) -> impl Parser<&'output str, Output = EmojiTeam<&'output str>, Error = Error<'output>> + 'parse {
+    move |i: &'output str| {
+        separated_pair(emoji, tag(" "), tag(parsing_context.game.home_team_name.as_str()))
+            .map(|(emoji, name)| EmojiTeam {emoji, name})
+            .parse(i)
+    }
 }
 
-/// A single team's name, obtained by matching the known team names in the context. e.g. "Antioch Royal Tigers"
-pub(super) fn team_name<'output, 'parse>(parsing_context: &'parse ParsingContext<'output>) -> impl Parser<&'output str, Output = &'output str, Error = Error<'output>> + 'parse {
+pub(super) fn away_emoji_team<'output, 'parse>(parsing_context: &'parse ParsingContext<'output>) -> impl Parser<&'output str, Output = EmojiTeam<&'output str>, Error = Error<'output>> + 'parse {
     move |i: &'output str| {
-        for name in [parsing_context.game.home_team_name.as_str(), parsing_context.game.away_team_name.as_str()] {
-            let name_len = name.input_len();
-            if i.compare(name) == CompareResult::Ok {
-                return Ok((&i[name_len..], &i[..name_len]))
-            }
-        }
-        IResult::Err(nom::Err::Error(VerboseError::from_error_kind(i, ErrorKind::Tag)))
+        separated_pair(emoji, tag(" "), tag(parsing_context.game.away_team_name.as_str()))
+            .map(|(emoji, name)| EmojiTeam {emoji, name})
+            .parse(i)
     }
 }
 
@@ -367,7 +365,10 @@ pub(super) fn item(input: &str) -> IResult<&str, Item<&str>> {
 
 pub(super) fn delivery<'parse, 'output>(parsing_context: &'parse ParsingContext<'output>, label: &'output str) -> impl MyParser<'output, Delivery<&'output str>> + 'parse {
         (
-            separated_pair(emoji_team(parsing_context), tag(" "), parse_terminated(" received a ")),
+            alt((
+                separated_pair(away_emoji_team(parsing_context), tag(" "), parse_terminated(" received a ")),
+                separated_pair(home_emoji_team(parsing_context), tag(" "), parse_terminated(" received a ")),
+            )),
             terminated(item, (tag(" "), tag(label), tag("."))),
             opt(delimited(tag(" They discarded their "), item, tag(".")))
         ).map(|((team, player), item, discarded)| Delivery {team, player, item, discarded} )

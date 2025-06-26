@@ -2,9 +2,9 @@ use std::str::FromStr;
 
 use nom::{branch::alt, bytes::complete::{tag, take_until}, character::complete::{digit1, u8}, combinator::{all_consuming, cut, fail, opt, rest}, error::context, multi::{many0, many1, separated_list1}, sequence::{delimited, preceded, separated_pair, terminated}, Finish, Parser};
 
-use crate::{enums::{EventType, GameOverMessage, HomeAway, MaybeRecognized, NowBattingStats}, game::Event, nom_parsing::shared::{emoji, delivery, try_from_word, try_from_words_m_n, MyParser}, parsed_event::{FieldingAttempt, StartOfInningPitcher}, ParsedEventMessage};
+use crate::{enums::{EventType, GameOverMessage, HomeAway, MaybeRecognized, NowBattingStats}, game::Event, nom_parsing::shared::{away_emoji_team, delivery, emoji, home_emoji_team, try_from_word, try_from_words_m_n, MyParser}, parsed_event::{FieldingAttempt, StartOfInningPitcher}, ParsedEventMessage};
 
-use super::{shared::{all_consuming_sentence_and, base_steal_sentence, bold, destination, emoji_team_eof, exclamation, fair_ball_type_verb_name, fielders_eof, fly_ball_type_verb_name, name_eof, now_batting_stats, ordinal_suffix, out, parse_and, parse_terminated, positioned_player_eof, score_update, scores_and_advances, scores_sentence, sentence, sentence_eof, switch_pitcher_sentences, emoji_team, Error}, ParsingContext};
+use super::{shared::{all_consuming_sentence_and, base_steal_sentence, bold, destination, emoji_team_eof, exclamation, fair_ball_type_verb_name, fielders_eof, fly_ball_type_verb_name, name_eof, now_batting_stats, ordinal_suffix, out, parse_and, parse_terminated, positioned_player_eof, score_update, scores_and_advances, scores_sentence, sentence, sentence_eof, switch_pitcher_sentences, Error}, ParsingContext};
 
 pub fn parse_event<'output>(event: &'output Event, parsing_context: &ParsingContext<'output>) -> Result<ParsedEventMessage<&'output str>, Error<'output>> {
     let event_type = match &event.event {
@@ -287,8 +287,8 @@ fn pitch<'output>() -> impl MyParser<'output, ParsedEventMessage<&'output str>> 
 fn pitching_matchup<'output, 'parse>(parsing_context: &'parse ParsingContext<'output>) -> impl MyParser<'output, ParsedEventMessage<&'output str>> + 'parse {
     context("Pitching matchup", all_consuming(
         ( 
-            separated_pair(emoji_team(parsing_context), tag(" "), parse_terminated(" vs. ")), 
-            separated_pair(emoji_team(parsing_context), tag(" "), name_eof)
+            separated_pair(away_emoji_team(parsing_context), tag(" "), parse_terminated(" vs. ")), 
+            separated_pair(home_emoji_team(parsing_context), tag(" "), name_eof)
         ).map(|((away_team, away_pitcher), (home_team , home_pitcher))| ParsedEventMessage::PitchingMatchup { home_team, home_pitcher, away_team, away_pitcher })
     ))
 }
