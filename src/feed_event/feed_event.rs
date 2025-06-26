@@ -5,7 +5,7 @@ use crate::{enums::{FeedEventStatus, FeedEventType, MaybeRecognized, FeedEventDa
 pub struct FeedEvent {
     pub emoji: String,
     pub season: u8,
-    pub day: FeedEventDay,
+    pub day: MaybeRecognized<FeedEventDay>,
     pub status: MaybeRecognized<FeedEventStatus>,
     pub text: FeedEventText,
     pub ts: String,

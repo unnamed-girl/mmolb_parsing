@@ -6,11 +6,6 @@ use tracing::error;
 use crate::{enums::{EventType, GameStat, Inning, MaybeRecognized, PitchType}, raw_game::{IndexHistory, IndexHistoryDiscriminants, RawEvent, RawGame, RawWeather}};
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
-pub enum GameDeserializeError {
-    GameStatNotRecognized
-}
-
-#[derive(Debug, Clone, Serialize, Deserialize)]
 #[serde(from = "RawGame", into = "RawGame")]
 pub struct Game {
     #[serde(rename = "AwaySP")]
@@ -41,13 +36,10 @@ pub struct Game {
     pub stats: HashMap<String, HashMap<String, HashMap<MaybeRecognized<GameStat>, i32>>>,
 
     pub event_log: Vec<Event>,
-    pub deserialization_errors: Vec<GameDeserializeError>,
     pub extra_fields: serde_json::Map<String, serde_json::Value>,
 }
 impl From<RawGame> for Game {
     fn from(value: RawGame) -> Self {
-        let mut deserialization_error = Vec::new();
-
         let weather = value.weather.into();
         let event_log: Vec<Event> = value.event_log.into_iter().map(|event| event.into()).collect();
         let realm_id = value.realm;
@@ -55,9 +47,6 @@ impl From<RawGame> for Game {
             let players = players.into_iter().map(|(player, stats)| {
                 let stats = stats.into_iter().map(|(stat, value)| {
                     let stat: MaybeRecognized<GameStat> = stat.as_str().into();
-                    if let MaybeRecognized::NotRecognized(_) = &stat {
-                        deserialization_error.push(GameDeserializeError::GameStatNotRecognized);
-                    }
                     (stat, value)
                 }).collect();
                 (player, stats)
@@ -66,16 +55,12 @@ impl From<RawGame> for Game {
             }
         ).collect();
 
-        if deserialization_error.len() > 0 {
-            error!("Event deserialize errors: {:?}", deserialization_error)
-        }
-
         if value.extra_fields.len() > 0 {
             error!("Deserialization found extra fields: {:?}", value.extra_fields)
         }
 
         Self { extra_fields: value.extra_fields, away_sp: value.away_sp, away_team_abbreviation: value.away_team_abbreviation, away_team_color: value.away_team_color, away_team_emoji: value.away_team_emoji, away_team_id: value.away_team_id, away_team_name: value.away_team_name, home_sp: value.home_sp, home_team_abbreviation: value.home_team_abbreviation, home_team_color: value.home_team_color, home_team_emoji: value.home_team_emoji, home_team_id: value.home_team_id, home_team_name: value.home_team_name, day: value.day, state: value.state, season: value.season,
-                    weather, event_log, realm_id, stats, deserialization_errors: deserialization_error
+                    weather, event_log, realm_id, stats
                 }
     }
 }
@@ -120,12 +105,6 @@ impl From<Weather> for RawWeather {
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
-pub enum EventDeserializeError {
-    EventTypeNotRecognized,
-    PitchTypeNotRecognized
-}
-
-#[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct Event {
     pub inning: Inning,
 
@@ -153,13 +132,10 @@ pub struct Event {
     index_format: IndexHistoryDiscriminants,
     pub index: Option<u16>,
 
-    pub deserialization_error: Vec<EventDeserializeError>,
     pub extra_fields: serde_json::Map<String, serde_json::Value>,
 }
 impl From<RawEvent> for Event {
     fn from(value: RawEvent) -> Self {
-        let mut deserialization_error = Vec::new();
-
         let inning = match (value.inning, value.inning_side) {
             (0, 1) => Inning::BeforeGame,
             (number, 2) => Inning::AfterGame { total_inning_count: number - 1 },
@@ -175,19 +151,6 @@ impl From<RawEvent> for Event {
         
         let event = value.event.as_str().into();
 
-        if let MaybeRecognized::NotRecognized(_) = &event {
-            deserialization_error.push(EventDeserializeError::EventTypeNotRecognized);
-        }
-
-        if let Some(pitch) = &pitch {
-            if let MaybeRecognized::NotRecognized(_) = &pitch.pitch_type {
-                deserialization_error.push(EventDeserializeError::PitchTypeNotRecognized);
-            }
-        }
-
-        if deserialization_error.len() > 0 {
-            error!("Event deserialize errors: {:?}", deserialization_error)
-        }
         if value.extra_fields.len() > 0 {
             error!("Deserialization found extra fields: {:?}", value.extra_fields)
         }
@@ -198,7 +161,7 @@ impl From<RawEvent> for Event {
         };
         let index_format = value.index.discriminant();
 
-        Self {index_format, deserialization_error, inning, pitch, batter, pitcher, on_deck, event, away_score: value.away_score, home_score: value.home_score, balls: value.balls, strikes: value.strikes, outs: value.outs, on_1b: value.on_1b, on_2b: value.on_2b, on_3b: value.on_3b, message: value.message, extra_fields: value.extra_fields, index }
+        Self {index_format, inning, pitch, batter, pitcher, on_deck, event, away_score: value.away_score, home_score: value.home_score, balls: value.balls, strikes: value.strikes, outs: value.outs, on_1b: value.on_1b, on_2b: value.on_2b, on_3b: value.on_3b, message: value.message, extra_fields: value.extra_fields, index }
     }
 }
 impl From<Event> for RawEvent {

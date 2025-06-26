@@ -2,7 +2,7 @@ use std::{fmt::Display, ops::{Deref, DerefMut}};
 
 use serde::{Deserialize, Serialize};
 
-use crate::{enums::{FeedEventType, Item, Attribute}, nom_parsing::parse_feed_event};
+use crate::{enums::{Attribute, FeedEventType, ItemType}, nom_parsing::parse_feed_event, parsed_event::Item};
 
 #[derive(Clone, Debug, Serialize, Deserialize)]
 pub struct FeedEventText(pub String);
@@ -13,6 +13,17 @@ impl FeedEventText {
     }
     pub fn into_inner(self) -> String {
         self.0
+    }
+}
+
+impl PartialEq<String> for FeedEventText {
+    fn eq(&self, other: &String) -> bool {
+        self.0.eq(other)
+    }
+}
+impl Display for FeedEventText {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        write!(f, "{}", self.0)
     }
 }
 
@@ -28,7 +39,7 @@ impl DerefMut for FeedEventText {
     }
 }
 
-#[derive(Clone, Debug, Serialize, Deserialize)]
+#[derive(Clone, Debug, Serialize, Deserialize, PartialEq)]
 pub enum ParsedFeedEventText<S> {
     ParseError {
         event_type: String,
@@ -45,9 +56,13 @@ pub enum ParsedFeedEventText<S> {
         away_score: u8
     },
     Delivery {
-        player_name: S,
-        item_emoji: S,
-        item: Item,
+        delivery: FeedDelivery<S>
+    },
+    Shipment {
+        delivery: FeedDelivery<S>
+    },
+    SpecialDelivery {
+        delivery: FeedDelivery<S>
     },
     AttributeChanges {
         changes: Vec<AttributeChange<S>>
@@ -57,10 +72,16 @@ pub enum ParsedFeedEventText<S> {
     },
     Enchantment {
         player_name: S,
-        item: Item,
+        item: ItemType,
         amount: u8,
         attribute: Attribute,
-        phrasing: EnchantmentPhrasing
+        phrasing: EnchantmentPhrasing,
+    },
+    CompensatoryEnchantment {
+        player_name: S,
+        item: ItemType,
+        amount: u8,
+        attribute: Attribute,
     },
     ROBO {
         player_name: S,
@@ -95,14 +116,14 @@ impl<S: Display> Display for ParsedFeedEventText<S> {
     }
 }
 
-#[derive(Clone, Debug, Serialize, Deserialize)]
+#[derive(Clone, Debug, Serialize, Deserialize, PartialEq)]
 pub struct AttributeChange<S> {
     pub player_name: S,
     pub amount: i16,
     pub attribute: Attribute,
 }
 
-#[derive(Clone, Debug, Serialize, Deserialize)]
+#[derive(Clone, Debug, Serialize, Deserialize, PartialEq)]
 pub struct AttributeEqual<S> {
     pub player_name: S,
     pub changing_attribute: Attribute,
@@ -116,8 +137,14 @@ impl<S: Display> ParsedFeedEventText<S> {
             ParsedFeedEventText::GameResult { home_team_emoji, home_team_name, away_team_emoji, away_team_name, home_score, away_score } => {
                 format!("{} {} vs. {} {} - FINAL {}-{}", home_team_emoji, home_team_name, away_team_emoji, away_team_name, home_score, away_score)
             }
-            ParsedFeedEventText::Delivery { player_name, item_emoji, item } => {
-                format!("{player_name} received a {item_emoji} {item} Delivery.")
+            ParsedFeedEventText::Delivery { delivery } => {
+                delivery.unparse("Delivery")
+            }
+            ParsedFeedEventText::SpecialDelivery { delivery } => {
+                delivery.unparse("Special Delivery")
+            }
+            ParsedFeedEventText::Shipment { delivery } => {
+                delivery.unparse("Shipment")
             }
             ParsedFeedEventText::AttributeChanges { changes } => {
                 changes.iter()
@@ -133,6 +160,9 @@ impl<S: Display> ParsedFeedEventText<S> {
             }
             ParsedFeedEventText::Enchantment { player_name, item, amount, attribute, phrasing } => {
                 phrasing.format_event(player_name, *item, *amount, *attribute)
+            }
+            ParsedFeedEventText::CompensatoryEnchantment { player_name, item, amount, attribute } => {
+                format!("The Compensatory Enchantment was a success! {player_name}'s {item} gained a +{amount} {attribute} bonus.")
             }
             ParsedFeedEventText::ROBO { player_name } => {
                 format!("{player_name} gained the ROBO Modification.")
@@ -150,16 +180,36 @@ impl<S: Display> ParsedFeedEventText<S> {
     }
 }
 
-#[derive(Clone, Copy, Debug, Serialize, Deserialize)]
+#[derive(Clone, Copy, Debug, Serialize, Deserialize, PartialEq)]
 pub enum EnchantmentPhrasing {
     Season1A,
     Season1B
 }
 impl EnchantmentPhrasing {
-    pub fn format_event<S:Display>(&self, player_name: &S, item: Item, amount: u8, attribute: Attribute) -> String {
+    pub fn format_event<S:Display>(&self, player_name: &S, item: ItemType, amount: u8, attribute: Attribute) -> String {
         match self {
             EnchantmentPhrasing::Season1A => format!("{player_name}'s {item} was enchanted with +{amount} to {attribute}."),
             EnchantmentPhrasing::Season1B => format!("The Item Enchantment was a success! {player_name}'s {item} gained a +{amount} {attribute} bonus.")
         }
+    }
+}
+
+#[derive(Clone, Debug, Serialize, Deserialize, PartialEq)]
+pub struct FeedDelivery<S> {
+    pub player: S,
+    pub item: Item<S>,
+    pub discarded: Option<Item<S>>
+}
+impl<S: Display> FeedDelivery<S> {
+    pub fn unparse(&self, delivery_label: &str) -> String {
+        let FeedDelivery { player, item, discarded} = self;
+
+        let discarded = match discarded {
+            Some(discarded) => format!(" They discarded their {discarded}."),
+            None => String::new(),
+        };
+
+
+        format!("{player} received a {item} {delivery_label}.{discarded}")
     }
 }

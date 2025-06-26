@@ -3,7 +3,10 @@ use std::collections::HashMap;
 use serde::{Deserialize, Serialize};
 use serde_json::Value;
 
-use crate::{enums::{GameStat, MaybeRecognized, Position, PositionType, RecordType, Slot}, feed_event::FeedEvent};
+use crate::{enums::{GameStat, MaybeRecognized, Position, PositionType, RecordType, Slot}, feed_event::FeedEvent, team::raw_team::PositionTypeHistoryDiscriminants};
+use raw_team::RawTeamPlayer;
+
+mod raw_team;
 
 #[derive(Serialize, Deserialize, Debug, Clone)]
 #[serde(rename_all = "PascalCase")]
@@ -53,19 +56,23 @@ pub struct TeamRecord {
 }
 
 #[derive(Serialize, Deserialize, Clone, Debug)]
-#[serde(rename_all = "PascalCase")]
+#[serde(from = "RawTeamPlayer", into = "RawTeamPlayer")]
 pub struct TeamPlayer {
     pub emoji: String,
     pub first_name: String,
     pub last_name: String,
     pub number: u8,
-    #[serde(rename = "PlayerID")]
     pub player_id: String,
-    pub position: MaybeRecognized<Position>,
-    pub slot: MaybeRecognized<Slot>,
-    pub position_type: MaybeRecognized<PositionType>,
-    pub stats: HashMap<MaybeRecognized<GameStat>, i32>,
 
-    #[serde(flatten)]
+    /// Undrafted player's positions are just their slot.
+    pub position: Option<MaybeRecognized<Position>>,
+
+    pub slot: MaybeRecognized<Slot>,
+
+    position_type_format: PositionTypeHistoryDiscriminants,
+    pub position_type: MaybeRecognized<PositionType>,
+
+
+    pub stats: HashMap<MaybeRecognized<GameStat>, i32>,
     pub extra_fields: serde_json::Map<String, serde_json::Value>,
 }

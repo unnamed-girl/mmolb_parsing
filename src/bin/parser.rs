@@ -1,10 +1,10 @@
 
-use std::{fs::File, io::Write, path::PathBuf, pin::pin};
+use std::{path::PathBuf, pin::pin};
 
-use clap::Parser;
+use clap::{Parser, ValueEnum};
 use futures::{Stream, StreamExt};
 use http_cache_reqwest::{CACacheManager, Cache, CacheMode, HttpCache, HttpCacheOptions};
-use mmolb_parsing::{process_event, Game};
+use mmolb_parsing::{enums::MaybeRecognized, process_event, team::Team, Game};
 use serde::{Deserialize, Serialize};
 
 use reqwest::Client;
@@ -52,9 +52,6 @@ pub struct CasheGameInfo {
 
 #[derive(Parser, Debug)]
 struct Args {
-    /// Where objects are saved to
-    output_file: Option<String>,
-
     /// Parent folder which the cache folder will be created in/loaded from
     #[arg(long)]
     http_cache: Option<String>,
@@ -75,18 +72,32 @@ struct Args {
     /// Nonstandard chron requests aren't cached
     #[clap(long)]
     before: Option<String>,
+
+    #[clap(long, default_value = "game")]
+    kind: Kind
 }
 
-fn cashews_fetch_games_json<'a>(client: &'a ClientWithMiddleware, extra: String) -> impl Stream<Item = Vec<EntityResponse<serde_json::Value>>> + 'a {
+#[derive(ValueEnum, Clone, Default, Debug, Copy)]
+enum Kind {
+    #[default]
+    Game,
+    Team
+}
+
+fn cashews_fetch_json<'a>(client: &'a ClientWithMiddleware, kind: Kind, extra: String) -> impl Stream<Item = Vec<EntityResponse<serde_json::Value>>> + 'a {
+    let kind = match kind {
+        Kind::Game => "game",
+        Kind::Team => "team"
+    };
     async_stream::stream! {
-        let mut url = format!("https://freecashe.ws/api/chron/v0/entities?kind=game&count=1000{extra}");
+        let mut url = format!("https://freecashe.ws/api/chron/v0/entities?kind={kind}&count=1000{extra}");
         loop {
             let response = client.get(&url).send().await.unwrap().json::<FreeCashewResponse<EntityResponse<serde_json::Value>>>().await.unwrap();
-            info!("{} games fetched from cashews", response.items.len());
+            info!("{} {kind}s fetched from cashews", response.items.len());
             yield response.items;
 
             if let Some(page) = response.next_page {
-                url = format!("https://freecashe.ws/api/chron/v0/entities?kind=game&count=1000&page={page}{extra}");
+                url = format!("https://freecashe.ws/api/chron/v0/entities?kind={kind}&count=1000&page={page}{extra}");
             } else {
                 break
             }
@@ -104,7 +115,11 @@ async fn main() {
     let guard = tracing::subscriber::set_default(subscriber);
 
     let args = Args::parse();
-    let output_file = args.output_file.as_ref().map(String::as_str);
+
+    let func = async |response, verbose| match args.kind {
+        Kind::Game => ingest_game(response, verbose, args.round_trip).await,
+        Kind::Team => ingest_team(response, args.round_trip).await
+    };
 
     if let Some(id) = args.id {
         info!("Given a list of games: skipping cashews arguments and not caching");
@@ -112,7 +127,7 @@ async fn main() {
         let url = format!("https://freecashe.ws/api/chron/v0/entities?kind=game&id={id}");
         let games = client.get(&url).send().await.unwrap().json::<FreeCashewResponse<EntityResponse<serde_json::Value>>>().await.unwrap().items;
         for game in games.into_iter() {
-            ingest_game(game, true, output_file, args.round_trip).await;
+            func(game, true).await;
         }
         return;
     }
@@ -133,18 +148,18 @@ async fn main() {
     let client = get_caching_http_client(args.http_cache.map(Into::into), mode);
 
 
-    let fetch = pin!(cashews_fetch_games_json(&client, extra));
+    let fetch = pin!(cashews_fetch_json(&client, args.kind, extra));
     fetch.flat_map(|games| {
-            let last = games.len() - 1;
-            futures::stream::iter(games.into_iter().enumerate().map(move |(i, g)| (i == last, g)))
-        })
-        .then(|(verbose, game_json)| ingest_game(game_json, verbose, output_file, args.round_trip))
-        .collect::<Vec<_>>()
-        .await;
+        let last = games.len() - 1;
+        futures::stream::iter(games.into_iter().enumerate().map(move |(i, o)| (i == last, o)))
+    })
+    .then(|(verbose, game_json)| func(game_json, verbose))
+    .collect::<Vec<_>>()
+    .await;
     drop(guard);
 }
 
-async fn ingest_game(response: EntityResponse<serde_json::Value>, verbose: bool, output_file: Option<&str>, round_trip: bool) {
+async fn ingest_game(response: EntityResponse<serde_json::Value>, verbose: bool, round_trip: bool) {
     let (game, round_tripped) = if round_trip {
         let game: Game = serde_json::from_value(response.data.clone()).unwrap();
         let round_tripped = serde_json::to_value(&game).unwrap();
@@ -155,12 +170,7 @@ async fn ingest_game(response: EntityResponse<serde_json::Value>, verbose: bool,
     } else {
         (serde_json::from_value(response.data).unwrap(), false)
     };
-    
 
-    let mut file = output_file.map(|cache| {
-        let ron_path = format!(r"{cache}/{}.ron", response.entity_id);
-        File::create(ron_path).unwrap()
-    });
 
     for event in &game.event_log {
         let parsed_event_message = process_event(event, &game);
@@ -170,13 +180,37 @@ async fn ingest_game(response: EntityResponse<serde_json::Value>, verbose: bool,
                 error!("{} s{}d{}: event round trip failure expected:\n'{}'\nGot:\n'{}'", response.entity_id, game.season, game.day, event.message, unparsed);
             }
         }
-
-        if let Some(file) = file.as_mut() {
-            writeln!(file, "{}", ron::to_string(&parsed_event_message).unwrap()).unwrap();
-        }
     }
     if verbose {
         let round_tripped = round_tripped.then_some(" with round trip").unwrap_or_default();
         info!("Parse{round_tripped} reached s{}d{}", game.season, game.day);
+    }
+}
+
+async fn ingest_team(response: EntityResponse<serde_json::Value>, round_trip: bool) {
+    let team = if round_trip {
+        let team: Team = serde_json::from_value(response.data.clone()).unwrap();
+        let round_tripped = serde_json::to_value(&team).unwrap();
+        if response.data != round_tripped {
+            error!("{} round trip failed.", response.entity_id);
+        }
+        team
+    } else {
+        serde_json::from_value(response.data).unwrap()
+    };
+
+    for event in team.feed {
+        match event.event_type {
+            MaybeRecognized::NotRecognized(event_type) => error!("{event_type} is not a recognized event type"),
+            MaybeRecognized::Recognized(event_type) => {
+                let parsed_text = event.text.parse(event_type);
+                if tracing::enabled!(Level::ERROR) {
+                    let unparsed = parsed_text.unparse();
+                    if event.text.0 != unparsed {
+                        error!("{}: feed event round trip failure expected:\n'{}'\nGot:\n'{}'", response.entity_id, event.text, unparsed);
+                    }
+                }
+            }
+        }
     }
 }

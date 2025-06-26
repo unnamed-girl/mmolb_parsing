@@ -1,7 +1,7 @@
 use nom::{branch::alt, bytes::complete::tag, character::complete::{i16, u8}, combinator::opt, error::context, multi::many1, sequence::{delimited, preceded, separated_pair, terminated}, Finish, Parser};
 use tracing::error;
 
-use crate::{enums::FeedEventType, feed_event::{AttributeChange, AttributeEqual, EnchantmentPhrasing, ParsedFeedEventText}, nom_parsing::shared::{emoji, name_eof, parse_terminated, sentence_eof, try_from_word}};
+use crate::{enums::FeedEventType, feed_event::{AttributeChange, AttributeEqual, EnchantmentPhrasing, ParsedFeedEventText}, nom_parsing::shared::{emoji, feed_delivery, name_eof, parse_terminated, sentence_eof, try_from_word}};
 
 use super::shared::Error;
 
@@ -30,28 +30,21 @@ pub fn parse_feed_event<'output>(text: &'output str, event_type: FeedEventType) 
 fn game<'output>() -> impl FeedEventParser<'output> {
     context("Game Feed Event", alt((
         game_result(),
-        delivery(),
+        feed_delivery("Delivery").map(|delivery| ParsedFeedEventText::Delivery { delivery } ),
+        feed_delivery("Shipment").map(|delivery| ParsedFeedEventText::Shipment { delivery } ),
+        feed_delivery("Special Delivery").map(|delivery| ParsedFeedEventText::SpecialDelivery { delivery } ),
     )))
 }
 
 fn game_result<'output>() -> impl FeedEventParser<'output> {
     (
-        emoji,
+        terminated(emoji, tag(" ")),
         parse_terminated(" vs. "),
-        emoji,
+        terminated(emoji, tag(" ")),
         parse_terminated(" - "),
         preceded(tag("FINAL "), separated_pair(u8, tag("-"), u8))
     ).map(|(home_team_emoji, home_team_name, away_team_emoji, away_team_name, (home_score, away_score))| 
         ParsedFeedEventText::GameResult { home_team_emoji, home_team_name, away_team_emoji, away_team_name, home_score, away_score }
-    )
-}
-fn delivery<'output>() -> impl FeedEventParser<'output> {
-    (
-        parse_terminated(" received a "),
-        emoji,
-        terminated(try_from_word, tag("Delivery.")),
-    ).map(|(player_name, item_emoji, item)|
-        ParsedFeedEventText::Delivery { player_name, item_emoji, item }
     )
 }
 
@@ -60,6 +53,7 @@ fn augment<'output>() -> impl FeedEventParser<'output> {
         attribute_gain(),
         enchantment_s1a(),
         enchantment_s1b(),
+        enchantment_compensatory(),
         robo(),
         take_the_mound(),
         take_the_plate(),
@@ -73,7 +67,7 @@ fn attribute_gain<'output>() -> impl FeedEventParser<'output> {
         (
             preceded(opt(tag(" ")), parse_terminated(" gained +")),
             i16,
-            terminated(try_from_word, tag("."))
+            delimited(tag(" "), try_from_word, tag("."))
         ).map(|(player_name, amount, attribute)| AttributeChange { player_name, amount, attribute })
     ).map(|changes| ParsedFeedEventText::AttributeChanges { changes })
 }
@@ -92,7 +86,7 @@ fn enchantment_s1a<'output>() -> impl FeedEventParser<'output> {
     (
         parse_terminated("'s "),
         try_from_word,
-        preceded(tag("was enchanted with +"), u8),
+        preceded(tag(" was enchanted with +"), u8),
         delimited(tag(" to "), try_from_word, tag("."))
     ).map(|(player_name, item, amount, attribute)| ParsedFeedEventText::Enchantment { player_name, item, amount, attribute, phrasing: EnchantmentPhrasing::Season1A })
 }
@@ -101,9 +95,18 @@ fn enchantment_s1b<'output>() -> impl FeedEventParser<'output> {
     (
         preceded(tag("The Item Enchantment was a success! "), parse_terminated("'s ")),
         try_from_word,
-        delimited(tag("gained a +"), u8, tag(" ")),
-        terminated(try_from_word, tag("bonus."))
+        delimited(tag(" gained a +"), u8, tag(" ")),
+        terminated(try_from_word, tag(" bonus."))
     ).map(|(player_name, item, amount, attribute)| ParsedFeedEventText::Enchantment { player_name, item, amount, attribute, phrasing: EnchantmentPhrasing::Season1B })
+}
+
+fn enchantment_compensatory<'output>() -> impl FeedEventParser<'output> {
+    (
+        preceded(tag("The Compensatory Enchantment was a success! "), parse_terminated("'s ")),
+        try_from_word,
+        delimited(tag(" gained a +"), u8, tag(" ")),
+        terminated(try_from_word, tag(" bonus."))
+    ).map(|(player_name, item, amount, attribute)| ParsedFeedEventText::CompensatoryEnchantment { player_name, item, amount, attribute })
 }
 
 fn robo<'output>() -> impl FeedEventParser<'output> {
@@ -133,4 +136,19 @@ fn swap_places<'output>() -> impl FeedEventParser<'output> {
         name_eof
     ))
     .map(|(player_one, player_two)| ParsedFeedEventText::SwapPlaces { player_one, player_two })
+}
+
+#[cfg(test)]
+mod test {
+    use nom::Parser;
+
+    use crate::{enums::Attribute, feed_event::{AttributeChange, ParsedFeedEventText}, nom_parsing::parse_feed_event::attribute_gain};
+
+    #[test]
+    fn test_attribute_gain() {
+        assert_eq!(
+            Ok(ParsedFeedEventText::AttributeChanges { changes: vec![AttributeChange { player_name: "Nancy Bright", amount: 50, attribute: Attribute::Awareness}] }),
+            attribute_gain().parse("Nancy Bright gained +50 Awareness.").map(|(_, o)| o).map_err(|e| e.to_string())
+        );
+    }
 }

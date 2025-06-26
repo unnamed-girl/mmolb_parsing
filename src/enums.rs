@@ -1,7 +1,8 @@
-use std::{fmt::Display, str::FromStr};
+use std::{convert::Infallible, fmt::Display, str::FromStr};
 
+use nom::{branch::alt, bytes::complete::tag, sequence::preceded, Parser, character::complete::u8};
 use serde::{Deserialize, Serialize};
-use strum::{Display, EnumDiscriminants, EnumIter, EnumString};
+use strum::{Display, EnumDiscriminants, EnumIter, EnumString, IntoDiscriminant};
 
 /// Possible values of the "event" field of an mmolb event. 
 #[derive(Debug, Clone, Copy, Serialize, Deserialize, EnumString, Display, PartialEq, Eq, Hash)]
@@ -311,8 +312,6 @@ pub enum Position {
     ReliefPitcher,
     #[strum(to_string = "CL")]
     Closer,
-    #[strum(to_string = "DH")]
-    DesignatedHitter
 }
 
 /// Places that a batter can hit a ball towards.
@@ -818,7 +817,7 @@ impl<T: Display> From<T> for DisplayDeserializer {
 }
 
 #[derive(Debug, Clone, Copy, Serialize, Deserialize, EnumString, Display, PartialEq, Eq, Hash)]
-#[serde(try_from = "&str", into = "DisplayDeserializer")]
+#[serde(rename_all = "lowercase")]
 #[strum(serialize_all = "lowercase")]
 pub enum FeedEventType {
     Game,
@@ -826,19 +825,49 @@ pub enum FeedEventType {
 }
 
 
-#[derive(Debug, Clone, Copy, Serialize, Deserialize, EnumString, Display, PartialEq, Eq, Hash)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, Serialize, Deserialize)]
 #[serde(try_from = "&str", into = "DisplayDeserializer")]
 pub enum FeedEventStatus {
-    #[strum(to_string = "Regular Season")]
     RegularSeason,
-    #[strum(to_string = "Superstar Break")]
-    SuperstarBreak
+    SuperstarBreak,
+    PostseasonRound(u8),
+}
+impl<'a> TryFrom<&'a str> for FeedEventStatus {
+    type Error = &'static str;
+    fn try_from(value: &'a str) -> Result<Self, Self::Error> {
+        Self::from_str(value)
+    }
+}
+impl FromStr for FeedEventStatus {
+    type Err = &'static str;
+    fn from_str(s: &str) -> Result<Self, Self::Err> {
+        match s {
+            "Regular Season" => Ok(FeedEventStatus::RegularSeason),
+            "Superstar Break" => Ok(FeedEventStatus::SuperstarBreak),
+            s => s.strip_prefix("Postseason Round ")
+                        .and_then(|s| s.parse().ok())
+                        .map(FeedEventStatus::PostseasonRound)
+                        .ok_or(())
+        }.map_err(|_| "Did not match any known FeedEventStatus variants")
+    }
 }
 
-#[derive(Debug, Clone, Copy, Serialize, Deserialize, PartialEq, Eq, Hash)]
+impl Display for FeedEventStatus {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        match self {
+            FeedEventStatus::RegularSeason => Display::fmt("Regular Season", f),
+            FeedEventStatus::SuperstarBreak => Display::fmt("Superstar Break", f),
+            FeedEventStatus::PostseasonRound(i) => write!(f, "Postseason round {i}")
+        }
+    }
+}
+
+
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, Serialize, Deserialize)]
 pub enum FeedEventDay {
     #[serde(rename = "Superstar Break")]
     SuperstarBreak,
+    Holiday,
     #[serde(untagged)]
     Day(u8),
 }
@@ -847,7 +876,8 @@ impl Display for FeedEventDay {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         match self {
             Self::SuperstarBreak => "Superstar Break".fmt(f),
-            Self::Day(d) => d.fmt(f)
+            Self::Day(d) => d.fmt(f),
+            Self::Holiday => "Holiday".fmt(f)
         }
     }
 }
@@ -887,10 +917,24 @@ impl<T> MaybeRecognized<T> {
     }
 }
 
+impl<T: FromStr> FromStr for MaybeRecognized<T> {
+    type Err = Infallible;
+    fn from_str(s: &str) -> Result<Self, Self::Err> {
+        Ok(Self::from(s))
+    }
+}
+
 impl<T: FromStr> From<&str> for MaybeRecognized<T> {
     fn from(value: &str) -> Self {
         T::from_str(value).map(MaybeRecognized::Recognized)
             .unwrap_or(MaybeRecognized::NotRecognized(value.to_string()))
+    }
+}
+
+impl<T: FromStr> From<String> for MaybeRecognized<T> {
+    fn from(value: String) -> Self {
+        T::from_str(&value).map(MaybeRecognized::Recognized)
+            .unwrap_or(MaybeRecognized::NotRecognized(value))
     }
 }
 
@@ -903,16 +947,23 @@ impl<T: ToString> ToString for MaybeRecognized<T> {
     }
 }
 
-impl<'de, T: FromStr> Deserialize<'de> for MaybeRecognized<T> {
+impl<'de, T:Deserialize<'de>> Deserialize<'de> for MaybeRecognized<T> {
     fn deserialize<D>(deserializer: D) -> Result<Self, D::Error>
         where
             D: serde::Deserializer<'de> {
-        let s = String::deserialize(deserializer)?;
-        let result = match T::from_str(&s) {
-            Ok(t) => MaybeRecognized::Recognized(t),
-            Err(_) => MaybeRecognized::NotRecognized(s)
-        };
-        Ok(result)
+        
+        #[derive(Serialize, Deserialize)]
+        enum Visitor<T> {
+            #[serde(untagged)]
+            Recognized(T),
+            #[serde(untagged)]
+            Other(String)
+        }
+        match Visitor::<T>::deserialize(deserializer) {
+            Ok(Visitor::Recognized(t)) => Ok(MaybeRecognized::Recognized(t)),
+            Ok(Visitor::Other(s)) => Ok(MaybeRecognized::NotRecognized(s)),
+            Err(e) => Err(e)
+        }
     }
 }
 
@@ -927,8 +978,67 @@ impl<T: ToString> Serialize for MaybeRecognized<T> {
 
 
 // TODO
-#[derive(EnumString, Display, Debug, Serialize, Deserialize, Clone, Copy, EnumIter, PartialEq, Eq, Hash)]
+#[derive(Debug, Serialize, Deserialize, Clone, Copy, EnumIter, PartialEq, Eq, Hash, EnumDiscriminants)]
+#[strum_discriminants(derive(EnumString, Display))]
 pub enum Slot {
+    #[strum_discriminants(strum(to_string = "P"))]
+    Pitcher,
+    #[strum_discriminants(strum(to_string = "C"))]
+    Catcher,
+    #[strum_discriminants(strum(to_string = "1B"))]
+    FirstBaseman,
+    #[strum_discriminants(strum(to_string = "2B"))]
+    SecondBaseman,
+    #[strum_discriminants(strum(to_string = "3B"))]
+    ThirdBaseman,
+    #[strum_discriminants(strum(to_string = "SS"))]
+    ShortStop,
+    #[strum_discriminants(strum(to_string = "LF"))]
+    LeftField,
+    #[strum_discriminants(strum(to_string = "CF"))]
+    CenterField,
+    #[strum_discriminants(strum(to_string = "RF"))]
+    RightField,
+    #[strum_discriminants(strum(to_string = "SP"))]
+    StartingPitcher(u8),
+    #[strum_discriminants(strum(to_string = "RP"))]
+    ReliefPitcher(u8),
+    #[strum_discriminants(strum(to_string = "CL"))]
+    Closer,
+    #[strum_discriminants(strum(to_string = "DH"))]
+    DesignatedHitter
+}
+impl Display for Slot {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        write!(f, "{}", self.discriminant())?;
+        match self {
+            Slot::StartingPitcher(i) | Slot::ReliefPitcher(i) => write!(f, "{}", i)?,
+            _ => ()
+        };
+        Ok(())
+    }
+}
+impl FromStr for Slot {
+    type Err = ();
+
+    fn from_str(s: &str) -> Result<Self, Self::Err> {
+        alt((
+            tag::<&str, &str, nom::error::Error<&str>>("P").map(|_| Slot::Pitcher),
+            tag("C").map(|_| Slot::Catcher),
+            tag("1B").map(|_| Slot::FirstBaseman),
+            tag("2B").map(|_| Slot::SecondBaseman),
+            tag("3B").map(|_| Slot::ThirdBaseman),
+            tag("LF").map(|_| Slot::LeftField),
+            tag("CF").map(|_| Slot::CenterField),
+            tag("RF").map(|_| Slot::RightField),
+            tag("SS").map(|_| Slot::ShortStop),
+            tag("DH").map(|_| Slot::DesignatedHitter),
+            preceded(tag("SP"), u8).map(|i| Slot::StartingPitcher(i)),
+            preceded(tag("RP"), u8).map(|i| Slot::ReliefPitcher(i)),
+            tag("CL").map(|_| Slot::ThirdBaseman),
+            tag("DG").map(|_| Slot::ThirdBaseman),
+        )).parse(s).map(|(_, o)| o).map_err(|_| ())
+    }
 }
 
 #[derive(EnumString, Display, Debug, Serialize, Deserialize, Clone, Copy, EnumIter, PartialEq, Eq, Hash)]

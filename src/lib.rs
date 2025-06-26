@@ -1,5 +1,7 @@
-pub mod game;
 pub(crate) mod raw_game;
+pub(crate) mod serde_utils;
+
+pub mod game;
 pub mod enums;
 pub mod parsing;
 pub mod nom_parsing;
