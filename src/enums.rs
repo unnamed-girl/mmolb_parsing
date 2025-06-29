@@ -287,7 +287,7 @@ impl Inning {
 /// 
 /// assert_eq!(Position::FirstBaseman.to_string(), "1B");
 /// ```
-#[derive(EnumString, Display, Debug, Serialize, Deserialize, Clone, Copy, EnumIter, PartialEq, Eq, Hash, EnumIter)]
+#[derive(EnumString, Display, Debug, Serialize, Deserialize, Clone, Copy, EnumIter, PartialEq, Eq, Hash)]
 pub enum Position {
     #[strum(to_string = "P")]
     Pitcher,
@@ -897,7 +897,7 @@ pub enum PositionType {
     Batter,
 }
 
-#[derive(Debug, Clone, PartialEq, Eq, Hash, EnumIter)]
+#[derive(Debug, Clone, PartialEq, Eq, Hash)]
 pub enum MaybeRecognized<T> {
     Recognized(T),
     NotRecognized(String)
@@ -1042,7 +1042,7 @@ impl FromStr for Slot {
     }
 }
 
-#[derive(EnumString, Display, Debug, Serialize, Deserialize, Clone, Copy, EnumIter, PartialEq, Eq, Hash, EnumIter)]
+#[derive(EnumString, Display, Debug, Serialize, Deserialize, Clone, Copy, EnumIter, PartialEq, Eq, Hash)]
 pub enum Attribute {
     Priority,
     Luck,
@@ -1082,7 +1082,7 @@ pub enum Attribute {
     Guts
 }
 
-#[derive(EnumString, Display, Debug, Serialize, Deserialize, Clone, Copy, EnumIter, PartialEq, Eq, Hash, EnumIter)]
+#[derive(EnumString, Display, Debug, Serialize, Deserialize, Clone, Copy, EnumIter, PartialEq, Eq, Hash)]
 #[serde(try_from = "&str", into = "DisplayDeserializer")]
 pub enum ItemPrefix {
     Sharp,
@@ -1114,7 +1114,7 @@ pub enum ItemPrefix {
     Sneaky,
 }
 
-#[derive(EnumString, Display, Debug, Serialize, Deserialize, Clone, Copy, EnumIter, PartialEq, Eq, Hash, EnumIter)]
+#[derive(EnumString, Display, Debug, Serialize, Deserialize, Clone, Copy, EnumIter, PartialEq, Eq, Hash)]
 #[serde(try_from = "&str", into = "DisplayDeserializer")]
 pub enum ItemSuffix {
     #[strum(to_string = "the Acrobat")]

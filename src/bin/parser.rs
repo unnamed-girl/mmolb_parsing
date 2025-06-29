@@ -122,11 +122,11 @@ async fn main() {
     };
 
     if let Some(id) = args.id {
-        info!("Given a list of games: skipping cashews arguments and not caching");
+        info!("Given a specific entities: skipping cashews arguments and not caching");
         let client = get_caching_http_client(args.http_cache.map(Into::into), CacheMode::NoCache);
         let url = format!("https://freecashe.ws/api/chron/v0/entities?kind=game&id={id}");
-        let games = client.get(&url).send().await.unwrap().json::<FreeCashewResponse<EntityResponse<serde_json::Value>>>().await.unwrap().items;
-        for game in games.into_iter() {
+        let entities = client.get(&url).send().await.unwrap().json::<FreeCashewResponse<EntityResponse<serde_json::Value>>>().await.unwrap().items;
+        for game in entities.into_iter() {
             func(game, true).await;
         }
         return;
