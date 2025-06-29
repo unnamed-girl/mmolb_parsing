@@ -1,10 +1,93 @@
 use std::collections::HashMap;
 
 use serde::{Deserialize, Serialize};
+use serde_json::Value;
 use strum::{EnumDiscriminants, IntoDiscriminant};
 use tracing::error;
 
-use crate::{enums::{GameStat, MaybeRecognized, PositionType, Slot}, team::TeamPlayer, serde_utils::APIHistory};
+use crate::{enums::{GameStat, MaybeRecognized, PositionType, RecordType, Slot}, feed_event::FeedEvent, serde_utils::APIHistory, team::{Team, TeamPlayer, TeamRecord}};
+
+#[derive(Serialize, Deserialize, Debug, Clone)]
+#[serde(rename_all = "PascalCase")]
+pub(crate) struct RawTeam {
+    // Cashews id
+    #[serde(rename = "_id", skip_serializing_if = "Option::is_none")]
+    _id: Option<String>,
+    pub abbreviation: String,
+    pub active: bool,
+    pub augments: u16,
+    pub championships: u8,
+    pub color: String,
+    pub emoji: String,
+
+    #[serde(default, skip_serializing_if = "APIHistory::is_missing")]
+    pub feed: FeedHistory,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub motes_used: Option<u8>,
+
+    pub location: String,
+    pub full_location: String,
+    pub league: String,
+
+    /// no modifications have been seen, so left as raw json
+    pub modifications: Vec<Value>,
+    pub name: String,
+
+    // / no mottos have been seen, so left as raw json
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub motto: Option<serde_json::Value>,
+
+    #[serde(rename = "OwnerID", skip_serializing_if = "Option::is_none")]
+    pub owner_id: Option<String>,
+
+    pub players: Vec<TeamPlayer>,
+    pub record: HashMap<MaybeRecognized<RecordType>, TeamRecord>,
+    pub season_records: HashMap<String, String>,
+
+    #[serde(flatten)]
+    pub extra_fields: serde_json::Map<String, serde_json::Value>,
+}
+
+impl From<RawTeam> for Team {
+    fn from(value: RawTeam) -> Self {
+        let RawTeam { _id, abbreviation, active, augments, championships, color, emoji, feed, motes_used, location, full_location, league, modifications, name, motto, owner_id, players, record, season_records, extra_fields } = value;
+        if extra_fields.len() > 0 {
+            error!("Deserialization of Team found extra fields: {:?}", extra_fields);
+        }
+        let feed_format = feed.discriminant();
+        let feed = match feed {
+            FeedHistory::Season0 => Vec::new(),
+            FeedHistory::Season1(feed) => feed
+        };
+        Team { _id, abbreviation, active, augments, championships, color, emoji, feed, motes_used, location, full_location, league, modifications, name, motto, owner_id, players, record, season_records, extra_fields, feed_format }
+    }
+}
+
+impl From<Team> for RawTeam {
+    fn from(value: Team) -> Self {
+        let Team { _id, abbreviation, active, augments, championships, color, emoji, feed, motes_used, location, full_location, league, modifications, name, motto, owner_id, players, record, season_records, extra_fields, feed_format } = value;
+        let feed = match feed_format {
+            FeedHistoryDiscriminants::Season0 => FeedHistory::Season0,
+            FeedHistoryDiscriminants::Season1 => FeedHistory::Season1(feed)
+        };
+        RawTeam { _id, abbreviation, active, augments, championships, color, emoji, feed, motes_used, location, full_location, league, modifications, name, motto, owner_id, players, record, season_records, extra_fields }
+    }
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize, EnumDiscriminants, Default)]
+#[strum_discriminants(derive(Serialize, Deserialize))]
+#[serde(untagged)]
+pub(crate) enum FeedHistory {
+    #[default]
+    Season0,
+    Season1(Vec<FeedEvent>)
+}
+
+impl APIHistory for FeedHistory {
+    fn is_missing(&self) -> bool {
+        matches!(self, Self::Season0)
+    }
+}
 
 
 #[derive(Deserialize, Serialize)]
@@ -42,7 +125,7 @@ impl From<RawTeamPlayer> for TeamPlayer {
         let position = (player_id != "#").then(|| position.as_str().into());
 
         if extra_fields.len() > 0 {
-            error!("Deserialization found extra fields: {:?}", extra_fields)
+            error!("Deserialization of TeamPlayer found extra fields: {:?}", extra_fields)
         }
 
 

@@ -4,12 +4,12 @@ use serde::{Deserialize, Serialize};
 use serde_json::Value;
 
 use crate::{enums::{GameStat, MaybeRecognized, Position, PositionType, RecordType, Slot}, feed_event::FeedEvent, team::raw_team::PositionTypeHistoryDiscriminants};
-use raw_team::RawTeamPlayer;
+use raw_team::{RawTeam, RawTeamPlayer, FeedHistoryDiscriminants};
 
 mod raw_team;
 
 #[derive(Serialize, Deserialize, Debug, Clone)]
-#[serde(rename_all = "PascalCase")]
+#[serde(from = "RawTeam", into = "RawTeam")]
 pub struct Team {
     // Cashews id
     #[serde(rename = "_id")]
@@ -21,7 +21,7 @@ pub struct Team {
     pub color: String,
     pub emoji: String,
 
-    #[serde(default)] // Teams deleted before season 1 won't have feeds,
+    feed_format: FeedHistoryDiscriminants,
     pub feed: Vec<FeedEvent>,
     pub motes_used: Option<u8>,
 
@@ -33,17 +33,15 @@ pub struct Team {
     pub modifications: Vec<Value>,
     pub name: String,
 
-    // / no mottos have been seen, so left as raw json
+    /// no mottos have been seen, so left as raw json
     pub motto: Option<serde_json::Value>,
 
-    #[serde(rename = "OwnerID")]
     pub owner_id: Option<String>,
 
     pub players: Vec<TeamPlayer>,
     pub record: HashMap<MaybeRecognized<RecordType>, TeamRecord>,
     pub season_records: HashMap<String, String>,
 
-    #[serde(flatten)]
     pub extra_fields: serde_json::Map<String, serde_json::Value>,
 }
 

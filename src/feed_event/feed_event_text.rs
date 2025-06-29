@@ -2,7 +2,7 @@ use std::{fmt::Display, ops::{Deref, DerefMut}};
 
 use serde::{Deserialize, Serialize};
 
-use crate::{enums::{Attribute, FeedEventType, ItemType}, nom_parsing::parse_feed_event, parsed_event::Item};
+use crate::{enums::{Attribute, FeedEventType, ItemPrefix, ItemSuffix, ItemType}, nom_parsing::parse_feed_event, parsed_event::Item};
 
 #[derive(Clone, Debug, Serialize, Deserialize)]
 pub struct FeedEventText(pub String);
@@ -68,20 +68,23 @@ pub enum ParsedFeedEventText<S> {
         changes: Vec<AttributeChange<S>>
     },
     AttributeEquals {
-        equals: Vec<AttributeEqual<S>>
+        equals: Vec<AttributeEqual<S>>,
+        phrasing: AttributeEqualsPhrasing
     },
-    Enchantment {
+    S1Enchantment {
         player_name: S,
-        item: ItemType,
+        item: EmojilessItem,
         amount: u8,
         attribute: Attribute,
-        phrasing: EnchantmentPhrasing,
+        phrasing: S1EnchantmentPhrasing,
     },
-    CompensatoryEnchantment {
+    S2Enchantment {
         player_name: S,
-        item: ItemType,
+        item: EmojilessItem,
         amount: u8,
         attribute: Attribute,
+        enchant_two: Option<(u8, Attribute)>,
+        compensatory: bool
     },
     ROBO {
         player_name: S,
@@ -152,17 +155,25 @@ impl<S: Display> ParsedFeedEventText<S> {
                     .collect::<Vec<_>>()
                     .join(" ")
             }
-            ParsedFeedEventText::AttributeEquals { equals } => {
+            ParsedFeedEventText::AttributeEquals { equals, phrasing } => {
+                let current = match phrasing {
+                    AttributeEqualsPhrasing::Season1 => "",
+                    AttributeEqualsPhrasing::Season2 => "current "
+                };
                 equals.iter()
-                    .map(|change| format!("{}'s {} became equal to their base {}.", change.player_name, change.changing_attribute, change.value_attribute))
+                    .map(|change| format!("{}'s {} became equal to their {current}base {}.", change.player_name, change.changing_attribute, change.value_attribute))
                     .collect::<Vec<_>>()
                     .join(" ")
             }
-            ParsedFeedEventText::Enchantment { player_name, item, amount, attribute, phrasing } => {
+            ParsedFeedEventText::S1Enchantment { player_name, item, amount, attribute, phrasing } => {
                 phrasing.format_event(player_name, *item, *amount, *attribute)
             }
-            ParsedFeedEventText::CompensatoryEnchantment { player_name, item, amount, attribute } => {
-                format!("The Compensatory Enchantment was a success! {player_name}'s {item} gained a +{amount} {attribute} bonus.")
+            ParsedFeedEventText::S2Enchantment { player_name, item, amount, attribute, enchant_two, compensatory } => {
+                let enchant_type = compensatory.then_some("Compensatory").unwrap_or("Item");
+                match enchant_two {
+                    Some((amount_two, attribute_two)) => format!("The {enchant_type} Enchantment was a success! {player_name}'s {item} was enchanted with +{amount} {attribute} and +{amount_two} {attribute_two}."),
+                    None =>  format!("The {enchant_type} Enchantment was a success! {player_name}'s {item} gained a +{amount} {attribute} bonus.")
+                }
             }
             ParsedFeedEventText::ROBO { player_name } => {
                 format!("{player_name} gained the ROBO Modification.")
@@ -180,16 +191,23 @@ impl<S: Display> ParsedFeedEventText<S> {
     }
 }
 
+
 #[derive(Clone, Copy, Debug, Serialize, Deserialize, PartialEq)]
-pub enum EnchantmentPhrasing {
+pub enum AttributeEqualsPhrasing {
+    Season1,
+    Season2
+}
+
+#[derive(Clone, Copy, Debug, Serialize, Deserialize, PartialEq)]
+pub enum S1EnchantmentPhrasing {
     Season1A,
     Season1B
 }
-impl EnchantmentPhrasing {
-    pub fn format_event<S:Display>(&self, player_name: &S, item: ItemType, amount: u8, attribute: Attribute) -> String {
+impl S1EnchantmentPhrasing {
+    pub fn format_event<S:Display>(&self, player_name: &S, item: EmojilessItem, amount: u8, attribute: Attribute) -> String {
         match self {
-            EnchantmentPhrasing::Season1A => format!("{player_name}'s {item} was enchanted with +{amount} to {attribute}."),
-            EnchantmentPhrasing::Season1B => format!("The Item Enchantment was a success! {player_name}'s {item} gained a +{amount} {attribute} bonus.")
+            S1EnchantmentPhrasing::Season1A => format!("{player_name}'s {item} was enchanted with +{amount} to {attribute}."),
+            S1EnchantmentPhrasing::Season1B => format!("The Item Enchantment was a success! {player_name}'s {item} gained a +{amount} {attribute} bonus.")
         }
     }
 }
@@ -211,5 +229,27 @@ impl<S: Display> FeedDelivery<S> {
 
 
         format!("{player} received a {item} {delivery_label}.{discarded}")
+    }
+}
+
+#[derive(Debug, Clone, Copy, Serialize, Deserialize, PartialEq)]
+pub struct EmojilessItem {
+    pub prefix: Option<ItemPrefix>,
+    pub item: ItemType,
+    pub suffix: Option<ItemSuffix>,
+}
+impl Display for EmojilessItem {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        let EmojilessItem { prefix, item, suffix } = self;
+        let prefix = match prefix {
+            Some(prefix) => format!("{prefix} "),
+            None => String::new()
+        };
+        let suffix = match suffix {
+            Some(suffix) => format!(" of {suffix}"),
+            None => String::new()
+        };
+
+        write!(f, "{prefix}{item}{suffix}")
     }
 }

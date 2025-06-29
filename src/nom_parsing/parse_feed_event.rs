@@ -1,7 +1,7 @@
 use nom::{branch::alt, bytes::complete::tag, character::complete::{i16, u8}, combinator::opt, error::context, multi::many1, sequence::{delimited, preceded, separated_pair, terminated}, Finish, Parser};
 use tracing::error;
 
-use crate::{enums::FeedEventType, feed_event::{AttributeChange, AttributeEqual, EnchantmentPhrasing, ParsedFeedEventText}, nom_parsing::shared::{emoji, feed_delivery, name_eof, parse_terminated, sentence_eof, try_from_word}};
+use crate::{enums::FeedEventType, feed_event::{AttributeChange, AttributeEqual, AttributeEqualsPhrasing, ParsedFeedEventText, S1EnchantmentPhrasing}, nom_parsing::shared::{emoji, emojiless_item, feed_delivery, name_eof, parse_terminated, sentence_eof, try_from_word}};
 
 use super::shared::Error;
 
@@ -53,11 +53,13 @@ fn augment<'output>() -> impl FeedEventParser<'output> {
         attribute_gain(),
         enchantment_s1a(),
         enchantment_s1b(),
+        enchantment_s2(),
         enchantment_compensatory(),
         robo(),
         take_the_mound(),
         take_the_plate(),
-        attribute_equal(),
+        s1_attribute_equal(),
+        s2_attribute_equal(),
         swap_places()
     )))
 }
@@ -72,41 +74,68 @@ fn attribute_gain<'output>() -> impl FeedEventParser<'output> {
     ).map(|changes| ParsedFeedEventText::AttributeChanges { changes })
 }
 
-fn attribute_equal<'output>() -> impl FeedEventParser<'output> {
+fn s1_attribute_equal<'output>() -> impl FeedEventParser<'output> {
     many1(
         (
             preceded(opt(tag(" ")), parse_terminated("'s ")),
             try_from_word,
-            delimited(tag("became equal to their base "), try_from_word, tag("."))
+            delimited(tag(" became equal to their base "), try_from_word, tag("."))
         ).map(|(player_name, changing_attribute, value_attribute)| AttributeEqual { player_name, changing_attribute, value_attribute })
-    ).map(|equals| ParsedFeedEventText::AttributeEquals { equals })
+    ).map(|equals| ParsedFeedEventText::AttributeEquals { equals, phrasing: AttributeEqualsPhrasing::Season1 })
+}
+
+fn s2_attribute_equal<'output>() -> impl FeedEventParser<'output> {
+    many1(
+        (
+            preceded(opt(tag(" ")), parse_terminated("'s ")),
+            try_from_word,
+            delimited(tag(" became equal to their current base "), try_from_word, tag("."))
+        ).map(|(player_name, changing_attribute, value_attribute)| AttributeEqual { player_name, changing_attribute, value_attribute })
+    ).map(|equals| ParsedFeedEventText::AttributeEquals { equals, phrasing: AttributeEqualsPhrasing::Season2 })
 }
 
 fn enchantment_s1a<'output>() -> impl FeedEventParser<'output> {
     (
         parse_terminated("'s "),
-        try_from_word,
+        emojiless_item,
         preceded(tag(" was enchanted with +"), u8),
         delimited(tag(" to "), try_from_word, tag("."))
-    ).map(|(player_name, item, amount, attribute)| ParsedFeedEventText::Enchantment { player_name, item, amount, attribute, phrasing: EnchantmentPhrasing::Season1A })
+    ).map(|(player_name, item, amount, attribute)| ParsedFeedEventText::S1Enchantment { player_name, item, amount, attribute, phrasing: S1EnchantmentPhrasing::Season1A })
 }
 
 fn enchantment_s1b<'output>() -> impl FeedEventParser<'output> {
     (
         preceded(tag("The Item Enchantment was a success! "), parse_terminated("'s ")),
-        try_from_word,
+        emojiless_item,
         delimited(tag(" gained a +"), u8, tag(" ")),
         terminated(try_from_word, tag(" bonus."))
-    ).map(|(player_name, item, amount, attribute)| ParsedFeedEventText::Enchantment { player_name, item, amount, attribute, phrasing: EnchantmentPhrasing::Season1B })
+    ).map(|(player_name, item, amount, attribute)| ParsedFeedEventText::S1Enchantment { player_name, item, amount, attribute, phrasing: S1EnchantmentPhrasing::Season1B })
+}
+
+fn enchantment_s2<'output>() -> impl FeedEventParser<'output> {
+    (
+        preceded(tag("The Item Enchantment was a success! "), parse_terminated("'s ")),
+        emojiless_item,
+        preceded((tag(" was enchanted with "), opt(tag("a ")) , tag("+")), separated_pair(u8, tag(" "), try_from_word)),
+        delimited(tag(" and +"), separated_pair(u8, tag(" "), try_from_word), tag(".")),
+    ).map(|(player_name, item, (amount, attribute), enchant_two)| ParsedFeedEventText::S2Enchantment { player_name, item, amount, attribute, enchant_two: Some(enchant_two), compensatory: false })
 }
 
 fn enchantment_compensatory<'output>() -> impl FeedEventParser<'output> {
     (
         preceded(tag("The Compensatory Enchantment was a success! "), parse_terminated("'s ")),
-        try_from_word,
-        delimited(tag(" gained a +"), u8, tag(" ")),
-        terminated(try_from_word, tag(" bonus."))
-    ).map(|(player_name, item, amount, attribute)| ParsedFeedEventText::CompensatoryEnchantment { player_name, item, amount, attribute })
+        emojiless_item,
+        alt((
+            (
+                preceded((tag(" was enchanted with "), opt(tag("a ")) , tag("+")), separated_pair(u8, tag(" "), try_from_word)),
+                delimited(tag(" and +"), separated_pair(u8, tag(" "), try_from_word), tag("."))
+            ).map(|((amount, attribute), second)| (amount, attribute, Some(second))),
+            (
+                delimited(tag(" gained a +"), separated_pair(u8, tag(" "), try_from_word), tag(" bonus."))
+                .map(|(amount, attribute)| (amount, attribute, None))
+            )
+        ))
+    ).map(|(player_name, item, (amount, attribute, enchant_two))| ParsedFeedEventText::S2Enchantment { player_name, item, amount, attribute, enchant_two, compensatory: true })
 }
 
 fn robo<'output>() -> impl FeedEventParser<'output> {
