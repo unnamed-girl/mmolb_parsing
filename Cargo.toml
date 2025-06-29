@@ -11,8 +11,11 @@ name = "parser"
 required-features = ["bin"]
 
 [features]
-rand = ["dep:rand"]
-bin = ["dep:clap", "dep:tracing-subscriber", "dep:tokio", "dep:futures", "dep:reqwest", "dep:reqwest-middleware", "dep:http-cache-reqwest", "dep:async-stream"]
+bin = ["dep:clap", "dep:tracing-subscriber", "dep:tokio", "dep:futures", "dep:reqwest", "dep:reqwest-middleware", "dep:http-cache-reqwest", "dep:async-stream", "dep:serde_json_diff"]
+serde_json_diff = ["dep:serde_json_diff"]
+
+[dev-dependencies]
+serde_json_diff = "0.1.1"
 
 [dependencies]
 async-stream = { version = "0.3.6", optional = true }
@@ -21,13 +24,13 @@ futures = { version = "0.3.31", optional = true }
 http-cache-reqwest = { version = "0.15.1", optional = true }
 nom = "8.0.0"
 nom-language = "0.1.0"
-rand = { version = "0.9.1", optional = true }
 reqwest = { version = "0.12.15", features = ["blocking", "brotli", "gzip", "json"], optional = true }
 reqwest-middleware = { version = "0.4.2", optional = true }
 ron = "0.10.1"
 serde = { version = "1.0.219", features = ["serde_derive"] }
 serde_cow = "0.1.2"
 serde_json = "1.0.140"
+serde_json_diff = { version = "0.1.1", optional = true }
 strum = { version = "0.27.1", features = ["derive"] }
 tokio = { version = "1.44.2", features = ["full"], optional = true }
 tracing = { version = "0.1.41" }

@@ -1,5 +1,6 @@
 use std::collections::HashMap;
 
+use crate::{enums::{Day, MaybeRecognized}, serde_utils::{none_as_empty_string, APIHistory}};
 use serde::{Deserialize, Serialize};
 use strum::EnumDiscriminants;
 
@@ -25,7 +26,7 @@ pub(crate) struct RawGame {
     pub home_team_name: String,
 
     pub season: u32,
-    pub day: u32,
+    pub day: MaybeRecognized<Day>,
     pub state: String,
 
     pub weather: RawWeather,
@@ -92,9 +93,6 @@ pub(crate) struct RawEvent {
     pub extra_fields: serde_json::Map<String, serde_json::Value>,
 }
 
-trait APIHistory {
-    fn is_missing(&self) -> bool;
-}
 
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq, EnumDiscriminants, Default)]
 #[strum_discriminants(derive(Serialize, Deserialize))]
@@ -112,39 +110,6 @@ impl APIHistory for IndexHistory {
             true
         } else {
             false
-        }
-    }
-}
-
-mod none_as_empty_string {
-    use serde::{de::Error, Deserialize, Deserializer, Serialize, Serializer};
-
-    pub fn deserialize<'de, T: Deserialize<'de>, D>(d: D) -> Result<Option<T>, D::Error>
-    where
-        D: Deserializer<'de>,
-    {
-        #[derive(Deserialize)]
-        #[serde(untagged)]
-        enum ValueOrEmptyString<'a, T> {
-            String(String),
-            S(&'a str),
-            R(T),
-        }
-
-        match ValueOrEmptyString::deserialize(d) {
-            Ok(ValueOrEmptyString::R(r)) => Ok(Some(r)),
-            Ok(ValueOrEmptyString::S(s)) if s.is_empty() => Ok(None),
-            Ok(ValueOrEmptyString::S(_)) => Err(D::Error::custom("only empty strings may be provided")),
-            Ok(ValueOrEmptyString::String(s)) if s.is_empty() => Ok(None),
-            Ok(ValueOrEmptyString::String(_)) => Err(D::Error::custom("only empty strings may be provided")),
-            Err(err) => Err(err),
-        }
-    }
-
-    pub fn serialize<S, T: Serialize>(value: &Option<T>, serializer: S) -> Result<S::Ok, S::Error> where S: Serializer {
-        match value {
-            Some(t) => t.serialize(serializer),
-            None => "".serialize(serializer)
         }
     }
 }

@@ -3,7 +3,7 @@ use std::fmt::Debug;
 use nom::{branch::alt, bytes::complete::{tag, take, take_till, take_until, take_until1, take_while}, character::complete::{one_of, space0, u8}, combinator::{all_consuming, opt, recognize, rest, value, verify}, error::{ErrorKind, ParseError}, multi::{count, many0, many1, separated_list1}, sequence::{delimited, preceded, separated_pair, terminated}, AsChar, Input, Parser};
 use nom_language::error::VerboseError;
 
-use crate::{enums::{Base, BatterStat, FairBallDestination, FairBallType, NowBattingStats}, parsed_event::{BaseSteal, EmojiTeam, Item, PositionedPlayer, RunnerAdvance, RunnerOut, Delivery}, Game};
+use crate::{enums::{Base, BatterStat, FairBallDestination, FairBallType, NowBattingStats}, feed_event::{EmojilessItem, FeedDelivery}, parsed_event::{BaseSteal, Delivery, EmojiTeam, Item, PositionedPlayer, RunnerAdvance, RunnerOut}, Game};
 
 pub(super) type Error<'a> = VerboseError<&'a str>;
 pub(super) type IResult<'a, I, O> = nom::IResult<I, O, Error<'a>>;
@@ -363,6 +363,15 @@ pub(super) fn item(input: &str) -> IResult<&str, Item<&str>> {
     .parse(input)
 }
 
+pub(super) fn emojiless_item(input: &str) -> IResult<&str, EmojilessItem> {
+    (
+        opt(terminated(try_from_word, tag(" "))),
+        try_from_word,
+        opt(preceded(tag(" of "), try_from_words_m_n(1,2)))
+    ).map(|(prefix, item, suffix)| EmojilessItem { prefix, item, suffix})
+    .parse(input)
+}
+
 pub(super) fn delivery<'parse, 'output>(parsing_context: &'parse ParsingContext<'output>, label: &'output str) -> impl MyParser<'output, Delivery<&'output str>> + 'parse {
         (
             alt((
@@ -372,6 +381,14 @@ pub(super) fn delivery<'parse, 'output>(parsing_context: &'parse ParsingContext<
             terminated(item, (tag(" "), tag(label), tag("."))),
             opt(delimited(tag(" They discarded their "), item, tag(".")))
         ).map(|((team, player), item, discarded)| Delivery {team, player, item, discarded} )
+}
+
+pub(super) fn feed_delivery<'output>(label: &'output str) -> impl MyParser<'output, FeedDelivery<&'output str>> {
+        (
+            parse_terminated(" received a "),
+            terminated(item, (tag(" "), tag(label), tag("."))),
+            opt(delimited(tag(" They discarded their "), item, tag(".")))
+        ).map(|(player, item, discarded)| FeedDelivery {player, item, discarded} )
 }
 
 #[cfg(test)]

@@ -1,10 +1,11 @@
-use std::{fmt::Display, str::FromStr};
+use std::{convert::Infallible, fmt::Display, str::FromStr};
 
-use serde::{Deserialize, Serialize};
-use strum::{Display, EnumDiscriminants, EnumIter, EnumString};
+use nom::{branch::alt, bytes::complete::tag, sequence::preceded, Parser, character::complete::u8};
+use serde::{Deserialize, Deserializer, Serialize, Serializer, de::Error};
+use strum::{Display, EnumDiscriminants, EnumIter, EnumString, IntoDiscriminant};
 
 /// Possible values of the "event" field of an mmolb event. 
-#[derive(Debug, Clone, Copy, Serialize, Deserialize, EnumString, Display, PartialEq, Eq, Hash)]
+#[derive(Debug, Clone, Copy, Serialize, Deserialize, EnumString, Display, PartialEq, Eq, Hash, EnumIter)]
 pub enum EventType {
     // Season 0
     PitchingMatchup,
@@ -49,8 +50,9 @@ pub enum EventType {
 /// assert_eq!(TopBottom::try_from(2), Err(NotASide(2)));
 /// assert_eq!(u8::from(TopBottom::Bottom), 1);
 /// ```
-#[derive(Debug, Clone, Copy, Deserialize, Serialize, PartialEq, Eq, Hash, EnumString, Display)]
+#[derive(Debug, Clone, Copy, Deserialize, Serialize, PartialEq, Eq, Hash, EnumString, Display, EnumIter, Default)]
 pub enum TopBottom {
+    #[default]
     #[strum(to_string = "top")]
     Top,
     #[strum(to_string = "bottom")]
@@ -132,7 +134,7 @@ impl From<HomeAway> for TopBottom {
 /// 
 /// assert_eq!(HomeAway::from(TopBottom::Top), HomeAway::Away);
 /// ```
-#[derive(Debug, Clone, Copy, Deserialize, Serialize, PartialEq, Eq, Hash, EnumString, Display)]
+#[derive(Debug, Clone, Copy, Deserialize, Serialize, PartialEq, Eq, Hash, EnumString, Display, EnumIter)]
 pub enum HomeAway {
     Away,
     Home,
@@ -184,11 +186,11 @@ impl From<TopBottom> for HomeAway {
 /// assert_eq!(Inning::DuringGame { number: 1, batting_side: TopBottom::Top }.batting_team(), Some(HomeAway::Away));
 /// assert_eq!(Inning::DuringGame { number: 1, batting_side: TopBottom::Top }.pitching_team(), Some(HomeAway::Home));
 /// ```
-#[derive(Debug, Clone, Copy, Serialize, Deserialize, PartialEq, Eq, Hash)]
+#[derive(Debug, Clone, Copy, Serialize, Deserialize, PartialEq, Eq, Hash, EnumIter)]
 pub enum Inning {
     BeforeGame,
     DuringGame {number: u8, batting_side: TopBottom},
-    AfterGame { total_inning_count: u8 }
+    AfterGame { final_inning_number: u8 }
 }
 impl Inning {
     /// The next inning. If `continue_if_overtime`, go to extra innings instead of ending the game at the 9th.
@@ -198,16 +200,16 @@ impl Inning {
     /// use mmolb_parsing::enums::TopBottom;
     /// 
     /// assert_eq!(Inning::BeforeGame.next(false), Some(Inning::DuringGame { number: 1, batting_side: TopBottom::Top }));
-    /// assert_eq!(Inning::DuringGame { number: 9, batting_side: TopBottom::Bottom }.next(false), Some(Inning::AfterGame { total_inning_count:9 }));
+    /// assert_eq!(Inning::DuringGame { number: 9, batting_side: TopBottom::Bottom }.next(false), Some(Inning::AfterGame { final_inning_number:9 }));
     /// assert_eq!(Inning::DuringGame { number: 9, batting_side: TopBottom::Bottom }.next(true), Some(Inning::DuringGame { number: 10, batting_side: TopBottom::Top }));
-    /// assert_eq!(Inning::AfterGame { total_inning_count: 9 }.next(true), None);
+    /// assert_eq!(Inning::AfterGame { final_inning_number: 9 }.next(true), None);
     /// ```
     pub fn next(self, continue_if_overtime: bool) -> Option<Self> {
         match self {
             Inning::BeforeGame => Some(Inning::DuringGame { number: 1, batting_side: TopBottom::Top }),
             Inning::DuringGame { number, batting_side } => {
                 if number >= 9 && !continue_if_overtime {
-                    Some(Inning::AfterGame { total_inning_count: number })
+                    Some(Inning::AfterGame { final_inning_number: number })
                 } else {
                     match batting_side {
                         TopBottom::Top => Some(Inning::DuringGame { number, batting_side: batting_side.flip() }),
@@ -226,7 +228,7 @@ impl Inning {
     /// 
     /// assert_eq!(Inning::BeforeGame.number(), None);
     /// assert_eq!(Inning::DuringGame { number: 1, batting_side: TopBottom::Top }.number(), Some(1));
-    /// assert_eq!(Inning::AfterGame {total_inning_count: 9}.number(), None);
+    /// assert_eq!(Inning::AfterGame {final_inning_number: 9}.number(), None);
     /// ```
     pub fn number(self) -> Option<u8> {
         if let Inning::DuringGame { number, .. } = self {
@@ -246,7 +248,7 @@ impl Inning {
     /// assert_eq!(Inning::BeforeGame.batting_team(), None);
     /// assert_eq!(Inning::DuringGame { number: 1, batting_side: TopBottom::Top }.batting_team(), Some(HomeAway::Away));
     /// assert_eq!(Inning::DuringGame { number: 1, batting_side: TopBottom::Bottom }.batting_team(), Some(HomeAway::Home));
-    /// assert_eq!(Inning::AfterGame {total_inning_count: 9}.batting_team(), None);
+    /// assert_eq!(Inning::AfterGame {final_inning_number: 9}.batting_team(), None);
     /// ```
     pub fn batting_team(self) -> Option<HomeAway> {
         if let Inning::DuringGame { batting_side, .. } = self {
@@ -266,7 +268,7 @@ impl Inning {
     /// assert_eq!(Inning::BeforeGame.pitching_team(), None);
     /// assert_eq!(Inning::DuringGame { number: 1, batting_side: TopBottom::Top }.pitching_team(), Some(HomeAway::Home));
     /// assert_eq!(Inning::DuringGame { number: 1, batting_side: TopBottom::Bottom }.pitching_team(), Some(HomeAway::Away));
-    /// assert_eq!(Inning::AfterGame {total_inning_count: 9}.pitching_team(), None);
+    /// assert_eq!(Inning::AfterGame {final_inning_number: 9}.pitching_team(), None);
     /// ```
     pub fn pitching_team(self) -> Option<HomeAway> {
         if let Inning::DuringGame { batting_side, .. } = self {
@@ -405,7 +407,7 @@ pub enum PitchType {
 /// 
 /// assert_eq!(StrikeType::Looking.to_string(), "looking");
 /// ```
-#[derive(Clone, Copy, EnumString, Display, Debug, Serialize, Deserialize, PartialEq, Eq, Hash)]
+#[derive(Clone, Copy, EnumString, Display, Debug, Serialize, Deserialize, PartialEq, Eq, Hash, EnumIter)]
 pub enum StrikeType {
     #[strum(to_string = "looking")]
     Looking,
@@ -420,7 +422,7 @@ pub enum StrikeType {
 /// assert_eq!(FieldingErrorType::Throwing.uppercase(), "Throwing");
 /// assert_eq!(FieldingErrorType::Throwing.lowercase(), "throwing");
 /// ```
-#[derive(Clone, Copy, EnumString, Display, Debug, Serialize, Deserialize, PartialEq, Eq, Hash)]
+#[derive(Clone, Copy, EnumString, Display, Debug, Serialize, Deserialize, PartialEq, Eq, Hash, EnumIter)]
 pub enum FieldingErrorType {
     #[strum(to_string="Throwing", serialize="throwing")]
     Throwing,
@@ -458,7 +460,7 @@ impl FieldingErrorType {
 /// 
 /// assert_eq!(FoulType::Tip.to_string(), "tip");
 /// ```
-#[derive(Clone, Copy, EnumString, Display, Debug, Serialize, Deserialize, PartialEq, Eq, Hash)]
+#[derive(Clone, Copy, EnumString, Display, Debug, Serialize, Deserialize, PartialEq, Eq, Hash, EnumIter)]
 pub enum FoulType {
     #[strum(to_string = "tip")]
     Tip,
@@ -473,7 +475,7 @@ pub enum FoulType {
 /// assert_eq!(Base::First.to_base_str(), "first base");
 /// assert_eq!(Base::Home.to_base_str(), "home");
 /// ```
-#[derive(Clone, Copy, EnumString, Display, Debug, Serialize, Deserialize, PartialEq, Eq, Hash)]
+#[derive(Clone, Copy, EnumString, Display, Debug, Serialize, Deserialize, PartialEq, Eq, Hash, EnumIter)]
 pub enum Base {
     #[strum(to_string = "home")]
     Home,
@@ -527,7 +529,7 @@ impl From<BaseNameVariant> for Base {
 /// assert_eq!(BaseNameVariant::basic_name(Base::First), BaseNameVariant::First);
 /// assert_eq!(Base::from(BaseNameVariant::OneB), Base::First);
 /// ```
-#[derive(Clone, Copy, EnumString, Display, Debug, Serialize, Deserialize, PartialEq, Eq, Hash)]
+#[derive(Clone, Copy, EnumString, Display, Debug, Serialize, Deserialize, PartialEq, Eq, Hash, EnumIter)]
 pub enum BaseNameVariant {
     #[strum(to_string = "first")]
     First,
@@ -567,7 +569,7 @@ impl BaseNameVariant {
 /// 
 /// assert_eq!(Distance::Single.to_string(), "singles");
 /// ```
-#[derive(Clone, Copy, EnumString, Display, Debug, Serialize, Deserialize, PartialEq, Eq, Hash)]
+#[derive(Clone, Copy, EnumString, Display, Debug, Serialize, Deserialize, PartialEq, Eq, Hash, EnumIter)]
 pub enum Distance {
     #[strum(to_string = "singles")]
     Single,
@@ -578,7 +580,7 @@ pub enum Distance {
 }
 
 /// Possible followup to "Now batting: [BATTER]". (e.g. "(1st PA of game)")
-#[derive(Clone, Debug, Serialize, Deserialize, PartialEq, Eq, Hash)]
+#[derive(Clone, Debug, Serialize, Deserialize, PartialEq, Eq, Hash, EnumIter)]
 pub enum NowBattingStats {
     FirstPA,
     Stats {
@@ -596,7 +598,7 @@ pub enum NowBattingStats {
 /// assert_eq!(BatterStatDiscriminants::FirstBases.to_string(), "1B");
 /// assert_eq!(BatterStatDiscriminants::HitsForAtBats.to_string(), "HitsForAtBats"); // mmolb implies this stat, it doesn't have an acronym.
 /// ```
-#[derive(Clone, Debug, EnumDiscriminants, Serialize, Deserialize, PartialEq, Eq, Hash)]
+#[derive(Clone, Debug, EnumDiscriminants, Serialize, Deserialize, PartialEq, Eq, Hash, EnumIter)]
 #[strum_discriminants(derive(EnumString, Display))]
 pub enum BatterStat {
     // Season 0
@@ -678,7 +680,7 @@ impl BatterStat {
 /// 
 /// assert_eq!(GameStat::GroundedIntoDoublePlay.to_string(), "grounded_into_double_play");
 /// ```
-#[derive(Clone, Copy, EnumString, Display, Debug, Serialize, Deserialize, PartialEq, Eq, Hash)]
+#[derive(Clone, Copy, EnumString, Display, Debug, Serialize, Deserialize, PartialEq, Eq, Hash, EnumIter)]
 #[strum(serialize_all = "snake_case")]
 pub enum GameStat {
     // Season 0
@@ -788,7 +790,7 @@ pub enum GameStat {
     Groundouts
 }
 
-#[derive(Clone, Copy, EnumString, Display, Debug, Serialize, Deserialize, PartialEq, Eq, Hash)]
+#[derive(Clone, Copy, EnumString, Display, Debug, Serialize, Deserialize, PartialEq, Eq, Hash, EnumIter)]
 pub enum GameOverMessage {
     /// Early season 0 "Game over." e.g. 6805db4bac48194de3cd42d2 
     #[strum(to_string = "Game over.")]
@@ -798,7 +800,7 @@ pub enum GameOverMessage {
     QuotedGAMEOVER
 }
 
-#[derive(Clone, Copy, EnumString, Display, Debug, Serialize, Deserialize, PartialEq, Eq, Hash)]
+#[derive(Clone, Copy, EnumString, Display, Debug, Serialize, Deserialize, PartialEq, Eq, Hash, EnumIter)]
 pub enum ItemType {
     Cap,
     Gloves,
@@ -817,49 +819,92 @@ impl<T: Display> From<T> for DisplayDeserializer {
     }
 }
 
-#[derive(Debug, Clone, Copy, Serialize, Deserialize, EnumString, Display, PartialEq, Eq, Hash)]
-#[serde(try_from = "&str", into = "DisplayDeserializer")]
+#[derive(Debug, Clone, Copy, Serialize, Deserialize, EnumString, Display, PartialEq, Eq, Hash, EnumIter)]
+#[serde(rename_all = "lowercase")]
 #[strum(serialize_all = "lowercase")]
 pub enum FeedEventType {
     Game,
     Augment,
 }
 
-
-#[derive(Debug, Clone, Copy, Serialize, Deserialize, EnumString, Display, PartialEq, Eq, Hash)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, Serialize, Deserialize, EnumIter)]
 #[serde(try_from = "&str", into = "DisplayDeserializer")]
 pub enum FeedEventStatus {
-    #[strum(to_string = "Regular Season")]
     RegularSeason,
-    #[strum(to_string = "Superstar Break")]
-    SuperstarBreak
-}
-
-#[derive(Debug, Clone, Copy, Serialize, Deserialize, PartialEq, Eq, Hash)]
-pub enum FeedEventDay {
-    #[serde(rename = "Superstar Break")]
     SuperstarBreak,
-    #[serde(untagged)]
-    Day(u8),
+    PostseasonRound(u8),
+}
+impl<'a> TryFrom<&'a str> for FeedEventStatus {
+    type Error = &'static str;
+    fn try_from(value: &'a str) -> Result<Self, Self::Error> {
+        Self::from_str(value)
+    }
+}
+impl FromStr for FeedEventStatus {
+    type Err = &'static str;
+    fn from_str(s: &str) -> Result<Self, Self::Err> {
+        match s {
+            "Regular Season" => Ok(FeedEventStatus::RegularSeason),
+            "Superstar Break" => Ok(FeedEventStatus::SuperstarBreak),
+            s => s.strip_prefix("Postseason Round ")
+                        .and_then(|s| s.parse().ok())
+                        .map(FeedEventStatus::PostseasonRound)
+                        .ok_or(())
+        }.map_err(|_| "Did not match any known FeedEventStatus variants")
+    }
 }
 
-impl Display for FeedEventDay {
+impl Display for FeedEventStatus {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         match self {
-            Self::SuperstarBreak => "Superstar Break".fmt(f),
-            Self::Day(d) => d.fmt(f)
+            FeedEventStatus::RegularSeason => Display::fmt("Regular Season", f),
+            FeedEventStatus::SuperstarBreak => Display::fmt("Superstar Break", f),
+            FeedEventStatus::PostseasonRound(i) => write!(f, "Postseason Round {i}")
         }
     }
 }
 
-#[derive(Debug, Clone, Copy, Serialize, Deserialize, EnumString, Display, PartialEq, Eq, Hash)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, Serialize, Deserialize, EnumIter)]
+pub enum Day {
+    #[serde(rename = "Superstar Break")]
+    SuperstarBreak,
+    Holiday,
+    #[serde(untagged)]
+    Day(u8),
+    #[serde(untagged, deserialize_with = "superstar_day_de", serialize_with = "superstar_day_ser")]
+    SuperstarDay(u8),
+}
+fn superstar_day_ser<S>(day: &u8, serializer: S) -> Result<S::Ok, S::Error> where S: Serializer {
+    format!("Superstar Day {day}").serialize(serializer)
+}
+
+fn superstar_day_de<'de, D>(deserializer: D) -> Result<u8, D::Error> where D: Deserializer<'de> {
+    <String>::deserialize(deserializer)?
+        .strip_prefix("Superstar Day ")
+        .ok_or(D::Error::custom("Didn't start with \"Superstar Day\""))?
+        .parse::<u8>()
+        .map_err(|_| D::Error::custom("Expected a number"))
+}
+
+impl Display for Day {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        match self {
+            Self::SuperstarBreak => "Superstar Break".fmt(f),
+            Self::Day(d) => d.fmt(f),
+            Self::Holiday => "Holiday".fmt(f),
+            Self::SuperstarDay(d) => write!(f, "Superstar Day {d}")
+        }
+    }
+}
+
+#[derive(Debug, Clone, Copy, Serialize, Deserialize, EnumString, Display, PartialEq, Eq, Hash, EnumIter)]
 #[serde(try_from = "&str", into = "DisplayDeserializer")]
 pub enum RecordType {
     #[strum(to_string = "Regular Season")]
     RegularSeason,
 }
 
-#[derive(Debug, Clone, Serialize, Deserialize, EnumString, Display, PartialEq, Eq, Hash)]
+#[derive(Debug, Clone, Serialize, Deserialize, EnumString, Display, PartialEq, Eq, Hash, EnumIter)]
 #[serde(try_from = "&str", into = "DisplayDeserializer")]
 pub enum PositionType {
     Pitcher,
@@ -887,6 +932,13 @@ impl<T> MaybeRecognized<T> {
     }
 }
 
+impl<T: FromStr> FromStr for MaybeRecognized<T> {
+    type Err = Infallible;
+    fn from_str(s: &str) -> Result<Self, Self::Err> {
+        Ok(Self::from(s))
+    }
+}
+
 impl<T: FromStr> From<&str> for MaybeRecognized<T> {
     fn from(value: &str) -> Self {
         T::from_str(value).map(MaybeRecognized::Recognized)
@@ -894,41 +946,116 @@ impl<T: FromStr> From<&str> for MaybeRecognized<T> {
     }
 }
 
-impl<T: ToString> ToString for MaybeRecognized<T> {
-    fn to_string(&self) -> String {
+impl<T: FromStr> From<String> for MaybeRecognized<T> {
+    fn from(value: String) -> Self {
+        T::from_str(&value).map(MaybeRecognized::Recognized)
+            .unwrap_or(MaybeRecognized::NotRecognized(value))
+    }
+}
+
+impl<T: Display> Display for MaybeRecognized<T> {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         match self {
-            MaybeRecognized::Recognized(t) => t.to_string(),
-            MaybeRecognized::NotRecognized(s) => s.to_string()
+            MaybeRecognized::Recognized(t) => t.fmt(f),
+            MaybeRecognized::NotRecognized(s) => s.fmt(f)
         }
     }
 }
 
-impl<'de, T: FromStr> Deserialize<'de> for MaybeRecognized<T> {
+impl<'de, T:Deserialize<'de>> Deserialize<'de> for MaybeRecognized<T> {
     fn deserialize<D>(deserializer: D) -> Result<Self, D::Error>
         where
             D: serde::Deserializer<'de> {
-        let s = String::deserialize(deserializer)?;
-        let result = match T::from_str(&s) {
-            Ok(t) => MaybeRecognized::Recognized(t),
-            Err(_) => MaybeRecognized::NotRecognized(s)
-        };
-        Ok(result)
+        
+        #[derive(Serialize, Deserialize)]
+        enum Visitor<T> {
+            #[serde(untagged)]
+            Recognized(T),
+            #[serde(untagged)]
+            Other(String)
+        }
+        match Visitor::<T>::deserialize(deserializer) {
+            Ok(Visitor::Recognized(t)) => Ok(MaybeRecognized::Recognized(t)),
+            Ok(Visitor::Other(s)) => Ok(MaybeRecognized::NotRecognized(s)),
+            Err(e) => Err(e)
+        }
     }
 }
 
-impl<T: ToString> Serialize for MaybeRecognized<T> {
+impl<T: Serialize> Serialize for MaybeRecognized<T> {
     fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error>
         where
             S: serde::Serializer {
-        let s = self.to_string();
-        s.serialize(serializer)
+        match self {
+            MaybeRecognized::Recognized(t) => t.serialize(serializer),
+            MaybeRecognized::NotRecognized(s) => s.serialize(serializer)
+        }
     }
 }
 
 
 // TODO
-#[derive(EnumString, Display, Debug, Serialize, Deserialize, Clone, Copy, EnumIter, PartialEq, Eq, Hash)]
+#[derive(Debug, Serialize, Deserialize, Clone, Copy, EnumIter, PartialEq, Eq, Hash, EnumDiscriminants)]
+#[strum_discriminants(derive(EnumString, Display))]
 pub enum Slot {
+    #[strum_discriminants(strum(to_string = "P"))]
+    Pitcher,
+    #[strum_discriminants(strum(to_string = "C"))]
+    Catcher,
+    #[strum_discriminants(strum(to_string = "1B"))]
+    FirstBaseman,
+    #[strum_discriminants(strum(to_string = "2B"))]
+    SecondBaseman,
+    #[strum_discriminants(strum(to_string = "3B"))]
+    ThirdBaseman,
+    #[strum_discriminants(strum(to_string = "SS"))]
+    ShortStop,
+    #[strum_discriminants(strum(to_string = "LF"))]
+    LeftField,
+    #[strum_discriminants(strum(to_string = "CF"))]
+    CenterField,
+    #[strum_discriminants(strum(to_string = "RF"))]
+    RightField,
+    #[strum_discriminants(strum(to_string = "SP"))]
+    StartingPitcher(u8),
+    #[strum_discriminants(strum(to_string = "RP"))]
+    ReliefPitcher(u8),
+    #[strum_discriminants(strum(to_string = "CL"))]
+    Closer,
+    #[strum_discriminants(strum(to_string = "DH"))]
+    DesignatedHitter
+}
+impl Display for Slot {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        write!(f, "{}", self.discriminant())?;
+        match self {
+            Slot::StartingPitcher(i) | Slot::ReliefPitcher(i) => write!(f, "{}", i)?,
+            _ => ()
+        };
+        Ok(())
+    }
+}
+impl FromStr for Slot {
+    type Err = ();
+
+    fn from_str(s: &str) -> Result<Self, Self::Err> {
+        alt((
+            tag::<&str, &str, nom::error::Error<&str>>("P").map(|_| Slot::Pitcher),
+            tag("C").map(|_| Slot::Catcher),
+            tag("1B").map(|_| Slot::FirstBaseman),
+            tag("2B").map(|_| Slot::SecondBaseman),
+            tag("3B").map(|_| Slot::ThirdBaseman),
+            tag("LF").map(|_| Slot::LeftField),
+            tag("CF").map(|_| Slot::CenterField),
+            tag("RF").map(|_| Slot::RightField),
+            tag("SS").map(|_| Slot::ShortStop),
+            tag("DH").map(|_| Slot::DesignatedHitter),
+            preceded(tag("SP"), u8).map(|i| Slot::StartingPitcher(i)),
+            preceded(tag("RP"), u8).map(|i| Slot::ReliefPitcher(i)),
+            tag("CL").map(|_| Slot::ThirdBaseman),
+            tag("DG").map(|_| Slot::ThirdBaseman),
+        )).parse(s).map(|(_, o)| o).map_err(|_| ())
+    }
 }
 
 #[derive(EnumString, Display, Debug, Serialize, Deserialize, Clone, Copy, EnumIter, PartialEq, Eq, Hash)]
@@ -1018,4 +1145,55 @@ pub enum ItemSuffix {
     Patience,
     Reflexes,
     Fortune
+}
+
+#[cfg(test)]
+mod test {
+    use std::fmt::Debug;
+
+    use strum::IntoEnumIterator;
+
+    use super::*;
+
+    fn serde_round_trip_inner<T: IntoEnumIterator + PartialEq + Debug + Serialize + for<'de> Deserialize<'de>>() {
+        for value in T::iter() {
+            let ser = serde_json::to_string(&value).unwrap();
+            let de = serde_json::from_str(&ser).map_err(|e| e.to_string());
+            let message = format!("{value:?}");
+            assert_eq!(Ok(value), de, "{message}");
+        }
+    }
+
+
+    #[test]
+    fn serde_round_trips() {
+        serde_round_trip_inner::<EventType>();
+        serde_round_trip_inner::<TopBottom>();
+        serde_round_trip_inner::<HomeAway>();
+        serde_round_trip_inner::<Inning>();
+        serde_round_trip_inner::<Position>();
+        serde_round_trip_inner::<FairBallDestination>();
+        serde_round_trip_inner::<FairBallType>();
+        serde_round_trip_inner::<PitchType>();
+        serde_round_trip_inner::<StrikeType>();
+        serde_round_trip_inner::<FieldingErrorType>();
+        serde_round_trip_inner::<FoulType>();
+        serde_round_trip_inner::<Base>();
+        serde_round_trip_inner::<BaseNameVariant>();
+        serde_round_trip_inner::<Distance>();
+        serde_round_trip_inner::<NowBattingStats>();
+        serde_round_trip_inner::<BatterStat>();
+        serde_round_trip_inner::<GameStat>();
+        serde_round_trip_inner::<GameOverMessage>();
+        serde_round_trip_inner::<ItemType>();
+        serde_round_trip_inner::<Day>();
+        serde_round_trip_inner::<FeedEventStatus>();
+        serde_round_trip_inner::<FeedEventType>();
+        serde_round_trip_inner::<RecordType>();
+        serde_round_trip_inner::<PositionType>();
+        serde_round_trip_inner::<Slot>();
+        serde_round_trip_inner::<Attribute>();
+        serde_round_trip_inner::<ItemPrefix>();
+        serde_round_trip_inner::<ItemSuffix>();
+    }
 }
