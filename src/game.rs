@@ -3,7 +3,7 @@ use serde::{Deserialize, Serialize};
 use strum::IntoDiscriminant;
 use tracing::error;
 
-use crate::{enums::{EventType, GameStat, Inning, MaybeRecognized, PitchType}, raw_game::{IndexHistory, IndexHistoryDiscriminants, RawEvent, RawGame, RawWeather}};
+use crate::{enums::{EventType, Day, GameStat, Inning, MaybeRecognized, PitchType}, raw_game::{IndexHistory, IndexHistoryDiscriminants, RawEvent, RawGame, RawWeather}};
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
 #[serde(from = "RawGame", into = "RawGame")]
@@ -27,7 +27,7 @@ pub struct Game {
     pub home_team_name: String,
 
     pub season: u32,
-    pub day: u32,
+    pub day: MaybeRecognized<Day>,
     pub state: String,
 
     pub weather: Weather,
@@ -138,7 +138,8 @@ impl From<RawEvent> for Event {
     fn from(value: RawEvent) -> Self {
         let inning = match (value.inning, value.inning_side) {
             (0, 1) => Inning::BeforeGame,
-            (number, 2) => Inning::AfterGame { total_inning_count: number - 1 },
+            (0, 2) => Inning::AfterGame { final_inning_number: 1 },
+            (number, 2) => Inning::AfterGame { final_inning_number: number - 1 },
             (number, side) => Inning::DuringGame { number, batting_side: side.try_into().unwrap() }
         };
         let pitch_info = (!value.pitch_info.is_empty()).then_some(value.pitch_info);
@@ -169,7 +170,8 @@ impl From<Event> for RawEvent {
         let (inning, inning_side) = match value.inning {
             Inning::BeforeGame => (0, 1),
             Inning::DuringGame { number, batting_side: side } => (number, side.into()),
-            Inning::AfterGame { total_inning_count } => (total_inning_count + 1, 2)
+            Inning::AfterGame { final_inning_number: 1 } => (0, 2),
+            Inning::AfterGame { final_inning_number } => (final_inning_number + 1, 2)
         };
         let (pitch_info, zone) = value.pitch.map(Pitch::unparse).map(|(pitch, zone)| (pitch, Some(zone))).unwrap_or(("".to_string(), None));
         let event = value.event.to_string();

@@ -1,12 +1,8 @@
 Known parse errors:
 - (season 0 issue) If a team's name changes between the start of game and the PitchingMatchup (the second event of a game), the parser is unable to parse that event. Team name changes at any other time should be fine.
 
-This is primarily intended as a library crate, but the a barebones binary are provided for use.
-
 # Library
 ## Game event parsing
-See parser binary.
-
 `mmolb_parsing::Game` - can be deserialized from the mmolb api response.
 - has an event_log field, a vec of events.
 
@@ -14,7 +10,7 @@ See parser binary.
 - produce a `mmolb_parsing::ParsedEventMessage` from an event and a game.
 
 ## Feed parsing
-See feed_parser binary.
+New, will be very volatile for the next while.
 
 `mmolb_parsing::team::Team` - can be deserialized from the mmolb api response
 - has a feed field, `Vec<mmolb_parsing::feed_event::FeedEvent>`
@@ -24,13 +20,3 @@ See feed_parser binary.
 - has a text field, `mmolb_parsing::feed_event::FeedEventText` with a parse() method that takes an `mmolb_parsing::enums::FeedEventType`.
 
 Alternatively `mmolb_parsing::feed_event::parse_feed_event` is provided
-
-# Parse
-```
-cargo run --release --bin parser OUTPUT_PATH
-```
-
-Errors are sent to stderr also.
-
-Use -s to specify a season (will default to season 1)
-Use -d to specify a start_day

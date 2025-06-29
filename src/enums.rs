@@ -1,7 +1,7 @@
 use std::{convert::Infallible, fmt::Display, str::FromStr};
 
 use nom::{branch::alt, bytes::complete::tag, sequence::preceded, Parser, character::complete::u8};
-use serde::{Deserialize, Serialize};
+use serde::{Deserialize, Deserializer, Serialize, Serializer, de::Error};
 use strum::{Display, EnumDiscriminants, EnumIter, EnumString, IntoDiscriminant};
 
 /// Possible values of the "event" field of an mmolb event. 
@@ -190,7 +190,7 @@ impl From<TopBottom> for HomeAway {
 pub enum Inning {
     BeforeGame,
     DuringGame {number: u8, batting_side: TopBottom},
-    AfterGame { total_inning_count: u8 }
+    AfterGame { final_inning_number: u8 }
 }
 impl Inning {
     /// The next inning. If `continue_if_overtime`, go to extra innings instead of ending the game at the 9th.
@@ -200,16 +200,16 @@ impl Inning {
     /// use mmolb_parsing::enums::TopBottom;
     /// 
     /// assert_eq!(Inning::BeforeGame.next(false), Some(Inning::DuringGame { number: 1, batting_side: TopBottom::Top }));
-    /// assert_eq!(Inning::DuringGame { number: 9, batting_side: TopBottom::Bottom }.next(false), Some(Inning::AfterGame { total_inning_count:9 }));
+    /// assert_eq!(Inning::DuringGame { number: 9, batting_side: TopBottom::Bottom }.next(false), Some(Inning::AfterGame { final_inning_number:9 }));
     /// assert_eq!(Inning::DuringGame { number: 9, batting_side: TopBottom::Bottom }.next(true), Some(Inning::DuringGame { number: 10, batting_side: TopBottom::Top }));
-    /// assert_eq!(Inning::AfterGame { total_inning_count: 9 }.next(true), None);
+    /// assert_eq!(Inning::AfterGame { final_inning_number: 9 }.next(true), None);
     /// ```
     pub fn next(self, continue_if_overtime: bool) -> Option<Self> {
         match self {
             Inning::BeforeGame => Some(Inning::DuringGame { number: 1, batting_side: TopBottom::Top }),
             Inning::DuringGame { number, batting_side } => {
                 if number >= 9 && !continue_if_overtime {
-                    Some(Inning::AfterGame { total_inning_count: number })
+                    Some(Inning::AfterGame { final_inning_number: number })
                 } else {
                     match batting_side {
                         TopBottom::Top => Some(Inning::DuringGame { number, batting_side: batting_side.flip() }),
@@ -228,7 +228,7 @@ impl Inning {
     /// 
     /// assert_eq!(Inning::BeforeGame.number(), None);
     /// assert_eq!(Inning::DuringGame { number: 1, batting_side: TopBottom::Top }.number(), Some(1));
-    /// assert_eq!(Inning::AfterGame {total_inning_count: 9}.number(), None);
+    /// assert_eq!(Inning::AfterGame {final_inning_number: 9}.number(), None);
     /// ```
     pub fn number(self) -> Option<u8> {
         if let Inning::DuringGame { number, .. } = self {
@@ -248,7 +248,7 @@ impl Inning {
     /// assert_eq!(Inning::BeforeGame.batting_team(), None);
     /// assert_eq!(Inning::DuringGame { number: 1, batting_side: TopBottom::Top }.batting_team(), Some(HomeAway::Away));
     /// assert_eq!(Inning::DuringGame { number: 1, batting_side: TopBottom::Bottom }.batting_team(), Some(HomeAway::Home));
-    /// assert_eq!(Inning::AfterGame {total_inning_count: 9}.batting_team(), None);
+    /// assert_eq!(Inning::AfterGame {final_inning_number: 9}.batting_team(), None);
     /// ```
     pub fn batting_team(self) -> Option<HomeAway> {
         if let Inning::DuringGame { batting_side, .. } = self {
@@ -268,7 +268,7 @@ impl Inning {
     /// assert_eq!(Inning::BeforeGame.pitching_team(), None);
     /// assert_eq!(Inning::DuringGame { number: 1, batting_side: TopBottom::Top }.pitching_team(), Some(HomeAway::Home));
     /// assert_eq!(Inning::DuringGame { number: 1, batting_side: TopBottom::Bottom }.pitching_team(), Some(HomeAway::Away));
-    /// assert_eq!(Inning::AfterGame {total_inning_count: 9}.pitching_team(), None);
+    /// assert_eq!(Inning::AfterGame {final_inning_number: 9}.pitching_team(), None);
     /// ```
     pub fn pitching_team(self) -> Option<HomeAway> {
         if let Inning::DuringGame { batting_side, .. } = self {
@@ -865,20 +865,34 @@ impl Display for FeedEventStatus {
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, Serialize, Deserialize, EnumIter)]
-pub enum FeedEventDay {
+pub enum Day {
     #[serde(rename = "Superstar Break")]
     SuperstarBreak,
     Holiday,
     #[serde(untagged)]
     Day(u8),
+    #[serde(untagged, deserialize_with = "superstar_day_de", serialize_with = "superstar_day_ser")]
+    SuperstarDay(u8),
+}
+fn superstar_day_ser<S>(day: &u8, serializer: S) -> Result<S::Ok, S::Error> where S: Serializer {
+    format!("Superstar Day {day}").serialize(serializer)
 }
 
-impl Display for FeedEventDay {
+fn superstar_day_de<'de, D>(deserializer: D) -> Result<u8, D::Error> where D: Deserializer<'de> {
+    <String>::deserialize(deserializer)?
+        .strip_prefix("Superstar Day ")
+        .ok_or(D::Error::custom("Didn't start with \"Superstar Day\""))?
+        .parse::<u8>()
+        .map_err(|_| D::Error::custom("Expected a number"))
+}
+
+impl Display for Day {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         match self {
             Self::SuperstarBreak => "Superstar Break".fmt(f),
             Self::Day(d) => d.fmt(f),
-            Self::Holiday => "Holiday".fmt(f)
+            Self::Holiday => "Holiday".fmt(f),
+            Self::SuperstarDay(d) => write!(f, "Superstar Day {d}")
         }
     }
 }
@@ -939,11 +953,11 @@ impl<T: FromStr> From<String> for MaybeRecognized<T> {
     }
 }
 
-impl<T: ToString> ToString for MaybeRecognized<T> {
-    fn to_string(&self) -> String {
+impl<T: Display> Display for MaybeRecognized<T> {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         match self {
-            MaybeRecognized::Recognized(t) => t.to_string(),
-            MaybeRecognized::NotRecognized(s) => s.to_string()
+            MaybeRecognized::Recognized(t) => t.fmt(f),
+            MaybeRecognized::NotRecognized(s) => s.fmt(f)
         }
     }
 }
@@ -1172,7 +1186,7 @@ mod test {
         serde_round_trip_inner::<GameStat>();
         serde_round_trip_inner::<GameOverMessage>();
         serde_round_trip_inner::<ItemType>();
-        serde_round_trip_inner::<FeedEventDay>();
+        serde_round_trip_inner::<Day>();
         serde_round_trip_inner::<FeedEventStatus>();
         serde_round_trip_inner::<FeedEventType>();
         serde_round_trip_inner::<RecordType>();

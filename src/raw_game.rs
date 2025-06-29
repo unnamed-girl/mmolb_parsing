@@ -1,6 +1,6 @@
 use std::collections::HashMap;
 
-use crate::serde_utils::{none_as_empty_string, APIHistory};
+use crate::{enums::{Day, MaybeRecognized}, serde_utils::{none_as_empty_string, APIHistory}};
 use serde::{Deserialize, Serialize};
 use strum::EnumDiscriminants;
 
@@ -26,7 +26,7 @@ pub(crate) struct RawGame {
     pub home_team_name: String,
 
     pub season: u32,
-    pub day: u32,
+    pub day: MaybeRecognized<Day>,
     pub state: String,
 
     pub weather: RawWeather,

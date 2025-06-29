@@ -168,7 +168,7 @@ async fn main() {
 
 async fn ingest_game(response: EntityResponse<serde_json::Value>, verbose: bool, round_trip: bool) {
     let (game, round_tripped) = if round_trip {
-        let game: Game = serde_json::from_value(response.data.clone()).unwrap();
+        let game: Game = serde_json::from_value(response.data.clone()).map_err(|_| format!("Failed to parse {}", response.entity_id)).unwrap();
         let round_tripped = serde_json::to_value(&game).unwrap();
 
         let diff = serde_json_diff::values(response.data, round_tripped);
@@ -177,7 +177,7 @@ async fn ingest_game(response: EntityResponse<serde_json::Value>, verbose: bool,
         }
         (game, true)
     } else {
-        (serde_json::from_value(response.data).unwrap(), false)
+        (serde_json::from_value(response.data).map_err(|_| format!("Failed to parse {}", response.entity_id)).unwrap(), false)
     };
 
 
