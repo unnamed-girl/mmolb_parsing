@@ -100,6 +100,9 @@ pub enum ParsedFeedEventText<S> {
     SwapPlaces {
         player_one: S,
         player_two: S,
+    },
+    HitByFallingStar {
+        player: S
     }
 }
 
@@ -186,6 +189,9 @@ impl<S: Display> ParsedFeedEventText<S> {
             },
             ParsedFeedEventText::SwapPlaces { player_one, player_two } => {
                 format!("{player_one} swapped places with {player_two}.")
+            },
+            ParsedFeedEventText::HitByFallingStar { player } => {
+                format!("{player} was hit by a Falling Star!")
             }
         }
     }

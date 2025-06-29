@@ -1,11 +1,11 @@
 use std::collections::HashMap;
 
 use serde::{Deserialize, Serialize};
-use serde_json::Value;
 use strum::{EnumDiscriminants, IntoDiscriminant};
 use tracing::error;
 
-use crate::{enums::{GameStat, MaybeRecognized, PositionType, RecordType, Slot}, feed_event::FeedEvent, serde_utils::APIHistory, team::{Team, TeamPlayer, TeamRecord}};
+use crate::{enums::{GameStat, MaybeRecognized, PositionType, RecordType, Slot}, feed_event::FeedEvent, serde_utils::APIHistory};
+use super::team::{Team, TeamPlayer, TeamRecord};
 
 #[derive(Serialize, Deserialize, Debug, Clone)]
 #[serde(rename_all = "PascalCase")]
@@ -29,18 +29,17 @@ pub(crate) struct RawTeam {
     pub full_location: String,
     pub league: String,
 
-    /// no modifications have been seen, so left as raw json
-    pub modifications: Vec<Value>,
+    /// no modifications have been seen
+    modifications: Vec<serde_json::Value>,
     pub name: String,
 
-    // / no mottos have been seen, so left as raw json
-    #[serde(skip_serializing_if = "Option::is_none")]
-    pub motto: Option<serde_json::Value>,
+    // / no mottos have been seen
+    motto: Option<String>,
 
-    #[serde(rename = "OwnerID", skip_serializing_if = "Option::is_none")]
+    #[serde(rename = "OwnerID")]
     pub owner_id: Option<String>,
 
-    pub players: Vec<TeamPlayer>,
+    pub players: Vec<RawTeamPlayer>,
     pub record: HashMap<MaybeRecognized<RecordType>, TeamRecord>,
     pub season_records: HashMap<String, String>,
 
@@ -59,6 +58,12 @@ impl From<RawTeam> for Team {
             FeedHistory::Season0 => Vec::new(),
             FeedHistory::Season1(feed) => feed
         };
+        let players = players.into_iter().map(TeamPlayer::from).collect();
+
+        if modifications.len() > 0 {
+            error!("Expected all modifications lists to be empty, found {modifications:?}");
+        }
+
         Team { _id, abbreviation, active, augments, championships, color, emoji, feed, motes_used, location, full_location, league, modifications, name, motto, owner_id, players, record, season_records, extra_fields, feed_format }
     }
 }
@@ -70,6 +75,7 @@ impl From<Team> for RawTeam {
             FeedHistoryDiscriminants::Season0 => FeedHistory::Season0,
             FeedHistoryDiscriminants::Season1 => FeedHistory::Season1(feed)
         };
+        let players = players.into_iter().map(RawTeamPlayer::from).collect();
         RawTeam { _id, abbreviation, active, augments, championships, color, emoji, feed, motes_used, location, full_location, league, modifications, name, motto, owner_id, players, record, season_records, extra_fields }
     }
 }
@@ -90,7 +96,7 @@ impl APIHistory for FeedHistory {
 }
 
 
-#[derive(Deserialize, Serialize)]
+#[derive(Deserialize, Serialize, Debug, Clone)]
 #[serde(rename_all = "PascalCase")]
 pub(crate) struct RawTeamPlayer {
     pub emoji: String,
@@ -101,11 +107,11 @@ pub(crate) struct RawTeamPlayer {
     pub player_id: String,
     pub position: String,
     pub slot: MaybeRecognized<Slot>,
-    #[serde(default)]
+    #[serde(default, skip_serializing_if = "APIHistory::is_missing")]
     pub position_type: PositionTypeHistory,
 
-    #[serde(default)]
-    pub stats: HashMap<MaybeRecognized<GameStat>, i32>,
+    #[serde(default, skip_serializing_if = "APIHistory::is_missing")]
+    pub stats: StatsHistory,
 
     #[serde(flatten)]
     pub extra_fields: serde_json::Map<String, serde_json::Value>,
@@ -124,22 +130,28 @@ impl From<RawTeamPlayer> for TeamPlayer {
         // Undrafted player's positions are just their slot
         let position = (player_id != "#").then(|| position.as_str().into());
 
+        let stats_format = stats.discriminant();
+        let stats = match stats {
+            StatsHistory::Undrafted => HashMap::default(),
+            StatsHistory::Drafted(stats) => stats,
+        };
+
         if extra_fields.len() > 0 {
             error!("Deserialization of TeamPlayer found extra fields: {:?}", extra_fields)
         }
 
-
-        TeamPlayer { emoji, first_name, last_name, number, player_id, position, slot, position_type, stats, extra_fields, position_type_format }
+        TeamPlayer { emoji, first_name, last_name, number, player_id, position, slot, position_type, stats, extra_fields, position_type_format, stats_format }
     }
 }
 
 impl From<TeamPlayer> for RawTeamPlayer {
     fn from(value: TeamPlayer) -> Self {
-        let TeamPlayer { emoji, first_name, last_name, number, player_id, position, slot, position_type, stats, extra_fields, position_type_format } = value;
+        let TeamPlayer { emoji, first_name, last_name, number, player_id, position, slot, position_type, stats, extra_fields, position_type_format, stats_format } = value;
 
-        let position = match position {
-            Some(position) => position.to_string(),
-            None => slot.to_string()
+        let position = match (position, position_type_format) {
+            (Some(position), _) => position.to_string(),
+            (None, PositionTypeHistoryDiscriminants::Season0a) => position_type.to_string(),
+            (None, PositionTypeHistoryDiscriminants::Season0b) => slot.to_string()
         };
 
         let position_type = match position_type_format {
@@ -147,7 +159,26 @@ impl From<TeamPlayer> for RawTeamPlayer {
             PositionTypeHistoryDiscriminants::Season0b => PositionTypeHistory::Season0b(position_type)
         };
 
+        let stats = match stats_format {
+            StatsHistoryDiscriminants::Undrafted => StatsHistory::Undrafted,
+            StatsHistoryDiscriminants::Drafted => StatsHistory::Drafted(stats)
+        };
+
         RawTeamPlayer { emoji, first_name, last_name, number, player_id, position, slot, position_type, stats, extra_fields }
+    }
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, EnumDiscriminants, Default)]
+#[strum_discriminants(derive(Serialize, Deserialize))]
+#[serde(untagged)]
+pub(crate) enum StatsHistory {
+    #[default]
+    Undrafted,
+    Drafted(HashMap<MaybeRecognized<GameStat>, i32>)
+}
+impl APIHistory for StatsHistory {
+    fn is_missing(&self) -> bool {
+        matches!(self, StatsHistory::Undrafted)
     }
 }
 

@@ -968,12 +968,14 @@ impl<'de, T:Deserialize<'de>> Deserialize<'de> for MaybeRecognized<T> {
     }
 }
 
-impl<T: ToString> Serialize for MaybeRecognized<T> {
+impl<T: Serialize> Serialize for MaybeRecognized<T> {
     fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error>
         where
             S: serde::Serializer {
-        let s = self.to_string();
-        s.serialize(serializer)
+        match self {
+            MaybeRecognized::Recognized(t) => t.serialize(serializer),
+            MaybeRecognized::NotRecognized(s) => s.serialize(serializer)
+        }
     }
 }
 

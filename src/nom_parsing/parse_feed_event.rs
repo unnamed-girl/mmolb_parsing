@@ -33,7 +33,12 @@ fn game<'output>() -> impl FeedEventParser<'output> {
         feed_delivery("Delivery").map(|delivery| ParsedFeedEventText::Delivery { delivery } ),
         feed_delivery("Shipment").map(|delivery| ParsedFeedEventText::Shipment { delivery } ),
         feed_delivery("Special Delivery").map(|delivery| ParsedFeedEventText::SpecialDelivery { delivery } ),
+        hit_by_falling_star()
     )))
+}
+
+fn hit_by_falling_star<'output>() -> impl FeedEventParser<'output> {
+    parse_terminated(" was hit by a Falling Star!").map(|player| ParsedFeedEventText::HitByFallingStar { player })
 }
 
 fn game_result<'output>() -> impl FeedEventParser<'output> {

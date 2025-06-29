@@ -63,6 +63,9 @@ struct Args {
     #[clap(long, action)]
     round_trip: bool,
 
+    #[clap(short, long, action)]
+    refetch: bool,
+
     /// Nonstandard chron requests aren't cached
     #[clap(long, action)]
     desc: bool,
@@ -139,7 +142,11 @@ async fn main() {
 
     let mode = if extra.is_empty() {
         info!("Requests being saved to cache");
-        CacheMode::ForceCache
+        if args.refetch {
+            CacheMode::Reload
+        } else {
+            CacheMode::ForceCache
+        }
     } else {
         info!("Nonstandard chron arguments: no caching");
         CacheMode::NoCache
@@ -150,7 +157,7 @@ async fn main() {
 
     let fetch = pin!(cashews_fetch_json(&client, args.kind, extra));
     fetch.flat_map(|games| {
-        let last = games.len() - 1;
+        let last = games.len().max(1) - 1;
         futures::stream::iter(games.into_iter().enumerate().map(move |(i, o)| (i == last, o)))
     })
     .then(|(verbose, game_json)| func(game_json, verbose))
@@ -163,8 +170,10 @@ async fn ingest_game(response: EntityResponse<serde_json::Value>, verbose: bool,
     let (game, round_tripped) = if round_trip {
         let game: Game = serde_json::from_value(response.data.clone()).unwrap();
         let round_tripped = serde_json::to_value(&game).unwrap();
-        if response.data != round_tripped {
-            error!("{} s{}d{}: round trip failed.", response.entity_id, game.season, game.day);
+
+        let diff = serde_json_diff::values(response.data, round_tripped);
+        if let Some(diff) = diff {
+            error!("{} s{}d{}: round trip failed. Diff: {}", response.entity_id, game.season, game.day, serde_json::to_string(&diff).unwrap());
         }
         (game, true)
     } else {
@@ -191,8 +200,9 @@ async fn ingest_team(response: EntityResponse<serde_json::Value>, round_trip: bo
     let team = if round_trip {
         let team: Team = serde_json::from_value(response.data.clone()).unwrap();
         let round_tripped = serde_json::to_value(&team).unwrap();
-        if response.data != round_tripped {
-            error!("{} round trip failed.", response.entity_id);
+        let diff = serde_json_diff::values(response.data, round_tripped);
+        if let Some(diff) = diff {
+            error!("{} round trip failed. Diff: {}", response.entity_id, serde_json::to_string(&diff).unwrap());
         }
         team
     } else {
