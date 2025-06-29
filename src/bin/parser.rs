@@ -59,6 +59,10 @@ struct Args {
     #[arg(long)]
     http_cache: Option<String>,
 
+    /// One or more ids (comma separated)
+    #[arg(long)]
+    id: Option<String>,
+
     #[clap(long, action)]
     round_trip: bool,
 
@@ -101,6 +105,18 @@ async fn main() {
 
     let args = Args::parse();
     let output_file = args.output_file.as_ref().map(String::as_str);
+
+    if let Some(id) = args.id {
+        info!("Given a list of games: skipping cashews arguments and not caching");
+        let client = get_caching_http_client(args.http_cache.map(Into::into), CacheMode::NoCache);
+        let url = format!("https://freecashe.ws/api/chron/v0/entities?kind=game&id={id}");
+        let games = client.get(&url).send().await.unwrap().json::<FreeCashewResponse<EntityResponse<serde_json::Value>>>().await.unwrap().items;
+        for game in games.into_iter() {
+            ingest_game(game, true, output_file, args.round_trip).await;
+        }
+        return;
+    }
+
     let after = args.after.map(|after| format!("&after={after}")).unwrap_or_default();
     let before = args.before.map(|before| format!("&before={before}")).unwrap_or_default();
     let desc = args.desc.then_some("&order=desc").unwrap_or_default();
@@ -119,15 +135,16 @@ async fn main() {
 
     let fetch = pin!(cashews_fetch_games_json(&client, extra));
     fetch.flat_map(|games| {
-            futures::stream::iter(games.into_iter().enumerate())
+            let last = games.len() - 1;
+            futures::stream::iter(games.into_iter().enumerate().map(move |(i, g)| (i == last, g)))
         })
-        .then(|(index_in_batch, game_json)| ingest_game(game_json, index_in_batch, output_file, args.round_trip))
+        .then(|(verbose, game_json)| ingest_game(game_json, verbose, output_file, args.round_trip))
         .collect::<Vec<_>>()
         .await;
     drop(guard);
 }
 
-async fn ingest_game(response: EntityResponse<serde_json::Value>, index_in_batch: usize, output_file: Option<&str>, round_trip: bool) {
+async fn ingest_game(response: EntityResponse<serde_json::Value>, verbose: bool, output_file: Option<&str>, round_trip: bool) {
     let (game, round_tripped) = if round_trip {
         let game: Game = serde_json::from_value(response.data.clone()).unwrap();
         let round_tripped = serde_json::to_value(&game).unwrap();
@@ -158,7 +175,7 @@ async fn ingest_game(response: EntityResponse<serde_json::Value>, index_in_batch
             writeln!(file, "{}", ron::to_string(&parsed_event_message).unwrap()).unwrap();
         }
     }
-    if index_in_batch == 0 {
+    if verbose {
         let round_tripped = round_tripped.then_some(" with round trip").unwrap_or_default();
         info!("Parse{round_tripped} reached s{}d{}", game.season, game.day);
     }

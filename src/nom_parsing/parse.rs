@@ -57,8 +57,8 @@ fn weather_delivery<'output, 'parse>(parsing_context: &'parse ParsingContext<'ou
         .map(|delivery| ParsedEventMessage::WeatherDelivery { delivery });
 
     let weather_delviery_discard = (
-        emoji,
-        terminated(try_from_word, tag("was discarded as no player had space."))
+        terminated(emoji, tag(" ")),
+        terminated(try_from_word, tag(" was discarded as no player had space."))
     ).map(|(item_emoji,  item)| ParsedEventMessage::WeatherDeliveryDiscard { item_emoji, item });
 
     context("Weather Delivery", all_consuming(alt((
