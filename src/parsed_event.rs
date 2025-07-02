@@ -1,9 +1,9 @@
-use std::{fmt::{Display, Write}, iter::once};
+use std::{fmt::{Display, Write}, iter::once, cmp::Ordering};
 
 use serde::{Deserialize, Serialize};
 use strum::EnumDiscriminants;
 
-use crate::enums::{Base, BaseNameVariant, BatterStat, Distance, FairBallDestination, FairBallType, FieldingErrorType, FoulType, GameOverMessage, HomeAway, ItemType, ItemPrefix, ItemSuffix, NowBattingStats, Position, StrikeType, TopBottom};
+use crate::{enums::{Base, BaseNameVariant, BatterStat, Day, Distance, FairBallDestination, FairBallType, FieldingErrorType, FoulType, GameOverMessage, HomeAway, ItemPrefix, ItemSuffix, ItemType, MaybeRecognized, MoundVisitType, NowBattingStats, Place, StrikeType, TopBottom}, Game};
 
 /// S is the string type used. S = &'output str is used by the parser, 
 /// but a mutable type is necessary when directly deserializing, because some players have escaped characters in their names
@@ -27,7 +27,7 @@ pub enum ParsedEventMessage<S> {
     },
     Lineup {
         side: HomeAway,
-        players: Vec<PositionedPlayer<S>>
+        players: Vec<PlacedPlayer<S>>
     },
     PlayBall,
     GameOver {
@@ -58,14 +58,16 @@ pub enum ParsedEventMessage<S> {
 
     // Mound visits
     MoundVisit {
-        team: EmojiTeam<S>
+        team: EmojiTeam<S>,
+        mound_visit_type: MoundVisitType
     },
     PitcherRemains {
-        remaining_pitcher: PositionedPlayer<S>,
+        remaining_pitcher: PlacedPlayer<S>,
     },
     PitcherSwap {
-        leaving_pitcher: PositionedPlayer<S>,
-        arriving_pitcher: PositionedPlayer<S>,
+        leaving_pitcher: PlacedPlayer<S>,
+        arriving_pitcher_place: Option<Place>,
+        arriving_pitcher_name: S,
     },
 
     // Pitch
@@ -82,15 +84,15 @@ pub enum ParsedEventMessage<S> {
     StrikeOut { foul: Option<FoulType>, batter: S, strike: StrikeType, steals: Vec<BaseSteal<S>> },
 
     // Field
-    BatterToBase { batter: S, distance: Distance, fair_ball_type: FairBallType, fielder: PositionedPlayer<S>, scores: Vec<S>, advances: Vec<RunnerAdvance<S>> },
+    BatterToBase { batter: S, distance: Distance, fair_ball_type: FairBallType, fielder: PlacedPlayer<S>, scores: Vec<S>, advances: Vec<RunnerAdvance<S>> },
     HomeRun { batter: S, fair_ball_type: FairBallType, destination: FairBallDestination, scores: Vec<S>, grand_slam: bool },
-    CaughtOut { batter: S, fair_ball_type: FairBallType, caught_by: PositionedPlayer<S>, scores: Vec<S>, advances: Vec<RunnerAdvance<S>>, sacrifice: bool, perfect: bool },
-    GroundedOut { batter: S, fielders: Vec<PositionedPlayer<S>>, scores: Vec<S>, advances: Vec<RunnerAdvance<S>>, perfect: bool },
-    ForceOut { batter: S, fielders: Vec<PositionedPlayer<S>>, fair_ball_type: FairBallType, out:RunnerOut<S>, scores: Vec<S>, advances: Vec<RunnerAdvance<S>> },
-    ReachOnFieldersChoice { batter: S, fielders: Vec<PositionedPlayer<S>>, result:FieldingAttempt<S>, scores: Vec<S>, advances: Vec<RunnerAdvance<S>> },
-    DoublePlayGrounded { batter: S, fielders: Vec<PositionedPlayer<S>>, out_one:RunnerOut<S>, out_two:RunnerOut<S>, scores: Vec<S>, advances: Vec<RunnerAdvance<S>>, sacrifice: bool },
-    DoublePlayCaught { batter: S, fair_ball_type: FairBallType, fielders: Vec<PositionedPlayer<S>>, out_two:RunnerOut<S>, scores: Vec<S>, advances: Vec<RunnerAdvance<S>> },
-    ReachOnFieldingError { batter: S, fielder:PositionedPlayer<S>, error: FieldingErrorType, scores: Vec<S>, advances: Vec<RunnerAdvance<S>> },
+    CaughtOut { batter: S, fair_ball_type: FairBallType, caught_by: PlacedPlayer<S>, scores: Vec<S>, advances: Vec<RunnerAdvance<S>>, sacrifice: bool, perfect: bool },
+    GroundedOut { batter: S, fielders: Vec<PlacedPlayer<S>>, scores: Vec<S>, advances: Vec<RunnerAdvance<S>>, perfect: bool },
+    ForceOut { batter: S, fielders: Vec<PlacedPlayer<S>>, fair_ball_type: FairBallType, out:RunnerOut<S>, scores: Vec<S>, advances: Vec<RunnerAdvance<S>> },
+    ReachOnFieldersChoice { batter: S, fielders: Vec<PlacedPlayer<S>>, result:FieldingAttempt<S>, scores: Vec<S>, advances: Vec<RunnerAdvance<S>> },
+    DoublePlayGrounded { batter: S, fielders: Vec<PlacedPlayer<S>>, out_one:RunnerOut<S>, out_two:RunnerOut<S>, scores: Vec<S>, advances: Vec<RunnerAdvance<S>>, sacrifice: bool },
+    DoublePlayCaught { batter: S, fair_ball_type: FairBallType, fielders: Vec<PlacedPlayer<S>>, out_two:RunnerOut<S>, scores: Vec<S>, advances: Vec<RunnerAdvance<S>> },
+    ReachOnFieldingError { batter: S, fielder:PlacedPlayer<S>, error: FieldingErrorType, scores: Vec<S>, advances: Vec<RunnerAdvance<S>> },
 
     // Season 1
     WeatherDelivery { delivery: Delivery<S> },
@@ -103,10 +105,15 @@ pub enum ParsedEventMessage<S> {
     WeatherSpecialDelivery {
         delivery: Delivery<S>
     },
+    Balk {
+        pitcher: S,
+        scores: Vec<S>,
+        advances: Vec<RunnerAdvance<S>>
+    }
 }
 impl<S: Display> ParsedEventMessage<S> {
     /// Recreate the event message this ParsedEvent was built out of.
-    pub fn unparse(self) -> String {
+    pub fn unparse(self, game: &Game, event_index: Option<u16>) -> String {
         match self {
             Self::ParseError { event_type: _, message } => {
                 message
@@ -134,8 +141,10 @@ impl<S: Display> ParsedEventMessage<S> {
                 };
                 let pitcher_message = match pitcher_status {
                     StartOfInningPitcher::Same { emoji, name } => format!("{emoji} {name} pitching."),
-                    StartOfInningPitcher::Different { leaving_pitcher, arriving_pitcher } => {
-                        format!("{leaving_pitcher} is leaving the game. {arriving_pitcher} takes the mound.")
+                    StartOfInningPitcher::Different { leaving_emoji, leaving_pitcher, arriving_emoji, arriving_pitcher } => {
+                        let leaving_emoji = leaving_emoji.map(|e| format!("{e} ")).unwrap_or_default();
+                        let arriving_emoji = arriving_emoji.map(|e| format!("{e} ")).unwrap_or_default();
+                        format!("{leaving_emoji}{leaving_pitcher} is leaving the game. {arriving_emoji}{arriving_pitcher} takes the mound.")
                     }
                 };
                 let automatic_runner = match automatic_runner {
@@ -166,42 +175,52 @@ impl<S: Display> ParsedEventMessage<S> {
                 };
                 format!("End of the {side} of the {ordinal}.")
             },        
-            Self::MoundVisit {team } => {
-                format!("The {team} manager is making a mound visit.")
+            Self::MoundVisit {team, mound_visit_type } => {
+                match mound_visit_type {
+                    MoundVisitType::MoundVisit => format!("The {team} manager is making a mound visit."),
+                    MoundVisitType::PitchingChange => format!("The {team} manager is making a pitching change.")
+                }
             },
             Self::PitcherRemains { remaining_pitcher } => {
                 format!("{remaining_pitcher} remains in the game.")
             },
-            Self::PitcherSwap { leaving_pitcher, arriving_pitcher } => {
-                format!("{leaving_pitcher} is leaving the game. {arriving_pitcher} takes the mound.")
+            Self::PitcherSwap { leaving_pitcher, arriving_pitcher_place, arriving_pitcher_name } => {
+                let arriving_pitcher_place = arriving_pitcher_place.map(|place| format!("{place} ")).unwrap_or_default();
+                format!("{leaving_pitcher} is leaving the game. {arriving_pitcher_place}{arriving_pitcher_name} takes the mound.")
             },
 
             Self::Ball { steals, count } => {
                 let steals = once(String::new()).chain(steals.iter().map(BaseSteal::to_string))
                     .collect::<Vec<String>>()
                     .join(" ");
-                format!(" Ball. {}-{}.{steals}", count.0, count.1,)
+                let space = old_space(game, event_index);
+                format!("{space}Ball. {}-{}.{steals}", count.0, count.1,)
             },
             Self::Strike { strike, steals, count } => {
                 let steals: Vec<String> = once(String::new()).chain(steals.into_iter().map(|steal| steal.to_string())).collect();
                 let steals = steals.join(" ");
-                format!(" Strike, {strike}. {}-{}.{steals}", count.0, count.1)
+                let space = old_space(game, event_index);
+                format!("{space}Strike, {strike}. {}-{}.{steals}", count.0, count.1)
             }
             Self::Foul { foul, steals, count } => {
                 let steals: Vec<String> = once(String::new()).chain(steals.into_iter().map(|steal| steal.to_string())).collect();
                 let steals = steals.join(" ");
-                format!(" Foul {foul}. {}-{}.{steals}", count.0, count.1)
+                let space = old_space(game, event_index);
+                format!("{space}Foul {foul}. {}-{}.{steals}", count.0, count.1)
             }
             Self::Walk { batter, scores, advances } => {
                 let scores_and_advances = unparse_scores_and_advances(scores, advances);
-                format!(" Ball 4. {batter} walks.{scores_and_advances}")
+                let space = old_space(game, event_index);
+                format!("{space}Ball 4. {batter} walks.{scores_and_advances}")
             }
             Self::HitByPitch { batter, scores, advances } => {
                 let scores_and_advances = unparse_scores_and_advances(scores, advances);
-                format!(" {batter} was hit by the pitch and advances to first base.{scores_and_advances}")
+                let space = old_space(game, event_index);
+                format!("{space}{batter} was hit by the pitch and advances to first base.{scores_and_advances}")
             }
             Self::FairBall { batter, fair_ball_type, destination } => {
-                format!(" {batter} hits a {fair_ball_type} to {destination}.")
+                let space = old_space(game, event_index);
+                format!("{space}{batter} hits a {fair_ball_type} to {destination}.")
             }
             Self::StrikeOut { foul, batter, strike, steals } => {
                 let foul = match foul {
@@ -210,7 +229,8 @@ impl<S: Display> ParsedEventMessage<S> {
                 };
                 let steals: Vec<String> = once(String::new()).chain(steals.into_iter().map(|steal| steal.to_string())).collect();
                 let steals = steals.join(" ");
-                format!(" {foul}{batter} struck out {strike}.{steals}")
+                let space = old_space(game, event_index);
+                format!("{space}{foul}{batter} struck out {strike}.{steals}")
             }
             Self::BatterToBase { batter, distance, fair_ball_type, fielder, scores, advances } => {
                 let scores_and_advances = unparse_scores_and_advances(scores, advances);
@@ -290,24 +310,28 @@ impl<S: Display> ParsedEventMessage<S> {
             }
             Self::WeatherSpecialDelivery { delivery } => {
                 delivery.unparse("Special Delivery")
+            },
+            Self::Balk { pitcher, scores, advances } => {
+                let scores_and_advances = unparse_scores_and_advances(scores, advances);
+                format!("Balk. {pitcher} dropped the ball.{scores_and_advances}")
             }
         }
     }
 }
 
-fn unparse_fielders<S:Display>(fielders: Vec<PositionedPlayer<S>>) -> String {
+fn unparse_fielders<S:Display>(fielders: Vec<PlacedPlayer<S>>) -> String {
     match fielders.len() {
         0 => panic!("0-fielders"),
         1 => format!(" to {}", fielders.first().unwrap()),
-        _ => format!(", {}", fielders.iter().map(PositionedPlayer::to_string).collect::<Vec<_>>().join(" to "))
+        _ => format!(", {}", fielders.iter().map(PlacedPlayer::to_string).collect::<Vec<_>>().join(" to "))
     }
 }
 
-fn unparse_fielders_for_play<S:Display>(fielders: Vec<PositionedPlayer<S>>) -> String {
+fn unparse_fielders_for_play<S:Display>(fielders: Vec<PlacedPlayer<S>>) -> String {
     match fielders.len() {
         0 => panic!("0-fielders"),
         1 => format!(", {} unassisted", fielders.first().unwrap()),
-        _ => format!(", {}", fielders.iter().map(PositionedPlayer::to_string).collect::<Vec<_>>().join(" to "))
+        _ => format!(", {}", fielders.iter().map(PlacedPlayer::to_string).collect::<Vec<_>>().join(" to "))
     }
 }
 fn unparse_scores_and_advances<S: Display>(scores: Vec<S>, advances:Vec<RunnerAdvance<S>>) -> String {
@@ -321,8 +345,10 @@ fn unparse_scores_and_advances<S: Display>(scores: Vec<S>, advances:Vec<RunnerAd
 pub enum StartOfInningPitcher<S> {
     Same {emoji: S, name: S},
     Different {
-        leaving_pitcher: PositionedPlayer<S>,
-        arriving_pitcher: PositionedPlayer<S>,
+        leaving_emoji: Option<S>,
+        leaving_pitcher: PlacedPlayer<S>,
+        arriving_emoji: Option<S>,
+        arriving_pitcher: PlacedPlayer<S>,
     }
 }
 
@@ -364,13 +390,13 @@ impl<S: Display> Display for EmojiTeam<S> {
 }
 
 #[derive(Debug, Clone, Copy, Serialize, Deserialize, PartialEq)]
-pub struct PositionedPlayer<S> {
+pub struct PlacedPlayer<S> {
     pub name: S,
-    pub position: Position
+    pub place: Place
 }
-impl<S: Display> Display for PositionedPlayer<S> {
+impl<S: Display> Display for PlacedPlayer<S> {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        write!(f, "{} {}", self.position, self.name)
+        write!(f, "{} {}", self.place, self.name)
     }
 }
 
@@ -473,5 +499,121 @@ impl<S: Display> Delivery<S> {
 
 
         format!("{team} {player} received a {item} {delivery_label}.{discarded}")
+    }
+}
+
+#[derive(Debug, PartialEq, Eq)]
+struct Time {
+    season: u32,
+    ascending_days: Vec<(DayEquivalent, u16)>
+}
+
+#[derive(Debug, PartialEq, Eq)]
+struct DayEquivalent {
+    day: u16,
+    offset: u8
+}
+impl PartialOrd for DayEquivalent {
+    fn partial_cmp(&self, other: &Self) -> Option<Ordering> {
+        Some(self.cmp(other))
+    }
+}
+impl Ord for DayEquivalent {
+    fn cmp(&self, other: &Self) -> Ordering {
+        match self.day.cmp(&other.day) {
+            Ordering::Equal => self.offset.cmp(&other.offset),
+            o @ _ => o
+        }
+    }
+}
+impl DayEquivalent {
+    fn new(season: u32, day: &MaybeRecognized<Day>) -> Option<Self> {
+        match season {
+            0..=2 => match day {
+                MaybeRecognized::NotRecognized(_) => None,
+                MaybeRecognized::Recognized(Day::Day(day)) => Some(DayEquivalent { day: *day, offset: 0 }),
+                MaybeRecognized::Recognized(Day::SuperstarBreak) => None,
+                MaybeRecognized::Recognized(Day::SuperstarDay(offset)) => Some(DayEquivalent { day: 120, offset: offset + 1 }),
+                MaybeRecognized::Recognized(Day::Holiday) => None
+            }
+            _ => None
+        }
+    }
+}
+
+#[derive(Clone, Copy, PartialEq, Eq, PartialOrd, Ord)]
+enum Breakpoints {
+    /// Starts in the middle of day 169
+    /// 584
+    Season2PostMidSeasonUpdatePatch,
+}
+impl Breakpoints {
+    fn ascending_transition_time(self) -> Time {
+        match self {
+            Breakpoints::Season2PostMidSeasonUpdatePatch => Time { 
+                season: 2, 
+                ascending_days: vec![
+                    (DayEquivalent { day: 168, offset: 0 }, 584),
+                    (DayEquivalent { day: 169, offset: 0 }, 94),
+                ]
+            }
+        }
+    }
+    fn before(&self, season: u32, day: &MaybeRecognized<Day>, event_index: Option<u16>) -> bool {
+        let event_index = event_index.unwrap_or(0);
+        let day = DayEquivalent::new(season, day);
+
+        let transition = self.ascending_transition_time();
+
+        match season.cmp(&transition.season) {
+            Ordering::Less => true, // earlier season is before
+            Ordering::Greater => false, // later season is after
+            Ordering::Equal => match day {
+                None => return true, // Assume unknown days are at end of season, and therefore after
+                Some(day) => {
+                    // Because of overflow, transition happens on multiple days
+                    for (transition_day, transition_event_index) in transition.ascending_days {
+                        match day.cmp(&transition_day) {
+                            Ordering::Greater => (), // Move on to check the next day in the transition period
+                            Ordering::Equal => match event_index.cmp(&transition_event_index) {
+                                Ordering::Greater | Ordering::Equal => return false,
+                                Ordering::Less => return true,
+                            },
+                            Ordering::Less => return true // Before a transition day, so before (only works because its in ascending order)
+                        }
+                    }
+                    false // After the transition point, so after
+                }
+            }
+        }
+    }
+    fn after(&self, season: u32, day: &MaybeRecognized<Day>, event_index: Option<u16>) -> bool {
+        !self.before(season, day, event_index)
+    }
+}
+
+
+fn old_space(game: &Game, event_index: Option<u16>) -> &'static str {
+    if Breakpoints::Season2PostMidSeasonUpdatePatch.before(game.season, &game.day, event_index) {
+        " "
+    } else {
+        ""
+    }
+}
+
+#[cfg(test)]
+mod test {
+    use crate::{enums::{Day, MaybeRecognized}, parsed_event::Breakpoints};
+
+    #[test]
+    fn break_point_test() {
+        assert!(Breakpoints::Season2PostMidSeasonUpdatePatch.before(1, &MaybeRecognized::Recognized(Day::Day(255)), Some(5)));
+        assert!(Breakpoints::Season2PostMidSeasonUpdatePatch.before(2, &MaybeRecognized::Recognized(Day::Day(5)), Some(5)));
+        assert!(Breakpoints::Season2PostMidSeasonUpdatePatch.before(2, &MaybeRecognized::Recognized(Day::Day(168)), Some(583)));
+        assert!(Breakpoints::Season2PostMidSeasonUpdatePatch.after(2, &MaybeRecognized::Recognized(Day::Day(168)), Some(584)));
+        assert!(Breakpoints::Season2PostMidSeasonUpdatePatch.before(2, &MaybeRecognized::Recognized(Day::Day(169)), Some(93)));
+        assert!(Breakpoints::Season2PostMidSeasonUpdatePatch.after(2, &MaybeRecognized::Recognized(Day::Day(169)), Some(94)));
+        assert!(Breakpoints::Season2PostMidSeasonUpdatePatch.after(2, &MaybeRecognized::Recognized(Day::Day(200)), Some(5)));
+        assert!(Breakpoints::Season2PostMidSeasonUpdatePatch.after(3, &MaybeRecognized::Recognized(Day::Day(255)), Some(5)));
     }
 }

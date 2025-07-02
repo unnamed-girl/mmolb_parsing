@@ -1,6 +1,6 @@
 use std::{convert::Infallible, fmt::Display, str::FromStr};
 
-use nom::{branch::alt, bytes::complete::tag, sequence::preceded, Parser, character::complete::u8};
+use nom::{branch::alt, bytes::complete::tag, sequence::preceded, Parser, character::complete::u8, combinator::all_consuming};
 use serde::{Deserialize, Deserializer, Serialize, Serializer, de::Error};
 use strum::{Display, EnumDiscriminants, EnumIter, EnumString, IntoDiscriminant};
 
@@ -32,7 +32,8 @@ pub enum EventType {
     #[strum(to_string = "Weather_Shipment")]
     WeatherShipment,
     #[strum(to_string = "Weather_SpecialDelivery")]
-    WeatherSpecialDelivery
+    WeatherSpecialDelivery,
+    Balk
 }
 
 /// Top or bottom of an inning.
@@ -315,8 +316,6 @@ pub enum Position {
     ReliefPitcher,
     #[strum(to_string = "CL")]
     Closer,
-    #[strum(to_string = "DH")]
-    DesignatedHitter
 }
 
 /// Places that a batter can hit a ball towards.
@@ -863,7 +862,7 @@ pub enum Day {
     SuperstarBreak,
     Holiday,
     #[serde(untagged)]
-    Day(u8),
+    Day(u16),
     #[serde(untagged, deserialize_with = "superstar_day_de", serialize_with = "superstar_day_ser")]
     SuperstarDay(u8),
 }
@@ -991,12 +990,9 @@ impl<T: Serialize> Serialize for MaybeRecognized<T> {
 }
 
 
-// TODO
 #[derive(Debug, Serialize, Deserialize, Clone, Copy, EnumIter, PartialEq, Eq, Hash, EnumDiscriminants)]
 #[strum_discriminants(derive(EnumString, Display))]
 pub enum Slot {
-    #[strum_discriminants(strum(to_string = "P"))]
-    Pitcher,
     #[strum_discriminants(strum(to_string = "C"))]
     Catcher,
     #[strum_discriminants(strum(to_string = "1B"))]
@@ -1032,25 +1028,27 @@ impl Display for Slot {
         Ok(())
     }
 }
+
 impl FromStr for Slot {
     type Err = ();
 
     fn from_str(s: &str) -> Result<Self, Self::Err> {
+        let a_tag = |t| {
+            all_consuming(tag::<&str, &str, nom::error::Error<&str>>(t))
+        };
         alt((
-            tag::<&str, &str, nom::error::Error<&str>>("P").map(|_| Slot::Pitcher),
-            tag("C").map(|_| Slot::Catcher),
-            tag("1B").map(|_| Slot::FirstBaseman),
-            tag("2B").map(|_| Slot::SecondBaseman),
-            tag("3B").map(|_| Slot::ThirdBaseman),
-            tag("LF").map(|_| Slot::LeftField),
-            tag("CF").map(|_| Slot::CenterField),
-            tag("RF").map(|_| Slot::RightField),
-            tag("SS").map(|_| Slot::ShortStop),
+            a_tag("C").map(|_| Slot::Catcher),
+            a_tag("1B").map(|_| Slot::FirstBaseman),
+            a_tag("2B").map(|_| Slot::SecondBaseman),
+            a_tag("3B").map(|_| Slot::ThirdBaseman),
+            a_tag("LF").map(|_| Slot::LeftField),
+            a_tag("CF").map(|_| Slot::CenterField),
+            a_tag("RF").map(|_| Slot::RightField),
+            a_tag("SS").map(|_| Slot::ShortStop),
             tag("DH").map(|_| Slot::DesignatedHitter),
             preceded(tag("SP"), u8).map(|i| Slot::StartingPitcher(i)),
             preceded(tag("RP"), u8).map(|i| Slot::ReliefPitcher(i)),
-            tag("CL").map(|_| Slot::ThirdBaseman),
-            tag("DG").map(|_| Slot::ThirdBaseman),
+            a_tag("CL").map(|_| Slot::Closer),
         )).parse(s).map(|(_, o)| o).map_err(|_| ())
     }
 }
@@ -1152,6 +1150,40 @@ impl From<FromStrDeserializer<Self>> for ItemSuffix {
     fn from(value: FromStrDeserializer<Self>) -> Self {
         value.0
     }
+}
+
+/// Since season 2b Slots are used rather than the player's position
+#[derive(Debug, Serialize, Deserialize, Clone, Copy, PartialEq, Eq, Hash)]
+#[serde(untagged)]
+pub enum Place {
+    Position(Position),
+    Slot(Slot)
+}
+impl FromStr for Place {
+    type Err = strum::ParseError;
+    fn from_str(s: &str) -> Result<Self, Self::Err> {
+        Slot::from_str(s).map(Place::Slot)
+            .or_else(|_| Position::from_str(s).map(Place::Position))
+    }
+}
+
+impl Display for Place {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        match self {
+            Place::Slot(s) => s.fmt(f),
+            Place::Position(p) => p.fmt(f)
+        }
+    }
+}
+
+#[derive(EnumString, Display, Debug, Serialize, Deserialize, Clone, Copy, EnumIter, PartialEq, Eq, Hash)]
+pub enum MoundVisitType {
+    #[serde(rename = "mound visit")]
+    #[strum(to_string = "mound visit")]
+    MoundVisit,
+    #[serde(rename = "pitching change")]
+    #[strum(to_string = "pitching change")]
+    PitchingChange
 }
 
 #[cfg(test)]

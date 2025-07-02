@@ -60,6 +60,17 @@ struct Args {
     #[arg(long)]
     id: Option<String>,
 
+    /// The page to start at.
+    /// AAY2hh1aLKs2ODEwNDBiYTU1NWZjODRhNjdiYTE5NjQ= - just before s1d1
+    /// AAY3kbe9JHU2ODRlMGQwNDgzYzQzNTM1YzBjYTgzMWU= - just before s1d120
+    /// /AAY31bN8HNA2ODUyODAxNTJhOWQxOWZkMGFjZjI5OGY= - just before s1d200
+    /// AAY4FghvuKk2ODU2YmFlNWQ2MjRiOTk4M2M2MjYxOTk= - just before s2d1
+    /// AAY4idGlfZw2ODVlNGY4NmUyOTZlMTU0MjIwOTI2MTI= - just before s2d100
+    /// AAY4r5t0A2k2ODYwYzg4OTFlNjVmNWZiNTJjYjVhODI= - just before s2d122 (after superstar day)
+    /// AAY4yLXoSnA2ODYyNmUzNzRmZTllMzVjZWY2NWY5NGM= - just before s2d154
+    #[arg(long)]
+    start_page: Option<String>,
+
     #[clap(long, action)]
     round_trip: bool,
 
@@ -87,19 +98,23 @@ enum Kind {
     Team
 }
 
-fn cashews_fetch_json<'a>(client: &'a ClientWithMiddleware, kind: Kind, extra: String) -> impl Stream<Item = Vec<EntityResponse<serde_json::Value>>> + 'a {
+fn cashews_fetch_json<'a>(client: &'a ClientWithMiddleware, kind: Kind, extra: String, start_page: Option<String>) -> impl Stream<Item = Vec<EntityResponse<serde_json::Value>>> + 'a {
     let kind = match kind {
         Kind::Game => "game",
         Kind::Team => "team"
     };
     async_stream::stream! {
-        let mut url = format!("https://freecashe.ws/api/chron/v0/entities?kind={kind}&count=1000{extra}");
+        let (mut url, mut page) = match start_page {
+            Some(page) => (format!("https://freecashe.ws/api/chron/v0/entities?kind={kind}&count=1000{extra}&page={page}"), Some(page)),
+            None => (format!("https://freecashe.ws/api/chron/v0/entities?kind={kind}&count=1000{extra}"), None)
+        };
         loop {
             let response = client.get(&url).send().await.unwrap().json::<FreeCashewResponse<EntityResponse<serde_json::Value>>>().await.unwrap();
-            info!("{} {kind}s fetched from cashews", response.items.len());
+            info!("{} {kind}s fetched from cashews page {page:?}", response.items.len());
+            page = response.next_page;
             yield response.items;
 
-            if let Some(page) = response.next_page {
+            if let Some(page) = &page {
                 url = format!("https://freecashe.ws/api/chron/v0/entities?kind={kind}&count=1000&page={page}{extra}");
             } else {
                 break
@@ -155,7 +170,7 @@ async fn main() {
     let client = get_caching_http_client(args.http_cache.map(Into::into), mode);
 
 
-    let fetch = pin!(cashews_fetch_json(&client, args.kind, extra));
+    let fetch = pin!(cashews_fetch_json(&client, args.kind, extra, args.start_page));
     fetch.flat_map(|games| {
         let last = games.len().max(1) - 1;
         futures::stream::iter(games.into_iter().enumerate().map(move |(i, o)| (i == last, o)))
@@ -168,7 +183,7 @@ async fn main() {
 
 async fn ingest_game(response: EntityResponse<serde_json::Value>, verbose: bool, round_trip: bool) {
     let (game, round_tripped) = if round_trip {
-        let game: Game = serde_json::from_value(response.data.clone()).map_err(|_| format!("Failed to parse {}", response.entity_id)).unwrap();
+        let game: Game = serde_json::from_value(response.data.clone()).map_err(|e| format!("Failed to parse {}, {e:?}", response.entity_id)).unwrap();
         let round_tripped = serde_json::to_value(&game).unwrap();
 
         let diff = serde_json_diff::values(response.data, round_tripped);
@@ -177,16 +192,16 @@ async fn ingest_game(response: EntityResponse<serde_json::Value>, verbose: bool,
         }
         (game, true)
     } else {
-        (serde_json::from_value(response.data).map_err(|_| format!("Failed to parse {}", response.entity_id)).unwrap(), false)
+        (serde_json::from_value(response.data).map_err(|e| format!("Failed to parse {}: {e:?}", response.entity_id)).unwrap(), false)
     };
 
 
     for event in &game.event_log {
         let parsed_event_message = process_event(event, &game);
         if tracing::enabled!(Level::ERROR) {
-            let unparsed = parsed_event_message.clone().unparse();
+            let unparsed = parsed_event_message.clone().unparse(&game, event.index);
             if event.message != unparsed {
-                error!("{} s{}d{}: event round trip failure expected:\n'{}'\nGot:\n'{}'", response.entity_id, game.season, game.day, event.message, unparsed);
+                error!("{} s{}d{}: {} event round trip failure expected:\n'{}'\nGot:\n'{}'", response.entity_id, game.season, game.day, event.event, event.message, unparsed);
             }
         }
     }

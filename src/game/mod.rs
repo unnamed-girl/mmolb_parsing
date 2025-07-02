@@ -1,0 +1,98 @@
+use serde::{Deserialize, Deserializer, Serialize};
+use crate::enums::{MaybeRecognized, PitchType};
+
+pub(crate) mod game;
+pub(crate) mod event;
+pub(crate) mod weather;
+
+pub use event::Event;
+pub use game::Game;
+pub use weather::Weather;
+
+/// mmmolb currently has three possible values for the batter and on_deck fields:
+/// - The name of a batter (used when there is a batter)
+/// - An empty string (used when there is no batter during the game)
+/// - null (used before the game)
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
+pub enum MaybePlayer<S> {
+    Player(S),
+    EmptyString,
+    Null
+}
+impl<S> MaybePlayer<S> {
+    pub fn player(self) -> Option<S> {
+        match self {
+            MaybePlayer::Player(player) => Some(player),
+            MaybePlayer::EmptyString => None,
+            MaybePlayer::Null => None
+        }
+    }
+}
+impl MaybePlayer<String> {
+    pub fn map_as_str(&self) -> MaybePlayer<&str> {
+        match self {
+            MaybePlayer::Player(player) => MaybePlayer::Player(player.as_str()),
+            MaybePlayer::EmptyString => MaybePlayer::EmptyString,
+            MaybePlayer::Null => MaybePlayer::Null
+        }
+    }
+}
+impl<S: From<&'static str>> MaybePlayer<S> {
+    pub fn unparse(self) -> Option<S> {
+        match self {
+            MaybePlayer::Player(player) => Some(player),
+            MaybePlayer::EmptyString => Some(S::from("")),
+            MaybePlayer::Null => None
+        }
+    }
+}
+impl<S: PartialEq<&'static str>> From<Option<S>> for MaybePlayer<S> {
+    fn from(value: Option<S>) -> Self {
+        match value {
+            Some(player) => if player == "" {
+                MaybePlayer::EmptyString
+            } else {
+                MaybePlayer::Player(player)
+            },
+            None => MaybePlayer::Null
+        }
+    }
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
+pub struct Pitch  {
+    pub speed: f32,
+    pub pitch_type: MaybeRecognized<PitchType>,
+    pub zone: u8,
+}
+impl Pitch {
+    pub fn new(pitch_info: String, zone: u8) -> Self {
+        let mut iter = pitch_info.split(" MPH ");
+        let pitch_speed = iter.next().unwrap().parse().unwrap();
+        let pitch_type = iter.next().unwrap().into();
+        Self { speed: pitch_speed, pitch_type, zone }
+    }
+    pub fn unparse(self) -> (String, u8) {
+        let speed = format!("{:.1}", self.speed);
+        // let speed = speed.strip_suffix(".0").unwrap_or(speed.as_str());
+        let pitch_info = format!("{speed} MPH {}", self.pitch_type.to_string());
+        (pitch_info, self.zone)
+    }
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
+pub struct PitcherEntry {
+    #[serde(rename = "bf", deserialize_with = "bf_de")]
+    pub batters_faced: u8,
+    pub id: String
+}
+
+fn bf_de<'de, D>(deserializer: D) -> Result<u8, D::Error> where D: Deserializer<'de> {
+    let r = u8::deserialize(deserializer);
+    if let Ok(n)= r {
+        if n > 0 {
+            tracing::error!("Thought batters_faced is always 0")
+        }
+    }
+    r
+}
