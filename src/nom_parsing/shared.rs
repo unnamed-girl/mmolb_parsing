@@ -298,7 +298,8 @@ pub(super) fn placed_player_eof(input: &str) -> IResult<&str, PlacedPlayer<&str>
 pub(super) fn name_eof(input: &str) -> IResult<&str, &str> {
     verify(rest,  |name: &str| 
         name.input_len() > 0 &&
-        name.chars().any(|c| c == ' ') && // From the API, we know players have first/last name, so there should always be a space
+        // Removed for now because of early season 1 bug where feed names didn't print their spaces
+        // name.chars().any(|c| c == ' ') && // From the API, we know players have first/last name, so there should always be a space
         !name.chars().any(|c| [',', '(', ')', '<', '>', '\\'].contains(&c)) && // These characters should not be in names
         !['.', ' '].contains(&name.chars().nth(0).unwrap()) // Vulnerable to "X jr." style name 
     )

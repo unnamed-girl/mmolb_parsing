@@ -2,7 +2,7 @@ use std::{fmt::Display, ops::{Deref, DerefMut}};
 
 use serde::{Deserialize, Serialize};
 
-use crate::{enums::{Attribute, FeedEventType, ItemPrefix, ItemSuffix, ItemType}, nom_parsing::parse_feed_event, parsed_event::Item};
+use crate::{enums::{Attribute, FeedEventType, ItemPrefix, ItemSuffix, ItemType}, feed_event::FeedEvent, nom_parsing::parse_feed_event, parsed_event::{EmojiTeam, Item}, time::Breakpoints};
 
 #[derive(Clone, Debug, Serialize, Deserialize)]
 pub struct FeedEventText(pub String);
@@ -46,11 +46,10 @@ pub enum ParsedFeedEventText<S> {
         event_text: String
     },
     GameResult {
-        home_team_emoji: S,
-        home_team_name: S,
-
-        away_team_emoji: S,
-        away_team_name: S,
+        /// Sometimes this name is wrong: early season 1 bug where the events didn't have spaces between words.
+        home_team: EmojiTeam<S>,
+        /// Sometimes this name is wrong: early season 1 bug where the events didn't have spaces between words.
+        away_team: EmojiTeam<S>,
 
         home_score: u8,
         away_score: u8
@@ -69,14 +68,12 @@ pub enum ParsedFeedEventText<S> {
     },
     AttributeEquals {
         equals: Vec<AttributeEqual<S>>,
-        phrasing: AttributeEqualsPhrasing
     },
     S1Enchantment {
         player_name: S,
         item: EmojilessItem,
         amount: u8,
         attribute: Attribute,
-        phrasing: S1EnchantmentPhrasing,
     },
     S2Enchantment {
         player_name: S,
@@ -116,12 +113,6 @@ impl<S> ParsedFeedEventText<S> {
     }
 }
 
-impl<S: Display> Display for ParsedFeedEventText<S> {
-    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        self.unparse().fmt(f)
-    }
-}
-
 #[derive(Clone, Debug, Serialize, Deserialize, PartialEq)]
 pub struct AttributeChange<S> {
     pub player_name: S,
@@ -137,11 +128,11 @@ pub struct AttributeEqual<S> {
 }
 
 impl<S: Display> ParsedFeedEventText<S> {
-    pub fn unparse(&self) -> String {
+    pub fn unparse(&self, event: &FeedEvent) -> String {
         match self {
             ParsedFeedEventText::ParseError { event_text, .. } => event_text.to_string(),
-            ParsedFeedEventText::GameResult { home_team_emoji, home_team_name, away_team_emoji, away_team_name, home_score, away_score } => {
-                format!("{} {} vs. {} {} - FINAL {}-{}", home_team_emoji, home_team_name, away_team_emoji, away_team_name, home_score, away_score)
+            ParsedFeedEventText::GameResult { home_team, away_team, home_score, away_score } => {
+                format!("{} vs. {} - FINAL {}-{}", home_team, away_team, home_score, away_score)
             }
             ParsedFeedEventText::Delivery { delivery } => {
                 delivery.unparse("Delivery")
@@ -158,18 +149,19 @@ impl<S: Display> ParsedFeedEventText<S> {
                     .collect::<Vec<_>>()
                     .join(" ")
             }
-            ParsedFeedEventText::AttributeEquals { equals, phrasing } => {
-                let current = match phrasing {
-                    AttributeEqualsPhrasing::Season1 => "",
-                    AttributeEqualsPhrasing::Season2 => "current "
-                };
+            ParsedFeedEventText::AttributeEquals { equals } => {
+                let current = Breakpoints::S1AttributeEqualChange.after(event.season as u32, &event.day, None).then_some("current ").unwrap_or_default();
                 equals.iter()
                     .map(|change| format!("{}'s {} became equal to their {current}base {}.", change.player_name, change.changing_attribute, change.value_attribute))
                     .collect::<Vec<_>>()
                     .join(" ")
             }
-            ParsedFeedEventText::S1Enchantment { player_name, item, amount, attribute, phrasing } => {
-                phrasing.format_event(player_name, *item, *amount, *attribute)
+            ParsedFeedEventText::S1Enchantment { player_name, item, amount, attribute } => {
+                if Breakpoints::Season1EnchantmentChange.before(event.season as u32, &event.day, None) {
+                    format!("{player_name}'s {item} was enchanted with +{amount} to {attribute}.")
+                } else {
+                    format!("The Item Enchantment was a success! {player_name}'s {item} gained a +{amount} {attribute} bonus.")
+                }
             }
             ParsedFeedEventText::S2Enchantment { player_name, item, amount, attribute, enchant_two, compensatory } => {
                 let enchant_type = compensatory.then_some("Compensatory").unwrap_or("Item");
@@ -193,27 +185,6 @@ impl<S: Display> ParsedFeedEventText<S> {
             ParsedFeedEventText::HitByFallingStar { player } => {
                 format!("{player} was hit by a Falling Star!")
             }
-        }
-    }
-}
-
-
-#[derive(Clone, Copy, Debug, Serialize, Deserialize, PartialEq)]
-pub enum AttributeEqualsPhrasing {
-    Season1,
-    Season2
-}
-
-#[derive(Clone, Copy, Debug, Serialize, Deserialize, PartialEq)]
-pub enum S1EnchantmentPhrasing {
-    Season1A,
-    Season1B
-}
-impl S1EnchantmentPhrasing {
-    pub fn format_event<S:Display>(&self, player_name: &S, item: EmojilessItem, amount: u8, attribute: Attribute) -> String {
-        match self {
-            S1EnchantmentPhrasing::Season1A => format!("{player_name}'s {item} was enchanted with +{amount} to {attribute}."),
-            S1EnchantmentPhrasing::Season1B => format!("The Item Enchantment was a success! {player_name}'s {item} gained a +{amount} {attribute} bonus.")
         }
     }
 }

@@ -231,9 +231,9 @@ async fn ingest_team(response: EntityResponse<serde_json::Value>, round_trip: bo
             MaybeRecognized::Recognized(event_type) => {
                 let parsed_text = event.text.parse(event_type);
                 if tracing::enabled!(Level::ERROR) {
-                    let unparsed = parsed_text.unparse();
+                    let unparsed = parsed_text.unparse(&event);
                     if event.text.0 != unparsed {
-                        error!("{}: feed event round trip failure expected:\n'{}'\nGot:\n'{}'", response.entity_id, event.text, unparsed);
+                        error!("{} s{}d{}: feed event round trip failure expected:\n'{}'\nGot:\n'{}'", response.entity_id, event.season, event.day, event.text, unparsed);
                     }
                 }
             }

@@ -32,7 +32,7 @@ impl DayEquivalent {
             0..=2 => match day {
                 MaybeRecognized::NotRecognized(_) => None,
                 MaybeRecognized::Recognized(Day::Day(day)) => Some(DayEquivalent { day: *day, offset: 0 }),
-                MaybeRecognized::Recognized(Day::SuperstarBreak) => None,
+                MaybeRecognized::Recognized(Day::SuperstarBreak) =>  Some(DayEquivalent { day: 120, offset: 255 }),
                 MaybeRecognized::Recognized(Day::SuperstarDay(offset)) => Some(DayEquivalent { day: 120, offset: offset + 1 }),
                 MaybeRecognized::Recognized(Day::Holiday) => None
             }
@@ -43,17 +43,23 @@ impl DayEquivalent {
 
 #[derive(Clone, Copy, PartialEq, Eq, PartialOrd, Ord)]
 pub enum Breakpoints {
-    Rough1BTo1BPatch,
+    Season1EnchantmentChange,
+    S1AttributeEqualChange,
     S2D152,
     S2D169,
 }
 impl Breakpoints {
     fn ascending_transition_time(self) -> Time {
         match self {
-            Breakpoints::Rough1BTo1BPatch => Time {
+            Breakpoints::Season1EnchantmentChange => Time {
                 season: 1,
                 ascending_days: vec![
-                    (DayEquivalent { day: 180, offset: 0 }, 0),
+                    (DayEquivalent { day: 120, offset: 255 }, 0),
+                ]
+            },
+            Breakpoints::S1AttributeEqualChange => Time { 
+                season: 1, ascending_days: vec![
+                    (DayEquivalent {day: 215, offset: 0}, 0)
                 ]
             },
             Breakpoints::S2D152 => Time {
@@ -81,7 +87,7 @@ impl Breakpoints {
             Ordering::Less => true, // earlier season is before
             Ordering::Greater => false, // later season is after
             Ordering::Equal => match day {
-                None => return true, // Assume unknown days are at end of season, and therefore after
+                None => return false, // Assume unknown days are at end of season, and therefore after
                 Some(day) => {
                     // Because of overflow, transition happens on multiple days
                     for (transition_day, transition_event_index) in transition.ascending_days {

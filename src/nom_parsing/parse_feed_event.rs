@@ -1,7 +1,7 @@
 use nom::{branch::alt, bytes::complete::tag, character::complete::{i16, u8}, combinator::opt, error::context, multi::many1, sequence::{delimited, preceded, separated_pair, terminated}, Finish, Parser};
 use tracing::error;
 
-use crate::{enums::FeedEventType, feed_event::{AttributeChange, AttributeEqual, AttributeEqualsPhrasing, ParsedFeedEventText, S1EnchantmentPhrasing}, nom_parsing::shared::{emoji, emojiless_item, feed_delivery, name_eof, parse_terminated, sentence_eof, try_from_word}};
+use crate::{enums::FeedEventType, feed_event::{AttributeChange, AttributeEqual, ParsedFeedEventText}, nom_parsing::shared::{emoji_team_eof, emojiless_item, feed_delivery, name_eof, parse_terminated, sentence_eof, try_from_word}};
 
 use super::shared::Error;
 
@@ -43,13 +43,11 @@ fn hit_by_falling_star<'output>() -> impl FeedEventParser<'output> {
 
 fn game_result<'output>() -> impl FeedEventParser<'output> {
     (
-        terminated(emoji, tag(" ")),
-        parse_terminated(" vs. "),
-        terminated(emoji, tag(" ")),
-        parse_terminated(" - "),
+        parse_terminated(" vs. ").and_then(emoji_team_eof),
+        parse_terminated(" - ").and_then(emoji_team_eof),
         preceded(tag("FINAL "), separated_pair(u8, tag("-"), u8))
-    ).map(|(home_team_emoji, home_team_name, away_team_emoji, away_team_name, (home_score, away_score))| 
-        ParsedFeedEventText::GameResult { home_team_emoji, home_team_name, away_team_emoji, away_team_name, home_score, away_score }
+    ).map(|(home_team, away_team, (home_score, away_score))| 
+        ParsedFeedEventText::GameResult { home_team, away_team, home_score, away_score }
     )
 }
 
@@ -86,7 +84,7 @@ fn s1_attribute_equal<'output>() -> impl FeedEventParser<'output> {
             try_from_word,
             delimited(tag(" became equal to their base "), try_from_word, tag("."))
         ).map(|(player_name, changing_attribute, value_attribute)| AttributeEqual { player_name, changing_attribute, value_attribute })
-    ).map(|equals| ParsedFeedEventText::AttributeEquals { equals, phrasing: AttributeEqualsPhrasing::Season1 })
+    ).map(|equals| ParsedFeedEventText::AttributeEquals { equals })
 }
 
 fn s2_attribute_equal<'output>() -> impl FeedEventParser<'output> {
@@ -96,7 +94,7 @@ fn s2_attribute_equal<'output>() -> impl FeedEventParser<'output> {
             try_from_word,
             delimited(tag(" became equal to their current base "), try_from_word, tag("."))
         ).map(|(player_name, changing_attribute, value_attribute)| AttributeEqual { player_name, changing_attribute, value_attribute })
-    ).map(|equals| ParsedFeedEventText::AttributeEquals { equals, phrasing: AttributeEqualsPhrasing::Season2 })
+    ).map(|equals| ParsedFeedEventText::AttributeEquals { equals })
 }
 
 fn enchantment_s1a<'output>() -> impl FeedEventParser<'output> {
@@ -105,7 +103,7 @@ fn enchantment_s1a<'output>() -> impl FeedEventParser<'output> {
         emojiless_item,
         preceded(tag(" was enchanted with +"), u8),
         delimited(tag(" to "), try_from_word, tag("."))
-    ).map(|(player_name, item, amount, attribute)| ParsedFeedEventText::S1Enchantment { player_name, item, amount, attribute, phrasing: S1EnchantmentPhrasing::Season1A })
+    ).map(|(player_name, item, amount, attribute)| ParsedFeedEventText::S1Enchantment { player_name, item, amount, attribute })
 }
 
 fn enchantment_s1b<'output>() -> impl FeedEventParser<'output> {
@@ -114,7 +112,7 @@ fn enchantment_s1b<'output>() -> impl FeedEventParser<'output> {
         emojiless_item,
         delimited(tag(" gained a +"), u8, tag(" ")),
         terminated(try_from_word, tag(" bonus."))
-    ).map(|(player_name, item, amount, attribute)| ParsedFeedEventText::S1Enchantment { player_name, item, amount, attribute, phrasing: S1EnchantmentPhrasing::Season1B })
+    ).map(|(player_name, item, amount, attribute)| ParsedFeedEventText::S1Enchantment { player_name, item, amount, attribute })
 }
 
 fn enchantment_s2<'output>() -> impl FeedEventParser<'output> {
@@ -176,13 +174,22 @@ fn swap_places<'output>() -> impl FeedEventParser<'output> {
 mod test {
     use nom::Parser;
 
-    use crate::{enums::Attribute, feed_event::{AttributeChange, ParsedFeedEventText}, nom_parsing::parse_feed_event::attribute_gain};
+    use crate::{enums::Attribute, feed_event::{AttributeChange, ParsedFeedEventText}, nom_parsing::parse_feed_event::{attribute_gain, game_result}, parsed_event::EmojiTeam};
 
     #[test]
     fn test_attribute_gain() {
         assert_eq!(
             Ok(ParsedFeedEventText::AttributeChanges { changes: vec![AttributeChange { player_name: "Nancy Bright", amount: 50, attribute: Attribute::Awareness}] }),
             attribute_gain().parse("Nancy Bright gained +50 Awareness.").map(|(_, o)| o).map_err(|e| e.to_string())
+        );
+    }
+
+    #[test]
+    fn test_game_result() {
+        let s = "🦖 Peoria Monster Monster Monster vs. 📮 Akron Anteaters Pace Stick - FINAL 2-4";
+        assert_eq!(
+            Ok(ParsedFeedEventText::GameResult { away_team: EmojiTeam {emoji: "🦖", name: "Peoria Monster Monster Monster"}, home_team: EmojiTeam { emoji: "📮", name: "Akron Anteaters Pace Stick" }, away_score: 2, home_score: 4 }),
+            game_result().parse(s).map(|(_, o)| o).map_err(|e| e.to_string())
         );
     }
 }
