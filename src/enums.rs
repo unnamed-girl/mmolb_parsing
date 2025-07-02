@@ -4,6 +4,8 @@ use nom::{branch::alt, bytes::complete::tag, sequence::preceded, Parser, charact
 use serde::{Deserialize, Deserializer, Serialize, Serializer, de::Error};
 use strum::{Display, EnumDiscriminants, EnumIter, EnumString, IntoDiscriminant};
 
+use crate::serde_utils::{DisplaySerializer, FromStrDeserializer};
+
 /// Possible values of the "event" field of an mmolb event. 
 #[derive(Debug, Clone, Copy, Serialize, Deserialize, EnumString, Display, PartialEq, Eq, Hash, EnumIter)]
 pub enum EventType {
@@ -810,15 +812,6 @@ pub enum ItemType {
     Ring
 }
 
-#[derive(Deserialize, Serialize)]
-#[serde(transparent)] 
-struct DisplayDeserializer(String);
-impl<T: Display> From<T> for DisplayDeserializer {
-    fn from(value: T) -> Self {
-        Self(value.to_string())
-    }
-}
-
 #[derive(Debug, Clone, Copy, Serialize, Deserialize, EnumString, Display, PartialEq, Eq, Hash, EnumIter)]
 #[serde(rename_all = "lowercase")]
 #[strum(serialize_all = "lowercase")]
@@ -827,19 +820,19 @@ pub enum FeedEventType {
     Augment,
 }
 
-#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, Serialize, Deserialize, EnumIter)]
-#[serde(try_from = "&str", into = "DisplayDeserializer")]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, Deserialize, Serialize, EnumIter)]
+#[serde(from = "FromStrDeserializer<Self>", into = "DisplaySerializer")]
 pub enum FeedEventStatus {
     RegularSeason,
     SuperstarBreak,
     PostseasonRound(u8),
 }
-impl<'a> TryFrom<&'a str> for FeedEventStatus {
-    type Error = &'static str;
-    fn try_from(value: &'a str) -> Result<Self, Self::Error> {
-        Self::from_str(value)
+impl From<FromStrDeserializer<Self>> for FeedEventStatus {
+    fn from(value: FromStrDeserializer<Self>) -> Self {
+        value.0
     }
 }
+
 impl FromStr for FeedEventStatus {
     type Err = &'static str;
     fn from_str(s: &str) -> Result<Self, Self::Err> {
@@ -897,15 +890,19 @@ impl Display for Day {
     }
 }
 
-#[derive(Debug, Clone, Copy, Serialize, Deserialize, EnumString, Display, PartialEq, Eq, Hash, EnumIter)]
-#[serde(try_from = "&str", into = "DisplayDeserializer")]
+#[derive(Debug, Clone, Copy, Deserialize, Serialize, EnumString, Display, PartialEq, Eq, Hash, EnumIter)]
+#[serde(from = "FromStrDeserializer<Self>", into = "DisplaySerializer")]
 pub enum RecordType {
     #[strum(to_string = "Regular Season")]
     RegularSeason,
 }
+impl From<FromStrDeserializer<Self>> for RecordType {
+    fn from(value: FromStrDeserializer<Self>) -> Self {
+        value.0
+    }
+}
 
 #[derive(Debug, Clone, Serialize, Deserialize, EnumString, Display, PartialEq, Eq, Hash, EnumIter)]
-#[serde(try_from = "&str", into = "DisplayDeserializer")]
 pub enum PositionType {
     Pitcher,
     Batter,
@@ -1098,8 +1095,8 @@ pub enum Attribute {
     Guts
 }
 
-#[derive(EnumString, Display, Debug, Serialize, Deserialize, Clone, Copy, EnumIter, PartialEq, Eq, Hash)]
-#[serde(try_from = "&str", into = "DisplayDeserializer")]
+#[derive(EnumString, Display, Debug, Deserialize, Serialize, Clone, Copy, EnumIter, PartialEq, Eq, Hash)]
+#[serde(from = "FromStrDeserializer<Self>", into = "DisplaySerializer")]
 pub enum ItemPrefix {
     Sharp,
     Consistent,
@@ -1129,9 +1126,14 @@ pub enum ItemPrefix {
     Swift,
     Sneaky,
 }
+impl From<FromStrDeserializer<Self>> for ItemPrefix {
+    fn from(value: FromStrDeserializer<Self>) -> Self {
+        value.0
+    }
+}
 
-#[derive(EnumString, Display, Debug, Serialize, Deserialize, Clone, Copy, EnumIter, PartialEq, Eq, Hash)]
-#[serde(try_from = "&str", into = "DisplayDeserializer")]
+#[derive(EnumString, Display, Debug, Deserialize, Serialize, Clone, Copy, EnumIter, PartialEq, Eq, Hash)]
+#[serde(from = "FromStrDeserializer<Self>", into = "DisplaySerializer")]
 pub enum ItemSuffix {
     #[strum(to_string = "the Acrobat")]
     Acrobat,
@@ -1145,6 +1147,11 @@ pub enum ItemSuffix {
     Patience,
     Reflexes,
     Fortune
+}
+impl From<FromStrDeserializer<Self>> for ItemSuffix {
+    fn from(value: FromStrDeserializer<Self>) -> Self {
+        value.0
+    }
 }
 
 #[cfg(test)]

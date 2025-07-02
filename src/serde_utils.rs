@@ -1,3 +1,7 @@
+use std::{fmt::Display, str::FromStr};
+
+use serde::{Deserialize, Serialize, de::Error};
+
 
 pub(crate) trait APIHistory {
     fn is_missing(&self) -> bool;
@@ -33,5 +37,34 @@ pub(crate) mod none_as_empty_string {
             Some(t) => t.serialize(serializer),
             None => "".serialize(serializer)
         }
+    }
+}
+
+pub(crate) struct FromStrDeserializer<T: FromStr>(pub(crate) T) where T::Err: Display;
+impl<'de, T: FromStr> Deserialize<'de> for FromStrDeserializer<T> where T::Err: Display{
+    fn deserialize<D>(deserializer: D) -> Result<Self, D::Error>
+        where
+            D: serde::Deserializer<'de> {
+        #[derive(Deserialize)]
+        #[serde(untagged)]
+        enum Helper<'a> {
+            String(String),
+            Str(&'a str),
+        }
+
+        match Helper::deserialize(deserializer) {
+            Ok(Helper::String(s)) => T::from_str(&s).map(Self).map_err(|e| D::Error::custom(e)),
+            Ok(Helper::Str(s)) => T::from_str(s).map(Self).map_err(|e| D::Error::custom(e)),
+            Err(e) => Err(e)
+        }
+        
+    }
+}
+
+#[derive(Serialize)]
+pub(crate) struct DisplaySerializer(String);
+impl<T: Display> From<T> for DisplaySerializer {
+    fn from(value: T) -> Self {
+        Self(value.to_string())
     }
 }
