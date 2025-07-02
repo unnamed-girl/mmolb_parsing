@@ -3,7 +3,7 @@ use std::{fmt::Debug, str::FromStr};
 use nom::{branch::alt, bytes::complete::{tag, take, take_till, take_until, take_until1, take_while}, character::complete::{one_of, space0, u8}, combinator::{all_consuming, opt, recognize, rest, value, verify}, error::{ErrorKind, ParseError}, multi::{count, many0, many1, separated_list1}, sequence::{delimited, preceded, separated_pair, terminated}, AsChar, Input, Parser};
 use nom_language::error::VerboseError;
 
-use crate::{enums::{Base, BatterStat, FairBallDestination, FairBallType, NowBattingStats}, feed_event::{EmojilessItem, FeedDelivery}, parsed_event::{BaseSteal, Delivery, EmojiTeam, Item, PlacedPlayer, RunnerAdvance, RunnerOut}, Game};
+use crate::{enums::{Base, BatterStat, FairBallDestination, FairBallType, NowBattingStats}, feed_event::{EmojilessItem, FeedDelivery}, parsed_event::{BaseSteal, Delivery, EmojiTeam, Item, PlacedPlayer, RunnerAdvance, RunnerOut}, time::Breakpoints, Game};
 
 pub(super) type Error<'a> = VerboseError<&'a str>;
 pub(super) type IResult<'a, I, O> = nom::IResult<I, O, Error<'a>>;
@@ -13,14 +13,24 @@ impl<'output, T, P: Parser<&'output str, Output = T, Error = Error<'output>>> My
 
 /// Context necessary for parsing. The 'output lifetime is linked to ParsedEvents parsed in this context.
 #[derive(Clone, Debug)]
-pub struct ParsingContext<'output> {
-    pub game: &'output Game
+pub struct ParsingContext<'output, 'parse> {
+    pub game_id: &'parse str,
+    pub game: &'output Game,
+    pub event_index: Option<u16>
 }
-impl<'output> ParsingContext<'output> {
-    pub fn new(game: &'output Game) -> Self {
+impl<'output, 'parse> ParsingContext<'output, 'parse> {
+    pub fn new(game_id: &'parse str, game: &'output Game, event_index: Option<u16>) -> Self {
         Self {
-            game
+            game_id,
+            game,
+            event_index
         }
+    }
+    pub(crate) fn before(&self, breakpoint: Breakpoints) -> bool {
+        breakpoint.before(self.game.season, &self.game.day, self.event_index)
+    }
+    pub(crate) fn after(&self, breakpoint: Breakpoints) -> bool {
+        breakpoint.after(self.game.season, &self.game.day, self.event_index)
     }
 }
 
@@ -121,7 +131,7 @@ pub(super) fn fielders_eof(input: &str) -> IResult<&str, Vec<PlacedPlayer<&str>>
     .parse(input)
 }
 
-pub(super) fn home_emoji_team<'output, 'parse>(parsing_context: &'parse ParsingContext<'output>) -> impl Parser<&'output str, Output = EmojiTeam<&'output str>, Error = Error<'output>> + 'parse {
+pub(super) fn home_emoji_team<'output, 'parse>(parsing_context: &'parse ParsingContext<'output, 'parse>) -> impl Parser<&'output str, Output = EmojiTeam<&'output str>, Error = Error<'output>> + 'parse {
     move |i: &'output str| {
         separated_pair(emoji, tag(" "), tag(parsing_context.game.home_team_name.as_str()))
             .map(|(emoji, name)| EmojiTeam {emoji, name})
@@ -129,7 +139,7 @@ pub(super) fn home_emoji_team<'output, 'parse>(parsing_context: &'parse ParsingC
     }
 }
 
-pub(super) fn away_emoji_team<'output, 'parse>(parsing_context: &'parse ParsingContext<'output>) -> impl Parser<&'output str, Output = EmojiTeam<&'output str>, Error = Error<'output>> + 'parse {
+pub(super) fn away_emoji_team<'output, 'parse>(parsing_context: &'parse ParsingContext<'output, 'parse>) -> impl Parser<&'output str, Output = EmojiTeam<&'output str>, Error = Error<'output>> + 'parse {
     move |i: &'output str| {
         separated_pair(emoji, tag(" "), tag(parsing_context.game.away_team_name.as_str()))
             .map(|(emoji, name)| EmojiTeam {emoji, name})
@@ -371,7 +381,7 @@ pub(super) fn emojiless_item(input: &str) -> IResult<&str, EmojilessItem> {
     .parse(input)
 }
 
-pub(super) fn delivery<'parse, 'output>(parsing_context: &'parse ParsingContext<'output>, label: &'output str) -> impl MyParser<'output, Delivery<&'output str>> + 'parse {
+pub(super) fn delivery<'parse, 'output>(parsing_context: &'parse ParsingContext<'output, 'parse>, label: &'output str) -> impl MyParser<'output, Delivery<&'output str>> + 'parse {
         (
             alt((
                 separated_pair(away_emoji_team(parsing_context), tag(" "), parse_terminated(" received a ")),

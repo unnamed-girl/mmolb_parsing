@@ -1,20 +1,22 @@
-use std::{fmt::{Display, Write}, iter::once, cmp::Ordering};
+use std::{fmt::{Display, Write}, iter::once};
 
 use serde::{Deserialize, Serialize};
 use strum::EnumDiscriminants;
 
-use crate::{enums::{Base, BaseNameVariant, BatterStat, Day, Distance, FairBallDestination, FairBallType, FieldingErrorType, FoulType, GameOverMessage, HomeAway, ItemPrefix, ItemSuffix, ItemType, MaybeRecognized, MoundVisitType, NowBattingStats, Place, StrikeType, TopBottom}, Game};
+use crate::{enums::{Base, BaseNameVariant, BatterStat, Distance, FairBallDestination, FairBallType, FieldingErrorType, FoulType, GameOverMessage, HomeAway, ItemPrefix, ItemSuffix, ItemType, MoundVisitType, NowBattingStats, Place, StrikeType, TopBottom}, Game, time::Breakpoints};
 
 /// S is the string type used. S = &'output str is used by the parser, 
 /// but a mutable type is necessary when directly deserializing, because some players have escaped characters in their names
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq, EnumDiscriminants)]
 pub enum ParsedEventMessage<S> {
-    // Season 0
     ParseError {
         event_type: String,
         message: String,
     },
-
+    KnownBug {
+        bug: KnownBug<S>
+    },
+    // Season 0
     LiveNow {
         away_team: EmojiTeam<S>,
         home_team: EmojiTeam<S>
@@ -314,7 +316,8 @@ impl<S: Display> ParsedEventMessage<S> {
             Self::Balk { pitcher, scores, advances } => {
                 let scores_and_advances = unparse_scores_and_advances(scores, advances);
                 format!("Balk. {pitcher} dropped the ball.{scores_and_advances}")
-            }
+            },
+            Self::KnownBug { bug } => format!("{bug}")
         }
     }
 }
@@ -502,118 +505,35 @@ impl<S: Display> Delivery<S> {
     }
 }
 
-#[derive(Debug, PartialEq, Eq)]
-struct Time {
-    season: u32,
-    ascending_days: Vec<(DayEquivalent, u16)>
-}
-
-#[derive(Debug, PartialEq, Eq)]
-struct DayEquivalent {
-    day: u16,
-    offset: u8
-}
-impl PartialOrd for DayEquivalent {
-    fn partial_cmp(&self, other: &Self) -> Option<Ordering> {
-        Some(self.cmp(other))
-    }
-}
-impl Ord for DayEquivalent {
-    fn cmp(&self, other: &Self) -> Ordering {
-        match self.day.cmp(&other.day) {
-            Ordering::Equal => self.offset.cmp(&other.offset),
-            o @ _ => o
-        }
-    }
-}
-impl DayEquivalent {
-    fn new(season: u32, day: &MaybeRecognized<Day>) -> Option<Self> {
-        match season {
-            0..=2 => match day {
-                MaybeRecognized::NotRecognized(_) => None,
-                MaybeRecognized::Recognized(Day::Day(day)) => Some(DayEquivalent { day: *day, offset: 0 }),
-                MaybeRecognized::Recognized(Day::SuperstarBreak) => None,
-                MaybeRecognized::Recognized(Day::SuperstarDay(offset)) => Some(DayEquivalent { day: 120, offset: offset + 1 }),
-                MaybeRecognized::Recognized(Day::Holiday) => None
-            }
-            _ => None
-        }
-    }
-}
-
-#[derive(Clone, Copy, PartialEq, Eq, PartialOrd, Ord)]
-enum Breakpoints {
-    /// Starts in the middle of day 169
-    /// 584
-    Season2PostMidSeasonUpdatePatch,
-}
-impl Breakpoints {
-    fn ascending_transition_time(self) -> Time {
-        match self {
-            Breakpoints::Season2PostMidSeasonUpdatePatch => Time { 
-                season: 2, 
-                ascending_days: vec![
-                    (DayEquivalent { day: 168, offset: 0 }, 584),
-                    (DayEquivalent { day: 169, offset: 0 }, 94),
-                ]
-            }
-        }
-    }
-    fn before(&self, season: u32, day: &MaybeRecognized<Day>, event_index: Option<u16>) -> bool {
-        let event_index = event_index.unwrap_or(0);
-        let day = DayEquivalent::new(season, day);
-
-        let transition = self.ascending_transition_time();
-
-        match season.cmp(&transition.season) {
-            Ordering::Less => true, // earlier season is before
-            Ordering::Greater => false, // later season is after
-            Ordering::Equal => match day {
-                None => return true, // Assume unknown days are at end of season, and therefore after
-                Some(day) => {
-                    // Because of overflow, transition happens on multiple days
-                    for (transition_day, transition_event_index) in transition.ascending_days {
-                        match day.cmp(&transition_day) {
-                            Ordering::Greater => (), // Move on to check the next day in the transition period
-                            Ordering::Equal => match event_index.cmp(&transition_event_index) {
-                                Ordering::Greater | Ordering::Equal => return false,
-                                Ordering::Less => return true,
-                            },
-                            Ordering::Less => return true // Before a transition day, so before (only works because its in ascending order)
-                        }
-                    }
-                    false // After the transition point, so after
-                }
-            }
-        }
-    }
-    fn after(&self, season: u32, day: &MaybeRecognized<Day>, event_index: Option<u16>) -> bool {
-        !self.before(season, day, event_index)
-    }
-}
-
-
 fn old_space(game: &Game, event_index: Option<u16>) -> &'static str {
-    if Breakpoints::Season2PostMidSeasonUpdatePatch.before(game.season, &game.day, event_index) {
+    if Breakpoints::S2D169.before(game.season, &game.day, event_index) {
         " "
     } else {
         ""
     }
 }
 
-#[cfg(test)]
-mod test {
-    use crate::{enums::{Day, MaybeRecognized}, parsed_event::Breakpoints};
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, EnumDiscriminants)]
+pub enum KnownBug<S> {
+    /// https://mmolb.com/watch/6851bb34f419fdc04f9d0ed5 "Genevieve Hirose reaches on a fielder's choice out, 1B N. Kitagawa"
+    /// Potentially fixed on S2D152
+    /// Properties:
+    /// - They are called fielders choice outs
+    /// - They (so far) always occur when no runners are on base
+    /// - They count as an out for the count
+    /// - the batter does end up on base
+    FirstBasemanChoosesAGhost {
+        batter: S,
+        first_baseman: S
+    }
+}
 
-    #[test]
-    fn break_point_test() {
-        assert!(Breakpoints::Season2PostMidSeasonUpdatePatch.before(1, &MaybeRecognized::Recognized(Day::Day(255)), Some(5)));
-        assert!(Breakpoints::Season2PostMidSeasonUpdatePatch.before(2, &MaybeRecognized::Recognized(Day::Day(5)), Some(5)));
-        assert!(Breakpoints::Season2PostMidSeasonUpdatePatch.before(2, &MaybeRecognized::Recognized(Day::Day(168)), Some(583)));
-        assert!(Breakpoints::Season2PostMidSeasonUpdatePatch.after(2, &MaybeRecognized::Recognized(Day::Day(168)), Some(584)));
-        assert!(Breakpoints::Season2PostMidSeasonUpdatePatch.before(2, &MaybeRecognized::Recognized(Day::Day(169)), Some(93)));
-        assert!(Breakpoints::Season2PostMidSeasonUpdatePatch.after(2, &MaybeRecognized::Recognized(Day::Day(169)), Some(94)));
-        assert!(Breakpoints::Season2PostMidSeasonUpdatePatch.after(2, &MaybeRecognized::Recognized(Day::Day(200)), Some(5)));
-        assert!(Breakpoints::Season2PostMidSeasonUpdatePatch.after(3, &MaybeRecognized::Recognized(Day::Day(255)), Some(5)));
+impl<S: Display> Display for KnownBug<S> {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        match self {
+            KnownBug::FirstBasemanChoosesAGhost { batter, first_baseman } => {
+                write!(f, "{batter} reaches on a fielder's choice out, 1B {first_baseman}")
+            }
+        }
     }
 }

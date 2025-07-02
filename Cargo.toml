@@ -24,6 +24,7 @@ futures = { version = "0.3.31", optional = true }
 http-cache-reqwest = { version = "0.15.1", optional = true }
 nom = "8.0.0"
 nom-language = "0.1.0"
+phf = { version = "0.12.1", features = ["macros"] }
 reqwest = { version = "0.12.15", features = ["blocking", "brotli", "gzip", "json"], optional = true }
 reqwest-middleware = { version = "0.4.2", optional = true }
 ron = "0.10.1"

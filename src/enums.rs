@@ -1234,5 +1234,7 @@ mod test {
         serde_round_trip_inner::<Attribute>();
         serde_round_trip_inner::<ItemPrefix>();
         serde_round_trip_inner::<ItemSuffix>();
+        // serde_round_trip_inner::<Place>();
+        serde_round_trip_inner::<MoundVisitType>();
     }
 }

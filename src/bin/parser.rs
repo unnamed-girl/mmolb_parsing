@@ -68,6 +68,7 @@ struct Args {
     /// AAY4idGlfZw2ODVlNGY4NmUyOTZlMTU0MjIwOTI2MTI= - just before s2d100
     /// AAY4r5t0A2k2ODYwYzg4OTFlNjVmNWZiNTJjYjVhODI= - just before s2d122 (after superstar day)
     /// AAY4yLXoSnA2ODYyNmUzNzRmZTllMzVjZWY2NWY5NGM= - just before s2d154
+    /// AAY41iifME82ODYzNGYzYTI0OGIxZjM1YmJlM2Q1YjQ= - just before s2d170
     #[arg(long)]
     start_page: Option<String>,
 
@@ -197,7 +198,7 @@ async fn ingest_game(response: EntityResponse<serde_json::Value>, verbose: bool,
 
 
     for event in &game.event_log {
-        let parsed_event_message = process_event(event, &game);
+        let parsed_event_message = process_event(event, &game, &response.entity_id);
         if tracing::enabled!(Level::ERROR) {
             let unparsed = parsed_event_message.clone().unparse(&game, event.index);
             if event.message != unparsed {

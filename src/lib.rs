@@ -1,4 +1,5 @@
 pub(crate) mod serde_utils;
+pub(crate) mod time;
 
 pub mod game;
 pub mod enums;
