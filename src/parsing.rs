@@ -17,7 +17,7 @@ pub fn process_event<'output, 'parse>(event: &'output Event, game: &'output Game
     let parsed_event_message = match parse_event(event, &parsing_context) {
         Ok(event) => event,
         Err(e) => {
-            error!("s{}d{} Parse error: for {:?}: {e}", game.season, game.day, &event.event);
+            error!("{game_id} s{}d{}i{:?} Parse error: for {:?}: {e}", game.season, game.day, event.index, &event.event);
             ParsedEventMessage::ParseError { event_type: event.event.to_string(), message: event.message.clone() }
         }
     };

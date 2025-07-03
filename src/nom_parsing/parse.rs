@@ -1,9 +1,9 @@
 use std::str::FromStr;
 
-use nom::{branch::alt, bytes::complete::{tag, take_until}, character::complete::{digit1, u8}, combinator::{all_consuming, cut, fail, opt, rest}, error::context, multi::{many0, many1, separated_list1}, sequence::{delimited, preceded, separated_pair, terminated}, Finish, Parser};
+use nom::{branch::alt, bytes::complete::{tag, take_until}, character::complete::{digit1, u8}, combinator::{all_consuming, cut, fail, opt, rest, verify}, error::context, multi::{many0, many1, separated_list1}, sequence::{delimited, preceded, separated_pair, terminated}, Finish, Parser};
 use phf::phf_map;
 
-use crate::{enums::{EventType, GameOverMessage, HomeAway, MaybeRecognized, MoundVisitType, NowBattingStats}, game::Event, nom_parsing::shared::{away_emoji_team, delivery, emoji, home_emoji_team, try_from_word, try_from_words_m_n, MyParser}, parsed_event::{FieldingAttempt, KnownBug, StartOfInningPitcher}, time::Breakpoints, ParsedEventMessage};
+use crate::{enums::{EventType, GameOverMessage, HomeAway, MaybeRecognized, MoundVisitType, NowBattingStats, Place}, game::Event, nom_parsing::shared::{away_emoji_team, delivery, emoji, home_emoji_team, try_from_word, try_from_words_m_n, MyParser}, parsed_event::{FieldingAttempt, KnownBug, StartOfInningPitcher}, time::Breakpoints, ParsedEventMessage};
 
 use super::{shared::{all_consuming_sentence_and, base_steal_sentence, bold, destination, emoji_team_eof, exclamation, fair_ball_type_verb_name, fielders_eof, fly_ball_type_verb_name, name_eof, now_batting_stats, ordinal_suffix, out, parse_and, parse_terminated, placed_player_eof, score_update, scores_and_advances, scores_sentence, sentence, sentence_eof, Error}, ParsingContext};
 
@@ -365,11 +365,11 @@ fn inning_start<'output>() -> impl MyParser<'output, ParsedEventMessage<&'output
 }
 
 fn mound_visit<'output, 'parse>(parsing_context: &'parse ParsingContext<'output, 'parse>) -> impl MyParser<'output, ParsedEventMessage<&'output str>> + 'parse {
-    let leaves_sentence = |i| {
+    let leaves_player = |i| {
         if parsing_context.before(Breakpoints::S2D152) { 
             (terminated(try_from_word, tag(" ")), name_eof).map(|(place, name)| (Some(place), name)).parse(i)
         } else {
-            (name_eof).map(|name| (None, name)).parse(i)
+            (opt(terminated(try_from_word, tag(" "))), name_eof).map(|(place, name)| (place, name)).parse(i)
         }
     };
 
@@ -381,7 +381,7 @@ fn mound_visit<'output, 'parse>(parsing_context: &'parse ParsingContext<'output,
         
         (
             sentence(parse_terminated(" is leaving the game").and_then(placed_player_eof)),
-            sentence(parse_terminated(" takes the mound").and_then(leaves_sentence))
+            sentence(parse_terminated(" takes the mound").and_then(leaves_player))
         ).map(|(leaving_pitcher, (arriving_pitcher_place, arriving_pitcher_name))| ParsedEventMessage::PitcherSwap { leaving_pitcher, arriving_pitcher_place, arriving_pitcher_name }),
 
         sentence(parse_terminated(" remains in the game").and_then(placed_player_eof))
