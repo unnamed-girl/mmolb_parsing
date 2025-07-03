@@ -150,7 +150,7 @@ pub(super) fn away_emoji_team<'output, 'parse>(parsing_context: &'parse ParsingC
 /// A single instance of an out, e.g. "Franklin Shoebill out at home"
 pub(super) fn out(input: &str) -> IResult<&str, RunnerOut<&str>> {
     (
-        parse_terminated(" out at "),
+        parse_terminated(" out at ").and_then(name_eof),
         try_from_words_m_n(1,2)
     )
     .map(|(player, base)| RunnerOut { runner: player, base })
@@ -159,13 +159,13 @@ pub(super) fn out(input: &str) -> IResult<&str, RunnerOut<&str>> {
 
 /// A single instance of a runner scoring, e.g. "<bold>Franklin Shoebill scores!</bold>"
 pub(super) fn scores_sentence(input: &str) -> IResult<&str, &str> {
-    bold(exclamation(parse_terminated(" scores")))
+    bold(exclamation(parse_terminated(" scores").and_then(name_eof)))
     .parse(input)
 }
 
 // A single instance of a runner advancing, e.g. "Franklin shoebill to third base."
 pub fn runner_advance_sentence(input: &str) -> IResult<&str, RunnerAdvance<&str>> {
-    sentence((parse_terminated(" to "), terminated(try_from_word, tag(" base"))))
+    sentence((parse_terminated(" to ").and_then(name_eof), terminated(try_from_word, tag(" base"))))
     .map(|(runner, base)| RunnerAdvance {runner, base})
     .parse(input)
 }
@@ -297,7 +297,7 @@ pub(super) fn placed_player_eof(input: &str) -> IResult<&str, PlacedPlayer<&str>
 
 pub(super) fn name_eof(input: &str) -> IResult<&str, &str> {
     verify(rest,  |name: &str| 
-        name.input_len() > 0 &&
+        name.input_len() >= 2 &&
         // Removed for now because of early season 1 bug where feed names didn't print their spaces
         // name.chars().any(|c| c == ' ') && // From the API, we know players have first/last name, so there should always be a space
         !name.chars().any(|c| [',', '(', ')', '<', '>', '\\'].contains(&c)) && // These characters should not be in names

@@ -170,7 +170,7 @@ fn field<'output>() -> impl MyParser<'output, ParsedEventMessage<&'output str>> 
 
     let grounded_out = all_consuming_sentence_and(
         (
-            parse_terminated(" grounds out"),
+            parse_terminated(" grounds out").and_then(name_eof),
             alt((
                 preceded(tag(" to "), placed_player_eof).map(|fielder| vec![fielder]),
                 preceded(tag(", "), fielders_eof)
@@ -195,7 +195,7 @@ fn field<'output>() -> impl MyParser<'output, ParsedEventMessage<&'output str>> 
     );
 
     let reaches_on_fielders_choice_out = all_consuming_sentence_and(
-        (parse_terminated(" reaches on a fielder's choice out, "), fielders_eof),
+        (parse_terminated(" reaches on a fielder's choice out, ").and_then(name_eof), fielders_eof),
         (sentence(out), scores_and_advances)
     )
     .map(|((batter, fielders), (out, (scores, advances)))| {
@@ -203,7 +203,7 @@ fn field<'output>() -> impl MyParser<'output, ParsedEventMessage<&'output str>> 
     });
 
     let reaches_on_fielders_choice_error = all_consuming_sentence_and(
-        (parse_terminated(" reaches on a fielder's choice, fielded by "), placed_player_eof),
+        (parse_terminated(" reaches on a fielder's choice, fielded by ").and_then(name_eof), placed_player_eof),
         (scores_and_advances, sentence_eof(separated_pair(try_from_word, tag(" error by "), name_eof)))
     )
     .map(|((batter, fielder), ((scores, advances), (error, error_fielder)))| {
@@ -211,7 +211,7 @@ fn field<'output>() -> impl MyParser<'output, ParsedEventMessage<&'output str>> 
     });
 
     let reaches_on_error = all_consuming_sentence_and(
-        (parse_terminated(" reaches on a "), terminated(try_from_word, tag(" error by ")), placed_player_eof),
+        (parse_terminated(" reaches on a ").and_then(name_eof), terminated(try_from_word, tag(" error by ")), placed_player_eof),
         scores_and_advances
     )
     .map(|((batter, error, fielder), (scores, advances))| {
@@ -220,7 +220,7 @@ fn field<'output>() -> impl MyParser<'output, ParsedEventMessage<&'output str>> 
 
     let double_play_grounded = all_consuming_sentence_and(
         (
-            parse_terminated(" grounded into a "),
+            parse_terminated(" grounded into a ").and_then(name_eof),
             terminated(opt(tag("sacrifice ")).map(|s| s.is_some()), tag("double play, ")),
             fielders_eof
         ),

@@ -516,7 +516,9 @@ fn old_space(game: &Game, event_index: Option<u16>) -> &'static str {
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq, EnumDiscriminants)]
 pub enum KnownBug<S> {
     /// https://mmolb.com/watch/6851bb34f419fdc04f9d0ed5 "Genevieve Hirose reaches on a fielder's choice out, 1B N. Kitagawa"
+    /// 
     /// Potentially fixed on S2D152
+    /// 
     /// Properties:
     /// - They are called fielders choice outs
     /// - They (so far) always occur when no runners are on base

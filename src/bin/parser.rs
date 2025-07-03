@@ -63,7 +63,7 @@ struct Args {
     /// The page to start at.
     /// AAY2hh1aLKs2ODEwNDBiYTU1NWZjODRhNjdiYTE5NjQ= - just before s1d1
     /// AAY3kbe9JHU2ODRlMGQwNDgzYzQzNTM1YzBjYTgzMWU= - just before s1d120
-    /// /AAY31bN8HNA2ODUyODAxNTJhOWQxOWZkMGFjZjI5OGY= - just before s1d200
+    /// AAY31bN8HNA2ODUyODAxNTJhOWQxOWZkMGFjZjI5OGY= - just before s1d200
     /// AAY4FghvuKk2ODU2YmFlNWQ2MjRiOTk4M2M2MjYxOTk= - just before s2d1
     /// AAY4idGlfZw2ODVlNGY4NmUyOTZlMTU0MjIwOTI2MTI= - just before s2d100
     /// AAY4r5t0A2k2ODYwYzg4OTFlNjVmNWZiNTJjYjVhODI= - just before s2d122 (after superstar day)
@@ -77,6 +77,9 @@ struct Args {
 
     #[clap(short, long, action)]
     refetch: bool,
+
+    #[clap(short, long, action)]
+    verbose: bool,
 
     /// Nonstandard chron requests aren't cached
     #[clap(long, action)]
@@ -135,8 +138,8 @@ async fn main() {
 
     let args = Args::parse();
 
-    let func = async |response, verbose| match args.kind {
-        Kind::Game => ingest_game(response, verbose, args.round_trip).await,
+    let func = async |response, progress_report| match args.kind {
+        Kind::Game => ingest_game(response, progress_report, args.round_trip, args.verbose).await,
         Kind::Team => ingest_team(response, args.round_trip).await
     };
 
@@ -176,13 +179,13 @@ async fn main() {
         let last = games.len().max(1) - 1;
         futures::stream::iter(games.into_iter().enumerate().map(move |(i, o)| (i == last, o)))
     })
-    .then(|(verbose, game_json)| func(game_json, verbose))
+    .then(|(progress_report, game_json)| func(game_json, progress_report))
     .collect::<Vec<_>>()
     .await;
     drop(guard);
 }
 
-async fn ingest_game(response: EntityResponse<serde_json::Value>, verbose: bool, round_trip: bool) {
+async fn ingest_game(response: EntityResponse<serde_json::Value>, progress_report: bool, round_trip: bool, verbose: bool) {
     let (game, round_tripped) = if round_trip {
         let game: Game = serde_json::from_value(response.data.clone()).map_err(|e| format!("Failed to parse {}, {e:?}", response.entity_id)).unwrap();
         let round_tripped = serde_json::to_value(&game).unwrap();
@@ -205,8 +208,12 @@ async fn ingest_game(response: EntityResponse<serde_json::Value>, verbose: bool,
                 error!("{} s{}d{}: {} event round trip failure expected:\n'{}'\nGot:\n'{}'", response.entity_id, game.season, game.day, event.event, event.message, unparsed);
             }
         }
+
+        if verbose {
+            info!("{:?} ({})", parsed_event_message, event.message);
+        }
     }
-    if verbose {
+    if progress_report {
         let round_tripped = round_tripped.then_some(" with round trip").unwrap_or_default();
         info!("Parse{round_tripped} reached s{}d{}", game.season, game.day);
     }

@@ -1030,7 +1030,7 @@ impl Display for Slot {
 }
 
 impl FromStr for Slot {
-    type Err = ();
+    type Err = &'static str;
 
     fn from_str(s: &str) -> Result<Self, Self::Err> {
         let a_tag = |t| {
@@ -1049,7 +1049,7 @@ impl FromStr for Slot {
             preceded(tag("SP"), u8).map(|i| Slot::StartingPitcher(i)),
             preceded(tag("RP"), u8).map(|i| Slot::ReliefPitcher(i)),
             a_tag("CL").map(|_| Slot::Closer),
-        )).parse(s).map(|(_, o)| o).map_err(|_| ())
+        )).parse(s).map(|(_, o)| o).map_err(|_| "Player's slot didn't match known slots")
     }
 }
 
@@ -1152,27 +1152,94 @@ impl From<FromStrDeserializer<Self>> for ItemSuffix {
     }
 }
 
-/// Since season 2b Slots are used rather than the player's position
-#[derive(Debug, Serialize, Deserialize, Clone, Copy, PartialEq, Eq, Hash)]
-#[serde(untagged)]
+/// The various places a player in a game has been said to be.
+#[derive(Debug, Serialize, Deserialize, Clone, Copy, EnumIter, PartialEq, Eq, Hash, EnumDiscriminants)]
+#[strum_discriminants(derive(EnumString, Display))]
+#[serde(from = "FromStrDeserializer<Self>", into = "DisplaySerializer")]
 pub enum Place {
-    Position(Position),
-    Slot(Slot)
+    #[strum_discriminants(strum(to_string = "P"))]
+    Pitcher,
+    #[strum_discriminants(strum(to_string = "C"))]
+    Catcher,
+    #[strum_discriminants(strum(to_string = "1B"))]
+    FirstBaseman,
+    #[strum_discriminants(strum(to_string = "2B"))]
+    SecondBaseman,
+    #[strum_discriminants(strum(to_string = "3B"))]
+    ThirdBaseman,
+    #[strum_discriminants(strum(to_string = "SS"))]
+    ShortStop,
+    #[strum_discriminants(strum(to_string = "LF"))]
+    LeftField,
+    #[strum_discriminants(strum(to_string = "CF"))]
+    CenterField,
+    #[strum_discriminants(strum(to_string = "RF"))]
+    RightField,
+    #[strum_discriminants(strum(to_string = "SP"))]
+    StartingPitcher(Option<u8>),
+    #[strum_discriminants(strum(to_string = "RP"))]
+    ReliefPitcher(Option<u8>),
+    #[strum_discriminants(strum(to_string = "CL"))]
+    Closer,
+    #[strum_discriminants(strum(to_string = "DH"))]
+    DesignatedHitter
+}
+impl From<FromStrDeserializer<Self>> for Place {
+    fn from(value: FromStrDeserializer<Self>) -> Self {
+        value.0
+    }
+}
+impl From<Slot> for Place {
+    fn from(value: Slot) -> Self {
+        match value {
+            Slot::Catcher => Place::Catcher,
+            Slot::CenterField => Place::CenterField,
+            Slot::Closer => Place::Closer,
+            Slot::DesignatedHitter => Place::DesignatedHitter,
+            Slot::FirstBaseman => Place::FirstBaseman,
+            Slot::SecondBaseman => Place::SecondBaseman,
+            Slot::ThirdBaseman => Place::ThirdBaseman,
+            Slot::ShortStop => Place::ShortStop,
+            Slot::LeftField => Place::LeftField,
+            Slot::RightField => Place::RightField,
+            Slot::StartingPitcher(i) => Place::StartingPitcher(Some(i)),
+            Slot::ReliefPitcher(i) => Place::ReliefPitcher(Some(i)),
+        }
+    }
+}
+impl From<Position> for Place {
+    fn from(value: Position) -> Self {
+        match value {
+            Position::Pitcher => Place::Pitcher,
+            Position::Catcher => Place::Catcher,
+            Position::FirstBaseman => Place::FirstBaseman,
+            Position::SecondBaseman => Place::SecondBaseman,
+            Position::ThirdBaseman => Place::ThirdBaseman,
+            Position::ShortStop => Place::ShortStop,
+            Position::LeftField => Place::LeftField,
+            Position::CenterField => Place::CenterField,
+            Position::RightField => Place::RightField,
+            Position::StartingPitcher => Place::StartingPitcher(None),
+            Position::ReliefPitcher => Place::ReliefPitcher(None),
+            Position::Closer => Place::Closer,
+        }
+    }
 }
 impl FromStr for Place {
     type Err = strum::ParseError;
     fn from_str(s: &str) -> Result<Self, Self::Err> {
-        Slot::from_str(s).map(Place::Slot)
-            .or_else(|_| Position::from_str(s).map(Place::Position))
+        Slot::from_str(s).map(Into::into)
+            .or_else(|_| Position::from_str(s).map(Into::into))
     }
 }
-
 impl Display for Place {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        write!(f, "{}", self.discriminant())?;
         match self {
-            Place::Slot(s) => s.fmt(f),
-            Place::Position(p) => p.fmt(f)
-        }
+            Place::StartingPitcher(Some(i)) | Place::ReliefPitcher(Some(i)) => write!(f, "{}", i)?,
+            _ => ()
+        };
+        Ok(())
     }
 }
 
@@ -1234,7 +1301,7 @@ mod test {
         serde_round_trip_inner::<Attribute>();
         serde_round_trip_inner::<ItemPrefix>();
         serde_round_trip_inner::<ItemSuffix>();
-        // serde_round_trip_inner::<Place>();
+        serde_round_trip_inner::<Place>();
         serde_round_trip_inner::<MoundVisitType>();
     }
 }
