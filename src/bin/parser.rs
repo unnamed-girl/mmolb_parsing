@@ -215,7 +215,7 @@ async fn ingest_game(response: EntityResponse<serde_json::Value>, progress_repor
     }
     if progress_report {
         let round_tripped = round_tripped.then_some(" with round trip").unwrap_or_default();
-        info!("Parse{round_tripped} reached s{}d{}", game.season, game.day);
+        info!("Parse{round_tripped} reached s{}d{} ({}, {})", game.season, game.day, game.season_status, game.league_scale);
     }
 }
 

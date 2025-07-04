@@ -1,19 +1,46 @@
 use std::{fmt::Display, str::FromStr};
 
-use serde::{Deserialize, Serialize, de::Error};
+use serde::{de::Error, Deserialize, Deserializer, Serialize, Serializer};
 
+#[derive(Clone, Copy, Deserialize, Serialize, Debug)]
+pub(crate) struct AddedLaterMarker(pub bool);
 
-pub(crate) trait APIHistory {
-    fn is_missing(&self) -> bool;
+impl AddedLaterMarker {
+    pub(crate) fn new<T>(value: &Option<T>) -> Self {
+        Self(value.is_none())
+    }
+    pub(crate) fn wrap<T>(self, value: T) -> Option<T> {
+        (!self.0).then_some(value)
+    }
 }
 
-pub(crate) mod none_as_empty_string {
-    use serde::{de::Error, Deserialize, Deserializer, Serialize, Serializer};
+#[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Default)]
+pub(crate) enum SomeOrEmptyString<T> {
+    Some(T),
+    #[default]
+    EmptyString
+}
 
-    pub fn deserialize<'de, T: Deserialize<'de>, D>(d: D) -> Result<Option<T>, D::Error>
-    where
-        D: Deserializer<'de>,
-    {
+impl<T> From<Option<T>> for SomeOrEmptyString<T> {
+    fn from(value: Option<T>) -> Self {
+        value.map(Self::Some)
+            .unwrap_or(Self::EmptyString)
+    }
+}
+
+impl<T> From<SomeOrEmptyString<T>> for Option<T> {
+    fn from(value: SomeOrEmptyString<T>) -> Self {
+        match value {
+            SomeOrEmptyString::Some(t) => Some(t),
+            SomeOrEmptyString::EmptyString => None
+        }
+    }
+}
+
+impl<'de, T: Deserialize<'de>> Deserialize<'de> for SomeOrEmptyString<T> {
+    fn deserialize<D>(deserializer: D) -> Result<Self, D::Error>
+        where
+            D: Deserializer<'de> {
         #[derive(Deserialize)]
         #[serde(untagged)]
         enum ValueOrEmptyString<'a, T> {
@@ -22,20 +49,24 @@ pub(crate) mod none_as_empty_string {
             R(T),
         }
 
-        match ValueOrEmptyString::deserialize(d) {
-            Ok(ValueOrEmptyString::R(r)) => Ok(Some(r)),
-            Ok(ValueOrEmptyString::S(s)) if s.is_empty() => Ok(None),
+        match ValueOrEmptyString::deserialize(deserializer) {
+            Ok(ValueOrEmptyString::R(r)) => Ok(Self::Some(r)),
+            Ok(ValueOrEmptyString::S(s)) if s.is_empty() => Ok(Self::EmptyString),
             Ok(ValueOrEmptyString::S(_)) => Err(D::Error::custom("only empty strings may be provided")),
-            Ok(ValueOrEmptyString::String(s)) if s.is_empty() => Ok(None),
+            Ok(ValueOrEmptyString::String(s)) if s.is_empty() => Ok(Self::EmptyString),
             Ok(ValueOrEmptyString::String(_)) => Err(D::Error::custom("only empty strings may be provided")),
             Err(err) => Err(err),
         }
     }
+}
 
-    pub fn serialize<S, T: Serialize>(value: &Option<T>, serializer: S) -> Result<S::Ok, S::Error> where S: Serializer {
-        match value {
-            Some(t) => t.serialize(serializer),
-            None => "".serialize(serializer)
+impl<T: Serialize> Serialize for SomeOrEmptyString<T> {
+    fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error>
+        where
+            S: Serializer {
+        match self {
+            Self::Some(t) => t.serialize(serializer),
+            Self::EmptyString => "".serialize(serializer)
         }
     }
 }

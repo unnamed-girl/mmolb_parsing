@@ -485,23 +485,33 @@ impl<S: Display> Display for Item<S> {
 }
 
 #[derive(Debug, Clone, Copy, Serialize, Deserialize, PartialEq)]
-pub struct Delivery<S> {
-    pub team: EmojiTeam<S>,
-    pub player: S,
-    pub item: Item<S>,
-    pub discarded: Option<Item<S>>
+pub enum Delivery<S> {
+    Successful {
+        team: EmojiTeam<S>,
+        player: S,
+        item: Item<S>,
+        discarded: Option<Item<S>>
+    },
+    NoSpace {
+        item: Item<S>,
+    }
 }
+
 impl<S: Display> Delivery<S> {
     pub fn unparse(&self, delivery_label: &str) -> String {
-        let Delivery { team, player, item, discarded} = self;
+        match self {
+            Self::Successful { team, player, item, discarded } => {
+                let discarded = match discarded {
+                    Some(discarded) => format!(" They discarded their {discarded}."),
+                    None => String::new(),
+                };
 
-        let discarded = match discarded {
-            Some(discarded) => format!(" They discarded their {discarded}."),
-            None => String::new(),
-        };
-
-
-        format!("{team} {player} received a {item} {delivery_label}.{discarded}")
+                format!("{team} {player} received a {item} {delivery_label}.{discarded}")
+            }
+            Self::NoSpace { item } => {
+                format!("{item} was discarded as no player had space.")
+            }
+        }
     }
 }
 

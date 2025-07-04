@@ -1,13 +1,13 @@
 use serde::{Deserialize, Serialize};
 
-use crate::{enums::{Day, FeedEventStatus, FeedEventType, MaybeRecognized}, feed_event::{FeedEventText, FeedEvent}};
+use crate::{enums::{Day, SeasonStatus, FeedEventType, MaybeRecognized}, feed_event::{FeedEventText, FeedEvent}};
 
 #[derive(Clone, Debug, Serialize, Deserialize)]
 pub struct RawFeedEvent {
     pub emoji: String,
     pub season: u8,
     pub day: MaybeRecognized<Day>,
-    pub status: MaybeRecognized<FeedEventStatus>,
+    pub status: MaybeRecognized<SeasonStatus>,
     pub text: FeedEventText,
     pub ts: String,
     #[serde(rename = "type")]

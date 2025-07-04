@@ -1,8 +1,7 @@
 use serde::{Deserialize, Serialize};
-use strum::{EnumDiscriminants, IntoDiscriminant};
 use tracing::error;
 
-use crate::{enums::{EventType, Inning, MaybeRecognized}, game::{MaybePlayer, Pitch}, serde_utils::{none_as_empty_string, APIHistory}};
+use crate::{enums::{EventType, Inning, MaybeRecognized}, game::{MaybePlayer, Pitch}, serde_utils::{AddedLaterMarker, SomeOrEmptyString}};
 
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
 pub(crate) struct RawEvent {
@@ -33,14 +32,13 @@ pub(crate) struct RawEvent {
     /// Empty if none
     pub pitch_info: String,
 
-    #[serde(with = "none_as_empty_string")]
-    pub zone: Option<u8>,
+    pub zone: SomeOrEmptyString<u8>,
 
     pub event: String,
     pub message: String,
 
-    #[serde(default, skip_serializing_if = "APIHistory::is_missing")]
-    pub index: IndexHistory,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub index: Option<SomeOrEmptyString<u16>>,
 
     #[serde(flatten)]
     pub extra_fields: serde_json::Map<String, serde_json::Value>,
@@ -71,7 +69,7 @@ pub struct Event {
     pub message: String,
 
     /// Event Index, introduced in S2
-    index_format: IndexHistoryDiscriminants,
+    index_format: AddedLaterMarker,
     pub index: Option<u16>,
 
     pub extra_fields: serde_json::Map<String, serde_json::Value>,
@@ -90,7 +88,7 @@ impl From<RawEvent> for Event {
         let on_deck = value.on_deck.into();
         let pitcher = value.pitcher.into();
 
-        let pitch = pitch_info.zip(value.zone).map(|(pitch_info, zone)| Pitch::new(pitch_info, zone));
+        let pitch = pitch_info.zip(value.zone.into()).map(|(pitch_info, zone)| Pitch::new(pitch_info, zone));
         
         let event = value.event.as_str().into();
 
@@ -98,11 +96,8 @@ impl From<RawEvent> for Event {
             error!("Deserialization found extra fields: {:?}", value.extra_fields)
         }
 
-        let index = match value.index {
-            IndexHistory::Season0 => None,
-            IndexHistory::Season2(index) => index
-        };
-        let index_format = value.index.discriminant();
+        let index_format = AddedLaterMarker::new(&value.index);
+        let index = value.index.unwrap_or_default().into();
 
         Self {index_format, inning, pitch, batter, pitcher, on_deck, event, away_score: value.away_score, home_score: value.home_score, balls: value.balls, strikes: value.strikes, outs: value.outs, on_1b: value.on_1b, on_2b: value.on_2b, on_3b: value.on_3b, message: value.message, extra_fields: value.extra_fields, index }
     }
@@ -122,31 +117,10 @@ impl From<Event> for RawEvent {
         let on_deck = value.on_deck.unparse();
         let pitcher = value.pitcher.unparse();
 
-        let index = match value.index_format {
-            IndexHistoryDiscriminants::Season0 => IndexHistory::Season0,
-            IndexHistoryDiscriminants::Season2 => IndexHistory::Season2(value.index)
-        };
+        let index = value.index_format.wrap(value.index.into());
+
+        let zone = zone.into();
 
         Self {inning, inning_side, pitch_info, zone, event, batter, on_deck, pitcher, away_score: value.away_score, home_score: value.home_score, balls: value.balls, strikes: value.strikes, outs: value.outs, on_1b: value.on_1b, on_2b: value.on_2b, on_3b: value.on_3b, message: value.message, extra_fields: value.extra_fields, index }
-    }
-}
-
-#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, EnumDiscriminants, Default)]
-#[strum_discriminants(derive(Serialize, Deserialize))]
-#[serde(untagged)]
-pub(crate) enum IndexHistory {
-    #[default]
-    Season0,
-    #[serde(with = "none_as_empty_string")]
-    Season2(Option<u16>)
-}
-
-impl APIHistory for IndexHistory {
-    fn is_missing(&self) -> bool {
-        if let IndexHistory::Season0 = self {
-            true
-        } else {
-            false
-        }
     }
 }

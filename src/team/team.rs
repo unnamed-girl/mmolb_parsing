@@ -2,8 +2,8 @@ use std::collections::HashMap;
 
 use serde::{Deserialize, Serialize};
 
-use crate::{enums::{GameStat, MaybeRecognized, Position, PositionType, RecordType, Slot}, feed_event::FeedEvent, team::raw_team::{PositionTypeHistoryDiscriminants, StatsHistoryDiscriminants}};
-use super::raw_team::{RawTeam, RawTeamPlayer, FeedHistoryDiscriminants};
+use crate::{enums::{GameStat, MaybeRecognized, Position, PositionType, RecordType, Slot}, feed_event::FeedEvent, serde_utils::AddedLaterMarker};
+use super::raw_team::{RawTeam, RawTeamPlayer};
 
 #[derive(Serialize, Deserialize, Debug, Clone)]
 #[serde(from = "RawTeam", into = "RawTeam")]
@@ -17,7 +17,7 @@ pub struct Team {
     pub color: String,
     pub emoji: String,
 
-    pub(super) feed_format: FeedHistoryDiscriminants,
+    pub(super) feed_format: AddedLaterMarker,
     pub feed: Vec<FeedEvent>,
     pub motes_used: Option<u8>,
 
@@ -29,8 +29,7 @@ pub struct Team {
     pub(super) modifications: Vec<serde_json::Value>,
     pub name: String,
 
-    /// no mottos have been seen yet
-    pub(super) motto: Option<String>,
+    pub motto: Option<String>,
 
     pub owner_id: Option<String>,
 
@@ -63,11 +62,11 @@ pub struct TeamPlayer {
 
     pub slot: MaybeRecognized<Slot>,
 
-    pub(super) position_type_format: PositionTypeHistoryDiscriminants,
+    pub(super) position_type_format: AddedLaterMarker,
     pub position_type: MaybeRecognized<PositionType>,
 
 
-    pub(super) stats_format: StatsHistoryDiscriminants,
+    pub(super) stats_format: AddedLaterMarker,
     pub stats: HashMap<MaybeRecognized<GameStat>, i32>,
     pub extra_fields: serde_json::Map<String, serde_json::Value>,
 }

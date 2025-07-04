@@ -46,7 +46,7 @@ fn game_result<'output>() -> impl FeedEventParser<'output> {
         parse_terminated(" vs. ").and_then(emoji_team_eof),
         parse_terminated(" - ").and_then(emoji_team_eof),
         preceded(tag("FINAL "), separated_pair(u8, tag("-"), u8))
-    ).map(|(home_team, away_team, (home_score, away_score))| 
+    ).map(|(away_team, home_team, (away_score, home_score))| 
         ParsedFeedEventText::GameResult { home_team, away_team, home_score, away_score }
     )
 }

@@ -1,6 +1,6 @@
 use std::{convert::Infallible, fmt::Display, str::FromStr};
 
-use nom::{branch::alt, bytes::complete::tag, sequence::preceded, Parser, character::complete::u8, combinator::all_consuming};
+use nom::{branch::alt, bytes::complete::tag, character::complete::u8, combinator::{all_consuming, opt}, sequence::preceded, Parser};
 use serde::{Deserialize, Deserializer, Serialize, Serializer, de::Error};
 use strum::{Display, EnumDiscriminants, EnumIter, EnumString, IntoDiscriminant};
 
@@ -291,6 +291,7 @@ impl Inning {
 /// assert_eq!(Position::FirstBaseman.to_string(), "1B");
 /// ```
 #[derive(EnumString, Display, Debug, Serialize, Deserialize, Clone, Copy, EnumIter, PartialEq, Eq, Hash)]
+#[serde(from = "FromStrDeserializer<Self>", into = "DisplaySerializer")]
 pub enum Position {
     #[strum(to_string = "P")]
     Pitcher,
@@ -316,6 +317,11 @@ pub enum Position {
     ReliefPitcher,
     #[strum(to_string = "CL")]
     Closer,
+}
+impl From<FromStrDeserializer<Self>> for Position {
+    fn from(value: FromStrDeserializer<Self>) -> Self {
+        value.0
+    }
 }
 
 /// Places that a batter can hit a ball towards.
@@ -788,7 +794,11 @@ pub enum GameStat {
 
     // Season 1
     GroundoutsRisp,
-    Groundouts
+    Groundouts,
+
+    // Season 2
+    Balks,
+    BalksRisp
 }
 
 #[derive(Clone, Copy, EnumString, Display, Debug, Serialize, Deserialize, PartialEq, Eq, Hash, EnumIter)]
@@ -821,37 +831,43 @@ pub enum FeedEventType {
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, Deserialize, Serialize, EnumIter)]
 #[serde(from = "FromStrDeserializer<Self>", into = "DisplaySerializer")]
-pub enum FeedEventStatus {
+pub enum SeasonStatus {
     RegularSeason,
     SuperstarBreak,
+    HomeRunChallenge,
+    SuperstarGame,
     PostseasonRound(u8),
 }
-impl From<FromStrDeserializer<Self>> for FeedEventStatus {
+impl From<FromStrDeserializer<Self>> for SeasonStatus {
     fn from(value: FromStrDeserializer<Self>) -> Self {
         value.0
     }
 }
 
-impl FromStr for FeedEventStatus {
+impl FromStr for SeasonStatus {
     type Err = &'static str;
     fn from_str(s: &str) -> Result<Self, Self::Err> {
         match s {
-            "Regular Season" => Ok(FeedEventStatus::RegularSeason),
-            "Superstar Break" => Ok(FeedEventStatus::SuperstarBreak),
+            "Regular Season" => Ok(SeasonStatus::RegularSeason),
+            "Superstar Break" => Ok(SeasonStatus::SuperstarBreak),
+            "Home Run Challenge" => Ok(SeasonStatus::HomeRunChallenge),
+            "Superstar Game" => Ok(SeasonStatus::SuperstarGame),
             s => s.strip_prefix("Postseason Round ")
                         .and_then(|s| s.parse().ok())
-                        .map(FeedEventStatus::PostseasonRound)
+                        .map(SeasonStatus::PostseasonRound)
                         .ok_or(())
         }.map_err(|_| "Did not match any known FeedEventStatus variants")
     }
 }
 
-impl Display for FeedEventStatus {
+impl Display for SeasonStatus {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         match self {
-            FeedEventStatus::RegularSeason => Display::fmt("Regular Season", f),
-            FeedEventStatus::SuperstarBreak => Display::fmt("Superstar Break", f),
-            FeedEventStatus::PostseasonRound(i) => write!(f, "Postseason Round {i}")
+            SeasonStatus::RegularSeason => Display::fmt("Regular Season", f),
+            SeasonStatus::SuperstarBreak => Display::fmt("Superstar Break", f),
+            SeasonStatus::HomeRunChallenge => Display::fmt("Home Run Challenge", f),
+            SeasonStatus::SuperstarGame => Display::fmt("Superstar Game", f),
+            SeasonStatus::PostseasonRound(i) => write!(f, "Postseason Round {i}")
         }
     }
 }
@@ -938,14 +954,17 @@ impl<T: FromStr> FromStr for MaybeRecognized<T> {
 impl<T: FromStr> From<&str> for MaybeRecognized<T> {
     fn from(value: &str) -> Self {
         T::from_str(value).map(MaybeRecognized::Recognized)
-            .unwrap_or(MaybeRecognized::NotRecognized(value.to_string()))
+            .unwrap_or_else(|_| {
+                tracing::error!("{value} not recognized");
+                MaybeRecognized::NotRecognized(value.to_string())
+            }
+        )
     }
 }
 
 impl<T: FromStr> From<String> for MaybeRecognized<T> {
     fn from(value: String) -> Self {
-        T::from_str(&value).map(MaybeRecognized::Recognized)
-            .unwrap_or(MaybeRecognized::NotRecognized(value))
+        Self::from(value.as_str())
     }
 }
 
@@ -972,7 +991,10 @@ impl<'de, T:Deserialize<'de>> Deserialize<'de> for MaybeRecognized<T> {
         }
         match Visitor::<T>::deserialize(deserializer) {
             Ok(Visitor::Recognized(t)) => Ok(MaybeRecognized::Recognized(t)),
-            Ok(Visitor::Other(s)) => Ok(MaybeRecognized::NotRecognized(s)),
+            Ok(Visitor::Other(s)) => {
+                tracing::error!("{s} not recognized");
+                Ok(MaybeRecognized::NotRecognized(s))
+            }
             Err(e) => Err(e)
         }
     }
@@ -992,6 +1014,7 @@ impl<T: Serialize> Serialize for MaybeRecognized<T> {
 
 #[derive(Debug, Serialize, Deserialize, Clone, Copy, EnumIter, PartialEq, Eq, Hash, EnumDiscriminants)]
 #[strum_discriminants(derive(EnumString, Display))]
+#[serde(from = "FromStrDeserializer<Self>", into = "DisplaySerializer")]
 pub enum Slot {
     #[strum_discriminants(strum(to_string = "C"))]
     Catcher,
@@ -1018,6 +1041,12 @@ pub enum Slot {
     #[strum_discriminants(strum(to_string = "DH"))]
     DesignatedHitter
 }
+impl From<FromStrDeserializer<Self>> for Slot {
+    fn from(value: FromStrDeserializer<Self>) -> Self {
+        value.0
+    }
+}
+
 impl Display for Slot {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         write!(f, "{}", self.discriminant())?;
@@ -1226,10 +1255,27 @@ impl From<Position> for Place {
     }
 }
 impl FromStr for Place {
-    type Err = strum::ParseError;
+    type Err = &'static str;
+
     fn from_str(s: &str) -> Result<Self, Self::Err> {
-        Slot::from_str(s).map(Into::into)
-            .or_else(|_| Position::from_str(s).map(Into::into))
+        let a_tag = |t| {
+            all_consuming(tag::<&str, &str, nom::error::Error<&str>>(t))
+        };
+        alt((
+            a_tag("P").map(|_| Place::Pitcher),
+            a_tag("C").map(|_| Place::Catcher),
+            a_tag("1B").map(|_| Place::FirstBaseman),
+            a_tag("2B").map(|_| Place::SecondBaseman),
+            a_tag("3B").map(|_| Place::ThirdBaseman),
+            a_tag("LF").map(|_| Place::LeftField),
+            a_tag("CF").map(|_| Place::CenterField),
+            a_tag("RF").map(|_| Place::RightField),
+            a_tag("SS").map(|_| Place::ShortStop),
+            tag("DH").map(|_| Place::DesignatedHitter),
+            preceded(tag("SP"), opt(u8)).map(|i| Place::StartingPitcher(i)),
+            preceded(tag("RP"), opt(u8)).map(|i| Place::ReliefPitcher(i)),
+            a_tag("CL").map(|_| Place::Closer),
+        )).parse(s).map(|(_, o)| o).map_err(|_| "Player's slot didn't match known slots")
     }
 }
 impl Display for Place {
@@ -1251,6 +1297,12 @@ pub enum MoundVisitType {
     #[serde(rename = "pitching change")]
     #[strum(to_string = "pitching change")]
     PitchingChange
+}
+
+#[derive(Debug, Serialize, Deserialize, Clone, Copy, EnumIter, PartialEq, Eq, Hash, EnumString, Display)]
+pub enum LeagueScale {
+    Lesser,
+    Greater
 }
 
 #[cfg(test)]
@@ -1293,7 +1345,7 @@ mod test {
         serde_round_trip_inner::<GameOverMessage>();
         serde_round_trip_inner::<ItemType>();
         serde_round_trip_inner::<Day>();
-        serde_round_trip_inner::<FeedEventStatus>();
+        serde_round_trip_inner::<SeasonStatus>();
         serde_round_trip_inner::<FeedEventType>();
         serde_round_trip_inner::<RecordType>();
         serde_round_trip_inner::<PositionType>();
@@ -1303,5 +1355,6 @@ mod test {
         serde_round_trip_inner::<ItemSuffix>();
         serde_round_trip_inner::<Place>();
         serde_round_trip_inner::<MoundVisitType>();
+        serde_round_trip_inner::<LeagueScale>();
     }
 }
