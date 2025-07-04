@@ -65,13 +65,13 @@ impl Breakpoints {
             Breakpoints::S2D152 => Time {
                 season: 2, 
                 ascending_days: vec![
-                    (DayEquivalent { day: 152, offset: 0 }, 194),
+                    (DayEquivalent { day: 152, offset: 0 }, 70),
                 ]
             },
             Breakpoints::S2D169 => Time { 
                 season: 2, 
                 ascending_days: vec![
-                    // (DayEquivalent { day: 168, offset: 0 }, 584),
+                    (DayEquivalent { day: 168, offset: 0 }, 584),
                     (DayEquivalent { day: 169, offset: 0 }, 94),
                 ]
             }
