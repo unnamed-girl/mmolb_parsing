@@ -2,7 +2,7 @@ use std::{fmt::Display, str::FromStr};
 
 use serde::{de::Error, Deserialize, Deserializer, Serialize, Serializer};
 
-#[derive(Clone, Copy, Deserialize, Serialize, Debug)]
+#[derive(Clone, Copy, Deserialize, Serialize, Debug, PartialEq, Eq)]
 pub(crate) struct AddedLaterMarker(pub bool);
 
 impl AddedLaterMarker {
@@ -77,7 +77,7 @@ impl<'de, T: FromStr> Deserialize<'de> for FromStrDeserializer<T> where T::Err: 
         where
             D: serde::Deserializer<'de> {
         #[derive(Deserialize)]
-        #[serde(untagged)]
+        #[serde(untagged, expecting = "Expected a String or &str")]
         enum Helper<'a> {
             String(String),
             Str(&'a str),
@@ -93,9 +93,32 @@ impl<'de, T: FromStr> Deserialize<'de> for FromStrDeserializer<T> where T::Err: 
 }
 
 #[derive(Serialize)]
+#[serde(transparent)]
 pub(crate) struct DisplaySerializer(String);
 impl<T: Display> From<T> for DisplaySerializer {
     fn from(value: T) -> Self {
         Self(value.to_string())
     }
 }
+
+#[cfg(test)]
+mod test_utils {
+    use std::{fs::File, io::Read, path::Path};
+    use serde::{de::DeserializeOwned, Serialize};
+   
+    pub(crate) fn assert_round_trip<T: Serialize + DeserializeOwned>(path: &Path) -> Result<(), Box<dyn std::error::Error>> {
+        let mut buf = String::new(); 
+        File::open(path)?.read_to_string(&mut buf)?;
+
+        let json: serde_json::Value = serde_json::from_str(&buf)?;
+        let event: T = serde_json::from_value(json.clone())?;
+        let round_trip = serde_json::to_value(&event)?;
+
+        let diff = serde_json_diff::values(json, round_trip);
+        assert!(diff.is_none(), "{diff:?}");
+        Ok(())
+    }
+}
+
+#[cfg(test)]
+pub(crate) use test_utils::*;

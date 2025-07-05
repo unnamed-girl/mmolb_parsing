@@ -122,7 +122,7 @@ impl From<RawGame> for Game {
             }
         ).collect();
 
-        if extra_fields.len() > 0 {
+        if !extra_fields.is_empty() {
             tracing::error!("Deserialization found extra fields: {:?}", extra_fields)
         }
 

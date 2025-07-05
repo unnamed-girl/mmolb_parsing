@@ -23,7 +23,7 @@ pub(crate) struct RawWeather {
 
 impl From<RawWeather> for Weather {
     fn from(value: RawWeather) -> Self {
-        if value.extra_fields.len() > 0 {
+        if !value.extra_fields.is_empty() {
             tracing::error!("Extra fields: {:?}", value.extra_fields)
         }
         Self { emoji: value.emoji, name: value.name, tooltip: value.tooltip, extra_fields: value.extra_fields }

@@ -96,3 +96,32 @@ fn bf_de<'de, D>(deserializer: D) -> Result<u8, D::Error> where D: Deserializer<
     }
     r
 }
+
+#[cfg(test)]
+mod test {
+    use std::path::Path;
+
+    use tracing_test::traced_test;
+
+    use crate::{serde_utils::assert_round_trip, Game};
+
+
+    #[test]
+    fn round_trip() -> Result<(), Box<dyn std::error::Error>> {
+        assert_round_trip::<Game>(Path::new("test_data/s2_d240_game.json"))
+    }
+
+    #[test]
+    #[traced_test]
+    fn extra_fields() -> Result<(), Box<dyn std::error::Error>> {
+        assert_round_trip::<Game>(Path::new("test_data/game_extra_fields.json"))?;
+
+        logs_assert(|lines: &[&str]| {
+            match lines.iter().filter(|line| line.contains("extra fields")).count() {
+                2 => Ok(()),
+                n => Err(format!("Expected two extra fields, but found {}", n)),
+            }
+        });
+        Ok(())
+    }
+}

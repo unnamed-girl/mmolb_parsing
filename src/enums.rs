@@ -1290,13 +1290,17 @@ impl Display for Place {
 }
 
 #[derive(EnumString, Display, Debug, Serialize, Deserialize, Clone, Copy, EnumIter, PartialEq, Eq, Hash)]
+#[serde(from = "FromStrDeserializer<Self>", into = "DisplaySerializer")]
 pub enum MoundVisitType {
-    #[serde(rename = "mound visit")]
     #[strum(to_string = "mound visit")]
     MoundVisit,
-    #[serde(rename = "pitching change")]
     #[strum(to_string = "pitching change")]
     PitchingChange
+}
+impl From<FromStrDeserializer<Self>> for MoundVisitType {
+    fn from(value: FromStrDeserializer<Self>) -> Self {
+        value.0
+    }
 }
 
 #[derive(Debug, Serialize, Deserialize, Clone, Copy, EnumIter, PartialEq, Eq, Hash, EnumString, Display)]

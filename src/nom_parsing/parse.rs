@@ -82,18 +82,9 @@ fn weather_shipment<'output, 'parse>(parsing_context: &'parse ParsingContext<'ou
 }
 
 fn weather_delivery<'output, 'parse>(parsing_context: &'parse ParsingContext<'output, 'parse>) -> impl MyParser<'output, ParsedEventMessage<&'output str>> + 'parse {
-    let weather_delivery_success = delivery(parsing_context, "Delivery")
-        .map(|delivery| ParsedEventMessage::WeatherDelivery { delivery });
-
-    let weather_delviery_discard = (
-        terminated(emoji, tag(" ")),
-        terminated(try_from_word, tag(" was discarded as no player had space."))
-    ).map(|(item_emoji,  item)| ParsedEventMessage::WeatherDeliveryDiscard { item_emoji, item });
-
-    context("Weather Delivery", all_consuming(alt((
-        weather_delivery_success,
-        weather_delviery_discard,
-    ))))
+    context("Weather Delivery", all_consuming(
+        delivery(parsing_context, "Delivery").map(|delivery| ParsedEventMessage::WeatherDelivery { delivery })
+    ))
 }
 
 fn game_over<'output>() -> impl MyParser<'output, ParsedEventMessage<&'output str>> {

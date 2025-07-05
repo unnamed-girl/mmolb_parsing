@@ -48,14 +48,14 @@ pub(crate) struct RawTeam {
 impl From<RawTeam> for Team {
     fn from(value: RawTeam) -> Self {
         let RawTeam { _id, abbreviation, active, augments, championships, color, emoji, feed, motes_used, location, full_location, league, modifications, name, motto, owner_id, players, record, season_records, extra_fields } = value;
-        if extra_fields.len() > 0 {
+        if !extra_fields.is_empty() {
             error!("Deserialization of Team found extra fields: {:?}", extra_fields);
         }
         let feed_format = AddedLaterMarker::new(&feed);
         let feed = feed.unwrap_or_default();
         let players = players.into_iter().map(TeamPlayer::from).collect();
 
-        if modifications.len() > 0 {
+        if !modifications.is_empty() {
             error!("Expected all modifications lists to be empty, found {modifications:?}");
         }
 
@@ -100,7 +100,7 @@ impl From<RawTeamPlayer> for TeamPlayer {
         let RawTeamPlayer { emoji, first_name, last_name, number, player_id, position, slot, position_type, stats, extra_fields } = value;
 
         let position_type_format = AddedLaterMarker::new(&position_type);
-        let position_type = Option::<MaybeRecognized<PositionType>>::from(position_type).unwrap_or_else(|| MaybeRecognized::<PositionType>::from(position.as_str()));
+        let position_type = position_type.unwrap_or_else(|| MaybeRecognized::<PositionType>::from(position.as_str()));
 
         // Undrafted player's positions are just their slot
         let position = (player_id != "#").then(|| position.as_str().into());
@@ -108,7 +108,7 @@ impl From<RawTeamPlayer> for TeamPlayer {
         let stats_format = AddedLaterMarker::new(&stats);
         let stats = stats.unwrap_or_default();
 
-        if extra_fields.len() > 0 {
+        if !extra_fields.is_empty() {
             error!("Deserialization of TeamPlayer found extra fields: {:?}", extra_fields)
         }
 

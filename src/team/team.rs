@@ -73,38 +73,13 @@ pub struct TeamPlayer {
 
 #[cfg(test)]
 mod test {
-    use std::{fs::File, io::Read, path::Path};
+    use std::{path::Path};
 
-    use crate::team::{Team, TeamPlayer};
-
-    #[test]
-    fn round_trip_team() -> Result<(), Box<dyn std::error::Error>> {
-        let mut buf = String::new(); 
-        File::open(Path::new("test_data/s2_team.json"))?.read_to_string(&mut buf)?;
-
-        let json: serde_json::Value = serde_json::from_str(&buf)?;
-        let event: Team = serde_json::from_value(json.clone())?;
-        let round_trip = serde_json::to_value(&event)?; 
-
-        let diff = serde_json_diff::values(json, round_trip);
-        assert!(diff.is_none(), "{diff:?}");
-
-        Ok(())
-    }
-
+    use crate::{serde_utils::assert_round_trip, team::{Team, TeamPlayer}};
 
     #[test]
-    fn round_trip_team_player() -> Result<(), Box<dyn std::error::Error>> {
-        let mut buf = String::new(); 
-        File::open(Path::new("test_data/s2_team_player.json"))?.read_to_string(&mut buf)?;
-
-        let json: serde_json::Value = serde_json::from_str(&buf)?;
-        let event: TeamPlayer = serde_json::from_value(json.clone())?;
-        let round_trip = serde_json::to_value(&event)?;
-
-        let diff = serde_json_diff::values(json, round_trip);
-        assert!(diff.is_none(), "{diff:?}");
-
-        Ok(())
+    fn round_trip() -> Result<(), Box<dyn std::error::Error>> {
+        assert_round_trip::<Team>(Path::new("test_data/s2_team.json"))?;
+        assert_round_trip::<TeamPlayer>(Path::new("test_data/s2_team_player.json"))
     }
 }

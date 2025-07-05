@@ -44,7 +44,7 @@ pub(crate) struct RawEvent {
     pub extra_fields: serde_json::Map<String, serde_json::Value>,
 }
 
-#[derive(Debug, Clone, Serialize, Deserialize)]
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
 pub struct Event {
     pub inning: Inning,
 
@@ -92,7 +92,7 @@ impl From<RawEvent> for Event {
         
         let event = value.event.as_str().into();
 
-        if value.extra_fields.len() > 0 {
+        if !value.extra_fields.is_empty() {
             error!("Deserialization found extra fields: {:?}", value.extra_fields)
         }
 

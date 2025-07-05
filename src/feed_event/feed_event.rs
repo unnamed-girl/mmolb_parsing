@@ -21,20 +21,13 @@ pub struct FeedEvent {
 
 #[cfg(test)]
 mod test {
-    use std::{fs::File, io::Read, path::Path};
+    use std::path::Path;
 
-    use crate::feed_event::FeedEvent;
+    use crate::{feed_event::FeedEvent, serde_utils::assert_round_trip};
 
 
     #[test]
     fn round_trip() -> Result<(), Box<dyn std::error::Error>> {
-        let mut buf = String::new(); 
-        File::open(Path::new("test_data/s2_feed_event.json"))?.read_to_string(&mut buf)?;
-
-        let json: serde_json::Value = serde_json::from_str(&buf)?;
-        let event: FeedEvent = serde_json::from_value(json.clone())?;
-        let round_trip = serde_json::to_value(&event)?; 
-        assert_eq!(json, round_trip);
-        Ok(())
+        assert_round_trip::<FeedEvent>(Path::new("test_data/s2_feed_event.json"))
     }
 }

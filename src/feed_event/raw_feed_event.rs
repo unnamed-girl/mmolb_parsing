@@ -22,7 +22,7 @@ pub struct RawFeedEvent {
 impl From<RawFeedEvent> for FeedEvent {
     fn from(value: RawFeedEvent) -> Self {
         let RawFeedEvent { emoji, season, day, status, text, ts, event_type, extra_fields, links } = value;
-        if extra_fields.len() > 0 {
+        if !extra_fields.is_empty() {
             tracing::error!("Deserialization of FeedEvent found extra fields: {:?}", extra_fields)
         }
         FeedEvent { emoji, season, day, status, text, ts, event_type, extra_fields, links }

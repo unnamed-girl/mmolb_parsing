@@ -16,6 +16,7 @@ serde_json_diff = ["dep:serde_json_diff"]
 
 [dev-dependencies]
 serde_json_diff = "0.1.1"
+tracing-test = "0.2.5"
 
 [dependencies]
 async-stream = { version = "0.3.6", optional = true }
