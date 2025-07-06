@@ -1,8 +1,8 @@
 use std::collections::HashMap;
 
-use serde::{Deserialize, Serialize};
+use serde::{Serialize, Deserialize};
 
-use crate::{enums::{GameStat, MaybeRecognized, Position, PositionType, RecordType, Slot}, feed_event::FeedEvent, serde_utils::AddedLaterMarker};
+use crate::{enums::{GameStat, MaybeRecognized, Position, PositionType, RecordType, Slot}, feed_event::FeedEvent, utils::AddedLaterMarker};
 use super::raw_team::{RawTeam, RawTeamPlayer};
 
 #[derive(Serialize, Deserialize, Debug, Clone)]
@@ -75,11 +75,16 @@ pub struct TeamPlayer {
 mod test {
     use std::{path::Path};
 
-    use crate::{serde_utils::assert_round_trip, team::{Team, TeamPlayer}};
+    use crate::{utils::assert_round_trip, team::{Team, TeamPlayer}};
 
     #[test]
-    fn round_trip() -> Result<(), Box<dyn std::error::Error>> {
+    #[tracing_test::traced_test]
+    fn team_round_trip() -> Result<(), Box<dyn std::error::Error>> {
         assert_round_trip::<Team>(Path::new("test_data/s2_team.json"))?;
-        assert_round_trip::<TeamPlayer>(Path::new("test_data/s2_team_player.json"))
+        assert_round_trip::<TeamPlayer>(Path::new("test_data/s2_team_player.json"))?;
+
+        assert!(!logs_contain("not recognized"));
+
+        Ok(())
     }
 }

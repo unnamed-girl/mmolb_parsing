@@ -1,8 +1,6 @@
-use std::{fmt::Display, str::FromStr};
-
 use serde::{de::Error, Deserialize, Deserializer, Serialize, Serializer};
 
-#[derive(Clone, Copy, Deserialize, Serialize, Debug, PartialEq, Eq)]
+#[derive(Clone, Copy, Serialize, Deserialize, Debug, PartialEq, Eq)]
 pub(crate) struct AddedLaterMarker(pub bool);
 
 impl AddedLaterMarker {
@@ -68,36 +66,6 @@ impl<T: Serialize> Serialize for SomeOrEmptyString<T> {
             Self::Some(t) => t.serialize(serializer),
             Self::EmptyString => "".serialize(serializer)
         }
-    }
-}
-
-pub(crate) struct FromStrDeserializer<T: FromStr>(pub(crate) T) where T::Err: Display;
-impl<'de, T: FromStr> Deserialize<'de> for FromStrDeserializer<T> where T::Err: Display{
-    fn deserialize<D>(deserializer: D) -> Result<Self, D::Error>
-        where
-            D: serde::Deserializer<'de> {
-        #[derive(Deserialize)]
-        #[serde(untagged, expecting = "Expected a String or &str")]
-        enum Helper<'a> {
-            String(String),
-            Str(&'a str),
-        }
-
-        match Helper::deserialize(deserializer) {
-            Ok(Helper::String(s)) => T::from_str(&s).map(Self).map_err(|e| D::Error::custom(e)),
-            Ok(Helper::Str(s)) => T::from_str(s).map(Self).map_err(|e| D::Error::custom(e)),
-            Err(e) => Err(e)
-        }
-        
-    }
-}
-
-#[derive(Serialize)]
-#[serde(transparent)]
-pub(crate) struct DisplaySerializer(String);
-impl<T: Display> From<T> for DisplaySerializer {
-    fn from(value: T) -> Self {
-        Self(value.to_string())
     }
 }
 

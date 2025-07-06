@@ -22,7 +22,7 @@ impl Ord for DayEquivalent {
     fn cmp(&self, other: &Self) -> Ordering {
         match self.day.cmp(&other.day) {
             Ordering::Equal => self.offset.cmp(&other.offset),
-            o @ _ => o
+            o=> o
         }
     }
 }

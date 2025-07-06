@@ -1,4 +1,4 @@
-use serde::{Deserialize, Serialize};
+use serde::{Serialize, Deserialize};
 
 use crate::{enums::{Day, SeasonStatus, FeedEventType, MaybeRecognized}, feed_event::{FeedEventText, FeedEvent}};
 

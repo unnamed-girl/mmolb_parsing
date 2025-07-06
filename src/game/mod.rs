@@ -13,11 +13,30 @@ pub use weather::Weather;
 /// - The name of a batter (used when there is a batter)
 /// - An empty string (used when there is no batter during the game)
 /// - null (used before the game)
-#[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
+#[derive(Debug, Clone, PartialEq)]
 pub enum MaybePlayer<S> {
     Player(S),
     EmptyString,
     Null
+}
+impl<T: Serialize> Serialize for MaybePlayer<T> {
+    fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error>
+        where
+            S: serde::Serializer {
+        match self {
+            MaybePlayer::Player(player) => player.serialize(serializer),
+            MaybePlayer::EmptyString => "".serialize(serializer),
+            MaybePlayer::Null => None::<T>.serialize(serializer)
+        }
+    }
+}
+impl<'de, T: Deserialize<'de> + PartialEq<&'static str>> Deserialize<'de> for MaybePlayer<T> {
+    fn deserialize<D>(deserializer: D) -> Result<Self, D::Error>
+        where
+            D: Deserializer<'de> {
+        let t = Option::<T>::deserialize(deserializer)?;
+        Ok(MaybePlayer::from(t))
+    }
 }
 impl<S> MaybePlayer<S> {
     pub fn player(self) -> Option<S> {
@@ -103,18 +122,23 @@ mod test {
 
     use tracing_test::traced_test;
 
-    use crate::{serde_utils::assert_round_trip, Game};
+    use crate::{utils::assert_round_trip, Game};
 
 
     #[test]
-    fn round_trip() -> Result<(), Box<dyn std::error::Error>> {
-        assert_round_trip::<Game>(Path::new("test_data/s2_d240_game.json"))
+    #[traced_test]
+    fn game_round_trip() -> Result<(), Box<dyn std::error::Error>> {
+        assert_round_trip::<Game>(Path::new("test_data/s2_d240_game.json"))?;
+        assert!(!logs_contain("not recognized"));
+        Ok(())
     }
 
     #[test]
     #[traced_test]
     fn extra_fields() -> Result<(), Box<dyn std::error::Error>> {
         assert_round_trip::<Game>(Path::new("test_data/game_extra_fields.json"))?;
+
+        assert!(!logs_contain("not recognized"));
 
         logs_assert(|lines: &[&str]| {
             match lines.iter().filter(|line| line.contains("extra fields")).count() {

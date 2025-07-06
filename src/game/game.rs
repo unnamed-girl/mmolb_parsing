@@ -1,7 +1,7 @@
 use std::collections::HashMap;
 
-use crate::{enums::{Day, GameStat, LeagueScale, MaybeRecognized, SeasonStatus, Slot}, game::{event::RawEvent, weather::RawWeather, Event, PitcherEntry, Weather}, serde_utils::AddedLaterMarker};
-use serde::{Deserialize, Serialize};
+use crate::{enums::{Day, GameStat, LeagueScale, MaybeRecognized, SeasonStatus, Slot}, game::{event::RawEvent, weather::RawWeather, Event, PitcherEntry, Weather}, utils::AddedLaterMarker};
+use serde::{Serialize, Deserialize};
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
 #[serde(from = "RawGame", into = "RawGame")]
@@ -81,7 +81,7 @@ pub(crate) struct RawGame {
     pub weather: RawWeather,
     #[serde(rename = "Realm")]
     pub realm_id: String,
-    pub stats: HashMap<String, HashMap<String, HashMap<String, i32>>>,
+    pub stats: HashMap<String, HashMap<String, HashMap<MaybeRecognized<GameStat>, i32>>>,
 
     #[serde(rename = "PitcherEntry", default, skip_serializing_if = "Option::is_none")]
     pub pitcher_entries: Option<HashMap<String, PitcherEntry>>,
@@ -110,17 +110,6 @@ impl From<RawGame> for Game {
         let RawGame { away_sp, away_team_abbreviation, away_team_color, away_team_emoji, away_team_id, away_team_name, home_sp, home_team_abbreviation, home_team_color, home_team_emoji, home_team_id, home_team_name, season, day, state, weather, realm_id, stats, pitcher_entries, event_log, extra_fields, pitchers_used, away_lineup, home_lineup, day_id, season_id, season_status, league_scale } = value;
         let weather = weather.into();
         let event_log: Vec<Event> = event_log.into_iter().map(|event| event.into()).collect();
-        let stats  = stats.into_iter().map(|(team, players)| {
-            let players = players.into_iter().map(|(player, stats)| {
-                let stats = stats.into_iter().map(|(stat, value)| {
-                    let stat: MaybeRecognized<GameStat> = stat.as_str().into();
-                    (stat, value)
-                }).collect();
-                (player, stats)
-            }).collect();
-            (team, players)
-            }
-        ).collect();
 
         if !extra_fields.is_empty() {
             tracing::error!("Deserialization found extra fields: {:?}", extra_fields)
@@ -140,11 +129,6 @@ impl From<Game> for RawGame {
         let Game { away_sp, away_team_abbreviation, away_team_color, away_team_emoji, away_team_id, away_team_name, home_sp, home_team_abbreviation, home_team_color, home_team_emoji, home_team_id, home_team_name, season, day, state, weather, realm_id, stats, event_log, extra_fields, pitcher_entries, pitchers_used, pitchers_used_format, pitcher_entries_format, away_lineup, home_lineup, day_id, season_id, season_status, league_scale } = value;
         let weather = weather.into();
         let event_log = event_log.into_iter().map(|event| event.into()).collect();
-        let stats: HashMap<String, HashMap<String, HashMap<String, i32>>>  = stats.into_iter().map(|(team, players)|
-            (team, players.into_iter().map(|(player, stats)|
-                (player, stats.into_iter().map(|(stat, value)| (stat.to_string(), value)).collect())
-            ).collect())
-        ).collect();
 
         let pitcher_entries = pitcher_entries_format.wrap(pitcher_entries);
         let pitchers_used = pitchers_used_format.wrap(pitchers_used);

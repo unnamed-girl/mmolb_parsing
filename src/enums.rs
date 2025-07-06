@@ -1,10 +1,9 @@
-use std::{convert::Infallible, fmt::Display, str::FromStr};
+use std::{any::type_name, convert::Infallible, fmt::Display, str::FromStr};
 
-use nom::{branch::alt, bytes::complete::tag, character::complete::u8, combinator::{all_consuming, opt}, sequence::preceded, Parser};
+use nom::{branch::alt, bytes::complete::tag, character::complete::u8, combinator::{all_consuming, opt}, sequence::{preceded, separated_pair, terminated}, Parser};
 use serde::{Deserialize, Deserializer, Serialize, Serializer, de::Error};
 use strum::{Display, EnumDiscriminants, EnumIter, EnumString, IntoDiscriminant};
-
-use crate::serde_utils::{DisplaySerializer, FromStrDeserializer};
+use serde_with::{SerializeDisplay, DeserializeFromStr};
 
 /// Possible values of the "event" field of an mmolb event. 
 #[derive(Debug, Clone, Copy, Serialize, Deserialize, EnumString, Display, PartialEq, Eq, Hash, EnumIter)]
@@ -26,12 +25,15 @@ pub enum EventType {
 
     // Season 1
     #[strum(to_string = "Weather_Delivery")]
+    #[serde(rename = "Weather_Delivery")]
     WeatherDelivery,
 
     // Season 2
     #[strum(to_string = "Weather_Shipment")]
+    #[serde(rename = "Weather_Shipment")]
     WeatherShipment,
     #[strum(to_string = "Weather_SpecialDelivery")]
+    #[serde(rename = "Weather_SpecialDelivery")]
     WeatherSpecialDelivery,
     Balk
 }
@@ -53,7 +55,7 @@ pub enum EventType {
 /// assert_eq!(TopBottom::try_from(2), Err(NotASide(2)));
 /// assert_eq!(u8::from(TopBottom::Bottom), 1);
 /// ```
-#[derive(Debug, Clone, Copy, Deserialize, Serialize, PartialEq, Eq, Hash, EnumString, Display, EnumIter, Default)]
+#[derive(Debug, Clone, Copy, Serialize, Deserialize, PartialEq, Eq, Hash, EnumString, Display, EnumIter, Default)]
 pub enum TopBottom {
     #[default]
     #[strum(to_string = "top")]
@@ -137,7 +139,7 @@ impl From<HomeAway> for TopBottom {
 /// 
 /// assert_eq!(HomeAway::from(TopBottom::Top), HomeAway::Away);
 /// ```
-#[derive(Debug, Clone, Copy, Deserialize, Serialize, PartialEq, Eq, Hash, EnumString, Display, EnumIter)]
+#[derive(Debug, Clone, Copy, Serialize, Deserialize, PartialEq, Eq, Hash, EnumString, Display, EnumIter)]
 pub enum HomeAway {
     Away,
     Home,
@@ -291,37 +293,43 @@ impl Inning {
 /// assert_eq!(Position::FirstBaseman.to_string(), "1B");
 /// ```
 #[derive(EnumString, Display, Debug, Serialize, Deserialize, Clone, Copy, EnumIter, PartialEq, Eq, Hash)]
-#[serde(from = "FromStrDeserializer<Self>", into = "DisplaySerializer")]
 pub enum Position {
     #[strum(to_string = "P")]
+    #[serde(rename = "P")]
     Pitcher,
     #[strum(to_string = "C")]
+    #[serde(rename = "C")]
     Catcher,
     #[strum(to_string = "1B")]
+    #[serde(rename = "1B")]
     FirstBaseman,
     #[strum(to_string = "2B")]
+    #[serde(rename = "2B")]
     SecondBaseman,
     #[strum(to_string = "3B")]
+    #[serde(rename = "3B")]
     ThirdBaseman,
     #[strum(to_string = "SS")]
+    #[serde(rename = "SS")]
     ShortStop,
     #[strum(to_string = "LF")]
+    #[serde(rename = "LF")]
     LeftField,
     #[strum(to_string = "CF")]
+    #[serde(rename = "CF")]
     CenterField,
     #[strum(to_string = "RF")]
+    #[serde(rename = "RF")]
     RightField,
     #[strum(to_string = "SP")]
+    #[serde(rename = "SP")]
     StartingPitcher,
     #[strum(to_string = "RP")]
+    #[serde(rename = "RP")]
     ReliefPitcher,
     #[strum(to_string = "CL")]
+    #[serde(rename = "CL")]
     Closer,
-}
-impl From<FromStrDeserializer<Self>> for Position {
-    fn from(value: FromStrDeserializer<Self>) -> Self {
-        value.0
-    }
 }
 
 /// Places that a batter can hit a ball towards.
@@ -576,7 +584,7 @@ impl BaseNameVariant {
 /// 
 /// assert_eq!(Distance::Single.to_string(), "singles");
 /// ```
-#[derive(Clone, Copy, EnumString, Display, Debug, Serialize, Deserialize, PartialEq, Eq, Hash, EnumIter)]
+#[derive(Clone, Copy, EnumString, Display, Debug, SerializeDisplay, DeserializeFromStr, PartialEq, Eq, Hash, EnumIter)]
 pub enum Distance {
     #[strum(to_string = "singles")]
     Single,
@@ -656,6 +664,12 @@ impl BatterStat {
     /// assert_eq!(BatterStat::HitsForAtBats{hits: 1, at_bats: 1}.unparse(), "1 for 1");
     /// ```
     pub fn unparse(self) -> String {
+        self.to_string()
+    }
+}
+
+impl Display for BatterStat {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         match self {
             BatterStat::FirstBases(count) |
             BatterStat::SecondBases(count) |
@@ -678,16 +692,48 @@ impl BatterStat {
             BatterStat::HitsForAtBats { hits, at_bats } => {
                 format!("{hits} for {at_bats}")
             }
-        }
+        }.fmt(f)
     }
 }
+
+impl FromStr for BatterStat {
+    type Err = &'static str;
+
+    fn from_str(s: &str) -> Result<Self, Self::Err> {
+        let a_u8_tag = |t| {
+            all_consuming(terminated(u8, tag::<&str, &str, nom::error::Error<&str>>(t)))
+        };
+        alt((
+            a_u8_tag(" 1B").map(BatterStat::FirstBases),
+            a_u8_tag(" 2B").map(BatterStat::SecondBases),
+            a_u8_tag(" 3B").map(BatterStat::ThirdBases),
+            a_u8_tag(" LO").map(BatterStat::LineOuts),
+            a_u8_tag(" SO").map(BatterStat::StrikeOuts),
+            a_u8_tag(" FO").map(BatterStat::ForceOuts),
+            a_u8_tag(" HR").map(BatterStat::HomeRuns),
+            a_u8_tag(" FC").map(BatterStat::FieldersChoices),
+            a_u8_tag(" SF").map(BatterStat::SacrificeFlies),
+            a_u8_tag(" F").map(BatterStat::Fouls),
+            a_u8_tag(" BB").map(BatterStat::BaseOnBalls),
+            a_u8_tag(" FC").map(BatterStat::SacrificeFlies),
+            a_u8_tag(" HBP").map(BatterStat::HitByPitchs),
+            a_u8_tag(" GIDP").map(BatterStat::GroundIntoDoublePlays),
+            a_u8_tag(" CDP").map(BatterStat::CaughtDoublePlays),
+            a_u8_tag(" PO").map(BatterStat::PopOuts),
+            a_u8_tag(" GO").map(BatterStat::GroundOuts),
+            separated_pair(u8, tag(" for "), u8).map(|(hits, at_bats)| BatterStat::HitsForAtBats { hits, at_bats }),
+        )).parse(s).map(|(_, o)| o).map_err(|_| "Batter stat not recognized")
+    }
+}
+
 
 /// ```
 /// use mmolb_parsing::enums::GameStat;
 /// 
 /// assert_eq!(GameStat::GroundedIntoDoublePlay.to_string(), "grounded_into_double_play");
 /// ```
-#[derive(Clone, Copy, EnumString, Display, Debug, Serialize, Deserialize, PartialEq, Eq, Hash, EnumIter)]
+#[derive(Clone, Copy, Display, Debug, Serialize, Deserialize, PartialEq, Eq, Hash, EnumIter)]
+#[serde(rename_all = "snake_case")]
 #[strum(serialize_all = "snake_case")]
 pub enum GameStat {
     // Season 0
@@ -822,28 +868,22 @@ pub enum ItemType {
 }
 
 #[derive(Debug, Clone, Copy, Serialize, Deserialize, EnumString, Display, PartialEq, Eq, Hash, EnumIter)]
-#[serde(rename_all = "lowercase")]
 #[strum(serialize_all = "lowercase")]
+#[serde(rename_all = "lowercase")]
 pub enum FeedEventType {
     Game,
     Augment,
 }
 
-#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, Deserialize, Serialize, EnumIter)]
-#[serde(from = "FromStrDeserializer<Self>", into = "DisplaySerializer")]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, EnumIter, SerializeDisplay, DeserializeFromStr)]
 pub enum SeasonStatus {
     RegularSeason,
     SuperstarBreak,
     HomeRunChallenge,
     SuperstarGame,
+    Holiday,
     PostseasonRound(u8),
 }
-impl From<FromStrDeserializer<Self>> for SeasonStatus {
-    fn from(value: FromStrDeserializer<Self>) -> Self {
-        value.0
-    }
-}
-
 impl FromStr for SeasonStatus {
     type Err = &'static str;
     fn from_str(s: &str) -> Result<Self, Self::Err> {
@@ -851,6 +891,7 @@ impl FromStr for SeasonStatus {
             "Regular Season" => Ok(SeasonStatus::RegularSeason),
             "Superstar Break" => Ok(SeasonStatus::SuperstarBreak),
             "Home Run Challenge" => Ok(SeasonStatus::HomeRunChallenge),
+            "Holiday" => Ok(SeasonStatus::Holiday),
             "Superstar Game" => Ok(SeasonStatus::SuperstarGame),
             s => s.strip_prefix("Postseason Round ")
                         .and_then(|s| s.parse().ok())
@@ -867,6 +908,7 @@ impl Display for SeasonStatus {
             SeasonStatus::SuperstarBreak => Display::fmt("Superstar Break", f),
             SeasonStatus::HomeRunChallenge => Display::fmt("Home Run Challenge", f),
             SeasonStatus::SuperstarGame => Display::fmt("Superstar Game", f),
+            SeasonStatus::Holiday => Display::fmt("Holiday", f),
             SeasonStatus::PostseasonRound(i) => write!(f, "Postseason Round {i}")
         }
     }
@@ -905,16 +947,11 @@ impl Display for Day {
     }
 }
 
-#[derive(Debug, Clone, Copy, Deserialize, Serialize, EnumString, Display, PartialEq, Eq, Hash, EnumIter)]
-#[serde(from = "FromStrDeserializer<Self>", into = "DisplaySerializer")]
+#[derive(Debug, Clone, Copy, Serialize, Deserialize, EnumString, Display, PartialEq, Eq, Hash, EnumIter)]
 pub enum RecordType {
     #[strum(to_string = "Regular Season")]
+    #[serde(rename = "Regular Season")]
     RegularSeason,
-}
-impl From<FromStrDeserializer<Self>> for RecordType {
-    fn from(value: FromStrDeserializer<Self>) -> Self {
-        value.0
-    }
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize, EnumString, Display, PartialEq, Eq, Hash, EnumIter)]
@@ -926,7 +963,7 @@ pub enum PositionType {
 #[derive(Debug, Clone, PartialEq, Eq, Hash)]
 pub enum MaybeRecognized<T> {
     Recognized(T),
-    NotRecognized(String)
+    NotRecognized(serde_json::Value)
 }
 
 impl<T> MaybeRecognized<T> {
@@ -955,8 +992,8 @@ impl<T: FromStr> From<&str> for MaybeRecognized<T> {
     fn from(value: &str) -> Self {
         T::from_str(value).map(MaybeRecognized::Recognized)
             .unwrap_or_else(|_| {
-                tracing::error!("{value} not recognized");
-                MaybeRecognized::NotRecognized(value.to_string())
+                tracing::error!("{value:?} not recognized as {}", type_name::<T>());
+                MaybeRecognized::NotRecognized(serde_json::Value::String(value.to_string()))
             }
         )
     }
@@ -987,12 +1024,12 @@ impl<'de, T:Deserialize<'de>> Deserialize<'de> for MaybeRecognized<T> {
             #[serde(untagged)]
             Recognized(T),
             #[serde(untagged)]
-            Other(String)
+            Other(serde_json::Value)
         }
         match Visitor::<T>::deserialize(deserializer) {
             Ok(Visitor::Recognized(t)) => Ok(MaybeRecognized::Recognized(t)),
             Ok(Visitor::Other(s)) => {
-                tracing::error!("{s} not recognized");
+                tracing::error!("{s:?} not recognized as {}", type_name::<T>());
                 Ok(MaybeRecognized::NotRecognized(s))
             }
             Err(e) => Err(e)
@@ -1012,9 +1049,8 @@ impl<T: Serialize> Serialize for MaybeRecognized<T> {
 }
 
 
-#[derive(Debug, Serialize, Deserialize, Clone, Copy, EnumIter, PartialEq, Eq, Hash, EnumDiscriminants)]
+#[derive(Debug, Clone, Copy, EnumIter, PartialEq, Eq, Hash, EnumDiscriminants, SerializeDisplay, DeserializeFromStr)]
 #[strum_discriminants(derive(EnumString, Display))]
-#[serde(from = "FromStrDeserializer<Self>", into = "DisplaySerializer")]
 pub enum Slot {
     #[strum_discriminants(strum(to_string = "C"))]
     Catcher,
@@ -1040,11 +1076,6 @@ pub enum Slot {
     Closer,
     #[strum_discriminants(strum(to_string = "DH"))]
     DesignatedHitter
-}
-impl From<FromStrDeserializer<Self>> for Slot {
-    fn from(value: FromStrDeserializer<Self>) -> Self {
-        value.0
-    }
 }
 
 impl Display for Slot {
@@ -1082,7 +1113,7 @@ impl FromStr for Slot {
     }
 }
 
-#[derive(EnumString, Display, Debug, Serialize, Deserialize, Clone, Copy, EnumIter, PartialEq, Eq, Hash)]
+#[derive(EnumString, Display, Debug, SerializeDisplay, DeserializeFromStr, Clone, Copy, EnumIter, PartialEq, Eq, Hash)]
 pub enum Attribute {
     Priority,
     Luck,
@@ -1122,8 +1153,7 @@ pub enum Attribute {
     Guts
 }
 
-#[derive(EnumString, Display, Debug, Deserialize, Serialize, Clone, Copy, EnumIter, PartialEq, Eq, Hash)]
-#[serde(from = "FromStrDeserializer<Self>", into = "DisplaySerializer")]
+#[derive(EnumString, Display, Debug, SerializeDisplay, DeserializeFromStr, Clone, Copy, EnumIter, PartialEq, Eq, Hash)]
 pub enum ItemPrefix {
     Sharp,
     Consistent,
@@ -1153,14 +1183,8 @@ pub enum ItemPrefix {
     Swift,
     Sneaky,
 }
-impl From<FromStrDeserializer<Self>> for ItemPrefix {
-    fn from(value: FromStrDeserializer<Self>) -> Self {
-        value.0
-    }
-}
 
-#[derive(EnumString, Display, Debug, Deserialize, Serialize, Clone, Copy, EnumIter, PartialEq, Eq, Hash)]
-#[serde(from = "FromStrDeserializer<Self>", into = "DisplaySerializer")]
+#[derive(EnumString, Display, Debug, SerializeDisplay, DeserializeFromStr, Clone, Copy, EnumIter, PartialEq, Eq, Hash)]
 pub enum ItemSuffix {
     #[strum(to_string = "the Acrobat")]
     Acrobat,
@@ -1175,16 +1199,10 @@ pub enum ItemSuffix {
     Reflexes,
     Fortune
 }
-impl From<FromStrDeserializer<Self>> for ItemSuffix {
-    fn from(value: FromStrDeserializer<Self>) -> Self {
-        value.0
-    }
-}
 
 /// The various places a player in a game has been said to be.
-#[derive(Debug, Serialize, Deserialize, Clone, Copy, EnumIter, PartialEq, Eq, Hash, EnumDiscriminants)]
+#[derive(Debug, SerializeDisplay, DeserializeFromStr, Clone, Copy, EnumIter, PartialEq, Eq, Hash, EnumDiscriminants)]
 #[strum_discriminants(derive(EnumString, Display))]
-#[serde(from = "FromStrDeserializer<Self>", into = "DisplaySerializer")]
 pub enum Place {
     #[strum_discriminants(strum(to_string = "P"))]
     Pitcher,
@@ -1213,11 +1231,7 @@ pub enum Place {
     #[strum_discriminants(strum(to_string = "DH"))]
     DesignatedHitter
 }
-impl From<FromStrDeserializer<Self>> for Place {
-    fn from(value: FromStrDeserializer<Self>) -> Self {
-        value.0
-    }
-}
+
 impl From<Slot> for Place {
     fn from(value: Slot) -> Self {
         match value {
@@ -1290,17 +1304,11 @@ impl Display for Place {
 }
 
 #[derive(EnumString, Display, Debug, Serialize, Deserialize, Clone, Copy, EnumIter, PartialEq, Eq, Hash)]
-#[serde(from = "FromStrDeserializer<Self>", into = "DisplaySerializer")]
 pub enum MoundVisitType {
     #[strum(to_string = "mound visit")]
     MoundVisit,
     #[strum(to_string = "pitching change")]
     PitchingChange
-}
-impl From<FromStrDeserializer<Self>> for MoundVisitType {
-    fn from(value: FromStrDeserializer<Self>) -> Self {
-        value.0
-    }
 }
 
 #[derive(Debug, Serialize, Deserialize, Clone, Copy, EnumIter, PartialEq, Eq, Hash, EnumString, Display)]

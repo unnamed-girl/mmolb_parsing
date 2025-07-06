@@ -1,6 +1,6 @@
 use std::{fmt::{Display, Write}, iter::once};
 
-use serde::{Deserialize, Serialize};
+use serde::{Serialize, Deserialize};
 use strum::EnumDiscriminants;
 
 use crate::{enums::{Base, BaseNameVariant, BatterStat, Distance, FairBallDestination, FairBallType, FieldingErrorType, FoulType, GameOverMessage, HomeAway, ItemPrefix, ItemSuffix, ItemType, MoundVisitType, NowBattingStats, Place, StrikeType, TopBottom}, Game, time::Breakpoints};
@@ -98,7 +98,6 @@ pub enum ParsedEventMessage<S> {
 
     // Season 1
     WeatherDelivery { delivery: Delivery<S> },
-    WeatherDeliveryDiscard { item_emoji: S, item :ItemType },
 
     // Season 2
     WeatherShipment {
@@ -157,7 +156,7 @@ impl<S: Display> ParsedEventMessage<S> {
             },
             Self::NowBatting {batter, stats} => {
                 let stats = match stats {
-                    NowBattingStats::FirstPA =>  format!(" (1st PA of game)"),
+                    NowBattingStats::FirstPA =>  " (1st PA of game)".to_string(),
                     NowBattingStats::Stats { stats } => {
                         format!(" ({})", stats.into_iter().map(BatterStat::unparse).collect::<Vec<_>>().join(", "))
                     }
@@ -303,9 +302,6 @@ impl<S: Display> ParsedEventMessage<S> {
             }
             Self::WeatherDelivery {delivery } => {
                 delivery.unparse("Delivery")
-            },
-            Self::WeatherDeliveryDiscard { item_emoji, item } => {
-                format!("{item_emoji} {item} was discarded as no player had space.")
             },
             Self::WeatherShipment { deliveries } => {
                 deliveries.iter().map(|d| d.unparse("Shipment")).collect::<Vec<String>>().join(" ")

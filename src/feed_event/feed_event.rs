@@ -1,4 +1,4 @@
-use serde::{Deserialize, Serialize};
+use serde::{Serialize, Deserialize};
 use crate::{enums::{SeasonStatus, FeedEventType, MaybeRecognized, Day}, feed_event::feed_event_text::FeedEventText};
 use super::raw_feed_event::RawFeedEvent;
 
@@ -23,11 +23,14 @@ pub struct FeedEvent {
 mod test {
     use std::path::Path;
 
-    use crate::{feed_event::FeedEvent, serde_utils::assert_round_trip};
+    use crate::{feed_event::FeedEvent, utils::assert_round_trip};
 
 
     #[test]
-    fn round_trip() -> Result<(), Box<dyn std::error::Error>> {
-        assert_round_trip::<FeedEvent>(Path::new("test_data/s2_feed_event.json"))
+    #[tracing_test::traced_test]
+    fn feed_event_round_trip() -> Result<(), Box<dyn std::error::Error>> {
+        assert_round_trip::<FeedEvent>(Path::new("test_data/s2_feed_event.json"))?;
+        assert!(!logs_contain("not recognized"));
+        Ok(())
     }
 }

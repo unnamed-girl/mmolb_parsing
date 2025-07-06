@@ -1,9 +1,9 @@
 use std::collections::HashMap;
 
-use serde::{Deserialize, Serialize};
+use serde::{Serialize, Deserialize};
 use tracing::error;
 
-use crate::{enums::{GameStat, MaybeRecognized, PositionType, RecordType, Slot}, feed_event::FeedEvent, serde_utils::AddedLaterMarker};
+use crate::{enums::{GameStat, MaybeRecognized, PositionType, RecordType, Slot}, feed_event::FeedEvent, utils::AddedLaterMarker};
 use super::team::{Team, TeamPlayer, TeamRecord};
 
 #[derive(Serialize, Deserialize, Debug, Clone)]
@@ -74,7 +74,7 @@ impl From<Team> for RawTeam {
 
 
 
-#[derive(Deserialize, Serialize, Debug, Clone)]
+#[derive(Serialize, Deserialize, Debug, Clone)]
 #[serde(rename_all = "PascalCase")]
 pub(crate) struct RawTeamPlayer {
     pub emoji: String,

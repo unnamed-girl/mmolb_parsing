@@ -1,6 +1,6 @@
 use std::{fmt::Display, ops::{Deref, DerefMut}};
 
-use serde::{Deserialize, Serialize};
+use serde::{Serialize, Deserialize};
 
 use crate::{enums::{Attribute, FeedEventType, ItemPrefix, ItemSuffix, ItemType}, feed_event::FeedEvent, nom_parsing::parse_feed_event, parsed_event::{EmojiTeam, Item}, time::Breakpoints};
 
@@ -105,11 +105,7 @@ pub enum ParsedFeedEventText<S> {
 
 impl<S> ParsedFeedEventText<S> {
     pub fn is_error(&self) -> bool {
-        if let ParsedFeedEventText::ParseError { .. } = self {
-            true
-        } else {
-            false
-        }
+        matches!(self, ParsedFeedEventText::ParseError { .. })
     }
 }
 

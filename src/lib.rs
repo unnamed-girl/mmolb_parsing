@@ -1,4 +1,4 @@
-pub(crate) mod serde_utils;
+pub(crate) mod utils;
 pub(crate) mod time;
 
 pub mod game;

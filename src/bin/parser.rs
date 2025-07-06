@@ -5,7 +5,7 @@ use clap::{Parser, ValueEnum};
 use futures::{Stream, StreamExt};
 use http_cache_reqwest::{CACacheManager, Cache, CacheMode, HttpCache, HttpCacheOptions};
 use mmolb_parsing::{enums::MaybeRecognized, process_event, team::Team, Game};
-use serde::{Deserialize, Serialize};
+use serde::{Serialize, Deserialize};
 
 use reqwest::Client;
 use reqwest_middleware::{ClientBuilder, ClientWithMiddleware};
