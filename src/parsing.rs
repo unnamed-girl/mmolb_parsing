@@ -18,7 +18,7 @@ pub fn process_event<'output, 'parse>(event: &'output Event, game: &'output Game
         Ok(event) => event,
         Err(e) => {
             error!("Parse error: for {:?}: {e}", &event.event);
-            ParsedEventMessage::ParseError { event_type: event.event.to_string(), message: event.message.clone() }
+            ParsedEventMessage::ParseError { raw_event_type: event.event.to_string(), message: event.message.clone() }
         }
     };
     parsed_event_message

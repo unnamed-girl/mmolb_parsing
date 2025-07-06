@@ -32,7 +32,7 @@ pub fn parse_event<'output, 'parse>(event: &'output Event, parsing_context: &Par
         MaybeRecognized::Recognized(event_type) => event_type,
         MaybeRecognized::NotRecognized(event_type) => {
             tracing::error!("Event type {event_type} not recognized: {}", event.message);
-            return Ok(ParsedEventMessage::ParseError { event_type: event_type.to_string(), message: event.message.clone() })
+            return Ok(ParsedEventMessage::ParseError { raw_event_type: event_type.to_string(), message: event.message.clone() })
         }
     };
     

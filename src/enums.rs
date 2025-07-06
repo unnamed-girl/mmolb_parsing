@@ -584,7 +584,7 @@ impl BaseNameVariant {
 /// 
 /// assert_eq!(Distance::Single.to_string(), "singles");
 /// ```
-#[derive(Clone, Copy, EnumString, Display, Debug, SerializeDisplay, DeserializeFromStr, PartialEq, Eq, Hash, EnumIter)]
+#[derive(Clone, Copy, EnumString, Display, Debug, Serialize, Deserialize, PartialEq, Eq, Hash, EnumIter)]
 pub enum Distance {
     #[strum(to_string = "singles")]
     Single,
@@ -598,9 +598,7 @@ pub enum Distance {
 #[derive(Clone, Debug, Serialize, Deserialize, PartialEq, Eq, Hash, EnumIter)]
 pub enum NowBattingStats {
     FirstPA,
-    Stats {
-        stats: Vec<BatterStat>
-    },
+    Stats(Vec<BatterStat>),
     NoStats
 }
 
@@ -615,6 +613,7 @@ pub enum NowBattingStats {
 /// ```
 #[derive(Clone, Debug, EnumDiscriminants, Serialize, Deserialize, PartialEq, Eq, Hash, EnumIter)]
 #[strum_discriminants(derive(EnumString, Display))]
+#[serde(tag = "stat", content = "value")]
 pub enum BatterStat {
     // Season 0
     HitsForAtBats {
@@ -1184,7 +1183,7 @@ pub enum ItemPrefix {
     Sneaky,
 }
 
-#[derive(EnumString, Display, Debug, SerializeDisplay, DeserializeFromStr, Clone, Copy, EnumIter, PartialEq, Eq, Hash)]
+#[derive(EnumString, Display, Debug, Serialize, Deserialize, Clone, Copy, EnumIter, PartialEq, Eq, Hash)]
 pub enum ItemSuffix {
     #[strum(to_string = "the Acrobat")]
     Acrobat,

@@ -359,7 +359,7 @@ pub(super) fn batter_stat(input: &str) -> IResult<&str, BatterStat> {
 pub(super) fn now_batting_stats(input: &str) -> IResult<&str, NowBattingStats> {
     alt ((
         value(NowBattingStats::FirstPA, tag("1st PA of game")),
-        separated_list1(tag(", "), batter_stat).map(|stats| NowBattingStats::Stats { stats } )
+        separated_list1(tag(", "), batter_stat).map(|stats| NowBattingStats::Stats(stats) )
     )).parse(input)
 }
 

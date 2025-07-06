@@ -8,9 +8,10 @@ use crate::{enums::{Base, BaseNameVariant, BatterStat, Distance, FairBallDestina
 /// S is the string type used. S = &'output str is used by the parser, 
 /// but a mutable type is necessary when directly deserializing, because some players have escaped characters in their names
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq, EnumDiscriminants)]
+#[serde(tag = "event_type")]
 pub enum ParsedEventMessage<S> {
     ParseError {
-        event_type: String,
+        raw_event_type: String,
         message: String,
     },
     KnownBug {
@@ -116,7 +117,7 @@ impl<S: Display> ParsedEventMessage<S> {
     /// Recreate the event message this ParsedEvent was built out of.
     pub fn unparse(self, game: &Game, event_index: Option<u16>) -> String {
         match self {
-            Self::ParseError { event_type: _, message } => {
+            Self::ParseError { raw_event_type: _, message } => {
                 message
             },
             Self::LiveNow { away_team, home_team } => format!("{} @ {}", away_team, home_team),
@@ -157,7 +158,7 @@ impl<S: Display> ParsedEventMessage<S> {
             Self::NowBatting {batter, stats} => {
                 let stats = match stats {
                     NowBattingStats::FirstPA =>  " (1st PA of game)".to_string(),
-                    NowBattingStats::Stats { stats } => {
+                    NowBattingStats::Stats(stats) => {
                         format!(" ({})", stats.into_iter().map(BatterStat::unparse).collect::<Vec<_>>().join(", "))
                     }
                     NowBattingStats::NoStats => {

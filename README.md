@@ -1,3 +1,5 @@
+As mmolb is constantly changing each season, this library is very volatile. Commits beginning with a version number include a change to an api.
+
 Known parse errors:
 - (season 0 issue) If a team's name changes between the start of game and the PitchingMatchup (the second event of a game), the parser is unable to parse that event. Team name changes at any other time should be fine.
 
