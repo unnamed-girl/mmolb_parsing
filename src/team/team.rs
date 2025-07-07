@@ -2,7 +2,7 @@ use std::collections::HashMap;
 
 use serde::{Serialize, Deserialize};
 
-use crate::{enums::{GameStat, MaybeRecognized, Position, PositionType, RecordType, Slot}, feed_event::FeedEvent, utils::AddedLaterMarker};
+use crate::{enums::{GameStat, MaybeRecognized, Position, PositionType, RecordType, Slot}, feed_event::FeedEvent, utils::{AddedLaterMarker, ExpectNone}};
 use super::raw_team::{RawTeam, RawTeamPlayer};
 
 #[derive(Serialize, Deserialize, Debug, Clone)]
@@ -26,7 +26,7 @@ pub struct Team {
     pub league: String,
 
     /// no modifications have been seen, so left as raw json
-    pub(super) modifications: Vec<serde_json::Value>,
+    pub(super) modifications: Vec<ExpectNone>,
     pub name: String,
 
     pub motto: Option<String>,

@@ -368,7 +368,7 @@ pub(super) fn item(input: &str) -> IResult<&str, Item<&str>> {
         emoji,
         opt(preceded(tag(" "), try_from_word)),
         preceded(tag(" "), try_from_word),
-        opt(preceded(tag(" of "), try_from_words_m_n(1,2)))
+        opt(preceded(tag(" "), try_from_words_m_n(2,3)))
     ).map(|(item_emoji, prefix, item, suffix)| Item { item_emoji, prefix, item, suffix})
     .parse(input)
 }
@@ -377,7 +377,7 @@ pub(super) fn emojiless_item(input: &str) -> IResult<&str, EmojilessItem> {
     (
         opt(terminated(try_from_word, tag(" "))),
         try_from_word,
-        opt(preceded(tag(" of "), try_from_words_m_n(1,2)))
+        opt(preceded(tag(" "), try_from_words_m_n(2,3)))
     ).map(|(prefix, item, suffix)| EmojilessItem { prefix, item, suffix})
     .parse(input)
 }

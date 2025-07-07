@@ -61,8 +61,9 @@ fn augment<'output>() -> impl FeedEventParser<'output> {
         robo(),
         take_the_mound(),
         take_the_plate(),
-        s1_attribute_equal(),
-        s2_attribute_equal(),
+        attribute_equal_1(),
+        attribute_equal_2(),
+        attribute_equal_3(),
         swap_places()
     )))
 }
@@ -77,7 +78,17 @@ fn attribute_gain<'output>() -> impl FeedEventParser<'output> {
     ).map(|changes| ParsedFeedEventText::AttributeChanges { changes })
 }
 
-fn s1_attribute_equal<'output>() -> impl FeedEventParser<'output> {
+fn attribute_equal_1<'output>() -> impl FeedEventParser<'output> {
+    many1(
+        (
+            preceded(opt(tag(" ")), parse_terminated("'s ")),
+            try_from_word,
+            delimited(tag(" was set to their "), try_from_word, tag("."))
+        ).map(|(player_name, changing_attribute, value_attribute)| AttributeEqual { player_name, changing_attribute, value_attribute })
+    ).map(|equals| ParsedFeedEventText::AttributeEquals { equals })
+}
+
+fn attribute_equal_2<'output>() -> impl FeedEventParser<'output> {
     many1(
         (
             preceded(opt(tag(" ")), parse_terminated("'s ")),
@@ -87,7 +98,7 @@ fn s1_attribute_equal<'output>() -> impl FeedEventParser<'output> {
     ).map(|equals| ParsedFeedEventText::AttributeEquals { equals })
 }
 
-fn s2_attribute_equal<'output>() -> impl FeedEventParser<'output> {
+fn attribute_equal_3<'output>() -> impl FeedEventParser<'output> {
     many1(
         (
             preceded(opt(tag(" ")), parse_terminated("'s ")),

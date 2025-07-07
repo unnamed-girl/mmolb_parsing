@@ -3,7 +3,7 @@ use std::collections::HashMap;
 use serde::{Serialize, Deserialize};
 use tracing::error;
 
-use crate::{enums::{GameStat, MaybeRecognized, PositionType, RecordType, Slot}, feed_event::FeedEvent, utils::AddedLaterMarker};
+use crate::{enums::{GameStat, MaybeRecognized, PositionType, RecordType, Slot}, feed_event::FeedEvent, utils::{AddedLaterMarker, ExpectNone}};
 use super::team::{Team, TeamPlayer, TeamRecord};
 
 #[derive(Serialize, Deserialize, Debug, Clone)]
@@ -29,7 +29,7 @@ pub(crate) struct RawTeam {
     pub league: String,
 
     /// no modifications have been seen
-    modifications: Vec<serde_json::Value>,
+    modifications: Vec<ExpectNone>,
     pub name: String,
 
     pub motto: Option<String>,
@@ -54,10 +54,6 @@ impl From<RawTeam> for Team {
         let feed_format = AddedLaterMarker::new(&feed);
         let feed = feed.unwrap_or_default();
         let players = players.into_iter().map(TeamPlayer::from).collect();
-
-        if !modifications.is_empty() {
-            error!("Expected all modifications lists to be empty, found {modifications:?}");
-        }
 
         Team { _id, abbreviation, active, augments, championships, color, emoji, feed, motes_used, location, full_location, league, modifications, name, motto, owner_id, players, record, season_records, extra_fields, feed_format }
     }

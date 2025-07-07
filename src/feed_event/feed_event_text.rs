@@ -2,9 +2,9 @@ use std::{fmt::Display, ops::{Deref, DerefMut}};
 
 use serde::{Serialize, Deserialize};
 
-use crate::{enums::{Attribute, FeedEventType, ItemPrefix, ItemSuffix, ItemType}, feed_event::FeedEvent, nom_parsing::parse_feed_event, parsed_event::{EmojiTeam, Item}, time::Breakpoints};
+use crate::{enums::{Attribute, FeedEventSource, FeedEventType, ItemPrefix, ItemSuffix, ItemType}, feed_event::FeedEvent, nom_parsing::parse_feed_event, parsed_event::{EmojiTeam, Item}, time::Breakpoints};
 
-#[derive(Clone, Debug, Serialize, Deserialize)]
+#[derive(Clone, Debug, Serialize, Deserialize, PartialEq)]
 pub struct FeedEventText(pub String);
 
 impl FeedEventText {
@@ -124,11 +124,11 @@ pub struct AttributeEqual<S> {
 }
 
 impl<S: Display> ParsedFeedEventText<S> {
-    pub fn unparse(&self, event: &FeedEvent) -> String {
+    pub fn unparse(&self, event: &FeedEvent, source: FeedEventSource) -> String {
         match self {
             ParsedFeedEventText::ParseError { event_text, .. } => event_text.to_string(),
             ParsedFeedEventText::GameResult { home_team, away_team, home_score, away_score } => {
-                format!("{} vs. {} - FINAL {}-{}", home_team, away_team, home_score, away_score)
+                format!("{} vs. {} - FINAL {}-{}", away_team, home_team, away_score, home_score)
             }
             ParsedFeedEventText::Delivery { delivery } => {
                 delivery.unparse("Delivery")
@@ -146,9 +146,17 @@ impl<S: Display> ParsedFeedEventText<S> {
                     .join(" ")
             }
             ParsedFeedEventText::AttributeEquals { equals } => {
-                let current = Breakpoints::S1AttributeEqualChange.after(event.season as u32, &event.day, None).then_some("current ").unwrap_or_default();
+                let f = |change: &AttributeEqual<S>| {
+                    if Breakpoints::S1AttributeEqualChange.after(event.season as u32, &event.day, None) {
+                        format!("{}'s {} became equal to their current base {}.", change.player_name, change.changing_attribute, change.value_attribute)
+                    } else if FeedEventSource::Player == source {
+                        format!("{}'s {} was set to their {}.", change.player_name, change.changing_attribute, change.value_attribute)
+                    } else {
+                        format!("{}'s {} became equal to their base {}.", change.player_name, change.changing_attribute, change.value_attribute)
+                    }
+                };
                 equals.iter()
-                    .map(|change| format!("{}'s {} became equal to their {current}base {}.", change.player_name, change.changing_attribute, change.value_attribute))
+                    .map(f)
                     .collect::<Vec<_>>()
                     .join(" ")
             }
@@ -219,7 +227,7 @@ impl Display for EmojilessItem {
             None => String::new()
         };
         let suffix = match suffix {
-            Some(suffix) => format!(" of {suffix}"),
+            Some(suffix) => format!(" {suffix}"),
             None => String::new()
         };
 

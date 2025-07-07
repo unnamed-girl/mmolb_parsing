@@ -27,16 +27,17 @@ impl Ord for DayEquivalent {
     }
 }
 impl DayEquivalent {
-    pub fn new(season: u32, day: &MaybeRecognized<Day>) -> Option<Self> {
-        match season {
-            0..=2 => match day {
-                MaybeRecognized::NotRecognized(_) => None,
-                MaybeRecognized::Recognized(Day::Day(day)) => Some(DayEquivalent { day: *day, offset: 0 }),
-                MaybeRecognized::Recognized(Day::SuperstarBreak) =>  Some(DayEquivalent { day: 120, offset: 255 }),
-                MaybeRecognized::Recognized(Day::SuperstarDay(offset)) => Some(DayEquivalent { day: 120, offset: offset + 1 }),
-                MaybeRecognized::Recognized(Day::Holiday) => None
-            }
-            _ => None
+    pub fn new(_season: u32, day: &MaybeRecognized<Day>) -> Option<Self> {
+        match day {
+            MaybeRecognized::NotRecognized(_) => None,
+            MaybeRecognized::Recognized(Day::Day(day)) => Some(DayEquivalent { day: *day, offset: 0 }),
+            MaybeRecognized::Recognized(Day::SuperstarBreak) =>  Some(DayEquivalent { day: 120, offset: 255 }),
+            MaybeRecognized::Recognized(Day::SuperstarDay(offset)) => Some(DayEquivalent { day: 120, offset: offset + 1 }),
+            MaybeRecognized::Recognized(Day::PostseasonRound(round)) => Some(DayEquivalent { day: 254, offset: *round }),
+            MaybeRecognized::Recognized(Day::PostseasonPreview) => Some(DayEquivalent { day: 254, offset: 0 }),
+            MaybeRecognized::Recognized(Day::Preseason) => Some(DayEquivalent { day: 0, offset: 0 }),
+            MaybeRecognized::Recognized(Day::Election) => Some(DayEquivalent { day: 255, offset: 0 }),
+            MaybeRecognized::Recognized(Day::Holiday) => Some(DayEquivalent { day: 255, offset: 1 })
         }
     }
 }

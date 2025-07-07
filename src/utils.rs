@@ -1,4 +1,92 @@
+use std::ops::{Deref, DerefMut};
+
 use serde::{de::Error, Deserialize, Deserializer, Serialize, Serializer};
+
+#[derive(Clone, Copy, Debug, PartialEq, Eq)]
+pub struct AddedLater<T>(T, bool);
+impl<T> AddedLater<T> {
+    pub(crate) fn skip(&self) -> bool {
+        !self.1
+    }
+    pub fn into_inner(self) -> T {
+        self.0
+    }
+}
+impl<T: Serialize> Serialize for AddedLater<T> {
+    fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error>
+        where
+            S: Serializer {
+        self.0.serialize(serializer)
+    }
+}
+impl<'de, T: Deserialize<'de>> Deserialize<'de> for AddedLater<T> {
+    fn deserialize<D>(deserializer: D) -> Result<Self, D::Error>
+        where
+            D: Deserializer<'de> {
+        Ok(Self(T::deserialize(deserializer)?, true))
+    }
+}
+
+impl<T: Default> Default for AddedLater<T> {
+    fn default() -> Self {
+        Self(T::default(), false)
+    }
+}
+
+impl<T> Deref for AddedLater<T> {
+    type Target = T;
+    fn deref(&self) -> &Self::Target {
+        &self.0
+    }
+}
+impl<T> DerefMut for AddedLater<T> {
+    fn deref_mut(&mut self) -> &mut Self::Target {
+        &mut self.0
+    }
+}
+
+#[derive(Clone, Copy, Debug, PartialEq, Eq)]
+pub struct RemovedLater<T>(T, bool);
+impl<T> RemovedLater<T> {
+    pub(crate) fn skip(&self) -> bool {
+        !self.1
+    }
+    pub fn into_inner(self) -> T {
+        self.0
+    }
+}
+impl<T: Serialize> Serialize for RemovedLater<T> {
+    fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error>
+        where
+            S: Serializer {
+        self.0.serialize(serializer)
+    }
+}
+impl<'de, T: Deserialize<'de>> Deserialize<'de> for RemovedLater<T> {
+    fn deserialize<D>(deserializer: D) -> Result<Self, D::Error>
+        where
+            D: Deserializer<'de> {
+        Ok(Self(T::deserialize(deserializer)?, true))
+    }
+}
+
+impl<T: Default> Default for RemovedLater<T> {
+    fn default() -> Self {
+        Self(T::default(), false)
+    }
+}
+
+impl<T> Deref for RemovedLater<T> {
+    type Target = T;
+    fn deref(&self) -> &Self::Target {
+        &self.0
+    }
+}
+impl<T> DerefMut for RemovedLater<T> {
+    fn deref_mut(&mut self) -> &mut Self::Target {
+        &mut self.0
+    }
+}
 
 #[derive(Clone, Copy, Serialize, Deserialize, Debug, PartialEq, Eq)]
 pub(crate) struct AddedLaterMarker(pub bool);
@@ -66,6 +154,24 @@ impl<T: Serialize> Serialize for SomeOrEmptyString<T> {
             Self::Some(t) => t.serialize(serializer),
             Self::EmptyString => "".serialize(serializer)
         }
+    }
+}
+
+#[derive(Debug, Clone, PartialEq, Eq, Default, Serialize)]
+#[serde(transparent)]
+pub struct ExpectNone(Option<serde_json::Value>);
+
+impl<'de> Deserialize<'de> for ExpectNone {
+    fn deserialize<D>(deserializer: D) -> Result<Self, D::Error>
+        where
+            D: Deserializer<'de> {
+        let result = Option::<serde_json::Value>::deserialize(deserializer)?;
+
+        if let Some(non_none) = &result {
+            tracing::error!("Expected field to be empty, not to be: {non_none:?}")
+        }
+        
+        Ok(Self(result))
     }
 }
 

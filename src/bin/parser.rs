@@ -4,7 +4,7 @@ use std::{fs::File, io::Write, path::PathBuf, pin::pin};
 use clap::{Parser, ValueEnum};
 use futures::{Stream, StreamExt};
 use http_cache_reqwest::{CACacheManager, Cache, CacheMode, HttpCache, HttpCacheOptions};
-use mmolb_parsing::{enums::MaybeRecognized, process_event, team::Team, Game};
+use mmolb_parsing::{enums::{EquipmentSlot, FeedEventSource, MaybeRecognized}, player::Player, process_event, team::Team, Game};
 use serde::{Serialize, Deserialize};
 
 use reqwest::Client;
@@ -102,13 +102,15 @@ struct Args {
 enum Kind {
     #[default]
     Game,
-    Team
+    Team,
+    Player
 }
 
 fn cashews_fetch_json<'a>(client: &'a ClientWithMiddleware, kind: Kind, extra: String, start_page: Option<String>) -> impl Stream<Item = Vec<EntityResponse<serde_json::Value>>> + 'a {
     let kind = match kind {
         Kind::Game => "game",
-        Kind::Team => "team"
+        Kind::Team => "team",
+        Kind::Player => "player"
     };
     async_stream::stream! {
         let (mut url, mut page) = match start_page {
@@ -143,7 +145,8 @@ async fn main() {
 
     let func = async |response, progress_report| match args.kind {
         Kind::Game => ingest_game(response, progress_report, &args).await,
-        Kind::Team => ingest_team(response, &args).await
+        Kind::Team => ingest_team(response, &args).await,
+        Kind::Player => ingest_player(response, &args).await
     };
 
     if let Some(id) = &args.id {
@@ -249,13 +252,13 @@ async fn ingest_team(response: EntityResponse<serde_json::Value>, args: &Args) {
     }
 
     for event in team.feed {
-        let _event_span_guard = tracing::span!(Level::INFO, "Feed Event", season = event.season, day = event.season.to_string(), r#type = event.event_type.to_string(), message = event.text.to_string()).entered();
+        let _event_span_guard = tracing::span!(Level::INFO, "Feed Event", season = event.season, day = event.day.to_string(), r#type = event.event_type.to_string(), message = event.text.to_string()).entered();
         match event.event_type {
             MaybeRecognized::NotRecognized(event_type) => error!("{event_type} is not a recognized event type"),
             MaybeRecognized::Recognized(event_type) => {
                 let parsed_text = event.text.parse(event_type);
                 if tracing::enabled!(Level::ERROR) {
-                    let unparsed = parsed_text.unparse(&event);
+                    let unparsed = parsed_text.unparse(&event, FeedEventSource::Team);
                     if event.text.0 != unparsed {
                         error!("{} s{}d{}: feed event round trip failure expected:\n'{}'\nGot:\n'{}'", response.entity_id, event.season, event.day, event.text, unparsed);
                     }
@@ -265,4 +268,45 @@ async fn ingest_team(response: EntityResponse<serde_json::Value>, args: &Args) {
         drop(_event_span_guard);
     }
     drop(_team_span_guard);
+}
+
+async fn ingest_player(response: EntityResponse<serde_json::Value>, args: &Args) {
+    let _player_span_guard = tracing::span!(Level::INFO, "Deserializing Player", player_id = response.entity_id).entered();
+
+    let round_trip_data = args.round_trip.then(|| response.data.clone());
+    let player: Player = serde_json::from_value(response.data).expect(&response.entity_id);
+
+    drop(_player_span_guard);
+
+    let _player_span_guard = tracing::span!(Level::INFO, "Player", player_id = response.entity_id, name = format!("{} {}", player.first_name, player.last_name)).entered();
+    
+    if let Some(data) = round_trip_data {
+        let round_tripped = serde_json::to_value(&player).unwrap();
+        let diff = serde_json_diff::values(data, round_tripped);
+        if let Some(diff) = diff {
+            error!("{} round trip failed. Diff: {}", response.entity_id, serde_json::to_string(&diff).unwrap());
+        }
+    }
+
+    if let Some(Some(eq)) = player.equipment.into_inner().get(&MaybeRecognized::Recognized(EquipmentSlot::Accessory)) {
+        tracing::info!("{:?}", eq.rarity);
+    } 
+
+    for event in player.feed.into_inner() {
+        let _event_span_guard = tracing::span!(Level::INFO, "Feed Event", season = event.season, day = event.day.to_string(), r#type = event.event_type.to_string(), message = event.text.to_string()).entered();
+        match event.event_type {
+            MaybeRecognized::NotRecognized(event_type) => error!("{event_type} is not a recognized event type"),
+            MaybeRecognized::Recognized(event_type) => {
+                let parsed_text = event.text.parse(event_type);
+                if tracing::enabled!(Level::ERROR) {
+                    let unparsed = parsed_text.unparse(&event, FeedEventSource::Player);
+                    if event.text.0 != unparsed {
+                        error!("{} s{}d{}: feed event round trip failure expected:\n'{}'\nGot:\n'{}'", response.entity_id, event.season, event.day, event.text, unparsed);
+                    }
+                }
+            }
+        }
+        drop(_event_span_guard);
+    }
+    drop(_player_span_guard);
 }
