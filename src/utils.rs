@@ -2,10 +2,24 @@ use std::ops::{Deref, DerefMut};
 
 use serde::{de::Error, Deserialize, Deserializer, Serialize, Serializer};
 
+/// A wrapper around fields that are only found in old data. Usually used in combination with `serde(default, skip_serializing_if = "AddedLater::skip"))` such that older data can still be (de)serialized.
+/// 
+/// NOTE: mmolb_parsing only promises to support the latest versions of entities on Cashews. So, this wrapper is used when: 
+/// - mmolb didn't retroactively add a new field to old entities.
+/// - Some entities of this type were deleted, and so Cashews holds on to old api versions.
+/// 
+/// ```
+/// use mmolb_parsing::AddedLater;
+/// 
+/// let value = AddedLater::<Option::<u8>>::default();
+/// assert_eq!(None, value.into_inner());
+/// assert!(value.is_none()); // Implements Deref and DerefMut targeting T
+/// assert!(value.skip()); // This value was not produced from a successful deserialization, and therefore should be skipped when serializing.
+/// ```
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
 pub struct AddedLater<T>(T, bool);
 impl<T> AddedLater<T> {
-    pub(crate) fn skip(&self) -> bool {
+    pub fn skip(&self) -> bool {
         !self.1
     }
     pub fn into_inner(self) -> T {
@@ -45,6 +59,20 @@ impl<T> DerefMut for AddedLater<T> {
     }
 }
 
+/// A wrapper around fields that are only found in old data. Usually used in combination with `serde(default, skip_serializing_if = "AddedLater::skip"))` such that newer data can still be (de)serialized.
+/// 
+/// NOTE: mmolb_parsing only promises to support the latest versions of entities on Cashews.
+/// So, this wrapper is used when: 
+/// - Some entities of this type were deleted, and so Cashews holds on to old api versions.
+/// 
+/// ```
+/// use mmolb_parsing::RemovedLater;
+/// 
+/// let value = RemovedLater::<Option::<u8>>::default();
+/// assert_eq!(None, value.into_inner());
+/// assert!(value.is_none()); // Implements Deref and DerefMut targeting T
+/// assert!(value.skip()); // This value was not produced from a successful deserialization, and therefore should be skipped when serializing.
+/// ```
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
 pub struct RemovedLater<T>(T, bool);
 impl<T> RemovedLater<T> {

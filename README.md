@@ -17,6 +17,9 @@ New, will be very volatile for the next while.
 `mmolb_parsing::team::Team` - can be deserialized from the mmolb api response
 - has a feed field, `Vec<mmolb_parsing::feed_event::FeedEvent>`
 
+`mmolb_parsing::team::Player` - can be deserialized from the mmolb api response
+- has a feed field, `Vec<mmolb_parsing::feed_event::FeedEvent>`
+
 `mmolb_parsing::feed_event::FeedEvent`
 - has an event_type field, which can be cast to an `Option<mmolb_parsing::enums::FeedEventType>` with into_inner.
 - has a text field, `mmolb_parsing::feed_event::FeedEventText` with a parse() method that takes an `mmolb_parsing::enums::FeedEventType`.

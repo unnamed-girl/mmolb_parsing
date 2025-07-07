@@ -288,10 +288,6 @@ async fn ingest_player(response: EntityResponse<serde_json::Value>, args: &Args)
         }
     }
 
-    if let Some(Some(eq)) = player.equipment.into_inner().get(&MaybeRecognized::Recognized(EquipmentSlot::Accessory)) {
-        tracing::info!("{:?}", eq.rarity);
-    } 
-
     for event in player.feed.into_inner() {
         let _event_span_guard = tracing::span!(Level::INFO, "Feed Event", season = event.season, day = event.day.to_string(), r#type = event.event_type.to_string(), message = event.text.to_string()).entered();
         match event.event_type {
