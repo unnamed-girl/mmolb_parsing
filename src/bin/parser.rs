@@ -8,22 +8,9 @@ use mmolb_parsing::{enums::{EquipmentSlot, FeedEventSource, MaybeRecognized}, pl
 use serde::{Serialize, Deserialize};
 
 use reqwest::Client;
-use reqwest_middleware::{ClientBuilder, ClientWithMiddleware};
 use tracing::{error, info, Level};
 use tracing_subscriber::fmt::writer::MakeWriterExt;
 
-
-pub fn get_caching_http_client(cache: Option<PathBuf>, mode: CacheMode) -> ClientWithMiddleware {
-    ClientBuilder::new(Client::new())
-        .with(Cache(HttpCache {
-            mode,
-            manager: cache.map(|cache| CACacheManager {
-                path: cache.join("http-cacache"),
-            }).unwrap_or_default(),
-            options: HttpCacheOptions::default(),
-        }))
-        .build()
-}
 
 #[derive(Serialize, Deserialize)]
 pub struct FreeCashewResponse<T> {
@@ -106,7 +93,7 @@ enum Kind {
     Player
 }
 
-fn cashews_fetch_json<'a>(client: &'a ClientWithMiddleware, kind: Kind, extra: String, start_page: Option<String>) -> impl Stream<Item = Vec<EntityResponse<serde_json::Value>>> + 'a {
+fn cashews_fetch_json<'a>(client: &'a Client, kind: Kind, extra: String, start_page: Option<String>) -> impl Stream<Item = Vec<EntityResponse<serde_json::Value>>> + 'a {
     let kind = match kind {
         Kind::Game => "game",
         Kind::Team => "team",
@@ -151,7 +138,7 @@ async fn main() {
 
     if let Some(id) = &args.id {
         info!("Given a specific entities: skipping cashews arguments and not caching");
-        let client = get_caching_http_client(args.http_cache.as_ref().map(Into::into), CacheMode::NoCache);
+        let client = Client::new();
         let url = format!("https://freecashe.ws/api/chron/v0/entities?kind=game&id={id}");
         let entities = client.get(&url).send().await.unwrap().json::<FreeCashewResponse<EntityResponse<serde_json::Value>>>().await.unwrap().items;
         for game in entities.into_iter() {
@@ -165,19 +152,7 @@ async fn main() {
     let desc = args.desc.then_some("&order=desc").unwrap_or_default();
     let extra = format!("{after}{before}{desc}");
 
-    let mode = if extra.is_empty() {
-        info!("Requests being saved to cache");
-        if args.refetch {
-            CacheMode::Reload
-        } else {
-            CacheMode::ForceCache
-        }
-    } else {
-        info!("Nonstandard chron arguments: no caching");
-        CacheMode::NoCache
-    };
-
-    let client = get_caching_http_client(args.http_cache.as_ref().map(Into::into), mode);
+    let client = Client::new();
 
 
     let fetch = pin!(cashews_fetch_json(&client, args.kind, extra, args.start_page.clone()));
@@ -193,7 +168,7 @@ async fn main() {
 
 async fn ingest_game(response: EntityResponse<serde_json::Value>, progress_report: bool, args: &Args) {
     let round_trip_data = args.round_trip.then(|| response.data.clone());
-    let game: Game = serde_json::from_value(response.data).map_err(|e| format!("Failed to deserialize {}, {e:?}", response.entity_id)).unwrap();
+    let game: Game = serde_json::from_value(response.data).map_err(|e| format!("Failed to deserialize {}, {e:?}", response.entity_id)).expect(&response.entity_id);
 
     let _span_guard = tracing::span!(Level::INFO, "Game", game_id = response.entity_id, season = game.season, day = game.day.to_string(), scale = game.league_scale.to_string()).entered();
 
@@ -239,7 +214,7 @@ async fn ingest_game(response: EntityResponse<serde_json::Value>, progress_repor
 
 async fn ingest_team(response: EntityResponse<serde_json::Value>, args: &Args) {
     let round_trip_data = args.round_trip.then(|| response.data.clone());
-    let team: Team = serde_json::from_value(response.data).unwrap();
+    let team: Team = serde_json::from_value(response.data).expect(&response.entity_id);
 
     let _team_span_guard = tracing::span!(Level::INFO, "Team", team_id = response.entity_id, name = team.name).entered();
     
@@ -251,7 +226,7 @@ async fn ingest_team(response: EntityResponse<serde_json::Value>, args: &Args) {
         }
     }
 
-    for event in team.feed {
+    for event in team.feed.into_inner().unwrap_or_default() {
         let _event_span_guard = tracing::span!(Level::INFO, "Feed Event", season = event.season, day = event.day.to_string(), r#type = event.event_type.to_string(), message = event.text.to_string()).entered();
         match event.event_type {
             MaybeRecognized::NotRecognized(event_type) => error!("{event_type} is not a recognized event type"),
@@ -288,7 +263,7 @@ async fn ingest_player(response: EntityResponse<serde_json::Value>, args: &Args)
         }
     }
 
-    for event in player.feed.into_inner() {
+    for event in player.feed.into_inner().unwrap_or_default() {
         let _event_span_guard = tracing::span!(Level::INFO, "Feed Event", season = event.season, day = event.day.to_string(), r#type = event.event_type.to_string(), message = event.text.to_string()).entered();
         match event.event_type {
             MaybeRecognized::NotRecognized(event_type) => error!("{event_type} is not a recognized event type"),

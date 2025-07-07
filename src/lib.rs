@@ -15,4 +15,3 @@ pub use parsing::{process_event, process_game};
 pub use parsed_event::ParsedEventMessage;
 
 pub use utils::AddedLater;
-pub use utils::RemovedLater;

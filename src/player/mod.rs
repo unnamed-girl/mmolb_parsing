@@ -2,7 +2,7 @@ use std::collections::HashMap;
 
 pub use serde::{Serialize, Deserialize};
 
-use crate::{enums::{Attribute, Day, EquipmentEffectType, EquipmentRarity, EquipmentSlot, GameStat, Handedness, ItemPrefix, ItemSuffix, ItemType, MaybeRecognized, Position, PositionType, SeasonStatus}, feed_event::FeedEvent, utils::{AddedLater, RemovedLater, ExpectNone}};
+use crate::{enums::{Attribute, Day, EquipmentEffectType, EquipmentRarity, EquipmentSlot, GameStat, Handedness, ItemPrefix, ItemSuffix, ItemType, MaybeRecognized, Position, PositionType, SeasonStatus}, feed_event::FeedEvent, utils::{AddedLater, ExpectNone}};
 
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
 #[serde(rename_all = "PascalCase")]
@@ -14,11 +14,14 @@ pub struct Player {
     pub augments: u8,
     pub bats: MaybeRecognized<Handedness>,
     pub birthday: MaybeRecognized<Day>,
+    /// Not present on old, deleted players
     #[serde(default, skip_serializing_if = "AddedLater::skip")]
-    pub birthseason: AddedLater<Option<u16>>,
+    pub birthseason: AddedLater<u16>,
     pub durability: f64,
+    /// Not present on old, deleted players
     #[serde(default, skip_serializing_if = "AddedLater::skip")]
     pub equipment: AddedLater<PlayerEquipmentMap>,
+    /// Not present on old, deleted players
     #[serde(default, skip_serializing_if = "AddedLater::skip")]
     pub feed: AddedLater<Vec<FeedEvent>>,
     pub first_name: String,
@@ -50,15 +53,17 @@ pub struct Player {
 /// an `EquipmentSlot` on its own as well as an `&MaybeRecognized<EquipmentSlot>`.
 /// 
 /// ```
-/// use mmolb_parsing::player::PlayerEquipmentMap;
-/// 
+/// use std::collections::HashMap;
+/// use mmolb_parsing::player::{PlayerEquipmentMap, PlayerEquipment};
+/// use mmolb_parsing::enums::{MaybeRecognized, EquipmentSlot};
+///  
 /// let map = PlayerEquipmentMap::default();
 /// map.get(EquipmentSlot::Head);
 /// map.get(&MaybeRecognized::Recognized(EquipmentSlot::Head));
-/// map.get(&MaybeRecognized::NotRecognized(serde_json::Value::String("New Slot")););
+/// map.get(&MaybeRecognized::NotRecognized(serde_json::Value::String("New Slot".to_string())));
 /// 
-/// let a: HashMap<MaybeRecognized<EquipmentSlot>, PlayerEquipment>> = map.clone().into();
-/// let b: HashMap<MaybeRecognized<EquipmentSlot>, Option<PlayerEquipment>>> = map.clone().into();
+/// let a: HashMap<MaybeRecognized<EquipmentSlot>, PlayerEquipment> = map.clone().into();
+/// let b: HashMap<MaybeRecognized<EquipmentSlot>, Option<PlayerEquipment>> = map.clone().into();
 /// ```
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Default)]
 #[serde(rename_all = "PascalCase")]
@@ -123,8 +128,9 @@ impl _GetHelper<&MaybeRecognized<EquipmentSlot>> for PlayerEquipmentMap {
 pub struct PlayerEquipment {
     pub effects: Vec<MaybeRecognized<EquipmentEffect>>,
     pub emoji: String,
-    #[serde(default, skip_serializing_if = "RemovedLater::skip")]
-    pub slot: RemovedLater<Option<MaybeRecognized<EquipmentSlot>>>,
+    /// Removed in the current version of the API
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    slot: Option<MaybeRecognized<EquipmentSlot>>,
     pub name: MaybeRecognized<ItemType>,
     pub prefix: Option<MaybeRecognized<ItemPrefix>>,
     pub suffix: Option<MaybeRecognized<ItemSuffix>>,
