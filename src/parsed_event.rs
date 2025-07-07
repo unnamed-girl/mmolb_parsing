@@ -473,7 +473,7 @@ impl<S: Display> Display for Item<S> {
             None => String::new()
         };
         let suffix = match suffix {
-            Some(suffix) => format!(" of {suffix}"),
+            Some(suffix) => format!(" {suffix}"),
             None => String::new()
         };
 

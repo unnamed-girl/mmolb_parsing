@@ -1,14 +1,62 @@
+use std::ops::{Deref, DerefMut};
+
 use serde::{de::Error, Deserialize, Deserializer, Serialize, Serializer};
 
-#[derive(Clone, Copy, Serialize, Deserialize, Debug, PartialEq, Eq)]
-pub(crate) struct AddedLaterMarker(pub bool);
-
-impl AddedLaterMarker {
-    pub(crate) fn new<T>(value: &Option<T>) -> Self {
-        Self(value.is_none())
+/// A wrapper around an Option<T>, for fields that aren't found in old data.
+/// 
+/// NOTE: mmolb_parsing only promises to support the latest versions of entities on Cashews. So this wrapper is used when: 
+/// - mmolb didn't retroactively add a new field to old entities.
+/// - Some entities of this type were deleted, and so Cashews holds on to old api versions.
+/// 
+/// ```
+/// use mmolb_parsing::AddedLater;
+/// 
+/// let value = AddedLater::<u8>::default();
+/// assert_eq!(None, value.0); // Wraps an Option<T>
+/// assert_eq!(None, value.into_inner());
+/// assert_eq!(0, value.unwrap_or_default()); // Implements Deref and DerefMut
+/// assert!(value.skip()); // This value was not produced from a successful deserialization, and therefore should be skipped when serializing.
+/// ```
+#[derive(Clone, Copy, Debug, PartialEq, Eq)]
+pub struct AddedLater<T>(pub Option<T>);
+impl<T> AddedLater<T> {
+    pub fn skip(&self) -> bool {
+        self.0.is_none()
     }
-    pub(crate) fn wrap<T>(self, value: T) -> Option<T> {
-        (!self.0).then_some(value)
+    pub fn into_inner(self) -> Option<T> {
+        self.0
+    }
+}
+impl<T: Serialize> Serialize for AddedLater<T> {
+    fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error>
+        where
+            S: Serializer {
+        self.0.serialize(serializer)
+    }
+}
+impl<'de, T: Deserialize<'de>> Deserialize<'de> for AddedLater<T> {
+    fn deserialize<D>(deserializer: D) -> Result<Self, D::Error>
+        where
+            D: Deserializer<'de> {
+        Ok(Self(Some(T::deserialize(deserializer)?)))
+    }
+}
+
+impl<T> Default for AddedLater<T> {
+    fn default() -> Self {
+        Self(None)
+    }
+}
+
+impl<T> Deref for AddedLater<T> {
+    type Target = Option<T>;
+    fn deref(&self) -> &Self::Target {
+        &self.0
+    }
+}
+impl<T> DerefMut for AddedLater<T> {
+    fn deref_mut(&mut self) -> &mut Self::Target {
+        &mut self.0
     }
 }
 
@@ -68,6 +116,43 @@ impl<T: Serialize> Serialize for SomeOrEmptyString<T> {
         }
     }
 }
+
+#[derive(Debug, Clone, PartialEq, Eq, Default, Serialize)]
+#[serde(transparent)]
+pub struct ExpectNone(Option<serde_json::Value>);
+
+impl<'de> Deserialize<'de> for ExpectNone {
+    fn deserialize<D>(deserializer: D) -> Result<Self, D::Error>
+        where
+            D: Deserializer<'de> {
+        let result = Option::<serde_json::Value>::deserialize(deserializer)?;
+
+        if let Some(non_none) = &result {
+            tracing::error!("Expected field to be empty, not to be: {non_none:?}")
+        }
+        
+        Ok(Self(result))
+    }
+}
+
+#[derive(Debug, Clone, PartialEq, Eq, Default, Serialize)]
+#[serde(transparent)]
+pub struct ExtraFields(serde_json::Map<String, serde_json::Value>);
+
+impl<'de> Deserialize<'de> for ExtraFields {
+    fn deserialize<D>(deserializer: D) -> Result<Self, D::Error>
+        where
+            D: Deserializer<'de> {
+        let result = serde_json::Map::<String, serde_json::Value>::deserialize(deserializer)?;
+
+        if !result.is_empty() {
+            tracing::error!("Deserialization found extra fields: {:?}", result)
+        }
+
+        Ok(Self(result))
+    }
+}
+
 
 #[cfg(test)]
 mod test_utils {

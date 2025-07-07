@@ -861,6 +861,7 @@ pub enum ItemType {
     Cap,
     Gloves,
     #[strum(to_string = "T-Shirt")]
+    #[serde(rename = "T-Shirt")]
     TShirt,
     Sneakers,
     Ring
@@ -917,11 +918,17 @@ impl Display for SeasonStatus {
 pub enum Day {
     #[serde(rename = "Superstar Break")]
     SuperstarBreak,
+    #[serde(rename = "Postseason Preview")]
+    PostseasonPreview,
     Holiday,
+    Preseason,
+    Election,
     #[serde(untagged)]
     Day(u16),
     #[serde(untagged, deserialize_with = "superstar_day_de", serialize_with = "superstar_day_ser")]
     SuperstarDay(u8),
+    #[serde(untagged, deserialize_with = "postseason_round_de", serialize_with = "postseason_round_ser")]
+    PostseasonRound(u8),
 }
 fn superstar_day_ser<S>(day: &u8, serializer: S) -> Result<S::Ok, S::Error> where S: Serializer {
     format!("Superstar Day {day}").serialize(serializer)
@@ -935,13 +942,29 @@ fn superstar_day_de<'de, D>(deserializer: D) -> Result<u8, D::Error> where D: De
         .map_err(|_| D::Error::custom("Expected a number"))
 }
 
+fn postseason_round_ser<S>(round: &u8, serializer: S) -> Result<S::Ok, S::Error> where S: Serializer {
+    format!("Postseason Round {round}").serialize(serializer)
+}
+
+fn postseason_round_de<'de, D>(deserializer: D) -> Result<u8, D::Error> where D: Deserializer<'de> {
+    <String>::deserialize(deserializer)?
+        .strip_prefix("Postseason Round ")
+        .ok_or(D::Error::custom("Didn't start with \"Postseason Round\""))?
+        .parse::<u8>()
+        .map_err(|_| D::Error::custom("Expected a number"))
+}
+
 impl Display for Day {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         match self {
             Self::SuperstarBreak => "Superstar Break".fmt(f),
             Self::Day(d) => d.fmt(f),
+            Self::Preseason => "Preseason".fmt(f),
             Self::Holiday => "Holiday".fmt(f),
-            Self::SuperstarDay(d) => write!(f, "Superstar Day {d}")
+            Self::Election => "Election".fmt(f),
+            Self::SuperstarDay(d) => write!(f, "Superstar Day {d}"),
+            Self::PostseasonPreview => "Postseason Preview".fmt(f),
+            Self::PostseasonRound(r) => write!(f, "Postseason Round {r}")
         }
     }
 }
@@ -1183,19 +1206,25 @@ pub enum ItemPrefix {
     Sneaky,
 }
 
-#[derive(EnumString, Display, Debug, Serialize, Deserialize, Clone, Copy, EnumIter, PartialEq, Eq, Hash)]
+#[derive(EnumString, Display, Debug, SerializeDisplay, DeserializeFromStr, Clone, Copy, EnumIter, PartialEq, Eq, Hash)]
 pub enum ItemSuffix {
-    #[strum(to_string = "the Acrobat")]
+    #[strum(to_string = "of the Acrobat")]
     Acrobat,
-    #[strum(to_string = "the Cat")]
+    #[strum(to_string = "of the Cat")]
     Cat,
-    #[strum(to_string = "the Cannon")]
+    #[strum(to_string = "of the Cannon")]
     Cannon,
+    #[strum(to_string = "of Awareness")]
     Awareness,
+    #[strum(to_string = "of Calm")]
     Calm,
+    #[strum(to_string = "of Skill")]
     Skill,
+    #[strum(to_string = "of Patience")]
     Patience,
+    #[strum(to_string = "of Reflexes")]
     Reflexes,
+    #[strum(to_string = "of Fortune")]
     Fortune
 }
 
@@ -1316,6 +1345,46 @@ pub enum LeagueScale {
     Greater
 }
 
+#[derive(Debug, Serialize, Deserialize, Clone, Copy, EnumIter, PartialEq, Eq, Hash, EnumString, Display)]
+pub enum Handedness {
+    #[strum(to_string = "L")]
+    #[serde(rename = "L")]
+    Left,
+    #[strum(to_string = "R")]
+    #[serde(rename = "R")]
+    Right,
+    #[strum(to_string = "S")]
+    #[serde(rename = "S")]
+    Switch
+}
+
+#[derive(Debug, Serialize, Deserialize, Clone, Copy, EnumIter, PartialEq, Eq, Hash, EnumString, Display)]
+pub enum EquipmentEffectType {
+    FlatBonus
+}
+
+#[derive(Debug, Serialize, Deserialize, Clone, Copy, EnumIter, PartialEq, Eq, Hash, EnumString, Display)]
+pub enum EquipmentRarity {
+    Normal,
+    Rare,
+    Magic
+}
+
+#[derive(Debug, Serialize, Deserialize, Clone, Copy, EnumIter, PartialEq, Eq, Hash, EnumString, Display)]
+pub enum EquipmentSlot {
+    Accessory,
+    Head,
+    Feet,
+    Hands,
+    Body
+}
+
+#[derive(Debug, Serialize, Deserialize, Clone, Copy, EnumIter, PartialEq, Eq, Hash, EnumString, Display)]
+pub enum FeedEventSource {
+    Player,
+    Team
+}
+
 #[cfg(test)]
 mod test {
     use std::fmt::Debug;
@@ -1367,5 +1436,6 @@ mod test {
         serde_round_trip_inner::<Place>();
         serde_round_trip_inner::<MoundVisitType>();
         serde_round_trip_inner::<LeagueScale>();
+        serde_round_trip_inner::<Handedness>();
     }
 }

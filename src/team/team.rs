@@ -2,13 +2,14 @@ use std::collections::HashMap;
 
 use serde::{Serialize, Deserialize};
 
-use crate::{enums::{GameStat, MaybeRecognized, Position, PositionType, RecordType, Slot}, feed_event::FeedEvent, utils::AddedLaterMarker};
-use super::raw_team::{RawTeam, RawTeamPlayer};
+use crate::{enums::{GameStat, MaybeRecognized, Position, PositionType, RecordType, Slot}, feed_event::FeedEvent, utils::{ExpectNone, ExtraFields}, AddedLater};
+use super::raw_team::{RawTeamPlayer};
 
 #[derive(Serialize, Deserialize, Debug, Clone)]
-#[serde(from = "RawTeam", into = "RawTeam")]
+#[serde(rename_all = "PascalCase")]
 pub struct Team {
-    /// Cashews id
+    // Cashews id
+    #[serde(rename = "_id", skip_serializing_if = "Option::is_none")]
     pub(super) _id: Option<String>,
     pub abbreviation: String,
     pub active: bool,
@@ -17,27 +18,33 @@ pub struct Team {
     pub color: String,
     pub emoji: String,
 
-    pub(super) feed_format: AddedLaterMarker,
-    pub feed: Vec<FeedEvent>,
-    pub motes_used: Option<u8>,
+    /// Not present on some deleted teams.
+    #[serde(default, skip_serializing_if = "AddedLater::skip")]
+    pub feed: AddedLater<Vec<FeedEvent>>,
+
+    /// Not present on some deleted teams.
+    #[serde(default, skip_serializing_if = "AddedLater::skip")]
+    pub motes_used: AddedLater<u8>,
 
     pub location: String,
     pub full_location: String,
     pub league: String,
 
     /// no modifications have been seen, so left as raw json
-    pub(super) modifications: Vec<serde_json::Value>,
+    pub(super) modifications: Vec<ExpectNone>,
     pub name: String,
 
     pub motto: Option<String>,
 
+    #[serde(rename = "OwnerID")]
     pub owner_id: Option<String>,
 
     pub players: Vec<TeamPlayer>,
     pub record: HashMap<MaybeRecognized<RecordType>, TeamRecord>,
     pub season_records: HashMap<String, String>,
 
-    pub extra_fields: serde_json::Map<String, serde_json::Value>,
+    #[serde(flatten)]
+    pub extra_fields: ExtraFields,
 }
 
 #[derive(Serialize, Deserialize, Clone, Copy, Debug)]
@@ -62,13 +69,14 @@ pub struct TeamPlayer {
 
     pub slot: MaybeRecognized<Slot>,
 
-    pub(super) position_type_format: AddedLaterMarker,
+    pub(crate) position_type_overidden: bool,
     pub position_type: MaybeRecognized<PositionType>,
 
 
-    pub(super) stats_format: AddedLaterMarker,
-    pub stats: HashMap<MaybeRecognized<GameStat>, i32>,
-    pub extra_fields: serde_json::Map<String, serde_json::Value>,
+    pub stats: AddedLater<HashMap<MaybeRecognized<GameStat>, i32>>,
+    
+    #[serde(flatten)]
+    pub extra_fields: ExtraFields,
 }
 
 #[cfg(test)]
