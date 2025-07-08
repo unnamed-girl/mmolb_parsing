@@ -1,16 +1,23 @@
 use serde::{Serialize, Deserialize};
-use crate::{enums::{Day, FeedEventType, MaybeRecognized, SeasonStatus}, feed_event::feed_event_text::FeedEventText, utils::ExtraFields};
+use serde_with::serde_as;
+use crate::{enums::{Day, FeedEventType, SeasonStatus}, feed_event::feed_event_text::FeedEventText, utils::{ExtraFields, MaybeRecognizedResult}};
+use crate::utils::MaybeRecognizedHelper;
 
+#[serde_as]
 #[derive(Clone, Debug, Serialize, Deserialize, PartialEq)]
 pub struct FeedEvent {
     pub emoji: String,
     pub season: u8,
-    pub day: MaybeRecognized<Day>,
-    pub status: MaybeRecognized<SeasonStatus>,
+    
+    #[serde_as(as = "MaybeRecognizedHelper<_>")]
+    pub day: MaybeRecognizedResult<Day>,
+    #[serde_as(as = "MaybeRecognizedHelper<_>")]
+    pub status: MaybeRecognizedResult<SeasonStatus>,
     pub text: FeedEventText,
     pub ts: String,
     #[serde(rename = "type")]
-    pub event_type: MaybeRecognized<FeedEventType>,
+    #[serde_as(as = "MaybeRecognizedHelper<_>")]
+    pub event_type: MaybeRecognizedResult<FeedEventType>,
 
     /// TODO
     pub(crate) links: serde_json::Value,

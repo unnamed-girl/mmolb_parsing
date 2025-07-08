@@ -1,6 +1,6 @@
 use std::cmp::Ordering;
 
-use crate::enums::{Day, MaybeRecognized};
+use crate::enums::Day;
 
 #[derive(Debug, PartialEq, Eq)]
 pub struct Time {
@@ -27,17 +27,16 @@ impl Ord for DayEquivalent {
     }
 }
 impl DayEquivalent {
-    pub fn new(_season: u32, day: &MaybeRecognized<Day>) -> Option<Self> {
+    pub fn new(_season: u32, day: Day) -> Self {
         match day {
-            MaybeRecognized::NotRecognized(_) => None,
-            MaybeRecognized::Recognized(Day::Day(day)) => Some(DayEquivalent { day: *day, offset: 0 }),
-            MaybeRecognized::Recognized(Day::SuperstarBreak) =>  Some(DayEquivalent { day: 120, offset: 255 }),
-            MaybeRecognized::Recognized(Day::SuperstarDay(offset)) => Some(DayEquivalent { day: 120, offset: offset + 1 }),
-            MaybeRecognized::Recognized(Day::PostseasonRound(round)) => Some(DayEquivalent { day: 254, offset: *round }),
-            MaybeRecognized::Recognized(Day::PostseasonPreview) => Some(DayEquivalent { day: 254, offset: 0 }),
-            MaybeRecognized::Recognized(Day::Preseason) => Some(DayEquivalent { day: 0, offset: 0 }),
-            MaybeRecognized::Recognized(Day::Election) => Some(DayEquivalent { day: 255, offset: 0 }),
-            MaybeRecognized::Recognized(Day::Holiday) => Some(DayEquivalent { day: 255, offset: 1 })
+            Day::Day(day) => DayEquivalent { day, offset: 0 },
+            Day::SuperstarBreak =>  DayEquivalent { day: 120, offset: 255 },
+            Day::SuperstarDay(offset) => DayEquivalent { day: 120, offset: offset + 1 },
+            Day::PostseasonRound(round) => DayEquivalent { day: 254, offset: round },
+            Day::PostseasonPreview => DayEquivalent { day: 254, offset: 0 },
+            Day::Preseason => DayEquivalent { day: 0, offset: 0 },
+            Day::Election => DayEquivalent { day: 255, offset: 0 },
+            Day::Holiday => DayEquivalent { day: 255, offset: 1 }
         }
     }
 }
@@ -78,9 +77,9 @@ impl Breakpoints {
             }
         }
     }
-    pub fn before(&self, season: u32, day: &MaybeRecognized<Day>, event_index: Option<u16>) -> bool {
+    pub fn before(&self, season: u32, day: Option<Day>, event_index: Option<u16>) -> bool {
         let event_index = event_index.unwrap_or(0);
-        let day = DayEquivalent::new(season, day);
+        let day = day.map(|day| DayEquivalent::new(season, day));
 
         let transition = self.ascending_transition_time();
 
@@ -106,7 +105,7 @@ impl Breakpoints {
             }
         }
     }
-    pub fn after(&self, season: u32, day: &MaybeRecognized<Day>, event_index: Option<u16>) -> bool {
+    pub fn after(&self, season: u32, day: Option<Day>, event_index: Option<u16>) -> bool {
         !self.before(season, day, event_index)
     }
 }
@@ -114,17 +113,17 @@ impl Breakpoints {
 
 #[cfg(test)]
 mod test {
-    use crate::{enums::{Day, MaybeRecognized}, time::Breakpoints};
+    use super::*;
 
     #[test]
     fn break_point_test() {
-        assert!(Breakpoints::S2D169.before(1, &MaybeRecognized::Recognized(Day::Day(255)), Some(5)));
-        assert!(Breakpoints::S2D169.before(2, &MaybeRecognized::Recognized(Day::Day(5)), Some(5)));
-        assert!(Breakpoints::S2D169.before(2, &MaybeRecognized::Recognized(Day::Day(168)), Some(583)));
-        assert!(Breakpoints::S2D169.after(2, &MaybeRecognized::Recognized(Day::Day(168)), Some(584)));
-        assert!(Breakpoints::S2D169.before(2, &MaybeRecognized::Recognized(Day::Day(169)), Some(93)));
-        assert!(Breakpoints::S2D169.after(2, &MaybeRecognized::Recognized(Day::Day(169)), Some(94)));
-        assert!(Breakpoints::S2D169.after(2, &MaybeRecognized::Recognized(Day::Day(200)), Some(5)));
-        assert!(Breakpoints::S2D169.after(3, &MaybeRecognized::Recognized(Day::Day(255)), Some(5)));
+        assert!(Breakpoints::S2D169.before(1, Some(Day::Day(255)), Some(5)));
+        assert!(Breakpoints::S2D169.before(2, Some(Day::Day(5)), Some(5)));
+        assert!(Breakpoints::S2D169.before(2, Some(Day::Day(168)), Some(583)));
+        assert!(Breakpoints::S2D169.after(2, Some(Day::Day(168)), Some(584)));
+        assert!(Breakpoints::S2D169.before(2, Some(Day::Day(169)), Some(93)));
+        assert!(Breakpoints::S2D169.after(2, Some(Day::Day(169)), Some(94)));
+        assert!(Breakpoints::S2D169.after(2, Some(Day::Day(200)), Some(5)));
+        assert!(Breakpoints::S2D169.after(3, Some(Day::Day(255)), Some(5)));
     }
 }

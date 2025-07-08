@@ -4,7 +4,7 @@ use std::{fs::File, io::Write, path::PathBuf, pin::pin};
 use clap::{Parser, ValueEnum};
 use futures::{Stream, StreamExt};
 use http_cache_reqwest::{CACacheManager, Cache, CacheMode, HttpCache, HttpCacheOptions};
-use mmolb_parsing::{enums::{EquipmentSlot, FeedEventSource, MaybeRecognized}, player::Player, process_event, team::Team, Game};
+use mmolb_parsing::{enums::{EquipmentSlot, FeedEventSource}, player::Player, process_event, team::Team, Game};
 use serde::{Serialize, Deserialize};
 
 use reqwest::Client;
@@ -204,6 +204,7 @@ async fn ingest_game(response: EntityResponse<serde_json::Value>, progress_repor
         
         drop(_event_span_guard);
     }
+
     if progress_report {
         let round_tripped = args.round_trip.then_some(" with round trip").unwrap_or_default();
         info!("Parse{round_tripped} completed");
@@ -217,6 +218,8 @@ async fn ingest_team(response: EntityResponse<serde_json::Value>, args: &Args) {
     let team: Team = serde_json::from_value(response.data).expect(&response.entity_id);
 
     let _team_span_guard = tracing::span!(Level::INFO, "Team", team_id = response.entity_id, name = team.name).entered();
+
+    let mut output = args.output_folder.as_ref().map(|folder| File::create(format!("{folder}/{}.ron", response.entity_id)).unwrap());
     
     if let Some(data) = round_trip_data {
         let round_tripped = serde_json::to_value(&team).unwrap();
@@ -228,9 +231,9 @@ async fn ingest_team(response: EntityResponse<serde_json::Value>, args: &Args) {
 
     for event in team.feed.into_inner().unwrap_or_default() {
         let _event_span_guard = tracing::span!(Level::INFO, "Feed Event", season = event.season, day = event.day.to_string(), r#type = event.event_type.to_string(), message = event.text.to_string()).entered();
-        match event.event_type {
-            MaybeRecognized::NotRecognized(event_type) => error!("{event_type} is not a recognized event type"),
-            MaybeRecognized::Recognized(event_type) => {
+        match event.event_type.0 {
+            Err(event_type) => error!("{event_type} is not a recognized event type"),
+            Ok(event_type) => {
                 let parsed_text = event.text.parse(event_type);
                 if tracing::enabled!(Level::ERROR) {
                     let unparsed = parsed_text.unparse(&event, FeedEventSource::Team);
@@ -238,8 +241,17 @@ async fn ingest_team(response: EntityResponse<serde_json::Value>, args: &Args) {
                         error!("{} s{}d{}: feed event round trip failure expected:\n'{}'\nGot:\n'{}'", response.entity_id, event.season, event.day, event.text, unparsed);
                     }
                 }
+
+                if args.verbose {
+                    info!("{:?} ({})", parsed_text, event.text);
+                }
+
+                if let Some(f) = &mut output {
+                    writeln!(f, "{}", ron::to_string(&parsed_text).unwrap()).unwrap();
+                }
             }
         }
+
         drop(_event_span_guard);
     }
     drop(_team_span_guard);
@@ -254,6 +266,7 @@ async fn ingest_player(response: EntityResponse<serde_json::Value>, args: &Args)
     drop(_player_span_guard);
 
     let _player_span_guard = tracing::span!(Level::INFO, "Player", player_id = response.entity_id, name = format!("{} {}", player.first_name, player.last_name)).entered();
+    let mut output = args.output_folder.as_ref().map(|folder| File::create(format!("{folder}/{}.ron", response.entity_id)).unwrap());
     
     if let Some(data) = round_trip_data {
         let round_tripped = serde_json::to_value(&player).unwrap();
@@ -265,9 +278,9 @@ async fn ingest_player(response: EntityResponse<serde_json::Value>, args: &Args)
 
     for event in player.feed.into_inner().unwrap_or_default() {
         let _event_span_guard = tracing::span!(Level::INFO, "Feed Event", season = event.season, day = event.day.to_string(), r#type = event.event_type.to_string(), message = event.text.to_string()).entered();
-        match event.event_type {
-            MaybeRecognized::NotRecognized(event_type) => error!("{event_type} is not a recognized event type"),
-            MaybeRecognized::Recognized(event_type) => {
+        match event.event_type.0 {
+            Err(event_type) => error!("{event_type} is not a recognized event type"),
+            Ok(event_type) => {
                 let parsed_text = event.text.parse(event_type);
                 if tracing::enabled!(Level::ERROR) {
                     let unparsed = parsed_text.unparse(&event, FeedEventSource::Player);
@@ -275,8 +288,17 @@ async fn ingest_player(response: EntityResponse<serde_json::Value>, args: &Args)
                         error!("{} s{}d{}: feed event round trip failure expected:\n'{}'\nGot:\n'{}'", response.entity_id, event.season, event.day, event.text, unparsed);
                     }
                 }
+
+                if args.verbose {
+                    info!("{:?} ({})", parsed_text, event.text);
+                }
+
+                if let Some(f) = &mut output {
+                    writeln!(f, "{}", ron::to_string(&parsed_text).unwrap()).unwrap();
+                }
             }
         }
+
         drop(_event_span_guard);
     }
     drop(_player_span_guard);

@@ -1,9 +1,12 @@
 use std::collections::HashMap;
 
 pub use serde::{Serialize, Deserialize};
+use serde_with::serde_as;
 
-use crate::{enums::{Attribute, Day, EquipmentEffectType, EquipmentRarity, EquipmentSlot, GameStat, Handedness, ItemPrefix, ItemSuffix, ItemType, MaybeRecognized, Position, PositionType, SeasonStatus}, feed_event::FeedEvent, utils::{AddedLater, ExpectNone}};
+use crate::{enums::{Attribute, Day, EquipmentEffectType, EquipmentRarity, EquipmentSlot, GameStat, Handedness, ItemPrefix, ItemSuffix, ItemType, Position, PositionType, SeasonStatus}, feed_event::FeedEvent, utils::{AddedLaterResult, ExpectNone, MaybeRecognizedResult}};
+use crate::utils::{MaybeRecognizedHelper, AddedLaterHelper};
 
+#[serde_as]
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
 #[serde(rename_all = "PascalCase")]
 pub struct Player {
@@ -12,18 +15,23 @@ pub struct Player {
     _id: Option<String>,
 
     pub augments: u8,
-    pub bats: MaybeRecognized<Handedness>,
-    pub birthday: MaybeRecognized<Day>,
+    #[serde_as(as = "MaybeRecognizedHelper<_>")]
+    pub bats: MaybeRecognizedResult<Handedness>,
+    #[serde_as(as = "MaybeRecognizedHelper<_>")]
+    pub birthday: MaybeRecognizedResult<Day>,
     /// Not present on old, deleted players
-    #[serde(default, skip_serializing_if = "AddedLater::skip")]
-    pub birthseason: AddedLater<u16>,
+    #[serde(default = "AddedLaterHelper::default_result", skip_serializing_if = "AddedLaterResult::is_err")]
+    #[serde_as(as = "AddedLaterHelper<_>")]
+    pub birthseason: AddedLaterResult<u16>,
     pub durability: f64,
     /// Not present on old, deleted players
-    #[serde(default, skip_serializing_if = "AddedLater::skip")]
-    pub equipment: AddedLater<PlayerEquipmentMap>,
+    #[serde(default = "AddedLaterHelper::default_result", skip_serializing_if = "AddedLaterResult::is_err")]
+    #[serde_as(as = "AddedLaterHelper<_>")]
+    pub equipment: AddedLaterResult<PlayerEquipmentMap>,
     /// Not present on old, deleted players
-    #[serde(default, skip_serializing_if = "AddedLater::skip")]
-    pub feed: AddedLater<Vec<FeedEvent>>,
+    #[serde(default = "AddedLaterHelper::default_result", skip_serializing_if = "AddedLaterResult::is_err")]
+    #[serde_as(as = "AddedLaterHelper<_>")]
+    pub feed: AddedLaterResult<Vec<FeedEvent>>,
     pub first_name: String,
     pub last_name: String,
     pub home: String,
@@ -37,39 +45,47 @@ pub struct Player {
     pub dislikes: String,
     
     pub number: u8,
-    pub position: MaybeRecognized<Position>,
-    pub position_type: MaybeRecognized<PositionType>,
-    pub season_stats: HashMap<String, HashMap<MaybeRecognized<SeasonStatus>, String>>,
-    pub stats: HashMap<MaybeRecognized<GameStat>, i32>,
+    #[serde_as(as = "MaybeRecognizedHelper<_>")]
+    pub position: MaybeRecognizedResult<Position>,
+    #[serde_as(as = "MaybeRecognizedHelper<_>")]
+    pub position_type: MaybeRecognizedResult<PositionType>,
+    #[serde_as(as = "HashMap<_, HashMap<MaybeRecognizedHelper<_>, _>>")]
+    pub season_stats: HashMap<String, HashMap<MaybeRecognizedResult<SeasonStatus>, String>>,
+    #[serde_as(as = "HashMap<MaybeRecognizedHelper<_>, _>")]
+    pub stats: HashMap<MaybeRecognizedResult<GameStat>, i32>,
 
     #[serde(rename = "TeamID")]
     pub team_id: Option<String>,
-    pub throws: MaybeRecognized<Handedness>
+    #[serde_as(as = "MaybeRecognizedHelper<_>")]
+    pub throws: MaybeRecognizedResult<Handedness>
 }
 
-/// A player's equipment field can be described by `HashMap<MaybeRecognized<EquipmentSlot>, Option<PlayerEquipment>>`
+/// A player's equipment field can be described by `HashMap<MaybeRecognizedResult<EquipmentSlot>, Option<PlayerEquipment>>`
 /// 
-/// This wrapper is accessed more like `HashMap<MaybeRecognized<EquipmentSlot>, PlayerEquipment>`, and can be accessed through 
-/// an `EquipmentSlot` on its own as well as an `&MaybeRecognized<EquipmentSlot>`.
+/// This wrapper is accessed more like `HashMap<MaybeRecognizedResult<EquipmentSlot>, PlayerEquipment>`, and can be accessed through 
+/// an `EquipmentSlot` on its own as well as an `&MaybeRecognizedResult<EquipmentSlot>`.
 /// 
 /// ```
 /// use std::collections::HashMap;
 /// use mmolb_parsing::player::{PlayerEquipmentMap, PlayerEquipment};
-/// use mmolb_parsing::enums::{MaybeRecognized, EquipmentSlot};
+/// use mmolb_parsing::enums::EquipmentSlot;
+/// use mmolb_parsing::utils::{MaybeRecognizedResult, NotRecognized};
 ///  
 /// let map = PlayerEquipmentMap::default();
 /// map.get(EquipmentSlot::Head);
-/// map.get(&MaybeRecognized::Recognized(EquipmentSlot::Head));
-/// map.get(&MaybeRecognized::NotRecognized(serde_json::Value::String("New Slot".to_string())));
+/// map.get(&Ok(EquipmentSlot::Head));
+/// map.get(&Err(NotRecognized(serde_json::Value::String("New Slot".to_string()))));
 /// 
-/// let a: HashMap<MaybeRecognized<EquipmentSlot>, PlayerEquipment> = map.clone().into();
-/// let b: HashMap<MaybeRecognized<EquipmentSlot>, Option<PlayerEquipment>> = map.clone().into();
+/// let a: HashMap<MaybeRecognizedResult<EquipmentSlot>, PlayerEquipment> = map.clone().into();
+/// let b: HashMap<MaybeRecognizedResult<EquipmentSlot>, Option<PlayerEquipment>> = map.clone().into();
 /// ```
+#[serde_as]
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Default)]
 #[serde(rename_all = "PascalCase")]
 pub struct PlayerEquipmentMap {
     #[serde(flatten)]
-    fields: HashMap<MaybeRecognized<EquipmentSlot>, Option<PlayerEquipment>>,
+    #[serde_as(as = "HashMap<MaybeRecognizedHelper<_>, _>")]
+    fields: HashMap<MaybeRecognizedResult<EquipmentSlot>, Option<PlayerEquipment>>,
 }
 
 impl PlayerEquipmentMap {
@@ -81,16 +97,16 @@ impl PlayerEquipmentMap {
     }
 }
 
-impl Into<HashMap<MaybeRecognized<EquipmentSlot>, PlayerEquipment>> for PlayerEquipmentMap {
-    fn into(self) -> HashMap<MaybeRecognized<EquipmentSlot>, PlayerEquipment> {
+impl Into<HashMap<MaybeRecognizedResult<EquipmentSlot>, PlayerEquipment>> for PlayerEquipmentMap {
+    fn into(self) -> HashMap<MaybeRecognizedResult<EquipmentSlot>, PlayerEquipment> {
         self.fields.into_iter()
             .flat_map(|(slot, equipment)| equipment.and_then(|e| Some((slot, e))))
             .collect()
     }
 }
 
-impl Into<HashMap<MaybeRecognized<EquipmentSlot>, Option<PlayerEquipment>>> for PlayerEquipmentMap {
-    fn into(self) -> HashMap<MaybeRecognized<EquipmentSlot>, Option<PlayerEquipment>> {
+impl Into<HashMap<MaybeRecognizedResult<EquipmentSlot>, Option<PlayerEquipment>>> for PlayerEquipmentMap {
+    fn into(self) -> HashMap<MaybeRecognizedResult<EquipmentSlot>, Option<PlayerEquipment>> {
         self.fields
     }
 }
@@ -105,44 +121,54 @@ pub trait _GetHelper<Index> {
 impl _GetHelper<EquipmentSlot> for PlayerEquipmentMap {
     type Output = PlayerEquipment;
     fn _get(&self, index: EquipmentSlot) -> Option<&Self::Output> {
-        self._get(&MaybeRecognized::Recognized(index))
+        self.fields.get(&Ok(index)).map(Option::as_ref).flatten()
     }
     fn _get_mut(&mut self, index: EquipmentSlot) -> Option<&mut Self::Output> {
-        self._get_mut(&MaybeRecognized::Recognized(index))
+        self.fields.get_mut(&Ok(index)).map(Option::as_mut).flatten()
     }
 }
 
-impl _GetHelper<&MaybeRecognized<EquipmentSlot>> for PlayerEquipmentMap {
+impl _GetHelper<&MaybeRecognizedResult<EquipmentSlot>> for PlayerEquipmentMap {
     type Output = PlayerEquipment;
 
-    fn _get(&self, index: &MaybeRecognized<EquipmentSlot>) -> Option<&Self::Output> {
+    fn _get(&self, index: &MaybeRecognizedResult<EquipmentSlot>) -> Option<&Self::Output> {
         self.fields.get(index).map(Option::as_ref).flatten()
     }
-    fn _get_mut(&mut self, index: &MaybeRecognized<EquipmentSlot>) -> Option<&mut Self::Output> {
+    fn _get_mut(&mut self, index: &MaybeRecognizedResult<EquipmentSlot>) -> Option<&mut Self::Output> {
         self.fields.get_mut(index).map(Option::as_mut).flatten()
     }
 }
 
+#[serde_as]
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
 #[serde(rename_all = "PascalCase")]
 pub struct PlayerEquipment {
-    pub effects: Vec<MaybeRecognized<EquipmentEffect>>,
+    #[serde_as(as = "Vec<MaybeRecognizedHelper<_>>")]
+    pub effects: Vec<MaybeRecognizedResult<EquipmentEffect>>,
     pub emoji: String,
     /// Removed in the current version of the API
     #[serde(default, skip_serializing_if = "Option::is_none")]
-    slot: Option<MaybeRecognized<EquipmentSlot>>,
-    pub name: MaybeRecognized<ItemType>,
-    pub prefix: Option<MaybeRecognized<ItemPrefix>>,
-    pub suffix: Option<MaybeRecognized<ItemSuffix>>,
-    pub rarity: MaybeRecognized<EquipmentRarity>
+    #[serde_as(as = "Option<MaybeRecognizedHelper<_>>")]
+    slot: Option<MaybeRecognizedResult<EquipmentSlot>>,
+    #[serde_as(as = "MaybeRecognizedHelper<_>")]
+    pub name: MaybeRecognizedResult<ItemType>,
+    #[serde_as(as = "Option<MaybeRecognizedHelper<_>>")]
+    pub prefix: Option<MaybeRecognizedResult<ItemPrefix>>,
+    #[serde_as(as = "Option<MaybeRecognizedHelper<_>>")]
+    pub suffix: Option<MaybeRecognizedResult<ItemSuffix>>,
+    #[serde_as(as = "MaybeRecognizedHelper<_>")]
+    pub rarity: MaybeRecognizedResult<EquipmentRarity>
 }
 
+#[serde_as]
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
 #[serde(rename_all = "PascalCase")]
 pub struct EquipmentEffect {
-    pub attribute: MaybeRecognized<Attribute>,
+    #[serde_as(as = "MaybeRecognizedHelper<_>")]
+    pub attribute: MaybeRecognizedResult<Attribute>,
     #[serde(rename = "Type")]
-    pub effect_type: MaybeRecognized<EquipmentEffectType>,
+    #[serde_as(as = "MaybeRecognizedHelper<_>")]
+    pub effect_type: MaybeRecognizedResult<EquipmentEffectType>,
     pub value: f64
 }
 

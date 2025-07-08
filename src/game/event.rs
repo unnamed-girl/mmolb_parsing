@@ -1,7 +1,10 @@
 use serde::{Serialize, Deserialize};
+use serde_with::serde_as;
 
-use crate::{enums::{EventType, Inning, MaybeRecognized}, game::{MaybePlayer, Pitch}, utils::{ExtraFields, SomeOrEmptyString}};
+use crate::{enums::{EventType, Inning}, game::{MaybePlayer, Pitch}, utils::{ExtraFields, MaybeRecognizedResult, SomeOrEmptyString}};
+use crate::utils::MaybeRecognizedHelper;
 
+#[serde_as]
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
 pub(crate) struct RawEvent {
     /// 0 is before the game has started
@@ -33,7 +36,8 @@ pub(crate) struct RawEvent {
 
     pub zone: SomeOrEmptyString<u8>,
 
-    pub event: MaybeRecognized<EventType>,
+    #[serde_as(as = "MaybeRecognizedHelper<_>")]
+    pub event: MaybeRecognizedResult<EventType>,
     pub message: String,
 
     pub index: SomeOrEmptyString<u16>,
@@ -42,6 +46,7 @@ pub(crate) struct RawEvent {
     pub extra_fields: ExtraFields,
 }
 
+#[serde_as]
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
 #[serde(from = "RawEvent", into = "RawEvent")]
 pub struct Event {
@@ -64,7 +69,8 @@ pub struct Event {
 
     pub pitch: Option<Pitch>,
 
-    pub event: MaybeRecognized<EventType>,
+    #[serde_as(as = "MaybeRecognizedHelper<_>")]
+    pub event: MaybeRecognizedResult<EventType>,
     pub message: String,
 
     pub index: Option<u16>,

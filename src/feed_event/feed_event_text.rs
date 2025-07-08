@@ -147,7 +147,7 @@ impl<S: Display> ParsedFeedEventText<S> {
             }
             ParsedFeedEventText::AttributeEquals { equals } => {
                 let f = |change: &AttributeEqual<S>| {
-                    if Breakpoints::S1AttributeEqualChange.after(event.season as u32, &event.day, None) {
+                    if Breakpoints::S1AttributeEqualChange.after(event.season as u32, event.day.as_ref().copied().ok(), None) {
                         format!("{}'s {} became equal to their current base {}.", change.player_name, change.changing_attribute, change.value_attribute)
                     } else if FeedEventSource::Player == source {
                         format!("{}'s {} was set to their {}.", change.player_name, change.changing_attribute, change.value_attribute)
@@ -161,7 +161,7 @@ impl<S: Display> ParsedFeedEventText<S> {
                     .join(" ")
             }
             ParsedFeedEventText::S1Enchantment { player_name, item, amount, attribute } => {
-                if Breakpoints::Season1EnchantmentChange.before(event.season as u32, &event.day, None) {
+                if Breakpoints::Season1EnchantmentChange.before(event.season as u32, event.day.as_ref().copied().ok(), None) {
                     format!("{player_name}'s {item} was enchanted with +{amount} to {attribute}.")
                 } else {
                     format!("The Item Enchantment was a success! {player_name}'s {item} gained a +{amount} {attribute} bonus.")

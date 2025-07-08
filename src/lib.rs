@@ -1,4 +1,4 @@
-pub(crate) mod utils;
+pub mod utils;
 pub(crate) mod time;
 
 pub mod game;

@@ -1,8 +1,12 @@
 use std::collections::HashMap;
 
-use crate::{enums::{Day, GameStat, LeagueScale, MaybeRecognized, SeasonStatus, Slot}, game::{Event, PitcherEntry, Weather}, utils::ExtraFields, AddedLater};
-use serde::{Serialize, Deserialize};
+use crate::{enums::{Day, GameStat, LeagueScale, SeasonStatus, Slot}, game::{Event, PitcherEntry, Weather}, utils::{AddedLaterResult, ExtraFields, MaybeRecognizedResult}};
+use crate::utils::{MaybeRecognizedHelper, AddedLaterHelper};
 
+use serde::{Serialize, Deserialize};
+use serde_with::serde_as;
+
+#[serde_as]
 #[derive(Debug, Clone, Serialize, Deserialize)]
 #[serde(rename_all = "PascalCase")]
 pub struct Game {
@@ -25,36 +29,45 @@ pub struct Game {
     pub home_team_name: String,
 
     pub season: u32,
-    pub day: MaybeRecognized<Day>,
+    #[serde_as(as = "MaybeRecognizedHelper<_>")]
+    pub day: MaybeRecognizedResult<Day>,
     pub state: String,
 
     pub weather: Weather,
     #[serde(rename = "Realm")]
     pub realm_id: String,
+    
     /// TeamID -> PlayerID -> Stat -> Value
-    pub stats: HashMap<String, HashMap<String, HashMap<MaybeRecognized<GameStat>, i32>>>,
+    #[serde_as(as = "HashMap<_, HashMap<_, HashMap<MaybeRecognizedHelper<_>, _>>>")]
+    pub stats: HashMap<String, HashMap<String, HashMap<MaybeRecognizedResult<GameStat>, i32>>>,
 
     /// PitcherEntries were not retroactively added to old games
     /// 
     /// TeamID -> PitcherEntry for that team.
-    #[serde(rename = "PitcherEntry", default, skip_serializing_if = "AddedLater::skip")]
-    pub pitcher_entries: AddedLater<HashMap<String, PitcherEntry>>,
+    #[serde(rename = "PitcherEntry", default = "AddedLaterHelper::default_result", skip_serializing_if = "AddedLaterResult::is_err")]
+    #[serde_as(as = "AddedLaterHelper<_>")]
+    pub pitcher_entries: AddedLaterResult<HashMap<String, PitcherEntry>>,
     
     /// PitchersUsed was not retroactively added to old games
     /// 
     /// TeamID -> List of pitchers for that team.
-    #[serde(default, skip_serializing_if = "AddedLater::skip")]
-    pub pitchers_used: AddedLater<HashMap<String, Vec<String>>>,
+    #[serde(default = "AddedLaterHelper::default_result", skip_serializing_if = "AddedLaterResult::is_err")]
+    #[serde_as(as = "AddedLaterHelper<_>")]
+    pub pitchers_used: AddedLaterResult<HashMap<String, Vec<String>>>,
 
-    pub away_lineup: Vec<MaybeRecognized<Slot>>,
-    pub home_lineup: Vec<MaybeRecognized<Slot>>,
+    #[serde_as(as = "Vec<MaybeRecognizedHelper<_>>")]
+    pub away_lineup: Vec<MaybeRecognizedResult<Slot>>,
+    #[serde_as(as = "Vec<MaybeRecognizedHelper<_>>")]
+    pub home_lineup: Vec<MaybeRecognizedResult<Slot>>,
     #[serde(rename = "DayID")]
     pub day_id: String,
     #[serde(rename = "SeasonID")]
     pub season_id: String,
-    pub season_status: MaybeRecognized<SeasonStatus>,
+    #[serde_as(as = "MaybeRecognizedHelper<_>")]
+    pub season_status: MaybeRecognizedResult<SeasonStatus>,
     #[serde(rename = "League")]
-    pub league_scale: MaybeRecognized<LeagueScale>,
+    #[serde_as(as = "MaybeRecognizedHelper<_>")]
+    pub league_scale: MaybeRecognizedResult<LeagueScale>,
 
     pub event_log: Vec<Event>,
 

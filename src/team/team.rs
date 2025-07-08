@@ -1,10 +1,13 @@
 use std::collections::HashMap;
 
 use serde::{Serialize, Deserialize};
+use serde_with::serde_as;
 
-use crate::{enums::{GameStat, MaybeRecognized, Position, PositionType, RecordType, Slot}, feed_event::FeedEvent, utils::{ExpectNone, ExtraFields}, AddedLater};
+use crate::{enums::{GameStat, Position, PositionType, RecordType, Slot}, feed_event::FeedEvent, utils::{AddedLaterResult, ExpectNone, ExtraFields, MaybeRecognizedResult, NotRecognized}};
+use crate::utils::{MaybeRecognizedHelper, AddedLaterHelper};
 use super::raw_team::{RawTeamPlayer};
 
+#[serde_as]
 #[derive(Serialize, Deserialize, Debug, Clone)]
 #[serde(rename_all = "PascalCase")]
 pub struct Team {
@@ -19,12 +22,14 @@ pub struct Team {
     pub emoji: String,
 
     /// Not present on some deleted teams.
-    #[serde(default, skip_serializing_if = "AddedLater::skip")]
-    pub feed: AddedLater<Vec<FeedEvent>>,
+    #[serde(default = "AddedLaterHelper::default_result", skip_serializing_if = "AddedLaterResult::is_err")]
+    #[serde_as(as = "AddedLaterHelper<_>")]
+    pub feed: AddedLaterResult<Vec<FeedEvent>>,
 
     /// Not present on some deleted teams.
-    #[serde(default, skip_serializing_if = "AddedLater::skip")]
-    pub motes_used: AddedLater<u8>,
+    #[serde(default = "AddedLaterHelper::default_result", skip_serializing_if = "AddedLaterResult::is_err")]
+    #[serde_as(as = "AddedLaterHelper<_>")]
+    pub motes_used: AddedLaterResult<u8>,
 
     pub location: String,
     pub full_location: String,
@@ -40,7 +45,8 @@ pub struct Team {
     pub owner_id: Option<String>,
 
     pub players: Vec<TeamPlayer>,
-    pub record: HashMap<MaybeRecognized<RecordType>, TeamRecord>,
+    #[serde_as(as = "HashMap<MaybeRecognizedHelper<_>, _>")]
+    pub record: HashMap<Result<RecordType, NotRecognized>, TeamRecord>,
     pub season_records: HashMap<String, String>,
 
     #[serde(flatten)]
@@ -65,15 +71,15 @@ pub struct TeamPlayer {
     pub player_id: String,
 
     /// Undrafted player's positions are just their slot.
-    pub position: Option<MaybeRecognized<Position>>,
+    pub position: Option<MaybeRecognizedResult<Position>>,
 
-    pub slot: MaybeRecognized<Slot>,
+    pub slot: MaybeRecognizedResult<Slot>,
 
     pub(crate) position_type_overidden: bool,
-    pub position_type: MaybeRecognized<PositionType>,
+    pub position_type: MaybeRecognizedResult<PositionType>,
 
 
-    pub stats: AddedLater<HashMap<MaybeRecognized<GameStat>, i32>>,
+    pub stats: AddedLaterResult<HashMap<MaybeRecognizedResult<GameStat>, i32>>,
     
     #[serde(flatten)]
     pub extra_fields: ExtraFields,

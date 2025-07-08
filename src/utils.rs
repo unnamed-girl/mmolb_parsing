@@ -1,64 +1,51 @@
-use std::ops::{Deref, DerefMut};
+use std::{any::type_name, fmt::{Debug, Display}, marker::PhantomData, str::FromStr};
 
 use serde::{de::Error, Deserialize, Deserializer, Serialize, Serializer};
+use serde_with::{de::DeserializeAsWrap, ser::SerializeAsWrap, DeserializeAs, SerializeAs};
 
-/// A wrapper around an Option<T>, for fields that aren't found in old data.
-/// 
-/// NOTE: mmolb_parsing only promises to support the latest versions of entities on Cashews. So this wrapper is used when: 
-/// - mmolb didn't retroactively add a new field to old entities.
-/// - Some entities of this type were deleted, and so Cashews holds on to old api versions.
-/// 
-/// ```
-/// use mmolb_parsing::AddedLater;
-/// 
-/// let value = AddedLater::<u8>::default();
-/// assert_eq!(None, value.0); // Wraps an Option<T>
-/// assert_eq!(None, value.into_inner());
-/// assert_eq!(0, value.unwrap_or_default()); // Implements Deref and DerefMut
-/// assert!(value.skip()); // This value was not produced from a successful deserialization, and therefore should be skipped when serializing.
-/// ```
-#[derive(Clone, Copy, Debug, PartialEq, Eq)]
-pub struct AddedLater<T>(pub Option<T>);
-impl<T> AddedLater<T> {
-    pub fn skip(&self) -> bool {
-        self.0.is_none()
-    }
-    pub fn into_inner(self) -> Option<T> {
-        self.0
+#[derive(Debug, Clone, PartialEq, Eq, Hash, Serialize, Deserialize)]
+pub struct AddedLater;
+
+impl Display for AddedLater {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        write!(f, "Old data that doesn't contain this field")
     }
 }
-impl<T: Serialize> Serialize for AddedLater<T> {
-    fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error>
-        where
-            S: Serializer {
-        self.0.serialize(serializer)
+
+impl std::error::Error for AddedLater {}
+
+pub type AddedLaterResult<T> = Result<T, AddedLater>;
+
+
+pub struct AddedLaterHelper<T>(PhantomData<T>);
+
+impl<T> AddedLaterHelper<T> {
+    pub fn default_result() -> AddedLaterResult<T> {
+        AddedLaterResult::Err(AddedLater)
     }
 }
-impl<'de, T: Deserialize<'de>> Deserialize<'de> for AddedLater<T> {
-    fn deserialize<D>(deserializer: D) -> Result<Self, D::Error>
+
+impl<'de, T, U> DeserializeAs<'de, AddedLaterResult<T>> for AddedLaterHelper<U>
+where U: DeserializeAs<'de, T> {
+    fn deserialize_as<D>(deserializer: D) -> Result<AddedLaterResult<T>, D::Error>
         where
             D: Deserializer<'de> {
-        Ok(Self(Some(T::deserialize(deserializer)?)))
+        Ok(Ok(DeserializeAsWrap::<T, U>::deserialize(deserializer)?.into_inner()))
     }
 }
 
-impl<T> Default for AddedLater<T> {
-    fn default() -> Self {
-        Self(None)
+impl<T, U> SerializeAs<AddedLaterResult<T>> for AddedLaterHelper<U> 
+where U: SerializeAs<T> {
+    fn serialize_as<S>(source: &AddedLaterResult<T>, serializer: S) -> Result<S::Ok, S::Error>
+        where
+            S: Serializer {
+        match source.as_ref().ok() {
+            Some(a) => SerializeAsWrap::<T, U>::new(a).serialize(serializer),
+            None => serializer.serialize_none()
+        }
     }
 }
 
-impl<T> Deref for AddedLater<T> {
-    type Target = Option<T>;
-    fn deref(&self) -> &Self::Target {
-        &self.0
-    }
-}
-impl<T> DerefMut for AddedLater<T> {
-    fn deref_mut(&mut self) -> &mut Self::Target {
-        &mut self.0
-    }
-}
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Default)]
 pub(crate) enum SomeOrEmptyString<T> {
@@ -153,6 +140,73 @@ impl<'de> Deserialize<'de> for ExtraFields {
     }
 }
 
+#[derive(Debug, Clone, PartialEq, Eq, Hash, Serialize, Deserialize)]
+#[serde(transparent)]
+/// When trying to parse the input, found a value we haven't added to our data model yet.
+pub struct NotRecognized(pub serde_json::Value);
+
+impl Display for NotRecognized {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        let received = self.0.to_string();
+        write!(f, "Failed to parse {received}")
+    }
+}
+
+impl std::error::Error for NotRecognized {}
+
+pub type MaybeRecognizedResult<T> = Result<T, NotRecognized>;
+
+
+#[derive(Debug, Clone, PartialEq, Eq, Hash)]
+pub struct MaybeRecognizedHelper<T>(PhantomData<T>);
+
+pub(crate) fn maybe_recognized_from_str<T: FromStr>(value: &str) -> MaybeRecognizedResult<T> {
+    T::from_str(value).map_err(|_| NotRecognized(serde_json::Value::String(value.to_string())))
+}
+
+pub(crate) fn maybe_recognized_to_string<T: ToString>(value: &MaybeRecognizedResult<T>) -> String {
+    match value {
+        Ok(t) => t.to_string(),
+        Err(NotRecognized(v)) => v.to_string()
+    }
+}
+
+
+impl<'de, T, U> DeserializeAs<'de, MaybeRecognizedResult<T>> for MaybeRecognizedHelper<U> 
+    where U: DeserializeAs<'de, T>{
+    fn deserialize_as<D>(deserializer: D) -> Result<Result<T, NotRecognized>, D::Error>
+        where
+            D: Deserializer<'de> {
+
+        #[derive(Deserialize)]
+        enum Visitor<T, U> {
+            #[serde(untagged)]
+            Recognized(#[serde(bound(deserialize = "U: DeserializeAs<'de, T>"))] DeserializeAsWrap<T, U>),
+            #[serde(untagged)]
+            Other(serde_json::Value)
+        }
+        match Visitor::<T, U>::deserialize(deserializer) {
+            Ok(Visitor::Recognized(t)) => Ok(Ok(t.into_inner())),
+            Ok(Visitor::Other(s)) => {
+                tracing::error!("{s:?} not recognized as {}", type_name::<T>());
+                Ok(Err(NotRecognized(s, )))
+            }
+            Err(e) => Err(e)
+        }
+    }
+}
+
+impl<T, U> SerializeAs<MaybeRecognizedResult<T>> for MaybeRecognizedHelper<U> 
+    where U: SerializeAs<T> {
+    fn serialize_as<S>(source: &Result<T, NotRecognized>, serializer: S) -> Result<S::Ok, S::Error>
+        where
+            S: Serializer {
+        match source {
+            Ok(t) => SerializeAsWrap::<T, U>::new(t).serialize(serializer),
+            Err(s) => s.serialize(serializer)
+        }
+    }
+}
 
 #[cfg(test)]
 mod test_utils {

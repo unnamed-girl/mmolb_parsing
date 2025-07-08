@@ -3,7 +3,7 @@ use std::{fmt::{Display, Write}, iter::once};
 use serde::{Serialize, Deserialize};
 use strum::EnumDiscriminants;
 
-use crate::{enums::{Base, BaseNameVariant, BatterStat, Distance, FairBallDestination, FairBallType, FieldingErrorType, FoulType, GameOverMessage, HomeAway, ItemPrefix, ItemSuffix, ItemType, MoundVisitType, NowBattingStats, Place, StrikeType, TopBottom}, Game, time::Breakpoints};
+use crate::{enums::{Base, BaseNameVariant, BatterStat, Distance, EventType, FairBallDestination, FairBallType, FieldingErrorType, FoulType, GameOverMessage, HomeAway, ItemPrefix, ItemSuffix, ItemType, MoundVisitType, NowBattingStats, Place, StrikeType, TopBottom}, time::Breakpoints, utils::MaybeRecognizedResult, Game};
 
 /// S is the string type used. S = &'output str is used by the parser, 
 /// but a mutable type is necessary when directly deserializing, because some players have escaped characters in their names
@@ -11,7 +11,7 @@ use crate::{enums::{Base, BaseNameVariant, BatterStat, Distance, FairBallDestina
 #[serde(tag = "event_type")]
 pub enum ParsedEventMessage<S> {
     ParseError {
-        raw_event_type: String,
+        raw_event_type: MaybeRecognizedResult<EventType>,
         message: String,
     },
     KnownBug {
@@ -513,7 +513,7 @@ impl<S: Display> Delivery<S> {
 }
 
 fn old_space(game: &Game, event_index: Option<u16>) -> &'static str {
-    if Breakpoints::S2D169.before(game.season, &game.day, event_index) {
+    if Breakpoints::S2D169.before(game.season, game.day.as_ref().copied().ok(), event_index) {
         " "
     } else {
         ""
