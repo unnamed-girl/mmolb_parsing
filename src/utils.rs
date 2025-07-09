@@ -3,12 +3,18 @@ use std::{any::type_name, fmt::{Debug, Display}, marker::PhantomData, str::FromS
 use serde::{de::{Error, Visitor}, Deserialize, Deserializer, Serialize, Serializer};
 use serde_with::{de::DeserializeAsWrap, ser::SerializeAsWrap, DeserializeAs, PickFirst, Same, SerializeAs};
 
+
 #[derive(Debug, Clone, PartialEq, Eq, Hash, Serialize, Deserialize)]
+/// Error for fields where some cashews data is missing the field.
+/// 
+/// NOTE: mmolb_parsing only aims to support the latest version of each entity on Cashews. This field is only used when:
+/// - Entities are deleted from mmolb, so cashews holds onto an old api version (e.g. deleted teams are missing feeds)
+/// - mmolb does not retroactively add a field to old entities (e.g. season 0 games don't have a PitcherEntry field)
 pub struct AddedLater;
 
 impl Display for AddedLater {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        write!(f, "Old data that doesn't contain this field")
+        write!(f, "This entity is missing this field, usually because the entity is older than the field")
     }
 }
 
@@ -17,7 +23,7 @@ impl std::error::Error for AddedLater {}
 pub type AddedLaterResult<T> = Result<T, AddedLater>;
 
 
-pub struct AddedLaterHelper<T>(PhantomData<T>);
+pub(crate) struct AddedLaterHelper<T>(PhantomData<T>);
 
 impl<T> AddedLaterHelper<T> {
     pub fn default_result() -> AddedLaterResult<T> {
@@ -149,7 +155,7 @@ pub(crate) fn extra_fields_deserialize<'de, D>(deserializer: D) -> Result<serde_
 
 #[derive(Debug, Clone, PartialEq, Eq, Hash, Serialize, Deserialize)]
 #[serde(transparent)]
-/// When trying to parse the input, found a value we haven't added to our data model yet.
+/// Couldn't parse this value, usually because it's a new mmolb feature we haven't handled yet.
 pub struct NotRecognized(pub serde_json::Value);
 
 impl Display for NotRecognized {
@@ -165,7 +171,7 @@ pub type MaybeRecognizedResult<T> = Result<T, NotRecognized>;
 
 
 #[derive(Debug, Clone, PartialEq, Eq, Hash)]
-pub struct MaybeRecognizedHelper<T>(PhantomData<T>);
+pub(crate) struct MaybeRecognizedHelper<T>(PhantomData<T>);
 
 pub(crate) fn maybe_recognized_from_str<T: FromStr>(value: &str) -> MaybeRecognizedResult<T> {
     T::from_str(value).map_err(|_| NotRecognized(serde_json::Value::String(value.to_string())))
