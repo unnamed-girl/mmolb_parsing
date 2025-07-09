@@ -4,7 +4,7 @@ use std::{fs::File, io::Write, path::PathBuf, pin::pin};
 use clap::{Parser, ValueEnum};
 use futures::{Stream, StreamExt};
 use mmolb_parsing::{enums::{EquipmentSlot, FeedEventSource}, feed_event::parse_feed_event, player::Player, process_event, team::Team, Game};
-use serde::{Serialize, Deserialize};
+use serde::{Deserialize, Deserializer, Serialize, de::IntoDeserializer};
 
 use reqwest::Client;
 use tracing::{error, info, Level};
@@ -85,7 +85,7 @@ enum Kind {
     Player
 }
 
-fn cashews_fetch_json<'a>(client: &'a Client, kind: Kind, extra: String, start_page: Option<String>) -> impl Stream<Item = Vec<EntityResponse<serde_json::Value>>> + 'a {
+fn cashews_fetch_json<'a>(client: &'a Client, kind: Kind, extra: String, start_page: Option<String>) -> impl Stream<Item = Vec<EntityResponse<Box<serde_json::value::RawValue>>>> + 'a {
     let kind = match kind {
         Kind::Game => "game",
         Kind::Team => "team",
@@ -98,7 +98,7 @@ fn cashews_fetch_json<'a>(client: &'a Client, kind: Kind, extra: String, start_p
         };
         loop {
             info!("Fetching {kind}s from cashews page {page:?}");
-            let response = client.get(&url).send().await.unwrap().json::<FreeCashewResponse<EntityResponse<serde_json::Value>>>().await.unwrap();
+            let response = client.get(&url).send().await.unwrap().json::<FreeCashewResponse<EntityResponse<Box<serde_json::value::RawValue>>>>().await.unwrap();
             info!("{} {kind}s fetched from cashews page {page:?}", response.items.len());
             page = response.next_page;
             yield response.items;
@@ -132,7 +132,7 @@ async fn main() {
     if let Some(id) = &args.id {
         let client = Client::new();
         let url = format!("https://freecashe.ws/api/chron/v0/entities?kind=game&id={id}");
-        let entities = client.get(&url).send().await.unwrap().json::<FreeCashewResponse<EntityResponse<serde_json::Value>>>().await.unwrap().items;
+        let entities = client.get(&url).send().await.unwrap().json::<FreeCashewResponse<EntityResponse<Box<serde_json::value::RawValue>>>>().await.unwrap().items;
         for game in entities.into_iter() {
             func(game, true).await;
         }
@@ -158,13 +158,13 @@ async fn main() {
     drop(guard);
 }
 
-async fn ingest_game(response: EntityResponse<serde_json::Value>, progress_report: bool, args: &Args) {
-    let round_trip_data = args.round_trip.then(|| response.data.clone());
-    let game: Game = serde_json::from_value(response.data).map_err(|e| format!("Failed to deserialize {}, {e:?}", response.entity_id)).expect(&response.entity_id);
+async fn ingest_game(response: EntityResponse<Box<serde_json::value::RawValue>>, progress_report: bool, args: &Args) {
+    let game: Game = Game::deserialize(response.data.as_ref().into_deserializer()).map_err(|e| format!("Failed to deserialize {}, {e:?}", response.entity_id)).expect(&response.entity_id);
 
     let _span_guard = tracing::span!(Level::INFO, "Game", game_id = response.entity_id, season = game.season, day = format!("{:?}", game.day), scale = format!("{:?}", game.league_scale)).entered();
 
-    if let Some(data) = round_trip_data {
+    if args.round_trip {
+        let data = serde_json::Value::deserialize(response.data.into_deserializer()).unwrap();
         let round_tripped = serde_json::to_value(&game).unwrap();
 
         let diff = serde_json_diff::values(data, round_tripped);
@@ -205,19 +205,20 @@ async fn ingest_game(response: EntityResponse<serde_json::Value>, progress_repor
     drop(_span_guard);
 }
 
-async fn ingest_team(response: EntityResponse<serde_json::Value>, args: &Args) {
-    let round_trip_data = args.round_trip.then(|| response.data.clone());
-    let team: Team = serde_json::from_value(response.data).expect(&response.entity_id);
+async fn ingest_team(response: EntityResponse<Box<serde_json::value::RawValue>>, args: &Args) {
+    let team = Team::deserialize(response.data.as_ref().into_deserializer()).map_err(|e| format!("Failed to deserialize {}, {e:?}", response.entity_id)).expect(&response.entity_id);
 
     let _team_span_guard = tracing::span!(Level::INFO, "Team", team_id = response.entity_id, name = team.name).entered();
 
     let mut output = args.output_folder.as_ref().map(|folder| File::create(format!("{folder}/{}.ron", response.entity_id)).unwrap());
     
-    if let Some(data) = round_trip_data {
+    if args.round_trip {
+        let data = serde_json::Value::deserialize(response.data.into_deserializer()).unwrap();
         let round_tripped = serde_json::to_value(&team).unwrap();
+
         let diff = serde_json_diff::values(data, round_tripped);
         if let Some(diff) = diff {
-            error!("{} round trip failed. Diff: {}", response.entity_id, serde_json::to_string(&diff).unwrap());
+            error!("round trip failed. Diff: {}", serde_json::to_string(&diff).unwrap());
         }
     }
 
@@ -245,24 +246,26 @@ async fn ingest_team(response: EntityResponse<serde_json::Value>, args: &Args) {
     drop(_team_span_guard);
 }
 
-async fn ingest_player(response: EntityResponse<serde_json::Value>, args: &Args) {
+async fn ingest_player(response: EntityResponse<Box<serde_json::value::RawValue>>, args: &Args) {
     let _player_span_guard = tracing::span!(Level::INFO, "Deserializing Player", player_id = response.entity_id).entered();
 
-    let round_trip_data = args.round_trip.then(|| response.data.clone());
-    let player: Player = serde_json::from_value(response.data).expect(&response.entity_id);
+    let player = Player::deserialize(response.data.as_ref().into_deserializer()).map_err(|e| format!("Failed to deserialize {}, {e:?}", response.entity_id)).expect(&response.entity_id);
 
     drop(_player_span_guard);
 
     let _player_span_guard = tracing::span!(Level::INFO, "Player", player_id = response.entity_id, name = format!("{} {}", player.first_name, player.last_name)).entered();
     let mut output = args.output_folder.as_ref().map(|folder| File::create(format!("{folder}/{}.ron", response.entity_id)).unwrap());
     
-    if let Some(data) = round_trip_data {
+    if args.round_trip {
+        let data = serde_json::Value::deserialize(response.data.into_deserializer()).unwrap();
         let round_tripped = serde_json::to_value(&player).unwrap();
+
         let diff = serde_json_diff::values(data, round_tripped);
         if let Some(diff) = diff {
-            error!("{} round trip failed. Diff: {}", response.entity_id, serde_json::to_string(&diff).unwrap());
+            error!("round trip failed. Diff: {}", serde_json::to_string(&diff).unwrap());
         }
     }
+
 
     for event in player.feed.unwrap_or_default() {
         let _event_span_guard = tracing::span!(Level::INFO, "Feed Event", season = event.season, day = format!("{:?}", event.day), r#type = format!("{:?}", event.event_type), message = event.text).entered();

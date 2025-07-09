@@ -1,7 +1,7 @@
 use std::{any::type_name, fmt::{Debug, Display}, marker::PhantomData, str::FromStr};
 
-use serde::{de::Error, Deserialize, Deserializer, Serialize, Serializer};
-use serde_with::{de::DeserializeAsWrap, ser::SerializeAsWrap, DeserializeAs, SerializeAs};
+use serde::{de::{Error, Visitor}, Deserialize, Deserializer, Serialize, Serializer};
+use serde_with::{de::DeserializeAsWrap, ser::SerializeAsWrap, DeserializeAs, PickFirst, Same, SerializeAs};
 
 #[derive(Debug, Clone, PartialEq, Eq, Hash, Serialize, Deserialize)]
 pub struct AddedLater;
@@ -46,60 +46,65 @@ where U: SerializeAs<T> {
     }
 }
 
+/// serde_as converter for an Option<T>. **This only works when T fails to deserialize from an empty string**
+/// because this is optimised to assume usually Some(T) is present, the Some branch goes first.
+pub(crate) struct NonStringOrEmptyString;
 
-#[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Default)]
-pub(crate) enum SomeOrEmptyString<T> {
-    Some(T),
-    #[default]
-    EmptyString
-}
-
-impl<T> From<Option<T>> for SomeOrEmptyString<T> {
-    fn from(value: Option<T>) -> Self {
-        value.map(Self::Some)
-            .unwrap_or(Self::EmptyString)
-    }
-}
-
-impl<T> From<SomeOrEmptyString<T>> for Option<T> {
-    fn from(value: SomeOrEmptyString<T>) -> Self {
-        match value {
-            SomeOrEmptyString::Some(t) => Some(t),
-            SomeOrEmptyString::EmptyString => None
-        }
-    }
-}
-
-impl<'de, T: Deserialize<'de>> Deserialize<'de> for SomeOrEmptyString<T> {
-    fn deserialize<D>(deserializer: D) -> Result<Self, D::Error>
+impl<'de, T: Deserialize<'de>> DeserializeAs<'de, Option<T>> for NonStringOrEmptyString {
+    fn deserialize_as<D>(deserializer: D) -> Result<Option<T>, D::Error>
         where
             D: Deserializer<'de> {
-        #[derive(Deserialize)]
-        #[serde(untagged)]
-        enum ValueOrEmptyString<'a, T> {
-            String(String),
-            S(&'a str),
-            R(T),
-        }
+        PickFirst::<(Same, EmptyString)>::deserialize_as(deserializer)
+    }
+}
 
-        match ValueOrEmptyString::deserialize(deserializer) {
-            Ok(ValueOrEmptyString::R(r)) => Ok(Self::Some(r)),
-            Ok(ValueOrEmptyString::S(s)) if s.is_empty() => Ok(Self::EmptyString),
-            Ok(ValueOrEmptyString::S(_)) => Err(D::Error::custom("only empty strings may be provided")),
-            Ok(ValueOrEmptyString::String(s)) if s.is_empty() => Ok(Self::EmptyString),
-            Ok(ValueOrEmptyString::String(_)) => Err(D::Error::custom("only empty strings may be provided")),
-            Err(err) => Err(err),
+impl<T: Serialize> SerializeAs<Option<T>> for NonStringOrEmptyString {
+    fn serialize_as<S>(source: &Option<T>, serializer: S) -> Result<S::Ok, S::Error>
+        where
+            S: Serializer {
+        match source {
+            Some(t) => t.serialize(serializer),
+            None => "".serialize(serializer)
         }
     }
 }
 
-impl<T: Serialize> Serialize for SomeOrEmptyString<T> {
-    fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error>
+/// serde_as converter that expects to always see an empty string. Currently only produces an Option::None value, because it is
+/// intended for use as the second branch of NonStringOrEmptyString.
+struct EmptyString;
+
+impl<'de, T: Deserialize<'de>> DeserializeAs<'de, Option<T>> for EmptyString {
+    fn deserialize_as<D>(deserializer: D) -> Result<Option<T>, D::Error>
+        where
+            D: Deserializer<'de> {
+        struct EmptyStringVisitor;
+        impl<'de> Visitor<'de> for EmptyStringVisitor {
+            type Value = ();
+
+            fn expecting(&self, formatter: &mut std::fmt::Formatter) -> std::fmt::Result {
+                write!(formatter, "an empty string")
+            }
+
+            fn visit_str<E>(self, v: &str) -> Result<Self::Value, E> where E: Error, {
+                match v {
+                    "" => Ok(()),
+                    _ => Err(E::custom("not an empty string"))
+                }
+            }
+        }
+
+        deserializer.deserialize_str(EmptyStringVisitor)
+            .map(|_| None)
+    }
+}
+
+impl<T: Serialize> SerializeAs<Option<T>> for EmptyString {
+    fn serialize_as<S>(source: &Option<T>, serializer: S) -> Result<S::Ok, S::Error>
         where
             S: Serializer {
-        match self {
-            Self::Some(t) => t.serialize(serializer),
-            Self::EmptyString => "".serialize(serializer)
+        match source {
+            Some(t) => t.serialize(serializer),
+            None => "".serialize(serializer)
         }
     }
 }
