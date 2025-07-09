@@ -14,7 +14,7 @@ const OVERRIDES: phf::Map<&'static str, phf::Map<u16, ParsedEventMessage<&'stati
     "68611cb61e65f5fb52cb61d6" => phf_map!(30u16 => ParsedEventMessage::KnownBug { bug: KnownBug::FirstBasemanChoosesAGhost { batter: "Zoom Savić", first_baseman: "Ana Carolina Finch" } }),
 );
 
-pub fn parse_event<'output, 'parse>(event: &'output Event, parsing_context: &ParsingContext<'output, 'parse>) -> Result<ParsedEventMessage<&'output str>, GameEventParseError> {
+pub fn parse_event<'output, 'parse>(event: &'output Event, parsing_context: &ParsingContext<'output, 'parse>) -> ParsedEventMessage<&'output str> {
     if let Some(game_overrides) = OVERRIDES.get(parsing_context.game_id) {
         let event_index = parsing_context.event_index.unwrap_or_else(|| 
             parsing_context.game.event_log.iter().enumerate()
@@ -24,7 +24,7 @@ pub fn parse_event<'output, 'parse>(event: &'output Event, parsing_context: &Par
         );
 
         if let Some(event) = game_overrides.get(&event_index) {
-            return Ok(event.clone());
+            return event.clone();
         }
     }
     
@@ -32,7 +32,8 @@ pub fn parse_event<'output, 'parse>(event: &'output Event, parsing_context: &Par
         Ok(event_type) => event_type,
         Err(event_type) => {
             tracing::error!("Event type {event_type} not recognized: {}", event.message);
-            return Err(GameEventParseError::EventTypeNotRecognized(event_type.clone()))
+            let error = GameEventParseError::EventTypeNotRecognized(event_type.clone());
+            return ParsedEventMessage::ParseError { error, message: &event.message }
         }
     };
     
@@ -54,7 +55,12 @@ pub fn parse_event<'output, 'parse>(event: &'output Event, parsing_context: &Par
         EventType::WeatherShipment => weather_shipment(parsing_context).parse(&event.message),
         EventType::WeatherSpecialDelivery => special_delivery(parsing_context).parse(&event.message),
         EventType::Balk => balk().parse(&event.message)
-    }.finish().map(|(_, o)| o).map_err(|_| GameEventParseError::FailedParsingMessage { event_type: *event_type, message: event.message.clone() })
+    }.finish().map(|(_, o)| o)
+    .unwrap_or_else(|_| {
+            let error = GameEventParseError::FailedParsingMessage { event_type: *event_type, message: event.message.clone() };
+            ParsedEventMessage::ParseError { error, message: &event.message }
+        }
+    )
 }
 
 fn balk<'output>() -> impl MyParser<'output, ParsedEventMessage<&'output str>> {

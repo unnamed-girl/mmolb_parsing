@@ -18,6 +18,10 @@ pub enum FeedEventParseError {
 
 #[derive(Clone, Debug, Serialize, Deserialize, PartialEq)]
 pub enum ParsedFeedEventText<S> {
+    ParseError {
+        error: FeedEventParseError,
+        text: S
+    },
     GameResult {
         /// Sometimes this name is wrong: early season 1 bug where the events didn't have spaces between words.
         home_team: EmojiTeam<S>,
@@ -93,6 +97,7 @@ pub struct AttributeEqual<S> {
 impl<S: Display> ParsedFeedEventText<S> {
     pub fn unparse(&self, event: &FeedEvent, source: FeedEventSource) -> String {
         match self {
+            ParsedFeedEventText::ParseError { text, .. } => text.to_string(),
             ParsedFeedEventText::GameResult { home_team, away_team, home_score, away_score } => {
                 format!("{} vs. {} - FINAL {}-{}", away_team, home_team, away_score, home_score)
             }

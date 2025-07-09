@@ -22,6 +22,10 @@ pub enum GameEventParseError {
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq, EnumDiscriminants)]
 #[serde(tag = "event_type")]
 pub enum ParsedEventMessage<S> {
+    ParseError {
+        error: GameEventParseError,
+        message: S
+    },
     KnownBug {
         bug: KnownBug<S>
     },
@@ -125,6 +129,7 @@ impl<S: Display> ParsedEventMessage<S> {
     /// Recreate the event message this ParsedEvent was built out of.
     pub fn unparse(&self, game: &Game, event_index: Option<u16>) -> String {
         match self {
+            Self::ParseError { message, .. } => message.to_string(),
             Self::LiveNow { away_team, home_team } => format!("{} @ {}", away_team, home_team),
             Self::PitchingMatchup { away_team, home_team, home_pitcher, away_pitcher } => format!("{away_team} {away_pitcher} vs. {home_team} {home_pitcher}"),
             Self::Lineup { side: _, players } => {

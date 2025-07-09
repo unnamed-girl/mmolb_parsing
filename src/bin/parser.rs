@@ -180,13 +180,10 @@ async fn ingest_game(response: EntityResponse<Box<serde_json::value::RawValue>>,
 
         let parsed_event_message = process_event(event, &game, &response.entity_id);
         if tracing::enabled!(Level::ERROR) {
-            if let Ok(parsed_event_message) = &parsed_event_message {
-                let unparsed = parsed_event_message.unparse(&game, event.index);
-                if event.message != unparsed {
-                    error!("Event round trip failure expected:\n'{}'\nGot:\n'{}'", event.message, unparsed);
-                }
+            let unparsed = parsed_event_message.unparse(&game, event.index);
+            if event.message != unparsed {
+                error!("Event round trip failure expected:\n'{}'\nGot:\n'{}'", event.message, unparsed);
             }
-
         }
 
         if args.verbose {
@@ -230,11 +227,9 @@ async fn ingest_team(response: EntityResponse<Box<serde_json::value::RawValue>>,
 
         let parsed_text = parse_feed_event(&event);
         if tracing::enabled!(Level::ERROR) {
-            if let Ok(parsed_text) = &parsed_text {
-                let unparsed = parsed_text.unparse(&event, FeedEventSource::Team);
-                if event.text != unparsed {
-                    error!("Feed event round trip failure expected:\n'{}'\nGot:\n'{}'", event.text, unparsed);
-                }
+            let unparsed = parsed_text.unparse(&event, FeedEventSource::Team);
+            if event.text != unparsed {
+                error!("Feed event round trip failure expected:\n'{}'\nGot:\n'{}'", event.text, unparsed);
             }
         }
 
@@ -277,11 +272,9 @@ async fn ingest_player(response: EntityResponse<Box<serde_json::value::RawValue>
 
         let parsed_text = parse_feed_event(&event);
         if tracing::enabled!(Level::ERROR) {
-            if let Ok(parsed_text) = &parsed_text {
-                let unparsed = parsed_text.unparse(&event, FeedEventSource::Player);
-                if event.text != unparsed {
-                    error!("Feed event round trip failure expected:\n'{}'\nGot:\n'{}'", event.text, unparsed);
-                }
+            let unparsed = parsed_text.unparse(&event, FeedEventSource::Player);
+            if event.text != unparsed {
+                error!("Feed event round trip failure expected:\n'{}'\nGot:\n'{}'", event.text, unparsed);
             }
         }
 

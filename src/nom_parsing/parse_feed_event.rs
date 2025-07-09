@@ -9,10 +9,13 @@ trait FeedEventParser<'output>: Parser<&'output str, Output = ParsedFeedEventTex
 impl<'output, T: Parser<&'output str, Output = ParsedFeedEventText<&'output str>, Error = Error<'output>>> FeedEventParser<'output> for T {}
 
 
-pub fn parse_feed_event<'output>(event: &'output FeedEvent) -> Result<ParsedFeedEventText<&'output str>, FeedEventParseError> {
+pub fn parse_feed_event<'output>(event: &'output FeedEvent) -> ParsedFeedEventText<&'output str> {
     let event_type = match &event.event_type {
         Ok(event_type) => event_type,
-        Err(e) => return Err(FeedEventParseError::EventTypeNotRecognized(e.clone()))
+        Err(e) => {
+            let error = FeedEventParseError::EventTypeNotRecognized(e.clone());
+            return ParsedFeedEventText::ParseError { error, text: &event.text };
+        }
     };
 
     let result = match event_type {
@@ -20,14 +23,16 @@ pub fn parse_feed_event<'output>(event: &'output FeedEvent) -> Result<ParsedFeed
         FeedEventType::Augment => augment().parse(&event.text),
     };
     match result.finish() {
-        Ok(("", output)) => Ok(output),
+        Ok(("", output)) => output,
         Ok((leftover, _)) => {
             error!("{event_type} feed event parsed had leftover: {leftover} from {}", &event.text);
-            Err(FeedEventParseError::FailedParsingText { event_type: *event_type, text: event.text.clone() })
+            let error = FeedEventParseError::FailedParsingText { event_type: *event_type, text: event.text.clone() };
+            ParsedFeedEventText::ParseError { error, text: &event.text }
         }
         Err(o) => {
             error!("{event_type} feed event parse error: {o:?}");
-            Err(FeedEventParseError::FailedParsingText { event_type: *event_type, text: event.text.clone() })
+            let error = FeedEventParseError::FailedParsingText { event_type: *event_type, text: event.text.clone() };
+            ParsedFeedEventText::ParseError { error, text: &event.text }
         }
     }
 }
