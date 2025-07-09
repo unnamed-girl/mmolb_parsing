@@ -1,163 +1,234 @@
-use std::ops::{Deref, DerefMut};
+use std::{any::type_name, fmt::Debug, marker::PhantomData, str::FromStr};
 
-use serde::{de::Error, Deserialize, Deserializer, Serialize, Serializer};
+use serde::{de::{Error, Visitor}, Deserialize, Deserializer, Serialize, Serializer};
+use serde_with::{de::DeserializeAsWrap, ser::SerializeAsWrap, DeserializeAs, PickFirst, Same, SerializeAs};
+use thiserror::Error;
 
-/// A wrapper around an Option<T>, for fields that aren't found in old data.
+#[cfg(test)]
+pub(crate) use test_utils::*;
+
+#[derive(Debug, Clone, PartialEq, Eq, Hash, Serialize, Deserialize, Error)]
+/// Error for fields where some cashews data is missing the field.
 /// 
-/// NOTE: mmolb_parsing only promises to support the latest versions of entities on Cashews. So this wrapper is used when: 
-/// - mmolb didn't retroactively add a new field to old entities.
-/// - Some entities of this type were deleted, and so Cashews holds on to old api versions.
-/// 
-/// ```
-/// use mmolb_parsing::AddedLater;
-/// 
-/// let value = AddedLater::<u8>::default();
-/// assert_eq!(None, value.0); // Wraps an Option<T>
-/// assert_eq!(None, value.into_inner());
-/// assert_eq!(0, value.unwrap_or_default()); // Implements Deref and DerefMut
-/// assert!(value.skip()); // This value was not produced from a successful deserialization, and therefore should be skipped when serializing.
-/// ```
-#[derive(Clone, Copy, Debug, PartialEq, Eq)]
-pub struct AddedLater<T>(pub Option<T>);
-impl<T> AddedLater<T> {
-    pub fn skip(&self) -> bool {
-        self.0.is_none()
-    }
-    pub fn into_inner(self) -> Option<T> {
-        self.0
+/// NOTE: mmolb_parsing only aims to support the latest version of each entity on Cashews. This field is only used when:
+/// - Entities are deleted from mmolb, so cashews holds onto an old api version (e.g. deleted teams are missing feeds)
+/// - mmolb does not retroactively add a field to old entities (e.g. season 0 games don't have a PitcherEntry field)
+#[error("this entity is missing this field, usually because the entity is older than the field")]
+pub struct AddedLater;
+
+
+pub type AddedLaterResult<T> = Result<T, AddedLater>;
+
+
+pub(crate) struct AddedLaterHelper<T>(PhantomData<T>);
+
+impl<T> AddedLaterHelper<T> {
+    pub fn default_result() -> AddedLaterResult<T> {
+        AddedLaterResult::Err(AddedLater)
     }
 }
-impl<T: Serialize> Serialize for AddedLater<T> {
-    fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error>
+
+impl<'de, T, U> DeserializeAs<'de, AddedLaterResult<T>> for AddedLaterHelper<U>
+where U: DeserializeAs<'de, T> {
+    fn deserialize_as<D>(deserializer: D) -> Result<AddedLaterResult<T>, D::Error>
+        where
+            D: Deserializer<'de> {
+        Ok(Ok(DeserializeAsWrap::<T, U>::deserialize(deserializer)?.into_inner()))
+    }
+}
+
+impl<T, U> SerializeAs<AddedLaterResult<T>> for AddedLaterHelper<U> 
+where U: SerializeAs<T> {
+    fn serialize_as<S>(source: &AddedLaterResult<T>, serializer: S) -> Result<S::Ok, S::Error>
         where
             S: Serializer {
-        self.0.serialize(serializer)
+        match source.as_ref().ok() {
+            Some(a) => SerializeAsWrap::<T, U>::new(a).serialize(serializer),
+            None => serializer.serialize_none()
+        }
     }
 }
-impl<'de, T: Deserialize<'de>> Deserialize<'de> for AddedLater<T> {
-    fn deserialize<D>(deserializer: D) -> Result<Self, D::Error>
+
+/// serde_as converter for an Option<T>. **This only works when T fails to deserialize from an empty string**
+/// because this is optimised to assume usually Some(T) is present, the Some branch goes first.
+pub(crate) struct NonStringOrEmptyString;
+
+impl<'de, T: Deserialize<'de>> DeserializeAs<'de, Option<T>> for NonStringOrEmptyString {
+    fn deserialize_as<D>(deserializer: D) -> Result<Option<T>, D::Error>
         where
             D: Deserializer<'de> {
-        Ok(Self(Some(T::deserialize(deserializer)?)))
+        PickFirst::<(Same, EmptyString)>::deserialize_as(deserializer)
     }
 }
 
-impl<T> Default for AddedLater<T> {
-    fn default() -> Self {
-        Self(None)
-    }
-}
-
-impl<T> Deref for AddedLater<T> {
-    type Target = Option<T>;
-    fn deref(&self) -> &Self::Target {
-        &self.0
-    }
-}
-impl<T> DerefMut for AddedLater<T> {
-    fn deref_mut(&mut self) -> &mut Self::Target {
-        &mut self.0
-    }
-}
-
-#[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Default)]
-pub(crate) enum SomeOrEmptyString<T> {
-    Some(T),
-    #[default]
-    EmptyString
-}
-
-impl<T> From<Option<T>> for SomeOrEmptyString<T> {
-    fn from(value: Option<T>) -> Self {
-        value.map(Self::Some)
-            .unwrap_or(Self::EmptyString)
-    }
-}
-
-impl<T> From<SomeOrEmptyString<T>> for Option<T> {
-    fn from(value: SomeOrEmptyString<T>) -> Self {
-        match value {
-            SomeOrEmptyString::Some(t) => Some(t),
-            SomeOrEmptyString::EmptyString => None
-        }
-    }
-}
-
-impl<'de, T: Deserialize<'de>> Deserialize<'de> for SomeOrEmptyString<T> {
-    fn deserialize<D>(deserializer: D) -> Result<Self, D::Error>
-        where
-            D: Deserializer<'de> {
-        #[derive(Deserialize)]
-        #[serde(untagged)]
-        enum ValueOrEmptyString<'a, T> {
-            String(String),
-            S(&'a str),
-            R(T),
-        }
-
-        match ValueOrEmptyString::deserialize(deserializer) {
-            Ok(ValueOrEmptyString::R(r)) => Ok(Self::Some(r)),
-            Ok(ValueOrEmptyString::S(s)) if s.is_empty() => Ok(Self::EmptyString),
-            Ok(ValueOrEmptyString::S(_)) => Err(D::Error::custom("only empty strings may be provided")),
-            Ok(ValueOrEmptyString::String(s)) if s.is_empty() => Ok(Self::EmptyString),
-            Ok(ValueOrEmptyString::String(_)) => Err(D::Error::custom("only empty strings may be provided")),
-            Err(err) => Err(err),
-        }
-    }
-}
-
-impl<T: Serialize> Serialize for SomeOrEmptyString<T> {
-    fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error>
+impl<T: Serialize> SerializeAs<Option<T>> for NonStringOrEmptyString {
+    fn serialize_as<S>(source: &Option<T>, serializer: S) -> Result<S::Ok, S::Error>
         where
             S: Serializer {
-        match self {
-            Self::Some(t) => t.serialize(serializer),
-            Self::EmptyString => "".serialize(serializer)
+        match source {
+            Some(t) => t.serialize(serializer),
+            None => "".serialize(serializer)
         }
     }
 }
 
-#[derive(Debug, Clone, PartialEq, Eq, Default, Serialize)]
-#[serde(transparent)]
-pub struct ExpectNone(Option<serde_json::Value>);
+/// serde_as converter that expects to always see an empty string. Currently only produces an Option::None value, because it is
+/// intended for use as the second branch of NonStringOrEmptyString.
+struct EmptyString;
 
-impl<'de> Deserialize<'de> for ExpectNone {
-    fn deserialize<D>(deserializer: D) -> Result<Self, D::Error>
+impl<'de, T: Deserialize<'de>> DeserializeAs<'de, Option<T>> for EmptyString {
+    fn deserialize_as<D>(deserializer: D) -> Result<Option<T>, D::Error>
         where
             D: Deserializer<'de> {
-        let result = Option::<serde_json::Value>::deserialize(deserializer)?;
+        struct EmptyStringVisitor;
+        impl<'de> Visitor<'de> for EmptyStringVisitor {
+            type Value = ();
+
+            fn expecting(&self, formatter: &mut std::fmt::Formatter) -> std::fmt::Result {
+                write!(formatter, "an empty string")
+            }
+
+            fn visit_str<E>(self, v: &str) -> Result<Self::Value, E> where E: Error, {
+                match v {
+                    "" => Ok(()),
+                    _ => Err(E::custom("not an empty string"))
+                }
+            }
+        }
+
+        deserializer.deserialize_str(EmptyStringVisitor)
+            .map(|_| None)
+    }
+}
+
+impl<T: Serialize> SerializeAs<Option<T>> for EmptyString {
+    fn serialize_as<S>(source: &Option<T>, serializer: S) -> Result<S::Ok, S::Error>
+        where
+            S: Serializer {
+        match source {
+            Some(t) => t.serialize(serializer),
+            None => "".serialize(serializer)
+        }
+    }
+}
+
+pub(crate) struct ExpectNone<T>(PhantomData<T>);
+
+impl<'de, T: Debug, U> DeserializeAs<'de, Option<T>> for ExpectNone<U> 
+    where U: DeserializeAs<'de, Option<T>> {
+    fn deserialize_as<D>(deserializer: D) -> Result<Option<T>, D::Error>
+        where
+            D: Deserializer<'de> {
+        let result = DeserializeAsWrap::<Option::<T>, U>::deserialize(deserializer)?.into_inner();
 
         if let Some(non_none) = &result {
             tracing::error!("Expected field to be empty, not to be: {non_none:?}")
         }
-        
-        Ok(Self(result))
+    
+        Ok(result)
     }
 }
 
-#[derive(Debug, Clone, PartialEq, Eq, Default, Serialize)]
-#[serde(transparent)]
-pub struct ExtraFields(serde_json::Map<String, serde_json::Value>);
+impl<T, U> SerializeAs<Option<T>> for ExpectNone<U>
+    where U: SerializeAs<Option<T>> {
+    fn serialize_as<S>(source: &Option<T>, serializer: S) -> Result<S::Ok, S::Error>
+        where
+            S: Serializer {
+        SerializeAsWrap::<Option<T>, U>::new(source).serialize(serializer)
+    }
+}
 
-impl<'de> Deserialize<'de> for ExtraFields {
-    fn deserialize<D>(deserializer: D) -> Result<Self, D::Error>
+pub(crate) fn extra_fields_deserialize<'de, D>(deserializer: D) -> Result<serde_json::Map<String, serde_json::Value>, D::Error>
+    where
+        D: Deserializer<'de> {
+    let result = serde_json::Map::<String, serde_json::Value>::deserialize(deserializer)?;
+
+    if !result.is_empty() {
+        tracing::error!("Deserialization found extra fields: {:?}", result)
+    }
+
+    Ok(result)
+}
+
+#[derive(Debug, Clone, PartialEq, Eq, Hash, Serialize, Deserialize, Error)]
+#[serde(transparent)]
+/// Couldn't parse this value, usually because it's a new mmolb feature we haven't handled yet.
+
+#[error("failed to parse value: {}", .0)]
+pub struct NotRecognized(pub serde_json::Value);
+
+pub type MaybeRecognizedResult<T> = Result<T, NotRecognized>;
+
+
+#[derive(Debug, Clone, PartialEq, Eq, Hash)]
+pub(crate) struct MaybeRecognizedHelper<T>(PhantomData<T>);
+
+pub(crate) fn maybe_recognized_from_str<T: FromStr>(value: &str) -> MaybeRecognizedResult<T> {
+    T::from_str(value).map_err(|_| NotRecognized(serde_json::Value::String(value.to_string())))
+}
+
+pub(crate) fn maybe_recognized_to_string<T: ToString>(value: &MaybeRecognizedResult<T>) -> String {
+    match value {
+        Ok(t) => t.to_string(),
+        Err(NotRecognized(v)) => v.to_string()
+    }
+}
+
+
+impl<'de, T, U> DeserializeAs<'de, MaybeRecognizedResult<T>> for MaybeRecognizedHelper<U> 
+    where U: DeserializeAs<'de, T>{
+    fn deserialize_as<D>(deserializer: D) -> Result<Result<T, NotRecognized>, D::Error>
         where
             D: Deserializer<'de> {
-        let result = serde_json::Map::<String, serde_json::Value>::deserialize(deserializer)?;
 
-        if !result.is_empty() {
-            tracing::error!("Deserialization found extra fields: {:?}", result)
+        #[derive(Deserialize)]
+        enum Visitor<T, U> {
+            #[serde(untagged)]
+            Recognized(#[serde(bound(deserialize = "U: DeserializeAs<'de, T>"))] DeserializeAsWrap<T, U>),
+            #[serde(untagged)]
+            Other(serde_json::Value)
         }
-
-        Ok(Self(result))
+        match Visitor::<T, U>::deserialize(deserializer) {
+            Ok(Visitor::Recognized(t)) => Ok(Ok(t.into_inner())),
+            Ok(Visitor::Other(s)) => {
+                tracing::error!("{s:?} not recognized as {}", type_name::<T>());
+                Ok(Err(NotRecognized(s, )))
+            }
+            Err(e) => Err(e)
+        }
     }
 }
 
+impl<T, U> SerializeAs<MaybeRecognizedResult<T>> for MaybeRecognizedHelper<U> 
+    where U: SerializeAs<T> {
+    fn serialize_as<S>(source: &Result<T, NotRecognized>, serializer: S) -> Result<S::Ok, S::Error>
+        where
+            S: Serializer {
+        match source {
+            Ok(t) => SerializeAsWrap::<T, U>::new(t).serialize(serializer),
+            Err(s) => s.serialize(serializer)
+        }
+    }
+}
 
 #[cfg(test)]
 mod test_utils {
     use std::{fs::File, io::Read, path::Path};
     use serde::{de::DeserializeOwned, Serialize};
+    use tracing::{subscriber::DefaultGuard, Level, Subscriber};
+    use tracing_subscriber::{layer::SubscriberExt, Layer};
+
+    pub(crate) fn no_tracing_errs() -> DefaultGuard {
+        let subscriber = tracing_subscriber::fmt().finish().with(NoErrorsLayer);
+        tracing::subscriber::set_default(subscriber)
+    }
+    pub(crate) struct NoErrorsLayer;
+
+    impl<S: Subscriber> Layer<S> for NoErrorsLayer {
+        fn on_event(&self, event: &tracing::Event<'_>, _ctx: tracing_subscriber::layer::Context<'_, S>) {
+            assert!(*event.metadata().level() < Level::ERROR, "Tracing error: {:?}", event)
+        }
+    }
    
     pub(crate) fn assert_round_trip<T: Serialize + DeserializeOwned>(path: &Path) -> Result<(), Box<dyn std::error::Error>> {
         let mut buf = String::new(); 
@@ -172,6 +243,3 @@ mod test_utils {
         Ok(())
     }
 }
-
-#[cfg(test)]
-pub(crate) use test_utils::*;

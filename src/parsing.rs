@@ -1,5 +1,4 @@
 use crate::{game::Event, nom_parsing::{parse_event, ParsingContext}, parsed_event::ParsedEventMessage, Game};
-use tracing::error;
 
 /// Convenience method to call process_event for every event in a game
 pub fn process_game<'output, 'parse>(game: &'output Game, game_id: &'parse str) -> Vec<ParsedEventMessage<&'output str>> {
@@ -14,13 +13,7 @@ pub fn process_game<'output, 'parse>(game: &'output Game, game_id: &'parse str) 
 /// Processes an event into a ParsedEventMessage. Zero-copy parsing, the strings in the returned ParsedEventMessage are references to the strings in event and game.
 pub fn process_event<'output, 'parse>(event: &'output Event, game: &'output Game, game_id: &'parse str) -> ParsedEventMessage<&'output str> {
     let parsing_context = ParsingContext::new(game_id, game, event.index);
-    let parsed_event_message = match parse_event(event, &parsing_context) {
-        Ok(event) => event,
-        Err(e) => {
-            error!("Parse error: for {:?}: {e}", &event.event);
-            ParsedEventMessage::ParseError { raw_event_type: event.event.to_string(), message: event.message.clone() }
-        }
-    };
+    let parsed_event_message = parse_event(event, &parsing_context);
     parsed_event_message
 }
 
@@ -29,10 +22,14 @@ pub fn process_event<'output, 'parse>(event: &'output Event, game: &'output Game
 mod test {
     use std::{error::Error, fs::File, io::Read};
 
-    use crate::{process_game, Game, ParsedEventMessage};
+    
+
+    use crate::{process_game, utils::no_tracing_errs, Game, ParsedEventMessage};
 
     #[test]
     fn livingston() -> Result<(), Box<dyn Error>> {
+        let no_tracing_errors = no_tracing_errs();
+
         let f = File::open("test_data/livingston_game.json")?;
         let game:Game = serde_json::from_reader(f)?;
 
@@ -53,6 +50,7 @@ mod test {
             assert!(diff.is_none(), "{diff:?}");
         }
 
+        drop(no_tracing_errors);
         Ok(())
     }
 }

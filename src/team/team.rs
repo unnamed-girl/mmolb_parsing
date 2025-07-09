@@ -1,10 +1,13 @@
 use std::collections::HashMap;
 
 use serde::{Serialize, Deserialize};
+use serde_with::serde_as;
 
-use crate::{enums::{GameStat, MaybeRecognized, Position, PositionType, RecordType, Slot}, feed_event::FeedEvent, utils::{ExpectNone, ExtraFields}, AddedLater};
+use crate::{enums::{GameStat, Position, PositionType, RecordType, Slot}, feed_event::FeedEvent, utils::{AddedLaterResult, ExpectNone, extra_fields_deserialize, MaybeRecognizedResult, NotRecognized}};
+use crate::utils::{MaybeRecognizedHelper, AddedLaterHelper};
 use super::raw_team::{RawTeamPlayer};
 
+#[serde_as]
 #[derive(Serialize, Deserialize, Debug, Clone)]
 #[serde(rename_all = "PascalCase")]
 pub struct Team {
@@ -19,19 +22,22 @@ pub struct Team {
     pub emoji: String,
 
     /// Not present on some deleted teams.
-    #[serde(default, skip_serializing_if = "AddedLater::skip")]
-    pub feed: AddedLater<Vec<FeedEvent>>,
+    #[serde(default = "AddedLaterHelper::default_result", skip_serializing_if = "AddedLaterResult::is_err")]
+    #[serde_as(as = "AddedLaterHelper<_>")]
+    pub feed: AddedLaterResult<Vec<FeedEvent>>,
 
     /// Not present on some deleted teams.
-    #[serde(default, skip_serializing_if = "AddedLater::skip")]
-    pub motes_used: AddedLater<u8>,
+    #[serde(default = "AddedLaterHelper::default_result", skip_serializing_if = "AddedLaterResult::is_err")]
+    #[serde_as(as = "AddedLaterHelper<_>")]
+    pub motes_used: AddedLaterResult<u8>,
 
     pub location: String,
     pub full_location: String,
     pub league: String,
 
     /// no modifications have been seen, so left as raw json
-    pub(super) modifications: Vec<ExpectNone>,
+    #[serde_as(as = "Vec<ExpectNone<_>>")]
+    pub(super) modifications: Vec<Option<serde_json::Value>>,
     pub name: String,
 
     pub motto: Option<String>,
@@ -40,11 +46,12 @@ pub struct Team {
     pub owner_id: Option<String>,
 
     pub players: Vec<TeamPlayer>,
-    pub record: HashMap<MaybeRecognized<RecordType>, TeamRecord>,
+    #[serde_as(as = "HashMap<MaybeRecognizedHelper<_>, _>")]
+    pub record: HashMap<Result<RecordType, NotRecognized>, TeamRecord>,
     pub season_records: HashMap<String, String>,
 
-    #[serde(flatten)]
-    pub extra_fields: ExtraFields,
+    #[serde(flatten, deserialize_with = "extra_fields_deserialize")]
+    pub extra_fields: serde_json::Map<String, serde_json::Value>,
 }
 
 #[derive(Serialize, Deserialize, Clone, Copy, Debug)]
@@ -65,34 +72,34 @@ pub struct TeamPlayer {
     pub player_id: String,
 
     /// Undrafted player's positions are just their slot.
-    pub position: Option<MaybeRecognized<Position>>,
+    pub position: Option<MaybeRecognizedResult<Position>>,
 
-    pub slot: MaybeRecognized<Slot>,
+    pub slot: MaybeRecognizedResult<Slot>,
 
     pub(crate) position_type_overidden: bool,
-    pub position_type: MaybeRecognized<PositionType>,
+    pub position_type: MaybeRecognizedResult<PositionType>,
 
 
-    pub stats: AddedLater<HashMap<MaybeRecognized<GameStat>, i32>>,
+    pub stats: AddedLaterResult<HashMap<MaybeRecognizedResult<GameStat>, i32>>,
     
-    #[serde(flatten)]
-    pub extra_fields: ExtraFields,
+    #[serde(flatten, deserialize_with = "extra_fields_deserialize")]
+    pub extra_fields: serde_json::Map<String, serde_json::Value>,
 }
 
 #[cfg(test)]
 mod test {
     use std::{path::Path};
 
-    use crate::{utils::assert_round_trip, team::{Team, TeamPlayer}};
+    use crate::{team::{Team, TeamPlayer}, utils::{assert_round_trip, no_tracing_errs}};
 
     #[test]
-    #[tracing_test::traced_test]
     fn team_round_trip() -> Result<(), Box<dyn std::error::Error>> {
+        let no_tracing_errs = no_tracing_errs();
+
         assert_round_trip::<Team>(Path::new("test_data/s2_team.json"))?;
         assert_round_trip::<TeamPlayer>(Path::new("test_data/s2_team_player.json"))?;
 
-        assert!(!logs_contain("not recognized"));
-
+        drop(no_tracing_errs);
         Ok(())
     }
 }

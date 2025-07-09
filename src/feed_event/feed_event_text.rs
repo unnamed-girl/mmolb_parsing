@@ -1,49 +1,26 @@
-use std::{fmt::Display, ops::{Deref, DerefMut}};
+use std::fmt::Display;
 
+use thiserror::Error;
 use serde::{Serialize, Deserialize};
 
-use crate::{enums::{Attribute, FeedEventSource, FeedEventType, ItemPrefix, ItemSuffix, ItemType}, feed_event::FeedEvent, nom_parsing::parse_feed_event, parsed_event::{EmojiTeam, Item}, time::Breakpoints};
+use crate::{enums::{Attribute, FeedEventSource, FeedEventType, ItemPrefix, ItemSuffix, ItemType}, feed_event::FeedEvent, parsed_event::{EmojiTeam, Item}, time::Breakpoints, NotRecognized};
 
-#[derive(Clone, Debug, Serialize, Deserialize, PartialEq)]
-pub struct FeedEventText(pub String);
-
-impl FeedEventText {
-    pub fn parse(&self, event_type: FeedEventType) -> ParsedFeedEventText<&str> {
-        parse_feed_event(self, event_type)
-    }
-    pub fn into_inner(self) -> String {
-        self.0
-    }
-}
-
-impl PartialEq<String> for FeedEventText {
-    fn eq(&self, other: &String) -> bool {
-        self.0.eq(other)
-    }
-}
-impl Display for FeedEventText {
-    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        write!(f, "{}", self.0)
-    }
-}
-
-impl Deref for FeedEventText {
-    type Target = String;
-    fn deref(&self) -> &Self::Target {
-        &self.0
-    }
-}
-impl DerefMut for FeedEventText {
-    fn deref_mut(&mut self) -> &mut Self::Target {
-        &mut self.0
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Error)]
+pub enum FeedEventParseError {
+    #[error("feed event type {} not recognized", .0.0)]
+    EventTypeNotRecognized(#[source] NotRecognized),
+    #[error("failed parsing {event_type} feed event \"{text}\"")]
+    FailedParsingText {
+        event_type: FeedEventType,
+        text: String
     }
 }
 
 #[derive(Clone, Debug, Serialize, Deserialize, PartialEq)]
 pub enum ParsedFeedEventText<S> {
     ParseError {
-        event_type: String,
-        event_text: String
+        error: FeedEventParseError,
+        text: S
     },
     GameResult {
         /// Sometimes this name is wrong: early season 1 bug where the events didn't have spaces between words.
@@ -103,12 +80,6 @@ pub enum ParsedFeedEventText<S> {
     }
 }
 
-impl<S> ParsedFeedEventText<S> {
-    pub fn is_error(&self) -> bool {
-        matches!(self, ParsedFeedEventText::ParseError { .. })
-    }
-}
-
 #[derive(Clone, Debug, Serialize, Deserialize, PartialEq)]
 pub struct AttributeChange<S> {
     pub player_name: S,
@@ -126,7 +97,7 @@ pub struct AttributeEqual<S> {
 impl<S: Display> ParsedFeedEventText<S> {
     pub fn unparse(&self, event: &FeedEvent, source: FeedEventSource) -> String {
         match self {
-            ParsedFeedEventText::ParseError { event_text, .. } => event_text.to_string(),
+            ParsedFeedEventText::ParseError { text, .. } => text.to_string(),
             ParsedFeedEventText::GameResult { home_team, away_team, home_score, away_score } => {
                 format!("{} vs. {} - FINAL {}-{}", away_team, home_team, away_score, home_score)
             }
@@ -147,7 +118,7 @@ impl<S: Display> ParsedFeedEventText<S> {
             }
             ParsedFeedEventText::AttributeEquals { equals } => {
                 let f = |change: &AttributeEqual<S>| {
-                    if Breakpoints::S1AttributeEqualChange.after(event.season as u32, &event.day, None) {
+                    if Breakpoints::S1AttributeEqualChange.after(event.season as u32, event.day.as_ref().copied().ok(), None) {
                         format!("{}'s {} became equal to their current base {}.", change.player_name, change.changing_attribute, change.value_attribute)
                     } else if FeedEventSource::Player == source {
                         format!("{}'s {} was set to their {}.", change.player_name, change.changing_attribute, change.value_attribute)
@@ -161,7 +132,7 @@ impl<S: Display> ParsedFeedEventText<S> {
                     .join(" ")
             }
             ParsedFeedEventText::S1Enchantment { player_name, item, amount, attribute } => {
-                if Breakpoints::Season1EnchantmentChange.before(event.season as u32, &event.day, None) {
+                if Breakpoints::Season1EnchantmentChange.before(event.season as u32, event.day.as_ref().copied().ok(), None) {
                     format!("{player_name}'s {item} was enchanted with +{amount} to {attribute}.")
                 } else {
                     format!("The Item Enchantment was a success! {player_name}'s {item} gained a +{amount} {attribute} bonus.")

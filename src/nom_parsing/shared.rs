@@ -27,10 +27,10 @@ impl<'output, 'parse> ParsingContext<'output, 'parse> {
         }
     }
     pub(crate) fn before(&self, breakpoint: Breakpoints) -> bool {
-        breakpoint.before(self.game.season, &self.game.day, self.event_index)
+        breakpoint.before(self.game.season, self.game.day.as_ref().copied().ok(), self.event_index)
     }
     pub(crate) fn after(&self, breakpoint: Breakpoints) -> bool {
-        breakpoint.after(self.game.season, &self.game.day, self.event_index)
+        breakpoint.after(self.game.season, self.game.day.as_ref().copied().ok(), self.event_index)
     }
 }
 

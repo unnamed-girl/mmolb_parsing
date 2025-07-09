@@ -1,11 +1,13 @@
 use std::collections::HashMap;
 
 use serde::{Serialize, Deserialize};
+use serde_with::serde_as;
 
-use crate::{enums::{GameStat, MaybeRecognized, PositionType, Slot}, utils::ExtraFields, AddedLater};
+use crate::{enums::{GameStat, PositionType, Slot}, utils::{maybe_recognized_from_str, maybe_recognized_to_string, AddedLaterResult, extra_fields_deserialize, MaybeRecognizedResult}, AddedLater};
+use crate::utils::{MaybeRecognizedHelper, AddedLaterHelper};
 use super::team::TeamPlayer;
 
-
+#[serde_as]
 #[derive(Serialize, Deserialize, Debug, Clone)]
 #[serde(rename_all = "PascalCase")]
 pub(crate) struct RawTeamPlayer {
@@ -16,26 +18,29 @@ pub(crate) struct RawTeamPlayer {
     #[serde(rename = "PlayerID")]
     pub player_id: String,
     pub position: String,
-    pub slot: MaybeRecognized<Slot>,
-    #[serde(default, skip_serializing_if = "AddedLater::skip")]
-    pub position_type: AddedLater<MaybeRecognized<PositionType>>,
+    #[serde_as(as = "MaybeRecognizedHelper<_>")]
+    pub slot: MaybeRecognizedResult<Slot>,
+    #[serde_as(as = "AddedLaterHelper<MaybeRecognizedHelper<_>>")]
+    #[serde(default = "AddedLaterHelper::default_result", skip_serializing_if = "AddedLaterResult::is_err")]
+    pub position_type: AddedLaterResult<MaybeRecognizedResult<PositionType>>,
 
-    #[serde(default, skip_serializing_if = "AddedLater::skip")]
-    pub stats: AddedLater<HashMap<MaybeRecognized<GameStat>, i32>>,
+    #[serde_as(as = "AddedLaterHelper<HashMap<MaybeRecognizedHelper<_>, _>>")]
+    #[serde(default = "AddedLaterHelper::default_result", skip_serializing_if = "AddedLaterResult::is_err")]
+    pub stats: AddedLaterResult<HashMap<MaybeRecognizedResult<GameStat>, i32>>,
 
-    #[serde(flatten)]
-    pub extra_fields: ExtraFields,
+    #[serde(flatten, deserialize_with = "extra_fields_deserialize")]
+    pub extra_fields: serde_json::Map<String, serde_json::Value>,
 }
 
 impl From<RawTeamPlayer> for TeamPlayer {
     fn from(value: RawTeamPlayer) -> Self {
         let RawTeamPlayer { emoji, first_name, last_name, number, player_id, position, slot, position_type, stats, extra_fields } = value;
 
-        let position_type_overidden = position_type.is_none();
-        let position_type = position_type.into_inner().unwrap_or_else(|| MaybeRecognized::<PositionType>::from(position.as_str()));
+        let position_type_overidden = position_type.is_err();
+        let position_type = position_type.unwrap_or_else(|_| maybe_recognized_from_str(&position));
 
         // Undrafted player's positions are just their slot
-        let position = (player_id != "#").then(|| position.as_str().into());
+        let position = (player_id != "#").then(|| maybe_recognized_from_str(&position));
 
         TeamPlayer { emoji, first_name, last_name, number, player_id, position, slot, position_type, stats, position_type_overidden, extra_fields }
     }
@@ -46,12 +51,12 @@ impl From<TeamPlayer> for RawTeamPlayer {
         let TeamPlayer { emoji, first_name, last_name, number, player_id, position, slot, position_type, stats, position_type_overidden, extra_fields } = value;
 
         let position = match (position, position_type_overidden) {
-            (Some(position), _) => position.to_string(),
-            (None, true) => position_type.to_string(),
-            (None, false) => slot.to_string()
+            (Some(position), _) => maybe_recognized_to_string(&position),
+            (None, true) => maybe_recognized_to_string(&position_type),
+            (None, false) => maybe_recognized_to_string(&slot)
         };
 
-        let position_type = AddedLater((!position_type_overidden).then_some(position_type));
+        let position_type = (!position_type_overidden).then_some(position_type).ok_or(AddedLater);
 
         RawTeamPlayer { emoji, first_name, last_name, number, player_id, position, slot, position_type, stats, extra_fields }
     }

@@ -1,7 +1,10 @@
 use serde::{Serialize, Deserialize};
+use serde_with::serde_as;
 
-use crate::{enums::{EventType, Inning, MaybeRecognized}, game::{MaybePlayer, Pitch}, utils::{ExtraFields, SomeOrEmptyString}};
+use crate::{enums::{EventType, Inning}, game::{MaybePlayer, Pitch}, utils::{extra_fields_deserialize, MaybeRecognizedResult, NonStringOrEmptyString}};
+use crate::utils::MaybeRecognizedHelper;
 
+#[serde_as]
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
 pub(crate) struct RawEvent {
     /// 0 is before the game has started
@@ -31,17 +34,21 @@ pub(crate) struct RawEvent {
     /// Empty if none
     pub pitch_info: String,
 
-    pub zone: SomeOrEmptyString<u8>,
+    #[serde_as(as = "NonStringOrEmptyString")]
+    pub zone: Option<u8>,
 
-    pub event: MaybeRecognized<EventType>,
+    #[serde_as(as = "MaybeRecognizedHelper<_>")]
+    pub event: MaybeRecognizedResult<EventType>,
     pub message: String,
 
-    pub index: SomeOrEmptyString<u16>,
+    #[serde_as(as = "NonStringOrEmptyString")]
+    pub index: Option<u16>,
 
-    #[serde(flatten)]
-    pub extra_fields: ExtraFields,
+    #[serde(flatten, deserialize_with = "extra_fields_deserialize")]
+    pub extra_fields: serde_json::Map<String, serde_json::Value>,
 }
 
+#[serde_as]
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
 #[serde(from = "RawEvent", into = "RawEvent")]
 pub struct Event {
@@ -64,13 +71,14 @@ pub struct Event {
 
     pub pitch: Option<Pitch>,
 
-    pub event: MaybeRecognized<EventType>,
+    #[serde_as(as = "MaybeRecognizedHelper<_>")]
+    pub event: MaybeRecognizedResult<EventType>,
     pub message: String,
 
     pub index: Option<u16>,
 
-    #[serde(flatten)]
-    pub extra_fields: ExtraFields,
+    #[serde(flatten, deserialize_with = "extra_fields_deserialize")]
+    pub extra_fields: serde_json::Map<String, serde_json::Value>,
 }
 impl From<RawEvent> for Event {
     fn from(value: RawEvent) -> Self {
@@ -82,11 +90,9 @@ impl From<RawEvent> for Event {
         };
         let pitch_info = (!value.pitch_info.is_empty()).then_some(value.pitch_info);
 
-        let pitch = pitch_info.zip(value.zone.into()).map(|(pitch_info, zone)| Pitch::new(pitch_info, zone));
+        let pitch = pitch_info.zip(value.zone).map(|(pitch_info, zone)| Pitch::new(pitch_info, zone));
 
-        let index = value.index.into();
-
-        Self {inning, pitch, batter: value.batter, pitcher: value.pitcher, on_deck: value.on_deck, event: value.event, away_score: value.away_score, home_score: value.home_score, balls: value.balls, strikes: value.strikes, outs: value.outs, on_1b: value.on_1b, on_2b: value.on_2b, on_3b: value.on_3b, message: value.message, extra_fields: value.extra_fields, index }
+        Self {inning, pitch, batter: value.batter, pitcher: value.pitcher, on_deck: value.on_deck, event: value.event, away_score: value.away_score, home_score: value.home_score, balls: value.balls, strikes: value.strikes, outs: value.outs, on_1b: value.on_1b, on_2b: value.on_2b, on_3b: value.on_3b, message: value.message, extra_fields: value.extra_fields, index: value.index }
     }
 }
 impl From<Event> for RawEvent {
@@ -98,8 +104,6 @@ impl From<Event> for RawEvent {
             Inning::AfterGame { final_inning_number } => (final_inning_number + 1, 2)
         };
         let (pitch_info, zone) = value.pitch.map(Pitch::unparse).map(|(pitch, zone)| (pitch, Some(zone))).unwrap_or(("".to_string(), None));
-
-        let zone = zone.into();
 
         Self {inning, inning_side, pitch_info, zone, event: value.event, batter: value.batter, on_deck: value.on_deck, pitcher: value.pitcher, away_score: value.away_score, home_score: value.home_score, balls: value.balls, strikes: value.strikes, outs: value.outs, on_1b: value.on_1b, on_2b: value.on_2b, on_3b: value.on_3b, message: value.message, extra_fields: value.extra_fields, index: value.index.into() }
     }

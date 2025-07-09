@@ -1,5 +1,8 @@
 use serde::{Deserialize, Deserializer, Serialize};
-use crate::enums::{MaybeRecognized, PitchType};
+use serde_with::serde_as;
+
+use crate::enums::{PitchType};
+use crate::utils::{maybe_recognized_from_str, maybe_recognized_to_string, MaybeRecognizedHelper, MaybeRecognizedResult};
 
 pub(crate) mod game;
 pub(crate) mod event;
@@ -78,23 +81,25 @@ impl<S: PartialEq<&'static str>> From<Option<S>> for MaybePlayer<S> {
     }
 }
 
+#[serde_as]
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
 pub struct Pitch  {
     pub speed: f32,
-    pub pitch_type: MaybeRecognized<PitchType>,
+    #[serde_as(as = "MaybeRecognizedHelper<_>")]
+    pub pitch_type: MaybeRecognizedResult<PitchType>,
     pub zone: u8,
 }
 impl Pitch {
     pub fn new(pitch_info: String, zone: u8) -> Self {
         let mut iter = pitch_info.split(" MPH ");
         let pitch_speed = iter.next().unwrap().parse().unwrap();
-        let pitch_type = iter.next().unwrap().into();
+        let pitch_type = maybe_recognized_from_str(iter.next().unwrap());
         Self { speed: pitch_speed, pitch_type, zone }
     }
     pub fn unparse(self) -> (String, u8) {
         let speed = format!("{:.1}", self.speed);
         // let speed = speed.strip_suffix(".0").unwrap_or(speed.as_str());
-        let pitch_info = format!("{speed} MPH {}", self.pitch_type.to_string());
+        let pitch_info = format!("{speed} MPH {}", maybe_recognized_to_string(&self.pitch_type));
         (pitch_info, self.zone)
     }
 }
@@ -122,14 +127,15 @@ mod test {
 
     use tracing_test::traced_test;
 
-    use crate::{utils::assert_round_trip, Game};
+    use crate::{utils::{assert_round_trip, no_tracing_errs}, Game};
 
 
     #[test]
-    #[traced_test]
     fn game_round_trip() -> Result<(), Box<dyn std::error::Error>> {
+        let no_tracing_errs = no_tracing_errs();
         assert_round_trip::<Game>(Path::new("test_data/s2_d240_game.json"))?;
-        assert!(!logs_contain("not recognized"));
+
+        drop(no_tracing_errs);
         Ok(())
     }
 

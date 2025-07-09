@@ -8,12 +8,12 @@ name = "parser"
 required-features = ["bin"]
 
 [features]
-bin = ["dep:clap", "dep:tracing-subscriber", "dep:tokio", "dep:futures", "dep:reqwest", "dep:reqwest-middleware", "dep:http-cache-reqwest", "dep:async-stream", "dep:serde_json_diff"]
-serde_json_diff = ["dep:serde_json_diff"]
+bin = ["dep:clap", "dep:tracing-subscriber", "dep:tokio", "dep:futures", "dep:reqwest", "dep:reqwest-middleware", "dep:http-cache-reqwest", "dep:async-stream", "dep:serde_json_diff", "serde_json/raw_value"]
 
 [dev-dependencies]
 serde_json_diff = "0.1.1"
 tracing-test = "0.2.5"
+tracing-subscriber = "0.3.19"
 
 [dependencies]
 async-stream = { version = "0.3.6", optional = true }
@@ -32,6 +32,7 @@ serde_json = "1.0.140"
 serde_json_diff = { version = "0.1.1", optional = true }
 serde_with = { version = "3.14.0", features = ["macros"] }
 strum = { version = "0.27.1", features = ["derive"] }
+thiserror = "2.0.12"
 tokio = { version = "1.44.2", features = ["full"], optional = true }
 tracing = { version = "0.1.41" }
 tracing-subscriber = { version = "0.3.19", optional = true }

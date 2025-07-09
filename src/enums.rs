@@ -1,4 +1,4 @@
-use std::{any::type_name, convert::Infallible, fmt::Display, str::FromStr};
+use std::{fmt::{Debug, Display}, str::FromStr};
 
 use nom::{branch::alt, bytes::complete::tag, character::complete::u8, combinator::{all_consuming, opt}, sequence::{preceded, separated_pair, terminated}, Parser};
 use serde::{Deserialize, Deserializer, Serialize, Serializer, de::Error};
@@ -662,7 +662,7 @@ impl BatterStat {
     /// assert_eq!(BatterStat::FirstBases(1).unparse(), "1 1B");
     /// assert_eq!(BatterStat::HitsForAtBats{hits: 1, at_bats: 1}.unparse(), "1 for 1");
     /// ```
-    pub fn unparse(self) -> String {
+    pub fn unparse(&self) -> String {
         self.to_string()
     }
 }
@@ -686,12 +686,12 @@ impl Display for BatterStat {
             BatterStat::HitByPitchs(count) |
             BatterStat::StrikeOuts(count) |
             BatterStat::GroundOuts(count) => {
-                format!("{count} {}", BatterStatDiscriminants::from(self))
+                write!(f, "{count} {}", BatterStatDiscriminants::from(self))
             }
             BatterStat::HitsForAtBats { hits, at_bats } => {
-                format!("{hits} for {at_bats}")
+                write!(f, "{hits} for {at_bats}")
             }
-        }.fmt(f)
+        }
     }
 }
 
@@ -957,13 +957,13 @@ fn postseason_round_de<'de, D>(deserializer: D) -> Result<u8, D::Error> where D:
 impl Display for Day {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         match self {
-            Self::SuperstarBreak => "Superstar Break".fmt(f),
-            Self::Day(d) => d.fmt(f),
-            Self::Preseason => "Preseason".fmt(f),
-            Self::Holiday => "Holiday".fmt(f),
-            Self::Election => "Election".fmt(f),
+            Self::SuperstarBreak => write!(f, "Superstar Break"),
+            Self::Day(d) => write!(f, "{}", d),
+            Self::Preseason => write!(f, "Preseason"),
+            Self::Holiday => write!(f, "Holiday"),
+            Self::Election => write!(f, "Election"),
             Self::SuperstarDay(d) => write!(f, "Superstar Day {d}"),
-            Self::PostseasonPreview => "Postseason Preview".fmt(f),
+            Self::PostseasonPreview => write!(f, "Postseason Preview"),
             Self::PostseasonRound(r) => write!(f, "Postseason Round {r}")
         }
     }
@@ -981,95 +981,6 @@ pub enum PositionType {
     Pitcher,
     Batter,
 }
-
-#[derive(Debug, Clone, PartialEq, Eq, Hash)]
-pub enum MaybeRecognized<T> {
-    Recognized(T),
-    NotRecognized(serde_json::Value)
-}
-
-impl<T> MaybeRecognized<T> {
-    pub fn into_inner(self) -> Option<T> {
-        match self {
-            MaybeRecognized::Recognized(t) => Some(t),
-            MaybeRecognized::NotRecognized(_) => None
-        }  
-    }
-    pub fn inner(&self) -> Option<&T> {
-        match self {
-            MaybeRecognized::Recognized(t) => Some(t),
-            MaybeRecognized::NotRecognized(_) => None
-        }
-    }
-}
-
-impl<T: FromStr> FromStr for MaybeRecognized<T> {
-    type Err = Infallible;
-    fn from_str(s: &str) -> Result<Self, Self::Err> {
-        Ok(Self::from(s))
-    }
-}
-
-impl<T: FromStr> From<&str> for MaybeRecognized<T> {
-    fn from(value: &str) -> Self {
-        T::from_str(value).map(MaybeRecognized::Recognized)
-            .unwrap_or_else(|_| {
-                tracing::error!("{value:?} not recognized as {}", type_name::<T>());
-                MaybeRecognized::NotRecognized(serde_json::Value::String(value.to_string()))
-            }
-        )
-    }
-}
-
-impl<T: FromStr> From<String> for MaybeRecognized<T> {
-    fn from(value: String) -> Self {
-        Self::from(value.as_str())
-    }
-}
-
-impl<T: Display> Display for MaybeRecognized<T> {
-    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        match self {
-            MaybeRecognized::Recognized(t) => t.fmt(f),
-            MaybeRecognized::NotRecognized(s) => s.fmt(f)
-        }
-    }
-}
-
-impl<'de, T:Deserialize<'de>> Deserialize<'de> for MaybeRecognized<T> {
-    fn deserialize<D>(deserializer: D) -> Result<Self, D::Error>
-        where
-            D: serde::Deserializer<'de> {
-        
-        #[derive(Serialize, Deserialize)]
-        enum Visitor<T> {
-            #[serde(untagged)]
-            Recognized(T),
-            #[serde(untagged)]
-            Other(serde_json::Value)
-        }
-        match Visitor::<T>::deserialize(deserializer) {
-            Ok(Visitor::Recognized(t)) => Ok(MaybeRecognized::Recognized(t)),
-            Ok(Visitor::Other(s)) => {
-                tracing::error!("{s:?} not recognized as {}", type_name::<T>());
-                Ok(MaybeRecognized::NotRecognized(s))
-            }
-            Err(e) => Err(e)
-        }
-    }
-}
-
-impl<T: Serialize> Serialize for MaybeRecognized<T> {
-    fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error>
-        where
-            S: serde::Serializer {
-        match self {
-            MaybeRecognized::Recognized(t) => t.serialize(serializer),
-            MaybeRecognized::NotRecognized(s) => s.serialize(serializer)
-        }
-    }
-}
-
 
 #[derive(Debug, Clone, Copy, EnumIter, PartialEq, Eq, Hash, EnumDiscriminants, SerializeDisplay, DeserializeFromStr)]
 #[strum_discriminants(derive(EnumString, Display))]
