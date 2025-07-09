@@ -1,24 +1,21 @@
-use std::{any::type_name, fmt::{Debug, Display}, marker::PhantomData, str::FromStr};
+use std::{any::type_name, fmt::Debug, marker::PhantomData, str::FromStr};
 
 use serde::{de::{Error, Visitor}, Deserialize, Deserializer, Serialize, Serializer};
 use serde_with::{de::DeserializeAsWrap, ser::SerializeAsWrap, DeserializeAs, PickFirst, Same, SerializeAs};
+use thiserror::Error;
 
+#[cfg(test)]
+pub(crate) use test_utils::*;
 
-#[derive(Debug, Clone, PartialEq, Eq, Hash, Serialize, Deserialize)]
+#[derive(Debug, Clone, PartialEq, Eq, Hash, Serialize, Deserialize, Error)]
 /// Error for fields where some cashews data is missing the field.
 /// 
 /// NOTE: mmolb_parsing only aims to support the latest version of each entity on Cashews. This field is only used when:
 /// - Entities are deleted from mmolb, so cashews holds onto an old api version (e.g. deleted teams are missing feeds)
 /// - mmolb does not retroactively add a field to old entities (e.g. season 0 games don't have a PitcherEntry field)
+#[error("this entity is missing this field, usually because the entity is older than the field")]
 pub struct AddedLater;
 
-impl Display for AddedLater {
-    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        write!(f, "This entity is missing this field, usually because the entity is older than the field")
-    }
-}
-
-impl std::error::Error for AddedLater {}
 
 pub type AddedLaterResult<T> = Result<T, AddedLater>;
 
@@ -153,19 +150,12 @@ pub(crate) fn extra_fields_deserialize<'de, D>(deserializer: D) -> Result<serde_
     Ok(result)
 }
 
-#[derive(Debug, Clone, PartialEq, Eq, Hash, Serialize, Deserialize)]
+#[derive(Debug, Clone, PartialEq, Eq, Hash, Serialize, Deserialize, Error)]
 #[serde(transparent)]
 /// Couldn't parse this value, usually because it's a new mmolb feature we haven't handled yet.
+
+#[error("failed to parse value: {}", .0)]
 pub struct NotRecognized(pub serde_json::Value);
-
-impl Display for NotRecognized {
-    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        let received = self.0.to_string();
-        write!(f, "Failed to parse {received}")
-    }
-}
-
-impl std::error::Error for NotRecognized {}
 
 pub type MaybeRecognizedResult<T> = Result<T, NotRecognized>;
 
@@ -253,6 +243,3 @@ mod test_utils {
         Ok(())
     }
 }
-
-#[cfg(test)]
-pub(crate) use test_utils::*;

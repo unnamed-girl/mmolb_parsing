@@ -1,7 +1,7 @@
 use nom::{branch::alt, bytes::complete::tag, character::complete::{i16, u8}, combinator::opt, error::context, multi::many1, sequence::{delimited, preceded, separated_pair, terminated}, Finish, Parser};
 use tracing::error;
 
-use crate::{enums::FeedEventType, feed_event::{AttributeChange, AttributeEqual, FeedEvent, ParsedFeedEventText}, nom_parsing::shared::{emoji_team_eof, emojiless_item, feed_delivery, name_eof, parse_terminated, sentence_eof, try_from_word}, utils::maybe_recognized_to_string};
+use crate::{enums::FeedEventType, feed_event::{AttributeChange, AttributeEqual, FeedEvent, FeedEventParseError, ParsedFeedEventText}, nom_parsing::shared::{emoji_team_eof, emojiless_item, feed_delivery, name_eof, parse_terminated, sentence_eof, try_from_word}};
 
 use super::shared::Error;
 
@@ -9,9 +9,10 @@ trait FeedEventParser<'output>: Parser<&'output str, Output = ParsedFeedEventTex
 impl<'output, T: Parser<&'output str, Output = ParsedFeedEventText<&'output str>, Error = Error<'output>>> FeedEventParser<'output> for T {}
 
 
-pub fn parse_feed_event<'output>(event: &'output FeedEvent) -> ParsedFeedEventText<&'output str> {
-    let event_type = if let Ok(event_type) = event.event_type {event_type} else {
-        return ParsedFeedEventText::ParseError { event_type: maybe_recognized_to_string(&event.event_type), event_text: event.text.clone() }
+pub fn parse_feed_event<'output>(event: &'output FeedEvent) -> Result<ParsedFeedEventText<&'output str>, FeedEventParseError> {
+    let event_type = match &event.event_type {
+        Ok(event_type) => event_type,
+        Err(e) => return Err(FeedEventParseError::EventTypeNotRecognized(e.clone()))
     };
 
     let result = match event_type {
@@ -19,14 +20,14 @@ pub fn parse_feed_event<'output>(event: &'output FeedEvent) -> ParsedFeedEventTe
         FeedEventType::Augment => augment().parse(&event.text),
     };
     match result.finish() {
-        Ok(("", output)) => output,
+        Ok(("", output)) => Ok(output),
         Ok((leftover, _)) => {
             error!("{event_type} feed event parsed had leftover: {leftover} from {}", &event.text);
-            ParsedFeedEventText::ParseError { event_type: event_type.to_string(), event_text: event.text.to_string() }
+            Err(FeedEventParseError::FailedParsingText { event_type: *event_type, text: event.text.clone() })
         }
         Err(o) => {
             error!("{event_type} feed event parse error: {o:?}");
-            ParsedFeedEventText::ParseError { event_type: event_type.to_string(), event_text: event.text.to_string() }
+            Err(FeedEventParseError::FailedParsingText { event_type: *event_type, text: event.text.clone() })
         }
     }
 }

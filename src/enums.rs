@@ -662,7 +662,7 @@ impl BatterStat {
     /// assert_eq!(BatterStat::FirstBases(1).unparse(), "1 1B");
     /// assert_eq!(BatterStat::HitsForAtBats{hits: 1, at_bats: 1}.unparse(), "1 for 1");
     /// ```
-    pub fn unparse(self) -> String {
+    pub fn unparse(&self) -> String {
         self.to_string()
     }
 }

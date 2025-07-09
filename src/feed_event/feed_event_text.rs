@@ -1,15 +1,23 @@
 use std::fmt::Display;
 
+use thiserror::Error;
 use serde::{Serialize, Deserialize};
 
-use crate::{enums::{Attribute, FeedEventSource, ItemPrefix, ItemSuffix, ItemType}, feed_event::FeedEvent, parsed_event::{EmojiTeam, Item}, time::Breakpoints};
+use crate::{enums::{Attribute, FeedEventSource, FeedEventType, ItemPrefix, ItemSuffix, ItemType}, feed_event::FeedEvent, parsed_event::{EmojiTeam, Item}, time::Breakpoints, NotRecognized};
+
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Error)]
+pub enum FeedEventParseError {
+    #[error("feed event type {} not recognized", .0.0)]
+    EventTypeNotRecognized(#[source] NotRecognized),
+    #[error("failed parsing {event_type} feed event \"{text}\"")]
+    FailedParsingText {
+        event_type: FeedEventType,
+        text: String
+    }
+}
 
 #[derive(Clone, Debug, Serialize, Deserialize, PartialEq)]
 pub enum ParsedFeedEventText<S> {
-    ParseError {
-        event_type: String,
-        event_text: String
-    },
     GameResult {
         /// Sometimes this name is wrong: early season 1 bug where the events didn't have spaces between words.
         home_team: EmojiTeam<S>,
@@ -68,12 +76,6 @@ pub enum ParsedFeedEventText<S> {
     }
 }
 
-impl<S> ParsedFeedEventText<S> {
-    pub fn is_error(&self) -> bool {
-        matches!(self, ParsedFeedEventText::ParseError { .. })
-    }
-}
-
 #[derive(Clone, Debug, Serialize, Deserialize, PartialEq)]
 pub struct AttributeChange<S> {
     pub player_name: S,
@@ -91,7 +93,6 @@ pub struct AttributeEqual<S> {
 impl<S: Display> ParsedFeedEventText<S> {
     pub fn unparse(&self, event: &FeedEvent, source: FeedEventSource) -> String {
         match self {
-            ParsedFeedEventText::ParseError { event_text, .. } => event_text.to_string(),
             ParsedFeedEventText::GameResult { home_team, away_team, home_score, away_score } => {
                 format!("{} vs. {} - FINAL {}-{}", away_team, home_team, away_score, home_score)
             }

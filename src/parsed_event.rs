@@ -2,18 +2,26 @@ use std::{fmt::{Display, Write}, iter::once};
 
 use serde::{Serialize, Deserialize};
 use strum::EnumDiscriminants;
+use thiserror::Error;
 
-use crate::{enums::{Base, BaseNameVariant, BatterStat, Distance, EventType, FairBallDestination, FairBallType, FieldingErrorType, FoulType, GameOverMessage, HomeAway, ItemPrefix, ItemSuffix, ItemType, MoundVisitType, NowBattingStats, Place, StrikeType, TopBottom}, time::Breakpoints, utils::MaybeRecognizedResult, Game};
+use crate::{enums::{Base, BaseNameVariant, BatterStat, Distance, EventType, FairBallDestination, FairBallType, FieldingErrorType, FoulType, GameOverMessage, HomeAway, ItemPrefix, ItemSuffix, ItemType, MoundVisitType, NowBattingStats, Place, StrikeType, TopBottom}, time::Breakpoints, Game, NotRecognized};
+
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Error)]
+pub enum GameEventParseError {
+    #[error("event type {} not recognized", .0.0)]
+    EventTypeNotRecognized(#[source] NotRecognized),
+    #[error("failed parsing {event_type} event \"{message}\"")]
+    FailedParsingMessage {
+        event_type: EventType,
+        message: String
+    }
+}
 
 /// S is the string type used. S = &'output str is used by the parser, 
 /// but a mutable type is necessary when directly deserializing, because some players have escaped characters in their names
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq, EnumDiscriminants)]
 #[serde(tag = "event_type")]
 pub enum ParsedEventMessage<S> {
-    ParseError {
-        raw_event_type: MaybeRecognizedResult<EventType>,
-        message: String,
-    },
     KnownBug {
         bug: KnownBug<S>
     },
@@ -115,11 +123,8 @@ pub enum ParsedEventMessage<S> {
 }
 impl<S: Display> ParsedEventMessage<S> {
     /// Recreate the event message this ParsedEvent was built out of.
-    pub fn unparse(self, game: &Game, event_index: Option<u16>) -> String {
+    pub fn unparse(&self, game: &Game, event_index: Option<u16>) -> String {
         match self {
-            Self::ParseError { raw_event_type: _, message } => {
-                message
-            },
             Self::LiveNow { away_team, home_team } => format!("{} @ {}", away_team, home_team),
             Self::PitchingMatchup { away_team, home_team, home_pitcher, away_pitcher } => format!("{away_team} {away_pitcher} vs. {home_team} {home_pitcher}"),
             Self::Lineup { side: _, players } => {
@@ -144,8 +149,8 @@ impl<S: Display> ParsedEventMessage<S> {
                 let pitcher_message = match pitcher_status {
                     StartOfInningPitcher::Same { emoji, name } => format!("{emoji} {name} pitching."),
                     StartOfInningPitcher::Different { leaving_emoji, leaving_pitcher, arriving_emoji, arriving_pitcher } => {
-                        let leaving_emoji = leaving_emoji.map(|e| format!("{e} ")).unwrap_or_default();
-                        let arriving_emoji = arriving_emoji.map(|e| format!("{e} ")).unwrap_or_default();
+                        let leaving_emoji = leaving_emoji.as_ref().map(|e| format!("{e} ")).unwrap_or_default();
+                        let arriving_emoji = arriving_emoji.as_ref().map(|e| format!("{e} ")).unwrap_or_default();
                         format!("{leaving_emoji}{leaving_pitcher} is leaving the game. {arriving_emoji}{arriving_pitcher} takes the mound.")
                     }
                 };
@@ -252,15 +257,15 @@ impl<S: Display> ParsedEventMessage<S> {
             Self::CaughtOut { batter, fair_ball_type, caught_by: catcher, scores, advances, sacrifice, perfect } => {
                 let fair_ball_type = fair_ball_type.verb_name();
                 let scores_and_advances = unparse_scores_and_advances(scores, advances);
-                let sacrifice = if sacrifice {"on a sacrifice fly "} else {""};
-                let perfect = if perfect {" <strong>Perfect catch!</strong>"} else {""};
+                let sacrifice = if *sacrifice {"on a sacrifice fly "} else {""};
+                let perfect = if *perfect {" <strong>Perfect catch!</strong>"} else {""};
                 
                 format!("{batter} {fair_ball_type} out {sacrifice}to {catcher}.{perfect}{scores_and_advances}")
             }
             Self::GroundedOut { batter, fielders, scores, advances, perfect } => {
                 let scores_and_advances = unparse_scores_and_advances(scores, advances);
                 let fielders = unparse_fielders(fielders);
-                let perfect = if perfect {" <strong>Perfect catch!</strong>"} else {""};
+                let perfect = if *perfect {" <strong>Perfect catch!</strong>"} else {""};
                 format!("{batter} grounds out{fielders}.{scores_and_advances}{perfect}")
             }
             Self::ForceOut { batter, fielders, fair_ball_type, out, scores, advances } => {
@@ -287,7 +292,7 @@ impl<S: Display> ParsedEventMessage<S> {
             Self::DoublePlayGrounded { batter, fielders, out_one, out_two, scores, advances, sacrifice } => {
                 let fielders = unparse_fielders_for_play(fielders);
                 let scores_and_advances = unparse_scores_and_advances(scores, advances);
-                let sacrifice = if sacrifice {"sacrifice "} else {""};
+                let sacrifice = if *sacrifice {"sacrifice "} else {""};
                 format!("{batter} grounded into a {sacrifice}double play{fielders}. {out_one} {out_two}{scores_and_advances}")
             }
             Self::DoublePlayCaught { batter, fair_ball_type, fielders, out_two, scores, advances } => {
@@ -319,7 +324,7 @@ impl<S: Display> ParsedEventMessage<S> {
     }
 }
 
-fn unparse_fielders<S:Display>(fielders: Vec<PlacedPlayer<S>>) -> String {
+fn unparse_fielders<S:Display>(fielders: &Vec<PlacedPlayer<S>>) -> String {
     match fielders.len() {
         0 => panic!("0-fielders"),
         1 => format!(" to {}", fielders.first().unwrap()),
@@ -327,14 +332,14 @@ fn unparse_fielders<S:Display>(fielders: Vec<PlacedPlayer<S>>) -> String {
     }
 }
 
-fn unparse_fielders_for_play<S:Display>(fielders: Vec<PlacedPlayer<S>>) -> String {
+fn unparse_fielders_for_play<S:Display>(fielders: &Vec<PlacedPlayer<S>>) -> String {
     match fielders.len() {
         0 => panic!("0-fielders"),
         1 => format!(", {} unassisted", fielders.first().unwrap()),
         _ => format!(", {}", fielders.iter().map(PlacedPlayer::to_string).collect::<Vec<_>>().join(" to "))
     }
 }
-fn unparse_scores_and_advances<S: Display>(scores: Vec<S>, advances:Vec<RunnerAdvance<S>>) -> String {
+fn unparse_scores_and_advances<S: Display>(scores: &Vec<S>, advances: &Vec<RunnerAdvance<S>>) -> String {
     once(String::new()).chain(scores.iter().map(|runner| format!("<strong>{runner} scores!</strong>"))
         .chain(advances.iter().map(|advance| advance.to_string())))
         .collect::<Vec<_>>()

@@ -1,8 +1,8 @@
-use crate::{game::Event, nom_parsing::{parse_event, ParsingContext}, parsed_event::ParsedEventMessage, Game};
+use crate::{game::Event, nom_parsing::{parse_event, ParsingContext}, parsed_event::{GameEventParseError, ParsedEventMessage}, Game};
 use tracing::error;
 
 /// Convenience method to call process_event for every event in a game
-pub fn process_game<'output, 'parse>(game: &'output Game, game_id: &'parse str) -> Vec<ParsedEventMessage<&'output str>> {
+pub fn process_game<'output, 'parse>(game: &'output Game, game_id: &'parse str) -> Vec<Result<ParsedEventMessage<&'output str>, GameEventParseError>> {
     let mut result = Vec::new();
 
     for event in &game.event_log {
@@ -12,15 +12,12 @@ pub fn process_game<'output, 'parse>(game: &'output Game, game_id: &'parse str) 
 }
 
 /// Processes an event into a ParsedEventMessage. Zero-copy parsing, the strings in the returned ParsedEventMessage are references to the strings in event and game.
-pub fn process_event<'output, 'parse>(event: &'output Event, game: &'output Game, game_id: &'parse str) -> ParsedEventMessage<&'output str> {
+pub fn process_event<'output, 'parse>(event: &'output Event, game: &'output Game, game_id: &'parse str) -> Result<ParsedEventMessage<&'output str>, GameEventParseError> {
     let parsing_context = ParsingContext::new(game_id, game, event.index);
-    let parsed_event_message = match parse_event(event, &parsing_context) {
-        Ok(event) => event,
-        Err(e) => {
-            error!("Parse error: for {:?}: {e}", &event.event);
-            ParsedEventMessage::ParseError { raw_event_type: event.event.clone(), message: event.message.clone() }
-        }
-    };
+    let parsed_event_message = parse_event(event, &parsing_context);
+    if let Err(e) = &parsed_event_message {
+        error!("Parse error for {:?}: {e}", &event.event);
+    }
     parsed_event_message
 }
 

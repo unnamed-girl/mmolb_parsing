@@ -3,9 +3,9 @@ use std::str::FromStr;
 use nom::{branch::alt, bytes::complete::{tag, take_until}, character::complete::{digit1, u8}, combinator::{all_consuming, cut, fail, opt, rest}, error::context, multi::{many0, many1, separated_list1}, sequence::{delimited, preceded, separated_pair, terminated}, Finish, Parser};
 use phf::phf_map;
 
-use crate::{enums::{EventType, GameOverMessage, HomeAway, MoundVisitType, NowBattingStats}, game::Event, nom_parsing::shared::{away_emoji_team, delivery, emoji, home_emoji_team, try_from_word, try_from_words_m_n, MyParser}, parsed_event::{FieldingAttempt, KnownBug, StartOfInningPitcher}, time::Breakpoints, ParsedEventMessage};
+use crate::{enums::{EventType, GameOverMessage, HomeAway, MoundVisitType, NowBattingStats}, game::Event, nom_parsing::shared::{away_emoji_team, delivery, emoji, home_emoji_team, try_from_word, try_from_words_m_n, MyParser}, parsed_event::{FieldingAttempt, GameEventParseError, KnownBug, StartOfInningPitcher}, time::Breakpoints, ParsedEventMessage};
 
-use super::{shared::{all_consuming_sentence_and, base_steal_sentence, bold, destination, emoji_team_eof, exclamation, fair_ball_type_verb_name, fielders_eof, fly_ball_type_verb_name, name_eof, now_batting_stats, ordinal_suffix, out, parse_and, parse_terminated, placed_player_eof, score_update, scores_and_advances, scores_sentence, sentence, sentence_eof, Error}, ParsingContext};
+use super::{shared::{all_consuming_sentence_and, base_steal_sentence, bold, destination, emoji_team_eof, exclamation, fair_ball_type_verb_name, fielders_eof, fly_ball_type_verb_name, name_eof, now_batting_stats, ordinal_suffix, out, parse_and, parse_terminated, placed_player_eof, score_update, scores_and_advances, scores_sentence, sentence, sentence_eof}, ParsingContext};
 
 const OVERRIDES: phf::Map<&'static str, phf::Map<u16, ParsedEventMessage<&'static str>>> = phf_map!(
     "6851bb34f419fdc04f9d0ed5" => phf_map!(196u16 => ParsedEventMessage::KnownBug { bug: KnownBug::FirstBasemanChoosesAGhost { batter: "Genevieve Hirose", first_baseman: "N. Kitagawa" } }),
@@ -14,7 +14,7 @@ const OVERRIDES: phf::Map<&'static str, phf::Map<u16, ParsedEventMessage<&'stati
     "68611cb61e65f5fb52cb61d6" => phf_map!(30u16 => ParsedEventMessage::KnownBug { bug: KnownBug::FirstBasemanChoosesAGhost { batter: "Zoom Savić", first_baseman: "Ana Carolina Finch" } }),
 );
 
-pub fn parse_event<'output, 'parse>(event: &'output Event, parsing_context: &ParsingContext<'output, 'parse>) -> Result<ParsedEventMessage<&'output str>, Error<'output>> {
+pub fn parse_event<'output, 'parse>(event: &'output Event, parsing_context: &ParsingContext<'output, 'parse>) -> Result<ParsedEventMessage<&'output str>, GameEventParseError> {
     if let Some(game_overrides) = OVERRIDES.get(parsing_context.game_id) {
         let event_index = parsing_context.event_index.unwrap_or_else(|| 
             parsing_context.game.event_log.iter().enumerate()
@@ -32,7 +32,7 @@ pub fn parse_event<'output, 'parse>(event: &'output Event, parsing_context: &Par
         Ok(event_type) => event_type,
         Err(event_type) => {
             tracing::error!("Event type {event_type} not recognized: {}", event.message);
-            return Ok(ParsedEventMessage::ParseError { raw_event_type: Err(event_type.clone()), message: event.message.clone() })
+            return Err(GameEventParseError::EventTypeNotRecognized(event_type.clone()))
         }
     };
     
@@ -54,7 +54,7 @@ pub fn parse_event<'output, 'parse>(event: &'output Event, parsing_context: &Par
         EventType::WeatherShipment => weather_shipment(parsing_context).parse(&event.message),
         EventType::WeatherSpecialDelivery => special_delivery(parsing_context).parse(&event.message),
         EventType::Balk => balk().parse(&event.message)
-    }.finish().map(|(_, o)| o)
+    }.finish().map(|(_, o)| o).map_err(|_| GameEventParseError::FailedParsingMessage { event_type: *event_type, message: event.message.clone() })
 }
 
 fn balk<'output>() -> impl MyParser<'output, ParsedEventMessage<&'output str>> {
