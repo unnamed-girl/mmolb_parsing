@@ -104,40 +104,42 @@ impl<T: Serialize> Serialize for SomeOrEmptyString<T> {
     }
 }
 
-#[derive(Debug, Clone, PartialEq, Eq, Default, Serialize)]
-#[serde(transparent)]
-pub struct ExpectNone(Option<serde_json::Value>);
+pub(crate) struct ExpectNone<T>(PhantomData<T>);
 
-impl<'de> Deserialize<'de> for ExpectNone {
-    fn deserialize<D>(deserializer: D) -> Result<Self, D::Error>
+impl<'de, T: Debug, U> DeserializeAs<'de, Option<T>> for ExpectNone<U> 
+    where U: DeserializeAs<'de, Option<T>> {
+    fn deserialize_as<D>(deserializer: D) -> Result<Option<T>, D::Error>
         where
             D: Deserializer<'de> {
-        let result = Option::<serde_json::Value>::deserialize(deserializer)?;
+        let result = DeserializeAsWrap::<Option::<T>, U>::deserialize(deserializer)?.into_inner();
 
         if let Some(non_none) = &result {
             tracing::error!("Expected field to be empty, not to be: {non_none:?}")
         }
-        
-        Ok(Self(result))
+    
+        Ok(result)
     }
 }
 
-#[derive(Debug, Clone, PartialEq, Eq, Default, Serialize)]
-#[serde(transparent)]
-pub struct ExtraFields(serde_json::Map<String, serde_json::Value>);
-
-impl<'de> Deserialize<'de> for ExtraFields {
-    fn deserialize<D>(deserializer: D) -> Result<Self, D::Error>
+impl<T, U> SerializeAs<Option<T>> for ExpectNone<U>
+    where U: SerializeAs<Option<T>> {
+    fn serialize_as<S>(source: &Option<T>, serializer: S) -> Result<S::Ok, S::Error>
         where
-            D: Deserializer<'de> {
-        let result = serde_json::Map::<String, serde_json::Value>::deserialize(deserializer)?;
-
-        if !result.is_empty() {
-            tracing::error!("Deserialization found extra fields: {:?}", result)
-        }
-
-        Ok(Self(result))
+            S: Serializer {
+        SerializeAsWrap::<Option<T>, U>::new(source).serialize(serializer)
     }
+}
+
+pub(crate) fn extra_fields_deserialize<'de, D>(deserializer: D) -> Result<serde_json::Map<String, serde_json::Value>, D::Error>
+    where
+        D: Deserializer<'de> {
+    let result = serde_json::Map::<String, serde_json::Value>::deserialize(deserializer)?;
+
+    if !result.is_empty() {
+        tracing::error!("Deserialization found extra fields: {:?}", result)
+    }
+
+    Ok(result)
 }
 
 #[derive(Debug, Clone, PartialEq, Eq, Hash, Serialize, Deserialize)]
@@ -212,6 +214,20 @@ impl<T, U> SerializeAs<MaybeRecognizedResult<T>> for MaybeRecognizedHelper<U>
 mod test_utils {
     use std::{fs::File, io::Read, path::Path};
     use serde::{de::DeserializeOwned, Serialize};
+    use tracing::{subscriber::DefaultGuard, Level, Subscriber};
+    use tracing_subscriber::{layer::SubscriberExt, Layer};
+
+    pub(crate) fn no_tracing_errs() -> DefaultGuard {
+        let subscriber = tracing_subscriber::fmt().finish().with(NoErrorsLayer);
+        tracing::subscriber::set_default(subscriber)
+    }
+    pub(crate) struct NoErrorsLayer;
+
+    impl<S: Subscriber> Layer<S> for NoErrorsLayer {
+        fn on_event(&self, event: &tracing::Event<'_>, _ctx: tracing_subscriber::layer::Context<'_, S>) {
+            assert!(*event.metadata().level() < Level::ERROR, "Tracing error: {:?}", event)
+        }
+    }
    
     pub(crate) fn assert_round_trip<T: Serialize + DeserializeOwned>(path: &Path) -> Result<(), Box<dyn std::error::Error>> {
         let mut buf = String::new(); 

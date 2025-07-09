@@ -29,10 +29,14 @@ pub fn process_event<'output, 'parse>(event: &'output Event, game: &'output Game
 mod test {
     use std::{error::Error, fs::File, io::Read};
 
-    use crate::{process_game, Game, ParsedEventMessage};
+    
+
+    use crate::{process_game, utils::no_tracing_errs, Game, ParsedEventMessage};
 
     #[test]
     fn livingston() -> Result<(), Box<dyn Error>> {
+        let no_tracing_errors = no_tracing_errs();
+
         let f = File::open("test_data/livingston_game.json")?;
         let game:Game = serde_json::from_reader(f)?;
 
@@ -53,6 +57,7 @@ mod test {
             assert!(diff.is_none(), "{diff:?}");
         }
 
+        drop(no_tracing_errors);
         Ok(())
     }
 }

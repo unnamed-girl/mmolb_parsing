@@ -1,7 +1,7 @@
 use serde::{Serialize, Deserialize};
 use serde_with::serde_as;
 
-use crate::{enums::{EventType, Inning}, game::{MaybePlayer, Pitch}, utils::{ExtraFields, MaybeRecognizedResult, SomeOrEmptyString}};
+use crate::{enums::{EventType, Inning}, game::{MaybePlayer, Pitch}, utils::{extra_fields_deserialize, MaybeRecognizedResult, SomeOrEmptyString}};
 use crate::utils::MaybeRecognizedHelper;
 
 #[serde_as]
@@ -34,16 +34,18 @@ pub(crate) struct RawEvent {
     /// Empty if none
     pub pitch_info: String,
 
-    pub zone: SomeOrEmptyString<u8>,
+    #[serde_as(as = "serde_with::FromInto<SomeOrEmptyString<u8>>")]
+    pub zone: Option<u8>,
 
     #[serde_as(as = "MaybeRecognizedHelper<_>")]
     pub event: MaybeRecognizedResult<EventType>,
     pub message: String,
 
-    pub index: SomeOrEmptyString<u16>,
+    #[serde_as(as = "serde_with::FromInto<SomeOrEmptyString<u16>>")]
+    pub index: Option<u16>,
 
-    #[serde(flatten)]
-    pub extra_fields: ExtraFields,
+    #[serde(flatten, deserialize_with = "extra_fields_deserialize")]
+    pub extra_fields: serde_json::Map<String, serde_json::Value>,
 }
 
 #[serde_as]
@@ -75,8 +77,8 @@ pub struct Event {
 
     pub index: Option<u16>,
 
-    #[serde(flatten)]
-    pub extra_fields: ExtraFields,
+    #[serde(flatten, deserialize_with = "extra_fields_deserialize")]
+    pub extra_fields: serde_json::Map<String, serde_json::Value>,
 }
 impl From<RawEvent> for Event {
     fn from(value: RawEvent) -> Self {

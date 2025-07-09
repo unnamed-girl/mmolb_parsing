@@ -3,7 +3,7 @@ use std::collections::HashMap;
 use serde::{Serialize, Deserialize};
 use serde_with::serde_as;
 
-use crate::{enums::{GameStat, PositionType, Slot}, utils::{maybe_recognized_from_str, maybe_recognized_to_string, AddedLaterResult, ExtraFields, MaybeRecognizedResult}, AddedLater};
+use crate::{enums::{GameStat, PositionType, Slot}, utils::{maybe_recognized_from_str, maybe_recognized_to_string, AddedLaterResult, extra_fields_deserialize, MaybeRecognizedResult}, AddedLater};
 use crate::utils::{MaybeRecognizedHelper, AddedLaterHelper};
 use super::team::TeamPlayer;
 
@@ -28,8 +28,8 @@ pub(crate) struct RawTeamPlayer {
     #[serde(default = "AddedLaterHelper::default_result", skip_serializing_if = "AddedLaterResult::is_err")]
     pub stats: AddedLaterResult<HashMap<MaybeRecognizedResult<GameStat>, i32>>,
 
-    #[serde(flatten)]
-    pub extra_fields: ExtraFields,
+    #[serde(flatten, deserialize_with = "extra_fields_deserialize")]
+    pub extra_fields: serde_json::Map<String, serde_json::Value>,
 }
 
 impl From<RawTeamPlayer> for TeamPlayer {

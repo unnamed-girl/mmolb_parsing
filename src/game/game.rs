@@ -1,6 +1,6 @@
 use std::collections::HashMap;
 
-use crate::{enums::{Day, GameStat, LeagueScale, SeasonStatus, Slot}, game::{Event, PitcherEntry, Weather}, utils::{AddedLaterResult, ExtraFields, MaybeRecognizedResult}};
+use crate::{enums::{Day, GameStat, LeagueScale, SeasonStatus, Slot}, game::{Event, PitcherEntry, Weather}, utils::{AddedLaterResult, extra_fields_deserialize, MaybeRecognizedResult}};
 use crate::utils::{MaybeRecognizedHelper, AddedLaterHelper};
 
 use serde::{Serialize, Deserialize};
@@ -71,6 +71,6 @@ pub struct Game {
 
     pub event_log: Vec<Event>,
 
-    #[serde(flatten)]
-    pub extra_fields: ExtraFields,
+    #[serde(flatten, deserialize_with = "extra_fields_deserialize")]
+    pub extra_fields: serde_json::Map<String, serde_json::Value>,
 }

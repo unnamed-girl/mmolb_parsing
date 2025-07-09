@@ -1,6 +1,6 @@
 use serde::{Serialize, Deserialize};
 use serde_with::serde_as;
-use crate::{enums::{Day, FeedEventType, SeasonStatus}, feed_event::feed_event_text::FeedEventText, utils::{ExtraFields, MaybeRecognizedResult}};
+use crate::{enums::{Day, FeedEventType, SeasonStatus}, utils::{extra_fields_deserialize, MaybeRecognizedResult}};
 use crate::utils::MaybeRecognizedHelper;
 
 #[serde_as]
@@ -13,7 +13,7 @@ pub struct FeedEvent {
     pub day: MaybeRecognizedResult<Day>,
     #[serde_as(as = "MaybeRecognizedHelper<_>")]
     pub status: MaybeRecognizedResult<SeasonStatus>,
-    pub text: FeedEventText,
+    pub text: String,
     pub ts: String,
     #[serde(rename = "type")]
     #[serde_as(as = "MaybeRecognizedHelper<_>")]
@@ -22,22 +22,24 @@ pub struct FeedEvent {
     /// TODO
     pub(crate) links: serde_json::Value,
 
-    #[serde(flatten)]
-    pub extra_fields: ExtraFields,
+    #[serde(flatten, deserialize_with = "extra_fields_deserialize")]
+    pub extra_fields: serde_json::Map<String, serde_json::Value>,
 }
 
 #[cfg(test)]
 mod test {
     use std::path::Path;
 
-    use crate::{feed_event::FeedEvent, utils::assert_round_trip};
+    use crate::{feed_event::FeedEvent, utils::{assert_round_trip, no_tracing_errs}};
 
 
     #[test]
-    #[tracing_test::traced_test]
     fn feed_event_round_trip() -> Result<(), Box<dyn std::error::Error>> {
+        let no_tracing_errs = no_tracing_errs();
+
         assert_round_trip::<FeedEvent>(Path::new("test_data/s2_feed_event.json"))?;
-        assert!(!logs_contain("not recognized"));
+        
+        drop(no_tracing_errs);
         Ok(())
     }
 }

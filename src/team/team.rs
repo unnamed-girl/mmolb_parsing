@@ -3,7 +3,7 @@ use std::collections::HashMap;
 use serde::{Serialize, Deserialize};
 use serde_with::serde_as;
 
-use crate::{enums::{GameStat, Position, PositionType, RecordType, Slot}, feed_event::FeedEvent, utils::{AddedLaterResult, ExpectNone, ExtraFields, MaybeRecognizedResult, NotRecognized}};
+use crate::{enums::{GameStat, Position, PositionType, RecordType, Slot}, feed_event::FeedEvent, utils::{AddedLaterResult, ExpectNone, extra_fields_deserialize, MaybeRecognizedResult, NotRecognized}};
 use crate::utils::{MaybeRecognizedHelper, AddedLaterHelper};
 use super::raw_team::{RawTeamPlayer};
 
@@ -36,7 +36,8 @@ pub struct Team {
     pub league: String,
 
     /// no modifications have been seen, so left as raw json
-    pub(super) modifications: Vec<ExpectNone>,
+    #[serde_as(as = "Vec<ExpectNone<_>>")]
+    pub(super) modifications: Vec<Option<serde_json::Value>>,
     pub name: String,
 
     pub motto: Option<String>,
@@ -49,8 +50,8 @@ pub struct Team {
     pub record: HashMap<Result<RecordType, NotRecognized>, TeamRecord>,
     pub season_records: HashMap<String, String>,
 
-    #[serde(flatten)]
-    pub extra_fields: ExtraFields,
+    #[serde(flatten, deserialize_with = "extra_fields_deserialize")]
+    pub extra_fields: serde_json::Map<String, serde_json::Value>,
 }
 
 #[derive(Serialize, Deserialize, Clone, Copy, Debug)]
@@ -81,24 +82,24 @@ pub struct TeamPlayer {
 
     pub stats: AddedLaterResult<HashMap<MaybeRecognizedResult<GameStat>, i32>>,
     
-    #[serde(flatten)]
-    pub extra_fields: ExtraFields,
+    #[serde(flatten, deserialize_with = "extra_fields_deserialize")]
+    pub extra_fields: serde_json::Map<String, serde_json::Value>,
 }
 
 #[cfg(test)]
 mod test {
     use std::{path::Path};
 
-    use crate::{utils::assert_round_trip, team::{Team, TeamPlayer}};
+    use crate::{team::{Team, TeamPlayer}, utils::{assert_round_trip, no_tracing_errs}};
 
     #[test]
-    #[tracing_test::traced_test]
     fn team_round_trip() -> Result<(), Box<dyn std::error::Error>> {
+        let no_tracing_errs = no_tracing_errs();
+
         assert_round_trip::<Team>(Path::new("test_data/s2_team.json"))?;
         assert_round_trip::<TeamPlayer>(Path::new("test_data/s2_team_player.json"))?;
 
-        assert!(!logs_contain("not recognized"));
-
+        drop(no_tracing_errs);
         Ok(())
     }
 }

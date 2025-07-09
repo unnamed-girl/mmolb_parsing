@@ -127,14 +127,15 @@ mod test {
 
     use tracing_test::traced_test;
 
-    use crate::{utils::assert_round_trip, Game};
+    use crate::{utils::{assert_round_trip, no_tracing_errs}, Game};
 
 
     #[test]
-    #[traced_test]
     fn game_round_trip() -> Result<(), Box<dyn std::error::Error>> {
+        let no_tracing_errs = no_tracing_errs();
         assert_round_trip::<Game>(Path::new("test_data/s2_d240_game.json"))?;
-        assert!(!logs_contain("not recognized"));
+
+        drop(no_tracing_errs);
         Ok(())
     }
 

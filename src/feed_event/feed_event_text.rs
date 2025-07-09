@@ -1,43 +1,8 @@
-use std::{fmt::Display, ops::{Deref, DerefMut}};
+use std::fmt::Display;
 
 use serde::{Serialize, Deserialize};
 
-use crate::{enums::{Attribute, FeedEventSource, FeedEventType, ItemPrefix, ItemSuffix, ItemType}, feed_event::FeedEvent, nom_parsing::parse_feed_event, parsed_event::{EmojiTeam, Item}, time::Breakpoints};
-
-#[derive(Clone, Debug, Serialize, Deserialize, PartialEq)]
-pub struct FeedEventText(pub String);
-
-impl FeedEventText {
-    pub fn parse(&self, event_type: FeedEventType) -> ParsedFeedEventText<&str> {
-        parse_feed_event(self, event_type)
-    }
-    pub fn into_inner(self) -> String {
-        self.0
-    }
-}
-
-impl PartialEq<String> for FeedEventText {
-    fn eq(&self, other: &String) -> bool {
-        self.0.eq(other)
-    }
-}
-impl Display for FeedEventText {
-    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        write!(f, "{}", self.0)
-    }
-}
-
-impl Deref for FeedEventText {
-    type Target = String;
-    fn deref(&self) -> &Self::Target {
-        &self.0
-    }
-}
-impl DerefMut for FeedEventText {
-    fn deref_mut(&mut self) -> &mut Self::Target {
-        &mut self.0
-    }
-}
+use crate::{enums::{Attribute, FeedEventSource, ItemPrefix, ItemSuffix, ItemType}, feed_event::FeedEvent, parsed_event::{EmojiTeam, Item}, time::Breakpoints};
 
 #[derive(Clone, Debug, Serialize, Deserialize, PartialEq)]
 pub enum ParsedFeedEventText<S> {

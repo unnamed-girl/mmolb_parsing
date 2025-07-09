@@ -37,7 +37,8 @@ pub struct Player {
     pub home: String,
 
 
-    greater_boon: ExpectNone,
+    #[serde_as(as = "ExpectNone<_>")]
+    greater_boon: Option<serde_json::Value>,
     pub lesser_boon: Option<Boon>,
     pub modifications: Vec<Modification>,
 
@@ -192,17 +193,16 @@ pub struct Boon {
 #[cfg(test)]
 mod test {
     use std::path::Path;
-
-    use tracing_test::traced_test;
-
-    use crate::{player::Player, utils::assert_round_trip};
+    use crate::{player::Player, utils::{assert_round_trip, no_tracing_errs}};
 
 
     #[test]
-    #[traced_test]
     fn player_round_trip() -> Result<(), Box<dyn std::error::Error>> {
+        let no_tracing_errs = no_tracing_errs();
+
         assert_round_trip::<Player>(Path::new("test_data/s2_player.json"))?;
-        assert!(!logs_contain("not recognized"));
+
+        drop(no_tracing_errs);
         Ok(())
     }
 }
