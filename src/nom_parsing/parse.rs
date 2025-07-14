@@ -120,16 +120,16 @@ fn weather<'output>() -> impl MyParser<'output, ParsedEventMessage<&'output str>
             // These are very repetitive, but one is matching a name and the other is parsing a name
             // so I don't see an obvious way to genericize them
             if let Some((deflected_off, and_struck)) = deflection {
-                let (input, _) = tag(and_struck).parse(input)?;
-                
                 let (input, outcome) = alt((
-                    tag(" was injured by the extreme force of the impact!</strong>")
+                    (tag(and_struck), tag(" was injured by the extreme force of the impact!</strong>"))
                         .map(|_|  FallingStarOutcome::Injury ),
-                    tag(" was infused with a glimmer of celestial energy!</strong>")
+                    (tag("😇 "), tag(and_struck), tag(" retired from MMOLB!</strong>"))
+                        .map(|_|  FallingStarOutcome::Retired ),
+                    (tag(and_struck), tag(" was infused with a glimmer of celestial energy!</strong>"))
                         .map(|_|  FallingStarOutcome::InfusionI ),
-                    tag(" began to glow brightly with celestial energy!</strong>")
+                    (tag(and_struck), tag("  began to glow brightly with celestial energy!</strong>"))
                         .map(|_|  FallingStarOutcome::InfusionII ),
-                    tag(" was fully charged with an abundance of celestial energy!</strong>")
+                    (tag(and_struck), tag(" was fully charged with an abundance of celestial energy!</strong>"))
                         .map(|_|  FallingStarOutcome::InfusionIII )
                 )).parse(input)?;
                 
@@ -138,9 +138,11 @@ fn weather<'output>() -> impl MyParser<'output, ParsedEventMessage<&'output str>
                 let (input, (player_name, outcome)) = alt((
                     parse_terminated(" was injured by the extreme force of the impact!</strong>")
                         .map(|name| (name, FallingStarOutcome::Injury)),
+                    preceded(tag("😇 "), parse_terminated(" retired from MMOLB!</strong>"))
+                        .map(|name| (name, FallingStarOutcome::Retired)),
                     parse_terminated(" was infused with a glimmer of celestial energy!</strong>")
                         .map(|name| (name, FallingStarOutcome::InfusionI)),
-                    parse_terminated(" began to glow brightly with celestial energy!</strong>")
+                    parse_terminated("  began to glow brightly with celestial energy!</strong>")
                         .map(|name| (name, FallingStarOutcome::InfusionII)),
                     parse_terminated(" was fully charged with an abundance of celestial energy!</strong>")
                         .map(|name| (name, FallingStarOutcome::InfusionIII)),

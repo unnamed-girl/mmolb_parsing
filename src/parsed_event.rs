@@ -326,14 +326,20 @@ impl<S: Display> ParsedEventMessage<S> {
                     String::new()
                 };
                 
-                let outcome_msg = match outcome {
-                    FallingStarOutcome::Injury => "was injured by the extreme force of the impact!",
-                    FallingStarOutcome::InfusionI => "was infused with a glimmer of celestial energy!",
-                    FallingStarOutcome::InfusionII => "began to glow brightly with celestial energy!",
-                    FallingStarOutcome::InfusionIII => "was fully charged with an abundance of celestial energy!",
+                let emoji_prefix = match outcome {
+                    FallingStarOutcome::Retired => "😇 ",
+                    _ => ""
                 };
                 
-                format!(" <strong>{deflection_msg}{player_name} {outcome_msg}</strong>")
+                let outcome_msg = match outcome {
+                    FallingStarOutcome::Injury => "was injured by the extreme force of the impact!",
+                    FallingStarOutcome::Retired => "retired from MMOLB!",
+                    FallingStarOutcome::InfusionI => "was infused with a glimmer of celestial energy!",
+                    FallingStarOutcome::InfusionII => "began to glow brightly with celestial energy!",
+                    FallingStarOutcome::InfusionIII => "was fully charged with an abundance of celestial energy!"
+                };
+                
+                format!(" <strong>{deflection_msg}{emoji_prefix}{player_name} {outcome_msg}</strong>")
             },
             Self::WeatherShipment { deliveries } => {
                 deliveries.iter().map(|d| d.unparse("Shipment")).collect::<Vec<String>>().join(" ")
@@ -492,6 +498,7 @@ impl<S> TryFrom<BaseSteal<S>> for RunnerAdvance<S> {
 #[derive(Debug, Clone, Copy, Serialize, Deserialize, PartialEq)]
 pub enum FallingStarOutcome {
     Injury,
+    Retired,
     InfusionI,
     InfusionII,
     InfusionIII
