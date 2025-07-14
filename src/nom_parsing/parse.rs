@@ -3,7 +3,7 @@ use std::str::FromStr;
 use nom::{branch::alt, bytes::complete::{tag, take_until}, character::complete::{digit1, u8}, combinator::{all_consuming, cut, fail, opt, rest}, error::context, multi::{many0, many1, separated_list1}, sequence::{delimited, preceded, separated_pair, terminated}, Finish, Parser};
 use phf::phf_map;
 
-use crate::{enums::{EventType, GameOverMessage, HomeAway, MoundVisitType, NowBattingStats}, game::Event, nom_parsing::shared::{away_emoji_team, delivery, emoji, home_emoji_team, try_from_word, try_from_words_m_n, MyParser}, parsed_event::{FieldingAttempt, GameEventParseError, KnownBug, StartOfInningPitcher}, time::Breakpoints, ParsedEventMessage};
+use crate::{enums::{EventType, GameOverMessage, HomeAway, MoundVisitType, NowBattingStats}, game::Event, nom_parsing::shared::{away_emoji_team, delivery, emoji, home_emoji_team, try_from_word, try_from_words_m_n, MyParser}, parsed_event::{FieldingAttempt, GameEventParseError, KnownBug, StartOfInningPitcher, FallingStarOutcome}, time::Breakpoints, ParsedEventMessage};
 
 use super::{shared::{all_consuming_sentence_and, base_steal_sentence, bold, destination, emoji_team_eof, exclamation, fair_ball_type_verb_name, fielders_eof, fly_ball_type_verb_name, name_eof, now_batting_stats, ordinal_suffix, out, parse_and, parse_terminated, placed_player_eof, score_update, scores_and_advances, scores_sentence, sentence, sentence_eof}, ParsingContext};
 
@@ -52,6 +52,8 @@ pub fn parse_event<'output, 'parse>(event: &'output Event, parsing_context: &Par
         EventType::PlayBall => play_ball().parse(&event.message),
         EventType::NowBatting => now_batting().parse(&event.message),
         EventType::WeatherDelivery => weather_delivery(parsing_context).parse(&event.message),
+        EventType::FallingStar => falling_star().parse(&event.message),
+        EventType::Weather => weather().parse(&event.message),
         EventType::WeatherShipment => weather_shipment(parsing_context).parse(&event.message),
         EventType::WeatherSpecialDelivery => special_delivery(parsing_context).parse(&event.message),
         EventType::Balk => balk().parse(&event.message)
@@ -90,6 +92,62 @@ fn weather_shipment<'output, 'parse>(parsing_context: &'parse ParsingContext<'ou
 fn weather_delivery<'output, 'parse>(parsing_context: &'parse ParsingContext<'output, 'parse>) -> impl MyParser<'output, ParsedEventMessage<&'output str>> + 'parse {
     context("Weather Delivery", all_consuming(
         delivery(parsing_context, "Delivery").map(|delivery| ParsedEventMessage::WeatherDelivery { delivery })
+    ))
+}
+
+fn falling_star<'output>() -> impl MyParser<'output, ParsedEventMessage<&'output str>> {
+    context("Falling Star", all_consuming(
+        preceded(tag("<strong>🌠 "), parse_terminated(" is hit by a Falling Star!</strong>"))
+            .map(|player_name| ParsedEventMessage::FallingStar { player_name }),
+    ))
+}
+
+fn weather<'output>() -> impl MyParser<'output, ParsedEventMessage<&'output str>> {
+    context("Weather", all_consuming(
+        |input| {
+            let (input, _) = tag(" <strong>").parse(input)?;
+            
+            let (input, deflection) = opt(|input| {
+                let (input, _) = tag("It deflected off ").parse(input)?;
+                
+                let (input, deflected_off) = parse_terminated(" and struck ").parse(input)?;
+                let (input, and_struck) = parse_terminated("!</strong> <strong>").parse(input)?;
+                
+                Ok((input, (deflected_off, and_struck)))
+            }).parse(input)?;
+            
+            // These are very repetitive, but one is matching a name and the other is parsing a name
+            // so I don't see an obvious way to genericize them
+            if let Some((deflected_off, and_struck)) = deflection {
+                let (input, _) = tag(and_struck).parse(input)?;
+                
+                let (input, outcome) = alt((
+                    tag(" was injured by the extreme force of the impact!</strong>")
+                        .map(|_|  FallingStarOutcome::Injury ),
+                    tag(" was infused with a glimmer of celestial energy!</strong>")
+                        .map(|_|  FallingStarOutcome::InfusionI ),
+                    tag(" began to glow brightly with celestial energy!</strong>")
+                        .map(|_|  FallingStarOutcome::InfusionII ),
+                    tag(" was fully charged with an abundance of celestial energy!</strong>")
+                        .map(|_|  FallingStarOutcome::InfusionIII )
+                )).parse(input)?;
+                
+                Ok((input, ParsedEventMessage::FallingStarOutcome { deflection: Some(deflected_off), player_name: and_struck, outcome }))
+            } else {
+                let (input, (player_name, outcome)) = alt((
+                    parse_terminated(" was injured by the extreme force of the impact!</strong>")
+                        .map(|name| (name, FallingStarOutcome::Injury)),
+                    parse_terminated(" was infused with a glimmer of celestial energy!</strong>")
+                        .map(|name| (name, FallingStarOutcome::InfusionI)),
+                    parse_terminated(" began to glow brightly with celestial energy!</strong>")
+                        .map(|name| (name, FallingStarOutcome::InfusionII)),
+                    parse_terminated(" was fully charged with an abundance of celestial energy!</strong>")
+                        .map(|name| (name, FallingStarOutcome::InfusionIII)),
+                )).parse(input)?;
+                
+                Ok((input, ParsedEventMessage::FallingStarOutcome { deflection: None, player_name, outcome }))
+            }
+        },
     ))
 }
 

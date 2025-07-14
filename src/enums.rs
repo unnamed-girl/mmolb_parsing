@@ -27,6 +27,8 @@ pub enum EventType {
     #[strum(to_string = "Weather_Delivery")]
     #[serde(rename = "Weather_Delivery")]
     WeatherDelivery,
+    FallingStar,
+    Weather,
 
     // Season 2
     #[strum(to_string = "Weather_Shipment")]
@@ -883,6 +885,7 @@ pub enum SeasonStatus {
     SuperstarGame,
     Holiday,
     PostseasonRound(u8),
+    SpecialEvent
 }
 impl FromStr for SeasonStatus {
     type Err = &'static str;
@@ -893,6 +896,7 @@ impl FromStr for SeasonStatus {
             "Home Run Challenge" => Ok(SeasonStatus::HomeRunChallenge),
             "Holiday" => Ok(SeasonStatus::Holiday),
             "Superstar Game" => Ok(SeasonStatus::SuperstarGame),
+            "Special Event" => Ok(SeasonStatus::SpecialEvent),
             s => s.strip_prefix("Postseason Round ")
                         .and_then(|s| s.parse().ok())
                         .map(SeasonStatus::PostseasonRound)
@@ -909,7 +913,8 @@ impl Display for SeasonStatus {
             SeasonStatus::HomeRunChallenge => Display::fmt("Home Run Challenge", f),
             SeasonStatus::SuperstarGame => Display::fmt("Superstar Game", f),
             SeasonStatus::Holiday => Display::fmt("Holiday", f),
-            SeasonStatus::PostseasonRound(i) => write!(f, "Postseason Round {i}")
+            SeasonStatus::PostseasonRound(i) => write!(f, "Postseason Round {i}"),
+            SeasonStatus::SpecialEvent => write!(f, "Special Event")
         }
     }
 }
@@ -1253,7 +1258,8 @@ pub enum MoundVisitType {
 #[derive(Debug, Serialize, Deserialize, Clone, Copy, EnumIter, PartialEq, Eq, Hash, EnumString, Display)]
 pub enum LeagueScale {
     Lesser,
-    Greater
+    Greater,
+    Special
 }
 
 #[derive(Debug, Serialize, Deserialize, Clone, Copy, EnumIter, PartialEq, Eq, Hash, EnumString, Display)]

@@ -111,6 +111,8 @@ pub enum ParsedEventMessage<S> {
 
     // Season 1
     WeatherDelivery { delivery: Delivery<S> },
+    FallingStar { player_name: S },
+    FallingStarOutcome { deflection: Option<S>, player_name: S, outcome: FallingStarOutcome },
 
     // Season 2
     WeatherShipment {
@@ -314,6 +316,25 @@ impl<S: Display> ParsedEventMessage<S> {
             Self::WeatherDelivery {delivery } => {
                 delivery.unparse("Delivery")
             },
+            Self::FallingStar { player_name } => {
+                format!("<strong>🌠 {player_name} is hit by a Falling Star!</strong>")
+            },
+            Self::FallingStarOutcome { deflection, player_name, outcome } => {
+                let deflection_msg = if let Some(deflected_off_player_name) = deflection {
+                    format!("It deflected off {deflected_off_player_name} and struck {player_name}!</strong> <strong>")
+                } else {
+                    String::new()
+                };
+                
+                let outcome_msg = match outcome {
+                    FallingStarOutcome::Injury => "was injured by the extreme force of the impact!",
+                    FallingStarOutcome::InfusionI => "was infused with a glimmer of celestial energy!",
+                    FallingStarOutcome::InfusionII => "began to glow brightly with celestial energy!",
+                    FallingStarOutcome::InfusionIII => "was fully charged with an abundance of celestial energy!",
+                };
+                
+                format!(" <strong>{deflection_msg}{player_name} {outcome_msg}</strong>")
+            },
             Self::WeatherShipment { deliveries } => {
                 deliveries.iter().map(|d| d.unparse("Shipment")).collect::<Vec<String>>().join(" ")
             }
@@ -466,6 +487,14 @@ impl<S> TryFrom<BaseSteal<S>> for RunnerAdvance<S> {
             Err(())
         }
     }
+}
+
+#[derive(Debug, Clone, Copy, Serialize, Deserialize, PartialEq)]
+pub enum FallingStarOutcome {
+    Injury,
+    InfusionI,
+    InfusionII,
+    InfusionIII
 }
 
 #[derive(Debug, Clone, Copy, Serialize, Deserialize, PartialEq)]
