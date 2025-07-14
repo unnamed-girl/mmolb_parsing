@@ -159,6 +159,8 @@ async fn main() {
 }
 
 async fn ingest_game(response: EntityResponse<Box<serde_json::value::RawValue>>, progress_report: bool, args: &Args) {
+    let _ingest_guard = tracing::span!(Level::INFO, "Entity Ingest", game_id = response.entity_id).entered();
+
     let game: Game = Game::deserialize(response.data.as_ref().into_deserializer()).map_err(|e| format!("Failed to deserialize {}, {e:?}", response.entity_id)).expect(&response.entity_id);
 
     let _span_guard = tracing::span!(Level::INFO, "Game", game_id = response.entity_id, season = game.season, day = format!("{:?}", game.day), scale = format!("{:?}", game.league_scale)).entered();

@@ -30,8 +30,8 @@ pub fn parse_feed_event<'output>(event: &'output FeedEvent) -> ParsedFeedEventTe
             ParsedFeedEventText::ParseError { error, text: &event.text }
         }
         Err(o) => {
-            error!("{event_type} feed event parse error: {o:?}");
             let error = FeedEventParseError::FailedParsingText { event_type: *event_type, text: event.text.clone() };
+            tracing::error!("Parse error: {}", error);
             ParsedFeedEventText::ParseError { error, text: &event.text }
         }
     }

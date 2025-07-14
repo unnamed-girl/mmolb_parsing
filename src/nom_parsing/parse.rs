@@ -60,6 +60,7 @@ pub fn parse_event<'output, 'parse>(event: &'output Event, parsing_context: &Par
     }.finish().map(|(_, o)| o)
     .unwrap_or_else(|_| {
             let error = GameEventParseError::FailedParsingMessage { event_type: *event_type, message: event.message.clone() };
+            tracing::error!("Parse error: {}", error);
             ParsedEventMessage::ParseError { error, message: &event.message }
         }
     )
