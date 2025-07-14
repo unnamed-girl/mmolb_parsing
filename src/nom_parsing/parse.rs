@@ -126,7 +126,7 @@ fn weather<'output>() -> impl MyParser<'output, ParsedEventMessage<&'output str>
                         .map(|_|  FallingStarOutcome::Injury ),
                     tag(" was infused with a glimmer of celestial energy!</strong>")
                         .map(|_|  FallingStarOutcome::InfusionI ),
-                    tag("  began to glow brightly with celestial energy!</strong>")
+                    tag(" began to glow brightly with celestial energy!</strong>")
                         .map(|_|  FallingStarOutcome::InfusionII ),
                     tag(" was fully charged with an abundance of celestial energy!</strong>")
                         .map(|_|  FallingStarOutcome::InfusionIII )
@@ -139,7 +139,7 @@ fn weather<'output>() -> impl MyParser<'output, ParsedEventMessage<&'output str>
                         .map(|name| (name, FallingStarOutcome::Injury)),
                     parse_terminated(" was infused with a glimmer of celestial energy!</strong>")
                         .map(|name| (name, FallingStarOutcome::InfusionI)),
-                    parse_terminated("  began to glow brightly with celestial energy!</strong>")
+                    parse_terminated(" began to glow brightly with celestial energy!</strong>")
                         .map(|name| (name, FallingStarOutcome::InfusionII)),
                     parse_terminated(" was fully charged with an abundance of celestial energy!</strong>")
                         .map(|name| (name, FallingStarOutcome::InfusionIII)),
