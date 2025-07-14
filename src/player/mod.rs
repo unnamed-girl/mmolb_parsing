@@ -61,24 +61,24 @@ pub struct Player {
     pub throws: MaybeRecognizedResult<Handedness>
 }
 
-/// A player's equipment field can be described by `HashMap<MaybeRecognizedResult<EquipmentSlot>, Option<PlayerEquipment>>`
+/// A player's equipment field can be described by `HashMap<Result<EquipmentSlot, NotRecognized>, Option<PlayerEquipment>>`
 /// 
-/// This wrapper is accessed more like `HashMap<MaybeRecognizedResult<EquipmentSlot>, PlayerEquipment>`, and can be accessed through 
-/// an `EquipmentSlot` on its own as well as an `&MaybeRecognizedResult<EquipmentSlot>`.
+/// This wrapper is accessed more like `HashMap<Result<EquipmentSlot, NotRecognized>, PlayerEquipment>`, and can be accessed through 
+/// an `EquipmentSlot` on its own as well as an `&Result<EquipmentSlot, MaybeRecognized>`.
 /// 
 /// ```
 /// use std::collections::HashMap;
 /// use mmolb_parsing::player::{PlayerEquipmentMap, PlayerEquipment};
 /// use mmolb_parsing::enums::EquipmentSlot;
-/// use mmolb_parsing::utils::{MaybeRecognizedResult, NotRecognized};
+/// use mmolb_parsing::NotRecognized;
 ///  
 /// let map = PlayerEquipmentMap::default();
 /// map.get(EquipmentSlot::Head);
 /// map.get(&Ok(EquipmentSlot::Head));
 /// map.get(&Err(NotRecognized(serde_json::Value::String("New Slot".to_string()))));
 /// 
-/// let a: HashMap<MaybeRecognizedResult<EquipmentSlot>, PlayerEquipment> = map.clone().into();
-/// let b: HashMap<MaybeRecognizedResult<EquipmentSlot>, Option<PlayerEquipment>> = map.clone().into();
+/// let a: HashMap<Result<EquipmentSlot, NotRecognized>, PlayerEquipment> = map.clone().into();
+/// let b: HashMap<Result<EquipmentSlot, NotRecognized>, Option<PlayerEquipment>> = map.clone().into();
 /// ```
 #[serde_as]
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Default)]
