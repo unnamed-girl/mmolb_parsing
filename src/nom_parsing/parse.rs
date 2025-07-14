@@ -1,6 +1,6 @@
 use std::str::FromStr;
 
-use nom::{branch::alt, bytes::complete::{tag, take_until}, character::complete::{digit1, u8}, combinator::{all_consuming, cut, fail, opt, rest}, error::context, multi::{many0, many1, separated_list1}, sequence::{delimited, preceded, separated_pair, terminated}, Finish, Parser};
+use nom::{branch::alt, bytes::complete::{tag, take_until}, character::complete::{digit1, u8}, combinator::{all_consuming, cut, fail, opt, rest, verify}, error::context, multi::{many0, many1, separated_list1}, sequence::{delimited, preceded, separated_pair, terminated}, Finish, Parser};
 use phf::phf_map;
 
 use crate::{enums::{EventType, GameOverMessage, HomeAway, MoundVisitType, NowBattingStats}, game::Event, nom_parsing::shared::{away_emoji_team, delivery, emoji, home_emoji_team, try_from_word, try_from_words_m_n, MyParser}, parsed_event::{FieldingAttempt, GameEventParseError, KnownBug, StartOfInningPitcher, FallingStarOutcome}, time::Breakpoints, ParsedEventMessage};
@@ -104,51 +104,41 @@ fn falling_star<'output>() -> impl MyParser<'output, ParsedEventMessage<&'output
 }
 
 fn weather<'output>() -> impl MyParser<'output, ParsedEventMessage<&'output str>> {
+    let retirement = (
+        preceded(tag("😇 "), parse_terminated(" retired from MMOLB!")),
+        opt(preceded(
+            tag(" "),
+            parse_terminated(" was called up to take their place."),
+        )),
+    );
+
+    let outcomes = delimited(
+        tag("<strong>"), 
+        alt((
+            parse_terminated(" was injured by the extreme force of the impact!")
+                .map(|name| (name, FallingStarOutcome::Injury)),
+            retirement.map(|(retired_player_name, replacement_player_name)| (retired_player_name, FallingStarOutcome::Retired(replacement_player_name))),
+            parse_terminated(" was infused with a glimmer of celestial energy!")
+                .map(|name| (name, FallingStarOutcome::InfusionI)),
+            parse_terminated(" began to glow brightly with celestial energy!")
+                .map(|name| (name, FallingStarOutcome::InfusionII)),
+            parse_terminated(" was fully charged with an abundance of celestial energy!")
+                .map(|name| (name, FallingStarOutcome::InfusionIII)),
+        )),
+        tag("</strong>")
+    );
+
+    let deflection = delimited(
+        tag("<strong>"),
+        preceded(tag("It deflected off "), (parse_terminated(" and struck "), take_until("!</strong> <strong>"))),
+        tag("!</strong> ")
+    );
+
     context("Weather", all_consuming(
-        |input| {
-            let (input, _) = tag(" <strong>").parse(input)?;
-            
-            let (input, deflection) = opt(|input| {
-                let (input, _) = tag("It deflected off ").parse(input)?;
-                
-                let (input, deflected_off) = parse_terminated(" and struck ").parse(input)?;
-                let (input, and_struck) = parse_terminated("!</strong> <strong>").parse(input)?;
-                
-                Ok((input, (deflected_off, and_struck)))
-            }).parse(input)?;
-            
-            // These are very repetitive, but one is matching a name and the other is parsing a name
-            // so I don't see an obvious way to genericize them
-            if let Some((deflected_off, and_struck)) = deflection {
-                let (input, _) = tag(and_struck).parse(input)?;
-                
-                let (input, outcome) = alt((
-                    tag(" was injured by the extreme force of the impact!</strong>")
-                        .map(|_|  FallingStarOutcome::Injury ),
-                    tag(" was infused with a glimmer of celestial energy!</strong>")
-                        .map(|_|  FallingStarOutcome::InfusionI ),
-                    tag(" began to glow brightly with celestial energy!</strong>")
-                        .map(|_|  FallingStarOutcome::InfusionII ),
-                    tag(" was fully charged with an abundance of celestial energy!</strong>")
-                        .map(|_|  FallingStarOutcome::InfusionIII )
-                )).parse(input)?;
-                
-                Ok((input, ParsedEventMessage::FallingStarOutcome { deflection: Some(deflected_off), player_name: and_struck, outcome }))
-            } else {
-                let (input, (player_name, outcome)) = alt((
-                    parse_terminated(" was injured by the extreme force of the impact!</strong>")
-                        .map(|name| (name, FallingStarOutcome::Injury)),
-                    parse_terminated(" was infused with a glimmer of celestial energy!</strong>")
-                        .map(|name| (name, FallingStarOutcome::InfusionI)),
-                    parse_terminated(" began to glow brightly with celestial energy!</strong>")
-                        .map(|name| (name, FallingStarOutcome::InfusionII)),
-                    parse_terminated(" was fully charged with an abundance of celestial energy!</strong>")
-                        .map(|name| (name, FallingStarOutcome::InfusionIII)),
-                )).parse(input)?;
-                
-                Ok((input, ParsedEventMessage::FallingStarOutcome { deflection: None, player_name, outcome }))
-            }
-        },
+        verify(
+            preceded(tag(" "), (opt(deflection), outcomes)),
+            |(deflection, (player_name, _))| deflection.is_none_or(|(_, struck)| struck == *player_name) // Verify that if two names are present, they are consistent.
+        ).map(|(deflection, (player_name, outcome))| ParsedEventMessage::FallingStarOutcome { deflection: deflection.map(|(deflected_off, _)| deflected_off), player_name, outcome })
     ))
 }
 
