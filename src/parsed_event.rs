@@ -111,6 +111,7 @@ pub enum ParsedEventMessage<S> {
 
     // Season 1
     WeatherDelivery { delivery: Delivery<S> },
+    FallingStar { player_name: S },
 
     // Season 2
     WeatherShipment {
@@ -313,6 +314,9 @@ impl<S: Display> ParsedEventMessage<S> {
             }
             Self::WeatherDelivery {delivery } => {
                 delivery.unparse("Delivery")
+            },
+            Self::FallingStar { player_name } => {
+                format!("<strong>🌠 {player_name} is hit by a Falling Star!</strong>")
             },
             Self::WeatherShipment { deliveries } => {
                 deliveries.iter().map(|d| d.unparse("Shipment")).collect::<Vec<String>>().join(" ")

@@ -52,6 +52,7 @@ pub fn parse_event<'output, 'parse>(event: &'output Event, parsing_context: &Par
         EventType::PlayBall => play_ball().parse(&event.message),
         EventType::NowBatting => now_batting().parse(&event.message),
         EventType::WeatherDelivery => weather_delivery(parsing_context).parse(&event.message),
+        EventType::FallingStar => falling_star().parse(&event.message),
         EventType::WeatherShipment => weather_shipment(parsing_context).parse(&event.message),
         EventType::WeatherSpecialDelivery => special_delivery(parsing_context).parse(&event.message),
         EventType::Balk => balk().parse(&event.message)
@@ -90,6 +91,13 @@ fn weather_shipment<'output, 'parse>(parsing_context: &'parse ParsingContext<'ou
 fn weather_delivery<'output, 'parse>(parsing_context: &'parse ParsingContext<'output, 'parse>) -> impl MyParser<'output, ParsedEventMessage<&'output str>> + 'parse {
     context("Weather Delivery", all_consuming(
         delivery(parsing_context, "Delivery").map(|delivery| ParsedEventMessage::WeatherDelivery { delivery })
+    ))
+}
+
+fn falling_star<'output>() -> impl MyParser<'output, ParsedEventMessage<&'output str>> {
+    context("Falling Star", all_consuming(
+        preceded(tag("<strong>🌠 "), parse_terminated(" is hit by a Falling Star!</strong>"))
+            .map(|player_name| ParsedEventMessage::FallingStar { player_name }),
     ))
 }
 

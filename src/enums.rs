@@ -27,6 +27,7 @@ pub enum EventType {
     #[strum(to_string = "Weather_Delivery")]
     #[serde(rename = "Weather_Delivery")]
     WeatherDelivery,
+    FallingStar,
 
     // Season 2
     #[strum(to_string = "Weather_Shipment")]
