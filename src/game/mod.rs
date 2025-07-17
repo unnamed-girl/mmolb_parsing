@@ -115,7 +115,7 @@ fn bf_de<'de, D>(deserializer: D) -> Result<u8, D::Error> where D: Deserializer<
     let r = u8::deserialize(deserializer);
     if let Ok(n)= r {
         if n > 0 {
-            tracing::error!("Thought batters_faced is always 0")
+            tracing::warn!("Thought batters_faced is always 0")
         }
     }
     r

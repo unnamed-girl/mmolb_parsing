@@ -47,6 +47,7 @@ pub enum Breakpoints {
     S1AttributeEqualChange,
     S2D152,
     S2D169,
+    Season3,
 }
 impl Breakpoints {
     fn ascending_transition_time(self) -> Time {
@@ -73,6 +74,12 @@ impl Breakpoints {
                 ascending_days: vec![
                     (DayEquivalent { day: 168, offset: 0 }, 584),
                     (DayEquivalent { day: 169, offset: 0 }, 94),
+                ]
+            },
+            Breakpoints::Season3 => Time { 
+                season: 3, 
+                ascending_days: vec![
+                    (DayEquivalent { day: 0, offset: 0 }, 94),
                 ]
             }
         }

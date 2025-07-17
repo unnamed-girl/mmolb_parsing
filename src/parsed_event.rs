@@ -1,7 +1,7 @@
-use std::{fmt::{Display, Write}, iter::once};
+use std::{convert::Infallible, fmt::{Display, Write}, iter::once, str::FromStr};
 
 use serde::{Serialize, Deserialize};
-use strum::EnumDiscriminants;
+use strum::{EnumDiscriminants, EnumString, Display};
 use thiserror::Error;
 
 use crate::{enums::{Base, BaseNameVariant, BatterStat, Distance, EventType, FairBallDestination, FairBallType, FieldingErrorType, FoulType, GameOverMessage, HomeAway, ItemPrefix, ItemSuffix, ItemType, MoundVisitType, NowBattingStats, Place, StrikeType, TopBottom}, time::Breakpoints, Game, NotRecognized};
@@ -32,7 +32,8 @@ pub enum ParsedEventMessage<S> {
     // Season 0
     LiveNow {
         away_team: EmojiTeam<S>,
-        home_team: EmojiTeam<S>
+        home_team: EmojiTeam<S>,
+        stadium: Option<S>
     },
     PitchingMatchup {
         away_team: EmojiTeam<S>,
@@ -86,17 +87,18 @@ pub enum ParsedEventMessage<S> {
     },
 
     // Pitch
-    Ball { steals: Vec<BaseSteal<S>>, count:(u8, u8)},
-    Strike { strike: StrikeType, steals: Vec<BaseSteal<S>>, count:(u8, u8)},
-    Foul { foul: FoulType, steals: Vec<BaseSteal<S>>, count:(u8, u8) },
-    Walk { batter: S, scores: Vec<S>, advances: Vec<RunnerAdvance<S>> },
-    HitByPitch { batter: S, scores: Vec<S>, advances: Vec<RunnerAdvance<S>> },
+    Ball { steals: Vec<BaseSteal<S>>, count:(u8, u8), cheer: Option<Cheer>},
+    Strike { strike: StrikeType, steals: Vec<BaseSteal<S>>, count:(u8, u8), cheer: Option<Cheer>},
+    Foul { foul: FoulType, steals: Vec<BaseSteal<S>>, count:(u8, u8), cheer: Option<Cheer> },
+    Walk { batter: S, scores: Vec<S>, advances: Vec<RunnerAdvance<S>>, cheer: Option<Cheer> },
+    HitByPitch { batter: S, scores: Vec<S>, advances: Vec<RunnerAdvance<S>>, cheer: Option<Cheer> },
     FairBall {
         batter: S,
         fair_ball_type: FairBallType,
-        destination: FairBallDestination
+        destination: FairBallDestination,
+        cheer: Option<Cheer>
     },
-    StrikeOut { foul: Option<FoulType>, batter: S, strike: StrikeType, steals: Vec<BaseSteal<S>> },
+    StrikeOut { foul: Option<FoulType>, batter: S, strike: StrikeType, steals: Vec<BaseSteal<S>>, cheer: Option<Cheer> },
 
     // Field
     BatterToBase { batter: S, distance: Distance, fair_ball_type: FairBallType, fielder: PlacedPlayer<S>, scores: Vec<S>, advances: Vec<RunnerAdvance<S>> },
@@ -125,6 +127,12 @@ pub enum ParsedEventMessage<S> {
         pitcher: S,
         scores: Vec<S>,
         advances: Vec<RunnerAdvance<S>>
+    },
+
+    // Season 3,
+    WeatherProsperity {
+        home_income: u8,
+        away_income: u8
     }
 }
 impl<S: Display> ParsedEventMessage<S> {
@@ -132,7 +140,12 @@ impl<S: Display> ParsedEventMessage<S> {
     pub fn unparse(&self, game: &Game, event_index: Option<u16>) -> String {
         match self {
             Self::ParseError { message, .. } => message.to_string(),
-            Self::LiveNow { away_team, home_team } => format!("{} @ {}", away_team, home_team),
+            Self::LiveNow { away_team, home_team, stadium } => {
+                match stadium {
+                    Some(stadium) => format!("{} vs {} @ {}", away_team, home_team, stadium),
+                    None => format!("{} @ {}", away_team, home_team),
+                }
+            },
             Self::PitchingMatchup { away_team, home_team, home_pitcher, away_pitcher } => format!("{away_team} {away_pitcher} vs. {home_team} {home_pitcher}"),
             Self::Lineup { side: _, players } => {
                 players.into_iter().enumerate().fold(String::new(), |mut acc, (index, player)| {
@@ -203,40 +216,58 @@ impl<S: Display> ParsedEventMessage<S> {
                 format!("{leaving_pitcher} is leaving the game. {arriving_pitcher_place}{arriving_pitcher_name} takes the mound.")
             },
 
-            Self::Ball { steals, count } => {
+            Self::Ball { steals, count, cheer } => {
                 let steals = once(String::new()).chain(steals.iter().map(BaseSteal::to_string))
                     .collect::<Vec<String>>()
                     .join(" ");
                 let space = old_space(game, event_index);
-                format!("{space}Ball. {}-{}.{steals}", count.0, count.1,)
+
+                let cheer = cheer.as_ref().map(|cheer| format!(" 📣 {cheer}!")).unwrap_or_default();
+
+                format!("{space}Ball. {}-{}.{steals}{cheer}", count.0, count.1,)
             },
-            Self::Strike { strike, steals, count } => {
+            Self::Strike { strike, steals, count, cheer } => {
                 let steals: Vec<String> = once(String::new()).chain(steals.into_iter().map(|steal| steal.to_string())).collect();
                 let steals = steals.join(" ");
                 let space = old_space(game, event_index);
-                format!("{space}Strike, {strike}. {}-{}.{steals}", count.0, count.1)
+
+                let cheer = cheer.as_ref().map(|cheer| format!(" 📣 {cheer}!")).unwrap_or_default();
+
+                format!("{space}Strike, {strike}. {}-{}.{steals}{cheer}", count.0, count.1)
             }
-            Self::Foul { foul, steals, count } => {
+            Self::Foul { foul, steals, count, cheer } => {
                 let steals: Vec<String> = once(String::new()).chain(steals.into_iter().map(|steal| steal.to_string())).collect();
                 let steals = steals.join(" ");
                 let space = old_space(game, event_index);
-                format!("{space}Foul {foul}. {}-{}.{steals}", count.0, count.1)
+
+                let cheer = cheer.as_ref().map(|cheer| format!(" 📣 {cheer}!")).unwrap_or_default();
+
+                format!("{space}Foul {foul}. {}-{}.{steals}{cheer}", count.0, count.1)
             }
-            Self::Walk { batter, scores, advances } => {
+            Self::Walk { batter, scores, advances, cheer } => {
                 let scores_and_advances = unparse_scores_and_advances(scores, advances);
                 let space = old_space(game, event_index);
-                format!("{space}Ball 4. {batter} walks.{scores_and_advances}")
+
+                let cheer = cheer.as_ref().map(|cheer| format!(" 📣 {cheer}!")).unwrap_or_default();
+
+                format!("{space}Ball 4. {batter} walks.{scores_and_advances}{cheer}")
             }
-            Self::HitByPitch { batter, scores, advances } => {
+            Self::HitByPitch { batter, scores, advances, cheer } => {
                 let scores_and_advances = unparse_scores_and_advances(scores, advances);
                 let space = old_space(game, event_index);
-                format!("{space}{batter} was hit by the pitch and advances to first base.{scores_and_advances}")
+
+                let cheer = cheer.as_ref().map(|cheer| format!(" 📣 {cheer}!")).unwrap_or_default();
+
+                format!("{space}{batter} was hit by the pitch and advances to first base.{scores_and_advances}{cheer}")
             }
-            Self::FairBall { batter, fair_ball_type, destination } => {
+            Self::FairBall { batter, fair_ball_type, destination, cheer } => {
                 let space = old_space(game, event_index);
-                format!("{space}{batter} hits a {fair_ball_type} to {destination}.")
+
+                let cheer = cheer.as_ref().map(|cheer| format!(" 📣 {cheer}!")).unwrap_or_default();
+                
+                format!("{space}{batter} hits a {fair_ball_type} to {destination}.{cheer}")
             }
-            Self::StrikeOut { foul, batter, strike, steals } => {
+            Self::StrikeOut { foul, batter, strike, steals, cheer } => {
                 let foul = match foul {
                     Some(foul) => format!("Foul {foul}. "),
                     None => String::new()
@@ -244,7 +275,10 @@ impl<S: Display> ParsedEventMessage<S> {
                 let steals: Vec<String> = once(String::new()).chain(steals.into_iter().map(|steal| steal.to_string())).collect();
                 let steals = steals.join(" ");
                 let space = old_space(game, event_index);
-                format!("{space}{foul}{batter} struck out {strike}.{steals}")
+
+                let cheer = cheer.as_ref().map(|cheer| format!(" 📣 {cheer}!")).unwrap_or_default();
+
+                format!("{space}{foul}{batter} struck out {strike}.{steals}{cheer}")
             }
             Self::BatterToBase { batter, distance, fair_ball_type, fielder, scores, advances } => {
                 let scores_and_advances = unparse_scores_and_advances(scores, advances);
@@ -349,7 +383,14 @@ impl<S: Display> ParsedEventMessage<S> {
                 let scores_and_advances = unparse_scores_and_advances(scores, advances);
                 format!("Balk. {pitcher} dropped the ball.{scores_and_advances}")
             },
-            Self::KnownBug { bug } => format!("{bug}")
+            Self::KnownBug { bug } => format!("{bug}"),
+            Self::WeatherProsperity { home_income, away_income } => {
+                let home = (*home_income > 0).then_some(format!("{} {} are Prosperous! They earned {home_income} 🪙.", game.home_team_emoji, game.home_team_name)).unwrap_or_default();
+                let away = (*away_income > 0).then_some(format!("{} {} are Prosperous! They earned {away_income} 🪙.", game.away_team_emoji, game.away_team_name)).unwrap_or_default();
+                let gap = (*home_income > 0 && *away_income > 0).then_some(" ").unwrap_or_default();
+
+                format!("{home}{gap}{away}")
+            }
         }
     }
 }
@@ -588,5 +629,235 @@ impl<S: Display> Display for KnownBug<S> {
                 write!(f, "{batter} reaches on a fielder's choice out, 1B {first_baseman}")
             }
         }
+    }
+}
+
+fn _check(_: &str) -> Infallible {
+    unreachable!("This is dead code that exists for a strum parse_err_fn")
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, EnumString, Display)]
+#[strum(
+    parse_err_fn = check,
+    parse_err_ty = Infallible
+)]
+pub enum Cheer {
+    #[strum(to_string = "A tremendous cheer fills the air")]
+    ATremendousCheerFillsTheAir,
+    #[strum(to_string = "A thunderous cheer echoes across the field")]
+    AThunderousCheerEchoesAcrossTheField,
+    #[strum(to_string = "Chants thunder around the stadium")]
+    ChantsThunderAroundTheStadium,
+    #[strum(to_string = "Everyone cheers at once")]
+    EveryoneCheersAtOnce,
+    #[strum(to_string = "Everyone is chanting the team's name")]
+    EveryoneIsChantingTheTeamsName,
+    #[strum(to_string = "The cheers drown out everything else")]
+    TheCheersDrownOutEverythingElse,
+    #[strum(to_string = "Cheers roll through the stadium")]
+    CheersRollThroughTheStadium,
+    #[strum(to_string = "Supporters pound on the railings")]
+    SupportersPoundOnTheRailings,
+    #[strum(to_string = "Hands clap and whistles pierce the air")]
+    HandsClapAndWhistlesPierceTheAir,
+    #[strum(to_string = "Home fans stomp their feet in unison")]
+    HomeFansStompTheirFeetInUnison,
+    #[strum(to_string = "No one is sitting anymore")]
+    NoOneIsSittingAnymore,
+    #[strum(to_string = "The hometown supporters give a roar")]
+    TheHometownSupportersGiveARoar,
+    #[strum(to_string = "The hometown section is deafening")]
+    TheHomeTownSectionIsDeafening,
+    #[strum(to_string = "The home faithful go berserk")]
+    TheHomeFaithfulGoBerserk,
+    #[strum(to_string = "Fans are losing their minds")]
+    TheFansAreLosingTheirMinds,
+    #[strum(to_string = "The stands explode in noise")]
+    TheStandsExplodeInNoise,
+    #[strum(to_string = "It's a wall of sound")]
+    ItsAWallOfSound,
+    #[strum(to_string = "The entire ballpark is rocking")]
+    TheEntireBallparkIsRocking,
+    #[strum(to_string = "The ballpark comes alive")]
+    TheBallparkComesAlive,
+    #[strum(to_string = "Excitement pours from the crowd")]
+    ExcitementPoursFromTheCrowd,
+    #[strum(to_string = "The home supporters can't contain themselves")]
+    TheHomeSupportersCantContainThemselves,
+    #[strum(to_string = "The crowd lets out a collective howl")]
+    TheCrowdLetsOutACollectiveHowl,
+    #[strum(to_string = "A rumble of excitement rolls through the stadium")]
+    ARumbleOfExcitementRollsThroughTheStadium,
+    #[strum(to_string = "Banners wave wildly")]
+    BannersWaveWildly,
+    #[strum(to_string = "The noise level skyrockets")]
+    TheNoiseLevelSkyrockets,
+    #[strum(to_string = "The energy in here is palpable")]
+    TheEnergyInHereIsPalpable,
+    #[strum(to_string = "The ballpark erupts in applause")]
+    TheBallparkEruptsInApplause,
+    #[strum(to_string = "The bleachers are booming")]
+    TheBleachersAreBooming,
+    #[strum(to_string = "Fans slap the walls in rhythm")]
+    FansSlapTheWallsInRhythm,
+    #[strum(to_string = "The hometown fans roar their support")]
+    TheHometownFansRoarTheirSupport,
+    #[strum(to_string = "Noise rains down from the seats")]
+    NoiseRainsDownFromTheSeats,
+    #[strum(to_string = "Fans wave their arms wildly")]
+    FansWaveTheirArmsWildly,
+    #[strum(to_string = "Energy pulses from the stands")]
+    EnergyPulsesFromTheStands,
+    #[strum(to_string = "The stands shake with noise")]
+    TheStandsShakeWithNoise,
+    #[strum(to_string = "The ballpark is in an uproar")]
+    TheBallparkIsInAnUproar,
+    #[strum(to_string = "The stadium swell with cheers")]
+    TheStadiumSwellWithCheers,
+    #[strum(to_string = "The stadium erupts")]
+    TheStadiumErupts,
+    #[strum(to_string = "Fans roar in support")]
+    FansRoarInSupport,
+    #[strum(to_string = "A chant grows louder and louder")]
+    AChantGrowsLouderAndLouder,
+    #[strum(to_string = "Fans shout encouragement")]
+    FansShoutEncouragement,
+    #[strum(to_string = "The stadium is buzzing")]
+    TheStadiumIsBuzzing,
+    #[strum(to_string = "The hometown faithful are loving this")]
+    TheHometownFaithfulAreLovingThis,
+    #[strum(to_string = "Fans whoop and holler")]
+    FansWhoopAndHoller,
+    #[strum(to_string = "The home crowd is fired up")]
+    TheHomeCrowdIsFiredUp,
+    #[strum(to_string = "It's pandemonium in the stands")]
+    ItsPandemoniumInTheStands,
+    #[strum(to_string = "The noise is overwhelming")]
+    TheNoiseIsOverwhelming,
+    #[strum(to_string = "Home supporters whistle and cheer")]
+    HomeSupportersWhistleAndCheer,
+    #[strum(to_string = "The home fans make themselves heard")]
+    TheHomeFansMakeThemselvesHeard,
+    #[strum(to_string = "The crowd rallies behind the team")]
+    TheCrowdRalliesBehindTheTeam,
+    #[strum(to_string = "The stands are rumbling")]
+    TheStandsAreRumbling,
+    #[strum(to_string = "It's pure pandemonium")]
+    ItsPurePandemonium,
+    #[strum(to_string = "The place is rocking")]
+    ThePlaceIsRocking,
+    #[strum(to_string = "A wave of cheers sweeps the stadium")]
+    AWaveOfCheersSweepsTheStadium,
+    #[strum(to_string = "The hometown fans roar")]
+    TheHometownFansRoar,
+    #[strum(to_string = "The fans thunder their approval")]
+    TheFansThunderTheirApproval,
+    #[strum(to_string = "Supporters yell at full volume")]
+    SupportersYellAtFullVolume,
+    #[strum(to_string = "The crowd goes absolutely bonkers")]
+    TheCrowdGoesAbsolutelyBonkers,
+    #[strum(to_string = "The cheering is relentless")]
+    TheCheeringIsRelentless,
+    #[strum(to_string = "Fans pump their fists in the air")]
+    FansPumpTheirFistsInTheAir,
+    #[strum(to_string = "The home crowd won't stop cheering")]
+    TheHomeCrowdWontStopCheering,
+    #[strum(to_string = "The crowd erupts into cheers")]
+    TheCrowdEruptsIntoCheers,
+    #[strum(to_string = "A roar builds from the seats")]
+    ARoarBuildsFromTheSeats,
+    #[strum(to_string = "Everyone in the stands is on their feet")]
+    EveryoneInTheStandsIsOnTheirFeet,
+    #[strum(to_string = "It's a roar from the rafters")]
+    ItsARoarFromTheRafters,
+    #[strum(to_string = "Chants rise from the bleachers")]
+    ChantsRiseFromTheBleachers,
+    #[strum(to_string = "A cheer rips through the park")]
+    ACheerRipsThroughThePark,
+    #[strum(to_string = "Everyone's clapping in rhythm")]
+    EveryonesClappingInRhythm,
+    #[strum(to_string = "The crowd is pumped up")]
+    TheCrowdIsPumpedUp,
+    #[strum(to_string = "The stadium swells with cheers")]
+    TheStadiumSwellsWithCheers,
+    #[strum(to_string = "You can barely hear the announcer")]
+    YouCanBarelyHearTheAnnouncer,
+    #[strum(to_string = "The fans are fired up")]
+    TheFansAreFiredUp,
+    #[strum(to_string = "The decibels rise to a frenzy")]
+    TheDecibelsRiseToAFrenzy,
+    #[strum(to_string = "The energy in the park surges")]
+    TheEnergyInTheParkSurges,
+    #[strum(to_string = "Fans yell themselves hoarse")]
+    FansYellThemselvesHoarse,
+    #[strum(to_string = "A mighty cheer erupts")]
+    AMightyCheerErupts,
+    #[strum(to_string = "The stands are electric")]
+    TheStandsAreElectric,
+    #[strum(to_string = "Fans jump and shout")]
+    FansJumpAndShout,
+    #[strum(to_string = "The cheers echo off the walls")]
+    TheCheersEchoOffTheWalls,
+    #[strum(to_string = "You can feel the stands vibrating")]
+    YouCanFeelTheStandsVibrating,
+    #[strum(to_string = "Noise levels spike")]
+    NoiseLevelsSpike,
+    #[strum(to_string = "Everyone is cheering at once")]
+    EveryoneIsCheeringAtOnce,
+    #[strum(to_string = "A huge cheer erupts")]
+    AHugeCheerErupts,
+    #[strum(to_string = "The noise just keeps building")]
+    TheNoiseJustKeepsBuilding,
+    #[strum(to_string = "The faithful are shouting at the top of their lungs")]
+    TheFaithfulAreShoutingAtTheTopOfTheirLungs,
+    #[strum(to_string = "They cheer like there's no tomorrow")]
+    TheyCheerLikeTheresNoTomorrow,
+    #[strum(to_string = "You can feel the hype building")]
+    YouCanFeelTheHypeBuilding,
+    #[strum(to_string = "The excitement is off the charts")]
+    TheExcitementIsOffTheCharts,
+    #[strum(to_string = "Excitement surges through the park")]
+    ExcitementSurgesThroughThePark,
+    #[strum(to_string = "Every fan is making noise")]
+    EveryFanIsMakingNoise,
+    #[strum(to_string = "The supporters fuel their team")]
+    TheSupportersFuelTheirTeam,
+    #[strum(to_string = "The park vibrates with noise")]
+    TheParkVibratesWithNoise,
+    #[strum(to_string = "The stands are shaking")]
+    TheStandsAreShaking,
+    #[strum(to_string = "The fans bellow encouragement")]
+    TheFansBellowEncouragement,
+    #[strum(to_string = "The stadium shakes with excitement")]
+    TheStadiumShakesWithExcitement,
+    #[strum(to_string = "Supporters wave their banners high")]
+    SupportersWaveTheirBannersHigh,
+    #[strum(to_string = "The faithful rise as one")]
+    TheFaithfulRiseAsOne,
+    #[strum(to_string = "Cheers cascade from every section")]
+    CheersCascadeFromEverySection,
+    #[strum(to_string = "The crowd belts out the team's chant")]
+    TheCrowdBeltsOutTheTeamsChant,
+    #[strum(to_string = "The fans scream for their heroes")]
+    TheFansScreamForTheirHeroes,
+    #[strum(to_string = "The crowd is ecstatic")]
+    TheCrowdIsEcstatic,
+    #[strum(to_string = "The crowd is pumped")]
+    TheCrowdIsPumped,
+
+    #[strum(default)]
+    Unknown(String)
+}
+
+impl Cheer {
+    pub fn new(value: &str) -> Self {
+        let r = Cheer::from_str(value)
+            .expect("This error type is infallible");
+
+        if matches!(r, Cheer::Unknown(_)) {
+            tracing::warn!("Failed to match cheer '{value}'");
+        }
+
+        r
     }
 }

@@ -1,7 +1,7 @@
 use std::collections::HashMap;
 
 use crate::{enums::{Day, GameStat, LeagueScale, SeasonStatus, Slot}, game::{Event, PitcherEntry, Weather}, utils::{AddedLaterResult, extra_fields_deserialize, MaybeRecognizedResult}};
-use crate::utils::{MaybeRecognizedHelper, AddedLaterHelper};
+use crate::utils::{MaybeRecognizedHelper, AddedLaterHelper, ExpectNone};
 
 use serde::{Serialize, Deserialize};
 use serde_with::serde_as;
@@ -68,6 +68,10 @@ pub struct Game {
     #[serde(rename = "League")]
     #[serde_as(as = "MaybeRecognizedHelper<_>")]
     pub league_scale: MaybeRecognizedResult<LeagueScale>,
+
+    #[serde(default = "AddedLaterHelper::default_result", skip_serializing_if = "AddedLaterResult::is_err")]
+    #[serde_as(as = "AddedLaterHelper<ExpectNone<_>>")]
+    pub(super) hype_end_index: AddedLaterResult<Option<serde_json::Value>>,
 
     pub event_log: Vec<Event>,
 

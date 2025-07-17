@@ -37,7 +37,12 @@ pub enum EventType {
     #[strum(to_string = "Weather_SpecialDelivery")]
     #[serde(rename = "Weather_SpecialDelivery")]
     WeatherSpecialDelivery,
-    Balk
+    Balk,
+
+    // Season 3
+    #[strum(to_string = "Weather_Prosperity")]
+    #[serde(rename = "Weather_Prosperity")]
+    WeatherProsperity
 }
 
 /// Top or bottom of an inning.
@@ -1307,6 +1312,7 @@ mod test {
     use std::fmt::Debug;
 
     use strum::IntoEnumIterator;
+
 
     use super::*;
 

@@ -122,7 +122,7 @@ impl<'de, T: Debug, U> DeserializeAs<'de, Option<T>> for ExpectNone<U>
         let result = DeserializeAsWrap::<Option::<T>, U>::deserialize(deserializer)?.into_inner();
 
         if let Some(non_none) = &result {
-            tracing::error!("Expected field to be empty, not to be: {non_none:?}")
+            tracing::warn!("Expected field to be empty, not to be: {non_none:?}")
         }
     
         Ok(result)
@@ -144,7 +144,7 @@ pub(crate) fn extra_fields_deserialize<'de, D>(deserializer: D) -> Result<serde_
     let result = serde_json::Map::<String, serde_json::Value>::deserialize(deserializer)?;
 
     if !result.is_empty() {
-        tracing::error!("Deserialization found extra fields: {:?}", result)
+        tracing::warn!("Deserialization found extra fields: {:?}", result)
     }
 
     Ok(result)
@@ -164,7 +164,10 @@ pub type MaybeRecognizedResult<T> = Result<T, NotRecognized>;
 pub(crate) struct MaybeRecognizedHelper<T>(PhantomData<T>);
 
 pub(crate) fn maybe_recognized_from_str<T: FromStr>(value: &str) -> MaybeRecognizedResult<T> {
-    T::from_str(value).map_err(|_| NotRecognized(serde_json::Value::String(value.to_string())))
+    T::from_str(value).map_err(|_| {
+        tracing::warn!("{value:?} not recognized as {}", type_name::<T>());
+        NotRecognized(serde_json::Value::String(value.to_string()))
+    })
 }
 
 pub(crate) fn maybe_recognized_to_string<T: ToString>(value: &MaybeRecognizedResult<T>) -> String {
@@ -191,7 +194,7 @@ impl<'de, T, U> DeserializeAs<'de, MaybeRecognizedResult<T>> for MaybeRecognized
         match Visitor::<T, U>::deserialize(deserializer) {
             Ok(Visitor::Recognized(t)) => Ok(Ok(t.into_inner())),
             Ok(Visitor::Other(s)) => {
-                tracing::error!("{s:?} not recognized as {}", type_name::<T>());
+                tracing::warn!("{s:?} not recognized as {}", type_name::<T>());
                 Ok(Err(NotRecognized(s, )))
             }
             Err(e) => Err(e)

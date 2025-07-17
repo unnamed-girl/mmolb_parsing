@@ -3,7 +3,7 @@ use std::{fmt::Debug, str::FromStr};
 use nom::{branch::alt, bytes::complete::{tag, take, take_till, take_until, take_until1, take_while}, character::complete::{one_of, space0, u8}, combinator::{all_consuming, opt, recognize, rest, value, verify}, error::{ErrorKind, ParseError}, multi::{count, many0, many1, separated_list1}, sequence::{delimited, preceded, separated_pair, terminated}, AsChar, Input, Parser};
 use nom_language::error::VerboseError;
 
-use crate::{enums::{Base, BatterStat, FairBallDestination, FairBallType, NowBattingStats}, feed_event::{EmojilessItem, FeedDelivery}, parsed_event::{BaseSteal, Delivery, EmojiTeam, Item, PlacedPlayer, RunnerAdvance, RunnerOut}, time::Breakpoints, Game};
+use crate::{enums::{Base, BatterStat, FairBallDestination, FairBallType, NowBattingStats}, feed_event::{EmojilessItem, FeedDelivery}, parsed_event::{BaseSteal, Cheer, Delivery, EmojiTeam, Item, PlacedPlayer, RunnerAdvance, RunnerOut}, time::Breakpoints, Game};
 
 pub(super) type Error<'a> = VerboseError<&'a str>;
 pub(super) type IResult<'a, I, O> = nom::IResult<I, O, Error<'a>>;
@@ -31,6 +31,27 @@ impl<'output, 'parse> ParsingContext<'output, 'parse> {
     }
     pub(crate) fn after(&self, breakpoint: Breakpoints) -> bool {
         breakpoint.after(self.game.season, self.game.day.as_ref().copied().ok(), self.event_index)
+    }
+
+    pub(crate) fn home_emoji_team(&'parse self) -> EmojiTeam<&'parse str> {
+        let emoji = self.game.home_team_emoji.as_str();
+        let name = self.game.home_team_name.as_str();
+        EmojiTeam { emoji, name }
+    }
+    pub(crate) fn away_emoji_team(&'parse self) -> EmojiTeam<&'parse str> {
+        let emoji = self.game.away_team_emoji.as_str();
+        let name = self.game.away_team_name.as_str();
+        EmojiTeam { emoji, name }
+    }
+}
+
+impl EmojiTeam<&str> {
+    pub(super) fn parser<'output, 'parse>(&'parse self) -> impl MyParser<'output, EmojiTeam<&'output str>> + 'parse {
+        |input: &'output str| {
+            separated_pair(tag(self.emoji), tag(" "), tag(self.name))
+                .map(|(emoji, name)| EmojiTeam {emoji, name})
+                .parse(input)
+        }
     }
 }
 
@@ -406,6 +427,14 @@ pub(super) fn feed_delivery<'output>(label: &'output str) -> impl MyParser<'outp
             terminated(item, (tag(" "), tag(label), tag("."))),
             opt(delimited(tag(" They discarded their "), item, tag(".")))
         ).map(|(player, item, discarded)| FeedDelivery {player, item, discarded} )
+}
+
+pub(super) fn cheer<'output>(input: &str) -> IResult<&str, Cheer> {
+    preceded(
+        tag("📣 "),
+        parse_terminated("!").map(Cheer::new)
+    )
+    .parse(input)
 }
 
 #[cfg(test)]
