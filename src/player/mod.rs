@@ -260,7 +260,7 @@ mod test {
     fn player_round_trip() -> Result<(), Box<dyn std::error::Error>> {
         let no_tracing_errs = no_tracing_errs();
 
-        assert_round_trip::<Player>(Path::new("test_data/s2_player.json"))?;
+        assert_round_trip::<Player>(Path::new("test_data/player.json"))?;
 
         drop(no_tracing_errs);
         Ok(())
