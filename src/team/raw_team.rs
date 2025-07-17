@@ -4,7 +4,7 @@ use serde::{Serialize, Deserialize};
 use serde_with::serde_as;
 
 use crate::{enums::{GameStat, PositionType, Slot}, utils::{maybe_recognized_from_str, maybe_recognized_to_string, AddedLaterResult, extra_fields_deserialize, MaybeRecognizedResult}, AddedLater};
-use crate::utils::{MaybeRecognizedHelper, AddedLaterHelper};
+use crate::utils::{MaybeRecognizedHelper, SometimesMissingHelper};
 use super::team::TeamPlayer;
 
 #[serde_as]
@@ -20,12 +20,12 @@ pub(crate) struct RawTeamPlayer {
     pub position: String,
     #[serde_as(as = "MaybeRecognizedHelper<_>")]
     pub slot: MaybeRecognizedResult<Slot>,
-    #[serde_as(as = "AddedLaterHelper<MaybeRecognizedHelper<_>>")]
-    #[serde(default = "AddedLaterHelper::default_result", skip_serializing_if = "AddedLaterResult::is_err")]
+    #[serde_as(as = "SometimesMissingHelper<MaybeRecognizedHelper<_>>")]
+    #[serde(default = "SometimesMissingHelper::default_result", skip_serializing_if = "AddedLaterResult::is_err")]
     pub position_type: AddedLaterResult<MaybeRecognizedResult<PositionType>>,
 
-    #[serde_as(as = "AddedLaterHelper<HashMap<MaybeRecognizedHelper<_>, _>>")]
-    #[serde(default = "AddedLaterHelper::default_result", skip_serializing_if = "AddedLaterResult::is_err")]
+    #[serde_as(as = "SometimesMissingHelper<HashMap<MaybeRecognizedHelper<_>, _>>")]
+    #[serde(default = "SometimesMissingHelper::default_result", skip_serializing_if = "AddedLaterResult::is_err")]
     pub stats: AddedLaterResult<HashMap<MaybeRecognizedResult<GameStat>, i32>>,
 
     #[serde(flatten, deserialize_with = "extra_fields_deserialize")]

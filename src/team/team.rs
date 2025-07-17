@@ -4,7 +4,7 @@ use serde::{Serialize, Deserialize};
 use serde_with::serde_as;
 
 use crate::{enums::{GameStat, Position, PositionType, RecordType, Slot}, feed_event::FeedEvent, utils::{AddedLaterResult, ExpectNone, extra_fields_deserialize, MaybeRecognizedResult, NotRecognized}};
-use crate::utils::{MaybeRecognizedHelper, AddedLaterHelper};
+use crate::utils::{MaybeRecognizedHelper, SometimesMissingHelper};
 use super::raw_team::{RawTeamPlayer};
 
 #[serde_as]
@@ -22,13 +22,13 @@ pub struct Team {
     pub emoji: String,
 
     /// Not present on some deleted teams.
-    #[serde(default = "AddedLaterHelper::default_result", skip_serializing_if = "AddedLaterResult::is_err")]
-    #[serde_as(as = "AddedLaterHelper<_>")]
+    #[serde(default = "SometimesMissingHelper::default_result", skip_serializing_if = "AddedLaterResult::is_err")]
+    #[serde_as(as = "SometimesMissingHelper<_>")]
     pub feed: AddedLaterResult<Vec<FeedEvent>>,
 
     /// Not present on some deleted teams.
-    #[serde(default = "AddedLaterHelper::default_result", skip_serializing_if = "AddedLaterResult::is_err")]
-    #[serde_as(as = "AddedLaterHelper<_>")]
+    #[serde(default = "SometimesMissingHelper::default_result", skip_serializing_if = "AddedLaterResult::is_err")]
+    #[serde_as(as = "SometimesMissingHelper<_>")]
     pub motes_used: AddedLaterResult<u8>,
 
     pub location: String,

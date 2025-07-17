@@ -7,7 +7,7 @@ use thiserror::Error;
 #[cfg(test)]
 pub(crate) use test_utils::*;
 
-#[derive(Debug, Clone, PartialEq, Eq, Hash, Serialize, Deserialize, Error)]
+#[derive(Debug, Clone, PartialEq, Eq, Hash, Serialize, Deserialize, Error, Default)]
 /// Error for fields where some cashews data is missing the field.
 /// 
 /// NOTE: mmolb_parsing only aims to support the latest version of each entity on Cashews. This field is only used when:
@@ -16,30 +16,41 @@ pub(crate) use test_utils::*;
 #[error("this entity is missing this field, usually because the entity is older than the field")]
 pub struct AddedLater;
 
-
 pub type AddedLaterResult<T> = Result<T, AddedLater>;
 
+#[derive(Debug, Clone, PartialEq, Eq, Hash, Serialize, Deserialize, Error, Default)]
+/// Error for fields where some cashews data is missing the field.
+/// 
+/// NOTE: mmolb_parsing only aims to support the latest version of each entity on Cashews. This field is only used when:
+/// - Entities are deleted from mmolb, so cashews holds onto an old api version (e.g. deleted player's might have items with a prefix field instead of a prefixes fields)
+/// - mmolb does not retroactively remove a field from old entities
+#[error("this entity is missing this field, usually because the entity is newer than the field")]
+pub struct RemovedLater;
 
-pub(crate) struct AddedLaterHelper<T>(PhantomData<T>);
+pub type RemovedLaterResult<T> = Result<T, RemovedLater>;
 
-impl<T> AddedLaterHelper<T> {
-    pub fn default_result() -> AddedLaterResult<T> {
-        AddedLaterResult::Err(AddedLater)
+
+
+pub(crate) struct SometimesMissingHelper<T>(PhantomData<T>);
+
+impl<T> SometimesMissingHelper<T> {
+    pub fn default_result<E:Default>() -> Result<T, E> {
+        Err(E::default())
     }
 }
 
-impl<'de, T, U> DeserializeAs<'de, AddedLaterResult<T>> for AddedLaterHelper<U>
+impl<'de, E, T, U> DeserializeAs<'de, Result<T, E>> for SometimesMissingHelper<U>
 where U: DeserializeAs<'de, T> {
-    fn deserialize_as<D>(deserializer: D) -> Result<AddedLaterResult<T>, D::Error>
+    fn deserialize_as<D>(deserializer: D) -> Result<Result<T, E>, D::Error>
         where
             D: Deserializer<'de> {
         Ok(Ok(DeserializeAsWrap::<T, U>::deserialize(deserializer)?.into_inner()))
     }
 }
 
-impl<T, U> SerializeAs<AddedLaterResult<T>> for AddedLaterHelper<U> 
+impl<E, T, U> SerializeAs<Result<T, E>> for SometimesMissingHelper<U> 
 where U: SerializeAs<T> {
-    fn serialize_as<S>(source: &AddedLaterResult<T>, serializer: S) -> Result<S::Ok, S::Error>
+    fn serialize_as<S>(source: &Result<T, E>, serializer: S) -> Result<S::Ok, S::Error>
         where
             S: Serializer {
         match source.as_ref().ok() {
@@ -211,6 +222,30 @@ impl<T, U> SerializeAs<MaybeRecognizedResult<T>> for MaybeRecognizedHelper<U>
             Ok(t) => SerializeAsWrap::<T, U>::new(t).serialize(serializer),
             Err(s) => s.serialize(serializer)
         }
+    }
+}
+
+pub struct StarHelper;
+
+impl<'de> DeserializeAs<'de, u8> for StarHelper {
+    fn deserialize_as<D>(deserializer: D) -> Result<u8, D::Error>
+        where
+            D: Deserializer<'de> {
+        let s = <&str>::deserialize(deserializer)?;
+
+        if !s.chars().all(|c| c == '⭐') {
+            return Err(serde::de::Error::custom("Expected every character in a start string to be '⭐'"));
+        }
+
+        Ok(s.chars().count() as u8)
+    }
+}
+
+impl SerializeAs<u8> for StarHelper {
+    fn serialize_as<S>(source: &u8, serializer: S) -> Result<S::Ok, S::Error>
+        where
+            S: Serializer {
+        (0..*source).map(|_| '⭐').collect::<String>().serialize(serializer)
     }
 }
 

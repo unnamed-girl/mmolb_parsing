@@ -1146,7 +1146,7 @@ pub enum ItemSuffix {
     #[strum(to_string = "of Reflexes")]
     Reflexes,
     #[strum(to_string = "of Fortune")]
-    Fortune
+    Fortune,
 }
 
 /// The various places a player in a game has been said to be.

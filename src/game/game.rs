@@ -1,7 +1,7 @@
 use std::collections::HashMap;
 
 use crate::{enums::{Day, GameStat, LeagueScale, SeasonStatus, Slot}, game::{Event, PitcherEntry, Weather}, utils::{AddedLaterResult, extra_fields_deserialize, MaybeRecognizedResult}};
-use crate::utils::{MaybeRecognizedHelper, AddedLaterHelper, ExpectNone};
+use crate::utils::{MaybeRecognizedHelper, SometimesMissingHelper, ExpectNone};
 
 use serde::{Serialize, Deserialize};
 use serde_with::serde_as;
@@ -44,15 +44,15 @@ pub struct Game {
     /// PitcherEntries were not retroactively added to old games
     /// 
     /// TeamID -> PitcherEntry for that team.
-    #[serde(rename = "PitcherEntry", default = "AddedLaterHelper::default_result", skip_serializing_if = "AddedLaterResult::is_err")]
-    #[serde_as(as = "AddedLaterHelper<_>")]
+    #[serde(rename = "PitcherEntry", default = "SometimesMissingHelper::default_result", skip_serializing_if = "AddedLaterResult::is_err")]
+    #[serde_as(as = "SometimesMissingHelper<_>")]
     pub pitcher_entries: AddedLaterResult<HashMap<String, PitcherEntry>>,
     
     /// PitchersUsed was not retroactively added to old games
     /// 
     /// TeamID -> List of pitchers for that team.
-    #[serde(default = "AddedLaterHelper::default_result", skip_serializing_if = "AddedLaterResult::is_err")]
-    #[serde_as(as = "AddedLaterHelper<_>")]
+    #[serde(default = "SometimesMissingHelper::default_result", skip_serializing_if = "AddedLaterResult::is_err")]
+    #[serde_as(as = "SometimesMissingHelper<_>")]
     pub pitchers_used: AddedLaterResult<HashMap<String, Vec<String>>>,
 
     #[serde_as(as = "Vec<MaybeRecognizedHelper<_>>")]
@@ -69,8 +69,8 @@ pub struct Game {
     #[serde_as(as = "MaybeRecognizedHelper<_>")]
     pub league_scale: MaybeRecognizedResult<LeagueScale>,
 
-    #[serde(default = "AddedLaterHelper::default_result", skip_serializing_if = "AddedLaterResult::is_err")]
-    #[serde_as(as = "AddedLaterHelper<ExpectNone<_>>")]
+    #[serde(default = "SometimesMissingHelper::default_result", skip_serializing_if = "AddedLaterResult::is_err")]
+    #[serde_as(as = "SometimesMissingHelper<ExpectNone<_>>")]
     pub(super) hype_end_index: AddedLaterResult<Option<serde_json::Value>>,
 
     pub event_log: Vec<Event>,
