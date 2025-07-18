@@ -81,7 +81,9 @@ pub enum ParsedEventMessage<S> {
         remaining_pitcher: PlacedPlayer<S>,
     },
     PitcherSwap {
+        leaving_pitcher_emoji: Option<S>,
         leaving_pitcher: PlacedPlayer<S>,
+        arriving_pitcher_emoji: Option<S>,
         arriving_pitcher_place: Option<Place>,
         arriving_pitcher_name: S,
     },
@@ -211,9 +213,12 @@ impl<S: Display> ParsedEventMessage<S> {
             Self::PitcherRemains { remaining_pitcher } => {
                 format!("{remaining_pitcher} remains in the game.")
             },
-            Self::PitcherSwap { leaving_pitcher, arriving_pitcher_place, arriving_pitcher_name } => {
+            Self::PitcherSwap { leaving_pitcher_emoji, leaving_pitcher, arriving_pitcher_emoji, arriving_pitcher_place, arriving_pitcher_name } => {
                 let arriving_pitcher_place = arriving_pitcher_place.map(|place| format!("{place} ")).unwrap_or_default();
-                format!("{leaving_pitcher} is leaving the game. {arriving_pitcher_place}{arriving_pitcher_name} takes the mound.")
+                let leaving_pitcher_emoji = leaving_pitcher_emoji.as_ref().map(|emoji| format!("{emoji} ")).unwrap_or_default();
+                let arriving_pitcher_emoji = arriving_pitcher_emoji.as_ref().map(|emoji| format!("{emoji} ")).unwrap_or_default();
+                
+                format!("{leaving_pitcher_emoji}{leaving_pitcher} is leaving the game. {arriving_pitcher_emoji}{arriving_pitcher_place}{arriving_pitcher_name} takes the mound.")
             },
 
             Self::Ball { steals, count, cheer } => {

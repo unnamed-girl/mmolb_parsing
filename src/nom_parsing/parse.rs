@@ -451,9 +451,9 @@ fn mound_visit<'output, 'parse>(parsing_context: &'parse ParsingContext<'output,
         .map(|team| ParsedEventMessage::MoundVisit { team, mound_visit_type: MoundVisitType::PitchingChange }),
         
         (
-            sentence(parse_terminated(" is leaving the game").and_then(placed_player_eof)),
-            sentence(parse_terminated(" takes the mound").and_then(leaves_player))
-        ).map(|(leaving_pitcher, (arriving_pitcher_place, arriving_pitcher_name))| ParsedEventMessage::PitcherSwap { leaving_pitcher, arriving_pitcher_place, arriving_pitcher_name }),
+            sentence((opt(terminated(emoji, tag(" "))), parse_terminated(" is leaving the game").and_then(placed_player_eof))),
+            sentence((opt(terminated(emoji, tag(" "))), parse_terminated(" takes the mound").and_then(leaves_player)))
+        ).map(|((leaving_pitcher_emoji, leaving_pitcher), (arriving_pitcher_emoji, (arriving_pitcher_place, arriving_pitcher_name)))| ParsedEventMessage::PitcherSwap { leaving_pitcher_emoji, leaving_pitcher, arriving_pitcher_emoji, arriving_pitcher_place, arriving_pitcher_name }),
 
         sentence(parse_terminated(" remains in the game").and_then(placed_player_eof))
         .map(|remaining_pitcher| ParsedEventMessage::PitcherRemains { remaining_pitcher }),
