@@ -1,9 +1,9 @@
 use std::{fmt::Debug, str::FromStr};
 
-use nom::{branch::alt, bytes::complete::{tag, take, take_till, take_until, take_until1, take_while}, character::complete::{one_of, space0, u8}, combinator::{all_consuming, opt, recognize, rest, value, verify}, error::{ErrorKind, ParseError}, multi::{count, many0, many1, separated_list1}, sequence::{delimited, preceded, separated_pair, terminated}, AsChar, Input, Parser};
+use nom::{branch::alt, bytes::complete::{tag, take, take_till, take_until, take_until1, take_while}, character::complete::{one_of, space0, u8}, combinator::{all_consuming, fail, opt, recognize, rest, value, verify}, error::{ErrorKind, ParseError}, multi::{count, many0, many1, separated_list1}, sequence::{delimited, preceded, separated_pair, terminated}, AsChar, Input, Parser};
 use nom_language::error::VerboseError;
 
-use crate::{enums::{Base, BatterStat, FairBallDestination, FairBallType, NowBattingStats}, feed_event::{EmojilessItem, FeedDelivery}, parsed_event::{BaseSteal, Cheer, Delivery, EmojiTeam, Item, PlacedPlayer, RunnerAdvance, RunnerOut}, time::Breakpoints, Game};
+use crate::{enums::{Base, BatterStat, FairBallDestination, FairBallType, NowBattingStats}, feed_event::{EmojilessItem, FeedDelivery}, parsed_event::{BaseSteal, Cheer, Delivery, EmojiTeam, Item, ItemAffixes, PlacedPlayer, RunnerAdvance, RunnerOut}, time::Breakpoints, Game};
 
 pub(super) type Error<'a> = VerboseError<&'a str>;
 pub(super) type IResult<'a, I, O> = nom::IResult<I, O, Error<'a>>;
@@ -337,12 +337,7 @@ pub(super) fn sentence_eof<'output, E: ParseError<&'output str> + Debug, F: Pars
 
 pub(super) fn emoji(input: &str) -> IResult<&str, &str> {
     verify(take_till(AsChar::is_space), |s: &str| {
-        for c in s.chars() {
-            if c.is_ascii() {
-                return false
-            }
-        }
-        true
+        !s.is_ascii() && s.chars().all(|c| !['!', '.', '<', '>'].contains(&c))
     }).parse(input)
 }
 
@@ -385,12 +380,22 @@ pub(super) fn now_batting_stats(input: &str) -> IResult<&str, NowBattingStats> {
 }
 
 pub(super) fn item(input: &str) -> IResult<&str, Item<&str>> {
-    (
-        emoji,
-        opt(preceded(tag(" "), try_from_word)),
-        preceded(tag(" "), try_from_word),
-        opt(preceded(tag(" "), try_from_words_m_n(2,3)))
-    ).map(|(item_emoji, prefix, item, suffix)| Item { item_emoji, prefix, item, suffix})
+    alt((
+        (
+            emoji,
+            opt(preceded(tag(" "), try_from_word)),
+            preceded(tag(" "), try_from_word),
+            opt(preceded(tag(" "), try_from_words_m_n(2,3)))
+        ).map(|(item_emoji, prefix, item, suffix)| Item { item_emoji, item, affixes: ItemAffixes::PrefixSuffix(prefix, suffix)}),
+        (
+            emoji,
+            preceded(tag(" "), try_from_word),
+        ).map(|(item_emoji, item, )| Item { item_emoji, item, affixes: ItemAffixes::None}),
+        (
+            emoji,
+            preceded(tag(" "), parse_and(try_from_word, " "))
+        ).map(|(item_emoji, (rare_name, item))| Item { item_emoji, item, affixes: ItemAffixes::RareName(rare_name)})
+    ))
     .parse(input)
 }
 
@@ -429,12 +434,23 @@ pub(super) fn feed_delivery<'output>(label: &'output str) -> impl MyParser<'outp
         ).map(|(player, item, discarded)| FeedDelivery {player, item, discarded} )
 }
 
-pub(super) fn cheer<'output>(input: &str) -> IResult<&str, Cheer> {
-    preceded(
-        tag("📣 "),
-        parse_terminated("!").map(Cheer::new)
-    )
-    .parse(input)
+pub(super) fn cheer<'parse, 'output>(parsing_context: &'parse ParsingContext<'output, 'parse>) -> impl MyParser<'output, Cheer> + 'parse {
+    |input| {
+        if parsing_context.before(Breakpoints::Season3) {
+            fail().parse(input)
+        } else if parsing_context.before(Breakpoints::CheersGetEmoji) {
+            parse_terminated("!").map(Cheer::new).parse(input)
+        } else {
+            preceded(
+                tag("📣 "),
+                parse_terminated("!").map(Cheer::new)
+            ).parse(input)
+        }
+    }
+
+
+
+
 }
 
 #[cfg(test)]

@@ -5,6 +5,7 @@ use crate::enums::Day;
 #[derive(Debug, PartialEq, Eq)]
 pub struct Time {
     pub season: u32,
+    /// Vec of (DayEquivalent, EventIndex), which is the first event after the breakpoint.
     pub ascending_days: Vec<(DayEquivalent, u16)>
 }
 
@@ -48,6 +49,7 @@ pub enum Breakpoints {
     S2D152,
     S2D169,
     Season3,
+    CheersGetEmoji
 }
 impl Breakpoints {
     fn ascending_transition_time(self) -> Time {
@@ -80,6 +82,12 @@ impl Breakpoints {
                 season: 3, 
                 ascending_days: vec![
                     (DayEquivalent { day: 0, offset: 0 }, 94),
+                ]
+            },
+            Breakpoints::CheersGetEmoji => Time {
+                season: 3,
+                ascending_days: vec![
+                    (DayEquivalent { day: 5, offset: 0 }, 330)
                 ]
             }
         }

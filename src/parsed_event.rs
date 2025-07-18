@@ -222,7 +222,7 @@ impl<S: Display> ParsedEventMessage<S> {
                     .join(" ");
                 let space = old_space(game, event_index);
 
-                let cheer = cheer.as_ref().map(|cheer| format!(" 📣 {cheer}!")).unwrap_or_default();
+                let cheer = cheer.as_ref().map(|c| c.unparse(game, event_index)).unwrap_or_default();
 
                 format!("{space}Ball. {}-{}.{steals}{cheer}", count.0, count.1,)
             },
@@ -231,7 +231,7 @@ impl<S: Display> ParsedEventMessage<S> {
                 let steals = steals.join(" ");
                 let space = old_space(game, event_index);
 
-                let cheer = cheer.as_ref().map(|cheer| format!(" 📣 {cheer}!")).unwrap_or_default();
+                let cheer = cheer.as_ref().map(|c| c.unparse(game, event_index)).unwrap_or_default();
 
                 format!("{space}Strike, {strike}. {}-{}.{steals}{cheer}", count.0, count.1)
             }
@@ -240,7 +240,7 @@ impl<S: Display> ParsedEventMessage<S> {
                 let steals = steals.join(" ");
                 let space = old_space(game, event_index);
 
-                let cheer = cheer.as_ref().map(|cheer| format!(" 📣 {cheer}!")).unwrap_or_default();
+                let cheer = cheer.as_ref().map(|c| c.unparse(game, event_index)).unwrap_or_default();
 
                 format!("{space}Foul {foul}. {}-{}.{steals}{cheer}", count.0, count.1)
             }
@@ -248,7 +248,7 @@ impl<S: Display> ParsedEventMessage<S> {
                 let scores_and_advances = unparse_scores_and_advances(scores, advances);
                 let space = old_space(game, event_index);
 
-                let cheer = cheer.as_ref().map(|cheer| format!(" 📣 {cheer}!")).unwrap_or_default();
+                let cheer = cheer.as_ref().map(|c| c.unparse(game, event_index)).unwrap_or_default();
 
                 format!("{space}Ball 4. {batter} walks.{scores_and_advances}{cheer}")
             }
@@ -256,14 +256,14 @@ impl<S: Display> ParsedEventMessage<S> {
                 let scores_and_advances = unparse_scores_and_advances(scores, advances);
                 let space = old_space(game, event_index);
 
-                let cheer = cheer.as_ref().map(|cheer| format!(" 📣 {cheer}!")).unwrap_or_default();
+                let cheer = cheer.as_ref().map(|c| c.unparse(game, event_index)).unwrap_or_default();
 
                 format!("{space}{batter} was hit by the pitch and advances to first base.{scores_and_advances}{cheer}")
             }
             Self::FairBall { batter, fair_ball_type, destination, cheer } => {
                 let space = old_space(game, event_index);
 
-                let cheer = cheer.as_ref().map(|cheer| format!(" 📣 {cheer}!")).unwrap_or_default();
+                let cheer = cheer.as_ref().map(|c| c.unparse(game, event_index)).unwrap_or_default();
                 
                 format!("{space}{batter} hits a {fair_ball_type} to {destination}.{cheer}")
             }
@@ -276,7 +276,7 @@ impl<S: Display> ParsedEventMessage<S> {
                 let steals = steals.join(" ");
                 let space = old_space(game, event_index);
 
-                let cheer = cheer.as_ref().map(|cheer| format!(" 📣 {cheer}!")).unwrap_or_default();
+                let cheer = cheer.as_ref().map(|c| c.unparse(game, event_index)).unwrap_or_default();
 
                 format!("{space}{foul}{batter} struck out {strike}.{steals}{cheer}")
             }
@@ -544,25 +544,38 @@ pub enum FallingStarOutcome<S> {
 }
 
 #[derive(Debug, Clone, Copy, Serialize, Deserialize, PartialEq)]
+pub enum ItemAffixes<S> {
+    None,
+    PrefixSuffix(Option<ItemPrefix>, Option<ItemSuffix>),
+    RareName(S)
+}
+
+#[derive(Debug, Clone, Copy, Serialize, Deserialize, PartialEq)]
 pub struct Item<S> {
     pub item_emoji: S,
-    pub prefix: Option<ItemPrefix>,
     pub item: ItemType,
-    pub suffix: Option<ItemSuffix>,
+    pub affixes: ItemAffixes<S>
 }
+
 impl<S: Display> Display for Item<S> {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        let Item { item_emoji, prefix, item, suffix } = self;
-        let prefix = match prefix {
-            Some(prefix) => format!("{prefix} "),
-            None => String::new()
-        };
-        let suffix = match suffix {
-            Some(suffix) => format!(" {suffix}"),
-            None => String::new()
-        };
+        let Item { item_emoji, item, affixes} = self;
 
-        write!(f, "{item_emoji} {prefix}{item}{suffix}")
+        match affixes {
+            ItemAffixes::None => write!(f, "{item_emoji} {item}"),
+            ItemAffixes::PrefixSuffix(prefix, suffix) => {
+            let prefix = match prefix {
+                Some(prefix) => format!("{prefix} "),
+                None => String::new()
+            };
+            let suffix = match suffix {
+                Some(suffix) => format!(" {suffix}"),
+                None => String::new()
+            };
+                write!(f, "{item_emoji} {prefix}{item}{suffix}")
+            },
+            ItemAffixes::RareName(rare_name) => write!(f, "{item_emoji} {rare_name} {item}"),
+        }
     }
 }
 
@@ -859,5 +872,13 @@ impl Cheer {
         }
 
         r
+    }
+
+    pub fn unparse(&self, game: &Game, event_index: Option<u16>) -> String {
+        if Breakpoints::CheersGetEmoji.before(game.season, game.day.as_ref().ok().copied(), event_index) {
+            format!(" {self}!")
+        } else {
+            format!(" 📣 {self}!")
+        }
     }
 }

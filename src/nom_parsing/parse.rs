@@ -12,6 +12,8 @@ const OVERRIDES: phf::Map<&'static str, phf::Map<u16, ParsedEventMessage<&'stati
     "685b744530d8d1ac659c30de" => phf_map!(265u16 => ParsedEventMessage::KnownBug { bug: KnownBug::FirstBasemanChoosesAGhost { batter: "Cameron Villalobos", first_baseman: "R. Marin" } }),
     "68611cb61e65f5fb52cb618f" => phf_map!(316u16 => ParsedEventMessage::KnownBug { bug: KnownBug::FirstBasemanChoosesAGhost { batter: "Liliana Marte", first_baseman: "Razzmatazz Koufax" } }),
     "68611cb61e65f5fb52cb61d6" => phf_map!(30u16 => ParsedEventMessage::KnownBug { bug: KnownBug::FirstBasemanChoosesAGhost { batter: "Zoom Savić", first_baseman: "Ana Carolina Finch" } }),
+    "68799d0621c82ae41451ca4f" => phf_map!(88u16 => ParsedEventMessage::KnownBug { bug: KnownBug::FirstBasemanChoosesAGhost { batter: "Stacy de Groot", first_baseman: "Lucky Moroz" } }),
+    "68782f7d206bc4d2a2003b05" => phf_map!(62u16 => ParsedEventMessage::KnownBug { bug: KnownBug::FirstBasemanChoosesAGhost { batter: "Finn Bondar", first_baseman: "Walter Fitzgerald" } }),
 );
 
 pub fn parse_event<'output, 'parse>(event: &'output Event, parsing_context: &ParsingContext<'output, 'parse>) -> ParsedEventMessage<&'output str> {
@@ -46,7 +48,7 @@ pub fn parse_event<'output, 'parse>(event: &'output Event, parsing_context: &Par
         EventType::Recordkeeping => record_keeping().parse(&event.message),
         EventType::LiveNow => live_now(parsing_context).parse(&event.message),
         EventType::InningStart => inning_start().parse(&event.message),
-        EventType::Pitch => pitch().parse(&event.message),
+        EventType::Pitch => pitch(parsing_context).parse(&event.message),
         EventType::AwayLineup => lineup(HomeAway::Away).parse(&event.message),
         EventType::InningEnd => inning_end().parse(&event.message),
         EventType::PlayBall => play_ball().parse(&event.message),
@@ -317,13 +319,13 @@ fn field<'output>() -> impl MyParser<'output, ParsedEventMessage<&'output str>> 
     context("Field event", all_consuming(fielding_outcomes))
 }
 
-fn pitch<'output>() -> impl MyParser<'output, ParsedEventMessage<&'output str>> {
+fn pitch<'output, 'parse>(parsing_context: &'parse ParsingContext<'output, 'parse>) -> impl MyParser<'output, ParsedEventMessage<&'output str>> + 'parse {
     let fair_ball = (sentence((
             parse_terminated(" hits a "), 
             try_from_words_m_n(1,2),
             preceded(tag(" to "), destination)
         )),
-        opt(preceded(tag(" "), cheer))    
+        opt(preceded(tag(" "), cheer(parsing_context)))    
     )
     .map(|((batter, fair_ball_type, destination), cheer)| ParsedEventMessage::FairBall { batter, fair_ball_type, destination, cheer });
 
@@ -334,37 +336,37 @@ fn pitch<'output>() -> impl MyParser<'output, ParsedEventMessage<&'output str>> 
             try_from_word)
     ))
     .and(many0(base_steal_sentence))
-    .and(opt(preceded(tag(" "), cheer)))
+    .and(opt(preceded(tag(" "), cheer(parsing_context))))
     .map(|(((foul, (batter, strike)), steals), cheer)|
         ParsedEventMessage::StrikeOut { foul, batter, strike, steals, cheer }
     );
 
     let hit_by_pitch = sentence(parse_terminated(" was hit by the pitch and advances to first base"))
     .and(scores_and_advances)
-    .and(opt(preceded(tag(" "), cheer)))
+    .and(opt(preceded(tag(" "), cheer(parsing_context))))
     .map(|((batter, (scores, advances)), cheer)| ParsedEventMessage::HitByPitch { batter, scores, advances, cheer });
 
     let walks = preceded(
         sentence(tag("Ball 4")),
         sentence(parse_terminated(" walks"))
     ).and(scores_and_advances)
-    .and(opt(preceded(tag(" "), cheer)))
+    .and(opt(preceded(tag(" "), cheer(parsing_context))))
     .map(|((batter, (scores, advances)), cheer)| ParsedEventMessage::Walk { batter, scores, advances, cheer });
  
     let ball = (preceded(sentence(tag("Ball")), sentence(score_update)))
     .and(many0(base_steal_sentence))
-    .and(opt(preceded(tag(" "), cheer)))
+    .and(opt(preceded(tag(" "), cheer(parsing_context))))
     .map(|((count, steals), cheer)| ParsedEventMessage::Ball { steals, count, cheer});
 
     let strike = sentence(preceded(tag("Strike, "), try_from_word))
     .and(cut((sentence(score_update), many0(base_steal_sentence))))
-    .and(opt(preceded(tag(" "), cheer)))
+    .and(opt(preceded(tag(" "), cheer(parsing_context))))
     .map(|((strike, (count, steals)), cheer)| ParsedEventMessage::Strike { strike, steals, count, cheer });
 
     let foul = sentence(preceded(tag("Foul "), try_from_word))
     .and(sentence(score_update))
     .and(many0(base_steal_sentence))
-    .and(opt(preceded(tag(" "), cheer)))
+    .and(opt(preceded(tag(" "), cheer(parsing_context))))
     .map(|(((foul, count), steals), cheer)| ParsedEventMessage::Foul { foul, steals, count, cheer });
 
     let pitch_options = alt((
