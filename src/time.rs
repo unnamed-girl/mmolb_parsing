@@ -49,7 +49,8 @@ pub enum Breakpoints {
     S2D152,
     S2D169,
     Season3,
-    CheersGetEmoji
+    CheersGetEmoji,
+    Season3PreSuperstarBreakUpdate
 }
 impl Breakpoints {
     fn ascending_transition_time(self) -> Time {
@@ -89,7 +90,13 @@ impl Breakpoints {
                 ascending_days: vec![
                     (DayEquivalent { day: 5, offset: 0 }, 330)
                 ]
-            }
+            },
+            Breakpoints::Season3PreSuperstarBreakUpdate => Time {
+                season: 3,
+                ascending_days: vec![
+                    (DayEquivalent { day: 112, offset: 0 }, 0)
+                ]
+            },
         }
     }
     pub fn before(&self, season: u32, day: Option<Day>, event_index: Option<u16>) -> bool {

@@ -394,7 +394,11 @@ impl<S: Display> ParsedEventMessage<S> {
                 let away = (*away_income > 0).then_some(format!("{} {} are Prosperous! They earned {away_income} 🪙.", game.away_team_emoji, game.away_team_name)).unwrap_or_default();
                 let gap = (*home_income > 0 && *away_income > 0).then_some(" ").unwrap_or_default();
 
-                format!("{home}{gap}{away}")
+                if Breakpoints::Season3PreSuperstarBreakUpdate.before(game.season, game.day.as_ref().ok().copied(), event_index) {
+                    format!("{home}{gap}{away}")
+                } else {
+                    format!("{away}{gap}{home}")
+                }
             }
         }
     }
