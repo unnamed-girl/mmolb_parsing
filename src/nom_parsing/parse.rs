@@ -3,7 +3,7 @@ use std::str::FromStr;
 use nom::{branch::alt, bytes::complete::{tag, take_until}, character::complete::{digit1, u8}, combinator::{all_consuming, cut, fail, opt, rest, verify}, error::context, multi::{many0, many1, separated_list1}, sequence::{delimited, preceded, separated_pair, terminated}, Finish, Parser};
 use phf::phf_map;
 
-use crate::{enums::{EventType, GameOverMessage, HomeAway, MoundVisitType, NowBattingStats}, game::Event, nom_parsing::shared::{away_emoji_team, cheer, delivery, emoji, home_emoji_team, try_from_word, try_from_words_m_n, MyParser}, parsed_event::{EmojiTeam, FallingStarOutcome, FieldingAttempt, GameEventParseError, KnownBug, StartOfInningPitcher}, time::Breakpoints, ParsedEventMessage};
+use crate::{enums::{EventType, GameOverMessage, HomeAway, MoundVisitType, NowBattingStats}, game::Event, nom_parsing::shared::{away_emoji_team, cheer, delivery, home_emoji_team, team_emoji, try_from_word, try_from_words_m_n, MyParser}, parsed_event::{EmojiTeam, FallingStarOutcome, FieldingAttempt, GameEventParseError, KnownBug, StartOfInningPitcher}, time::Breakpoints, ParsedEventMessage};
 
 use super::{shared::{all_consuming_sentence_and, base_steal_sentence, bold, destination, emoji_team_eof, exclamation, fair_ball_type_verb_name, fielders_eof, fly_ball_type_verb_name, name_eof, now_batting_stats, ordinal_suffix, out, parse_and, parse_terminated, placed_player_eof, score_update, scores_and_advances, scores_sentence, sentence, sentence_eof}, ParsingContext};
 
@@ -12,8 +12,9 @@ const OVERRIDES: phf::Map<&'static str, phf::Map<u16, ParsedEventMessage<&'stati
     "685b744530d8d1ac659c30de" => phf_map!(265u16 => ParsedEventMessage::KnownBug { bug: KnownBug::FirstBasemanChoosesAGhost { batter: "Cameron Villalobos", first_baseman: "R. Marin" } }),
     "68611cb61e65f5fb52cb618f" => phf_map!(316u16 => ParsedEventMessage::KnownBug { bug: KnownBug::FirstBasemanChoosesAGhost { batter: "Liliana Marte", first_baseman: "Razzmatazz Koufax" } }),
     "68611cb61e65f5fb52cb61d6" => phf_map!(30u16 => ParsedEventMessage::KnownBug { bug: KnownBug::FirstBasemanChoosesAGhost { batter: "Zoom Savić", first_baseman: "Ana Carolina Finch" } }),
-    "68799d0621c82ae41451ca4f" => phf_map!(88u16 => ParsedEventMessage::KnownBug { bug: KnownBug::FirstBasemanChoosesAGhost { batter: "Stacy de Groot", first_baseman: "Lucky Moroz" } }),
-    "68782f7d206bc4d2a2003b05" => phf_map!(62u16 => ParsedEventMessage::KnownBug { bug: KnownBug::FirstBasemanChoosesAGhost { batter: "Finn Bondar", first_baseman: "Walter Fitzgerald" } }),
+    "68799d0621c82ae41451ca4f" => phf_map!(65u16 => ParsedEventMessage::KnownBug { bug: KnownBug::FirstBasemanChoosesAGhost { batter: "Stacy de Groot", first_baseman: "Lucky Moroz" } }),
+    "68782f7d206bc4d2a2003b05" => phf_map!(18u16 => ParsedEventMessage::KnownBug { bug: KnownBug::FirstBasemanChoosesAGhost { batter: "Finn Bondar", first_baseman: "Walter Fitzgerald" } }),
+    "6879f14e21c82ae41451e785" => phf_map!(202u16 => ParsedEventMessage::KnownBug { bug: KnownBug::FirstBasemanChoosesAGhost { batter: "Bert Delić", first_baseman: "Asuka Loveless" } }),
 );
 
 pub fn parse_event<'output, 'parse>(event: &'output Event, parsing_context: &ParsingContext<'output, 'parse>) -> ParsedEventMessage<&'output str> {
@@ -41,13 +42,13 @@ pub fn parse_event<'output, 'parse>(event: &'output Event, parsing_context: &Par
     
     match event_type {
         EventType::PitchingMatchup => pitching_matchup(parsing_context).parse(&event.message),
-        EventType::MoundVisit => mound_visit(parsing_context).parse(&event.message),
+        EventType::MoundVisit => mound_visit(event, parsing_context).parse(&event.message),
         EventType::GameOver => game_over().parse(&event.message),
         EventType::Field => field().parse(&event.message),
         EventType::HomeLineup => lineup(HomeAway::Home).parse(&event.message),
         EventType::Recordkeeping => record_keeping().parse(&event.message),
         EventType::LiveNow => live_now(parsing_context).parse(&event.message),
-        EventType::InningStart => inning_start().parse(&event.message),
+        EventType::InningStart => inning_start(event, parsing_context).parse(&event.message),
         EventType::Pitch => pitch(parsing_context).parse(&event.message),
         EventType::AwayLineup => lineup(HomeAway::Away).parse(&event.message),
         EventType::InningEnd => inning_end().parse(&event.message),
@@ -403,13 +404,18 @@ fn lineup<'output>(side: HomeAway) -> impl MyParser<'output, ParsedEventMessage<
     ).map(move |players| ParsedEventMessage::Lineup {side, players }))
 }
 
-fn inning_start<'output>() -> impl MyParser<'output, ParsedEventMessage<&'output str>> {
-    let keep_pitcher = sentence(separated_pair(emoji, tag(" "), parse_terminated(" pitching")))
+fn inning_start<'output, 'parse>(event: &'output Event, parsing_context: &'parse ParsingContext<'output, 'parse>) -> impl MyParser<'output, ParsedEventMessage<&'output str>> + 'parse {
+    let pitching_team_emoji = |input| match event.inning.pitching_team() {
+        Some(side) => team_emoji(side, parsing_context).parse(input),
+        None => fail().parse(input)
+    };
+    
+    let keep_pitcher = sentence(separated_pair(pitching_team_emoji, tag(" "), parse_terminated(" pitching")))
     .map(|(emoji, name)| StartOfInningPitcher::Same { emoji, name });
 
     let swap_pitcher = (
-        sentence((opt(terminated(emoji, tag(" "))), parse_terminated(" is leaving the game").and_then(placed_player_eof))),
-        sentence((opt(terminated(emoji, tag(" "))), parse_terminated(" takes the mound").and_then(placed_player_eof)))
+        sentence((opt(terminated(pitching_team_emoji, tag(" "))), parse_terminated(" is leaving the game").and_then(placed_player_eof))),
+        sentence((opt(terminated(pitching_team_emoji, tag(" "))), parse_terminated(" takes the mound").and_then(placed_player_eof)))
     ).map(|((leaving_emoji, leaving_pitcher), (arriving_emoji, arriving_pitcher))| StartOfInningPitcher::Different { leaving_emoji, leaving_pitcher, arriving_emoji, arriving_pitcher });
 
     let start_inning = (
@@ -435,13 +441,18 @@ fn inning_start<'output>() -> impl MyParser<'output, ParsedEventMessage<&'output
     )
 }
 
-fn mound_visit<'output, 'parse>(parsing_context: &'parse ParsingContext<'output, 'parse>) -> impl MyParser<'output, ParsedEventMessage<&'output str>> + 'parse {
+fn mound_visit<'output, 'parse>(event: &'output Event, parsing_context: &'parse ParsingContext<'output, 'parse>) -> impl MyParser<'output, ParsedEventMessage<&'output str>> + 'parse {
     let leaves_player = |i| {
         if parsing_context.before(Breakpoints::S2D152) { 
             (terminated(try_from_word, tag(" ")), name_eof).map(|(place, name)| (Some(place), name)).parse(i)
         } else {
             (opt(terminated(try_from_word, tag(" "))), name_eof).map(|(place, name)| (place, name)).parse(i)
         }
+    };
+
+    let team_emoji = |input| match event.inning.pitching_team() {
+        Some(side) => team_emoji(side, parsing_context).parse(input),
+        None => fail().parse(input)
     };
 
     let mound_visit_options = alt((
@@ -451,8 +462,8 @@ fn mound_visit<'output, 'parse>(parsing_context: &'parse ParsingContext<'output,
         .map(|team| ParsedEventMessage::MoundVisit { team, mound_visit_type: MoundVisitType::PitchingChange }),
         
         (
-            sentence((opt(terminated(emoji, tag(" "))), parse_terminated(" is leaving the game").and_then(placed_player_eof))),
-            sentence((opt(terminated(emoji, tag(" "))), parse_terminated(" takes the mound").and_then(leaves_player)))
+            sentence((opt(terminated(team_emoji, tag(" "))), parse_terminated(" is leaving the game").and_then(placed_player_eof))),
+            sentence((opt(terminated(team_emoji, tag(" "))), parse_terminated(" takes the mound").and_then(leaves_player)))
         ).map(|((leaving_pitcher_emoji, leaving_pitcher), (arriving_pitcher_emoji, (arriving_pitcher_place, arriving_pitcher_name)))| ParsedEventMessage::PitcherSwap { leaving_pitcher_emoji, leaving_pitcher, arriving_pitcher_emoji, arriving_pitcher_place, arriving_pitcher_name }),
 
         sentence(parse_terminated(" remains in the game").and_then(placed_player_eof))

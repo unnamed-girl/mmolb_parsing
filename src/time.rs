@@ -81,7 +81,7 @@ impl Breakpoints {
             Breakpoints::Season3 => Time { 
                 season: 3, 
                 ascending_days: vec![
-                    (DayEquivalent { day: 0, offset: 0 }, 94),
+                    (DayEquivalent { day: 0, offset: 0 }, 0),
                 ]
             },
             Breakpoints::CheersGetEmoji => Time {

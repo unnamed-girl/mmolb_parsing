@@ -3,7 +3,7 @@ use std::{fmt::Debug, str::FromStr};
 use nom::{branch::alt, bytes::complete::{tag, take, take_till, take_until, take_until1, take_while}, character::complete::{one_of, space0, u8}, combinator::{all_consuming, fail, opt, recognize, rest, value, verify}, error::{ErrorKind, ParseError}, multi::{count, many0, many1, separated_list1}, sequence::{delimited, preceded, separated_pair, terminated}, AsChar, Input, Parser};
 use nom_language::error::VerboseError;
 
-use crate::{enums::{Base, BatterStat, FairBallDestination, FairBallType, NowBattingStats}, feed_event::{EmojilessItem, FeedDelivery}, parsed_event::{BaseSteal, Cheer, Delivery, EmojiTeam, Item, ItemAffixes, PlacedPlayer, RunnerAdvance, RunnerOut}, time::Breakpoints, Game};
+use crate::{enums::{Base, BatterStat, FairBallDestination, FairBallType, HomeAway, NowBattingStats}, feed_event::{EmojilessItem, FeedDelivery}, parsed_event::{BaseSteal, Cheer, Delivery, EmojiTeam, Item, ItemAffixes, PlacedPlayer, RunnerAdvance, RunnerOut}, time::Breakpoints, Game};
 
 pub(super) type Error<'a> = VerboseError<&'a str>;
 pub(super) type IResult<'a, I, O> = nom::IResult<I, O, Error<'a>>;
@@ -319,9 +319,10 @@ pub(super) fn placed_player_eof(input: &str) -> IResult<&str, PlacedPlayer<&str>
 pub(super) fn name_eof(input: &str) -> IResult<&str, &str> {
     verify(rest,  |name: &str| 
         name.input_len() >= 2 &&
+        name.split_whitespace().all(|word| word.len() == 0 || word.chars().any(|i| i.is_ascii())) &&
         // Removed for now because of early season 1 bug where feed names didn't print their spaces
         // name.chars().any(|c| c == ' ') && // From the API, we know players have first/last name, so there should always be a space
-        !name.chars().any(|c| [',', '(', ')', '<', '>', '\\'].contains(&c)) && // These characters should not be in names
+        !name.chars().any(|c| [',', '(', ')', '<', '>', '\\', '\u{FE0F}'].contains(&c)) && // These characters should not be in names
         !['.', ' '].contains(&name.chars().nth(0).unwrap()) // Vulnerable to "X jr." style name 
     )
     .parse(input)
@@ -447,10 +448,13 @@ pub(super) fn cheer<'parse, 'output>(parsing_context: &'parse ParsingContext<'ou
             ).parse(input)
         }
     }
+}
 
-
-
-
+pub(super) fn team_emoji<'parse, 'output>(side: HomeAway, parsing_context: &'parse ParsingContext<'output, 'parse>) -> impl MyParser<'output, &'output str> + 'parse {
+    move |input| match side {
+        HomeAway::Home => tag(parsing_context.game.home_team_emoji.as_str()).parse(input),
+        HomeAway::Away => tag(parsing_context.game.away_team_emoji.as_str()).parse(input),
+    }
 }
 
 #[cfg(test)]
