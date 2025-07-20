@@ -118,6 +118,12 @@ impl Into<HashMap<MaybeRecognizedResult<EquipmentSlot>, Option<PlayerEquipment>>
     }
 }
 
+impl Into<Vec<PlayerEquipment>> for PlayerEquipmentMap {
+    fn into(self) -> Vec<PlayerEquipment> {
+        self.fields.into_values().flatten().collect()
+    }
+}
+
 pub trait _GetHelper<Index> {
     type Output;
     fn _get(&self, index: Index) -> Option<&Self::Output>;

@@ -227,17 +227,28 @@ impl<T, U> SerializeAs<MaybeRecognizedResult<T>> for MaybeRecognizedHelper<U>
 
 pub struct StarHelper;
 
+struct StarVisitor;
+impl<'de> Visitor<'de> for StarVisitor {
+    type Value = u8;
+    fn expecting(&self, formatter: &mut std::fmt::Formatter) -> std::fmt::Result {
+        write!(formatter, "Up to 255 ⭐s")
+    }
+
+    fn visit_str<E>(self, v: &str) -> Result<Self::Value, E>
+        where
+            E: Error, {
+        if !v.chars().all(|c| c == '⭐') {
+            return Err(serde::de::Error::custom("Expected every character in a star string to be '⭐'"));
+        }
+        Ok(v.chars().count() as u8)
+    }
+}
+
 impl<'de> DeserializeAs<'de, u8> for StarHelper {
     fn deserialize_as<D>(deserializer: D) -> Result<u8, D::Error>
         where
             D: Deserializer<'de> {
-        let s = <&str>::deserialize(deserializer)?;
-
-        if !s.chars().all(|c| c == '⭐') {
-            return Err(serde::de::Error::custom("Expected every character in a start string to be '⭐'"));
-        }
-
-        Ok(s.chars().count() as u8)
+        deserializer.deserialize_str(StarVisitor)
     }
 }
 

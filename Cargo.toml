@@ -7,6 +7,10 @@ edition = "2021"
 name = "parser"
 required-features = ["bin"]
 
+[[bin]]
+name = "item_linter"
+required-features = ["bin"]
+
 [features]
 bin = ["dep:clap", "dep:tracing-subscriber", "dep:tokio", "dep:futures", "dep:reqwest", "dep:reqwest-middleware", "dep:http-cache-reqwest", "dep:async-stream", "dep:serde_json_diff", "serde_json/raw_value"]
 

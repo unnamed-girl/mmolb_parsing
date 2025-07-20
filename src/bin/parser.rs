@@ -1,10 +1,9 @@
-
-use std::{fs::File, io::Write, path::PathBuf, pin::pin};
+use std::{fs::File, io::Write, pin::pin};
 
 use clap::{Parser, ValueEnum};
 use futures::{Stream, StreamExt};
-use mmolb_parsing::{enums::{EquipmentSlot, FeedEventSource}, feed_event::parse_feed_event, player::Player, process_event, team::Team, Game};
-use serde::{Deserialize, Deserializer, Serialize, de::IntoDeserializer};
+use mmolb_parsing::{enums::FeedEventSource, feed_event::parse_feed_event, player::Player, process_event, team::Team, Game};
+use serde::{Deserialize, Serialize, de::IntoDeserializer};
 
 use reqwest::Client;
 use tracing::{error, info, Level};
@@ -135,8 +134,14 @@ async fn main() {
     };
 
     if let Some(id) = &args.id {
+        let kind = match args.kind {
+            Kind::Game => "game",
+            Kind::Team => "team",
+            Kind::Player => "player"
+        };
+
         let client = Client::new();
-        let url = format!("https://freecashe.ws/api/chron/v0/entities?kind=game&id={id}");
+        let url = format!("https://freecashe.ws/api/chron/v0/entities?kind={kind}&id={id}");
         let entities = client.get(&url).send().await.unwrap().json::<FreeCashewResponse<EntityResponse<Box<serde_json::value::RawValue>>>>().await.unwrap().items;
         for game in entities.into_iter() {
             func(game, true).await;

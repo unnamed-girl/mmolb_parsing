@@ -3,7 +3,7 @@ use std::collections::HashMap;
 use serde::{Serialize, Deserialize};
 use serde_with::serde_as;
 
-use crate::{enums::{GameStat, Position, PositionType, RecordType, Slot}, feed_event::FeedEvent, utils::{AddedLaterResult, ExpectNone, extra_fields_deserialize, MaybeRecognizedResult, NotRecognized}};
+use crate::{enums::{GameStat, Position, PositionType, RecordType, Slot}, feed_event::FeedEvent, player::PlayerEquipment, utils::{extra_fields_deserialize, AddedLaterResult, ExpectNone, MaybeRecognizedResult, NotRecognized}};
 use crate::utils::{MaybeRecognizedHelper, SometimesMissingHelper};
 use super::raw_team::{RawTeamPlayer};
 
@@ -49,6 +49,8 @@ pub struct Team {
     #[serde_as(as = "HashMap<MaybeRecognizedHelper<_>, _>")]
     pub record: HashMap<Result<RecordType, NotRecognized>, TeamRecord>,
     pub season_records: HashMap<String, String>,
+
+    pub inventory: Vec<PlayerEquipment>,
 
     #[serde(flatten, deserialize_with = "extra_fields_deserialize")]
     pub extra_fields: serde_json::Map<String, serde_json::Value>,
