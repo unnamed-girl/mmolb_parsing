@@ -1096,6 +1096,7 @@ pub enum Attribute {
     Guts
 }
 
+#[derive(Debug, Clone, Copy, EnumIter, PartialEq, Eq, Hash)]
 pub enum AttributeCategory {
     Batting,
     Pitching,
