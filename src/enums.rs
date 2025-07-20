@@ -1096,6 +1096,26 @@ pub enum Attribute {
     Guts
 }
 
+pub enum AttributeCategory {
+    Batting,
+    Pitching,
+    Defense,
+    Baserunning,
+    Generic
+}
+
+impl From<Attribute> for AttributeCategory {
+    fn from(value: Attribute) -> Self {
+        match value {
+            Attribute::Priority | Attribute::Luck => AttributeCategory::Generic,
+            Attribute::Aiming | Attribute::Contact | Attribute::Cunning | Attribute::Determination | Attribute::Discipline | Attribute::Insight | Attribute::Intimidation | Attribute::Lift | Attribute::Muscle | Attribute::Selflessness | Attribute::Vision | Attribute::Wisdom => AttributeCategory::Batting,
+            Attribute::Greed | Attribute::Performance | Attribute::Speed | Attribute::Stealth => AttributeCategory::Baserunning,
+            Attribute::Accuracy | Attribute::Control | Attribute::Defiance | Attribute::Guts | Attribute::Persuasion | Attribute::Presence | Attribute::Rotation | Attribute::Stamina | Attribute::Stuff | Attribute::Velocity | Attribute::Acrobatics | Attribute::Agility => AttributeCategory::Pitching,
+            Attribute::Arm | Attribute::Awareness | Attribute::Composure | Attribute::Dexterity | Attribute::Patience | Attribute::Reaction => AttributeCategory::Defense
+        }
+    }
+}
+
 #[derive(EnumString, Display, Debug, SerializeDisplay, DeserializeFromStr, Clone, Copy, EnumIter, PartialEq, Eq, Hash)]
 pub enum ItemPrefix {
     Sharp,
