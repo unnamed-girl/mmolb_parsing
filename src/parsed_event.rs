@@ -633,6 +633,7 @@ fn old_space(game: &Game, event_index: Option<u16>) -> &'static str {
     }
 }
 
+/// See individual variant documentation for an example of each bug, and the known properties of their events.
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq, EnumDiscriminants)]
 pub enum KnownBug<S> {
     /// https://mmolb.com/watch/6851bb34f419fdc04f9d0ed5 "Genevieve Hirose reaches on a fielder's choice out, 1B N. Kitagawa"
@@ -647,7 +648,18 @@ pub enum KnownBug<S> {
     FirstBasemanChoosesAGhost {
         batter: S,
         first_baseman: S
-    }
+    },
+    /// https://mmolb.com/watch/68758c796154982c31f5d803?event=412 ""
+    /// 
+    /// Potentially fixed as a side effect of the Season 3 Pre-Superstar Break Update, s3d112
+    /// 
+    /// NPC teams cannot earn Tokens. Before s3d112, teams that got shutout didn't prosper.
+    /// Thus, if an npc team shut out a player team, then an empty prosperity message would be displayed.
+    /// 
+    /// Properties
+    /// - It displays as an empty string
+    /// - It is a prosperity event in which neither team earned any tokens.
+    NoOneProspers
 }
 
 impl<S: Display> Display for KnownBug<S> {
@@ -655,6 +667,9 @@ impl<S: Display> Display for KnownBug<S> {
         match self {
             KnownBug::FirstBasemanChoosesAGhost { batter, first_baseman } => {
                 write!(f, "{batter} reaches on a fielder's choice out, 1B {first_baseman}")
+            },
+            KnownBug::NoOneProspers => {
+                write!(f, "")
             }
         }
     }

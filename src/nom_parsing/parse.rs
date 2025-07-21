@@ -1,6 +1,6 @@
 use std::str::FromStr;
 
-use nom::{branch::alt, bytes::complete::{tag, take_until}, character::complete::{digit1, u8}, combinator::{all_consuming, cut, fail, opt, rest, verify}, error::context, multi::{many0, many1, separated_list1}, sequence::{delimited, preceded, separated_pair, terminated}, Finish, Parser};
+use nom::{branch::alt, bytes::complete::{tag, take_until}, character::complete::{digit1, u8}, combinator::{all_consuming, cut, fail, opt, rest, value, verify}, error::context, multi::{many0, many1, separated_list1}, sequence::{delimited, preceded, separated_pair, terminated}, Finish, Parser};
 use phf::phf_map;
 
 use crate::{enums::{EventType, GameOverMessage, HomeAway, MoundVisitType, NowBattingStats}, game::Event, nom_parsing::shared::{away_emoji_team, cheer, delivery, home_emoji_team, team_emoji, try_from_word, try_from_words_m_n, MyParser}, parsed_event::{EmojiTeam, FallingStarOutcome, FieldingAttempt, GameEventParseError, KnownBug, StartOfInningPitcher}, time::Breakpoints, ParsedEventMessage};
@@ -113,7 +113,10 @@ fn weather_prosperity<'output, 'parse>(parsing_context: &'parse ParsingContext<'
     });
     
     context("Weather Prosperity", all_consuming(
-            variations
+        alt((
+            variations,
+            value(ParsedEventMessage::KnownBug { bug: KnownBug::NoOneProspers }, verify(rest, |s: &str| s.is_empty()))
+        ))
     ))
 }
 
