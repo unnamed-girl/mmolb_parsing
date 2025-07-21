@@ -422,12 +422,16 @@ pub(super) fn emojiless_item(input: &str) -> IResult<&str, EmojilessItem> {
 pub(super) fn delivery<'parse, 'output>(parsing_context: &'parse ParsingContext<'output, 'parse>, label: &'output str) -> impl MyParser<'output, Delivery<&'output str>> + 'parse {
     let success = (
         alt((
-            separated_pair(away_emoji_team(parsing_context), tag(" "), parse_terminated(" received a ")),
-            separated_pair(home_emoji_team(parsing_context), tag(" "), parse_terminated(" received a ")),
+            away_emoji_team(parsing_context),
+            home_emoji_team(parsing_context),
+        )),
+        alt((
+            value(None, tag(" received a ")),
+            preceded(tag(" "), parse_terminated(" received a ")).map(Some)
         )),
         terminated(item, (tag(" "), tag(label), tag("."))),
         opt(delimited(tag(" They discarded their "), item, tag(".")))
-    ).map(|((team, player), item, discarded)| Delivery::Successful {team, player, item, discarded} );
+    ).map(|(team, player, item, discarded)| Delivery::Successful {team, player, item, discarded} );
 
     let fail = terminated(item, tag(" was discarded as no player had space.")).map(|item| Delivery::NoSpace { item });
 

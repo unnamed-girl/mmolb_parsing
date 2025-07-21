@@ -397,7 +397,11 @@ impl<S: Display> ParsedEventMessage<S> {
                 if Breakpoints::Season3PreSuperstarBreakUpdate.before(game.season, game.day.as_ref().ok().copied(), event_index) {
                     format!("{home}{gap}{away}")
                 } else {
-                    format!("{away}{gap}{home}")
+                    if home_income > away_income {
+                        format!("{away}{gap}{home}")
+                    } else {
+                        format!("{home}{gap}{away}")
+                    }
                 }
             }
         }
@@ -592,7 +596,7 @@ impl<S: Display> Display for Item<S> {
 pub enum Delivery<S> {
     Successful {
         team: EmojiTeam<S>,
-        player: S,
+        player: Option<S>,
         item: Item<S>,
         discarded: Option<Item<S>>
     },
@@ -610,7 +614,9 @@ impl<S: Display> Delivery<S> {
                     None => String::new(),
                 };
 
-                format!("{team} {player} received a {item} {delivery_label}.{discarded}")
+                let player = player.as_ref().map(|player| format!(" {player}")).unwrap_or_default();
+
+                format!("{team}{player} received a {item} {delivery_label}.{discarded}")
             }
             Self::NoSpace { item } => {
                 format!("{item} was discarded as no player had space.")

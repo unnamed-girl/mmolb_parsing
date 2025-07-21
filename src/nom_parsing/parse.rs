@@ -102,35 +102,18 @@ fn weather_delivery<'output, 'parse>(parsing_context: &'parse ParsingContext<'ou
 
 fn weather_prosperity<'output, 'parse>(parsing_context: &'parse ParsingContext<'output, 'parse>) -> impl MyParser<'output, ParsedEventMessage<&'output str>> + 'parse {
     let prosperous = |t: EmojiTeam<&'parse str>| move |input: &'output str| delimited((t.parser(), tag(" are Prosperous! They earned ")), u8, tag(" 🪙.")).parse(input);
-    
-    let mut old = separated_pair(
-        opt(prosperous(parsing_context.home_emoji_team())),
-        opt(tag(" ")),
-        opt(prosperous(parsing_context.away_emoji_team()))
-    )
-    .map(|(home_income, away_income)| {
-        ParsedEventMessage::WeatherProsperity { home_income: home_income.unwrap_or_default(), away_income: away_income.unwrap_or_default() }
-    });
-    
-    let mut new = separated_pair(
-        opt(prosperous(parsing_context.away_emoji_team())),
-        opt(tag(" ")),
-        opt(prosperous(parsing_context.home_emoji_team())),
-    )
-    .map(|(away_income, home_income)| {
-        ParsedEventMessage::WeatherProsperity { home_income: home_income.unwrap_or_default(), away_income: away_income.unwrap_or_default() }
-    });
 
-    let time = move |input| {
-        if parsing_context.before(Breakpoints::Season3PreSuperstarBreakUpdate) {
-            old.parse(input)
-        } else {
-            new.parse(input)
-        }
-    };
+    let variations = alt((
+        separated_pair(prosperous(parsing_context.home_emoji_team()), tag(" "), prosperous(parsing_context.away_emoji_team())).map(|(home, away)| (Some(home), Some(away))),
+        separated_pair(prosperous(parsing_context.away_emoji_team()), tag(" "), prosperous(parsing_context.home_emoji_team())).map(|(away, home)| (Some(home), Some(away))),
+        prosperous(parsing_context.away_emoji_team()).map(|away| (None, Some(away))),
+        prosperous(parsing_context.home_emoji_team()).map(|home| (Some(home), None)),
+    )).map(|(home_income, away_income)| {
+        ParsedEventMessage::WeatherProsperity { home_income: home_income.unwrap_or_default(), away_income: away_income.unwrap_or_default() }
+    });
     
     context("Weather Prosperity", all_consuming(
-            time
+            variations
     ))
 }
 
