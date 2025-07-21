@@ -1,7 +1,7 @@
 use std::error::Error;
 
 use clap::Parser;
-use mmolb_parsing::{enums::{Attribute, EquipmentEffectType, ItemType, Position, Slot}, player::{Player, PlayerEquipment}, team::Team, NotRecognized};
+use mmolb_parsing::{enums::{Attribute, EquipmentEffectType, ItemName, Position, Slot}, player::{Player, PlayerEquipment}, team::Team, NotRecognized};
 use reqwest::blocking::Client;
 use serde::{de::DeserializeOwned, Deserialize, Serialize};
 
@@ -47,7 +47,7 @@ fn mmolb_fetch<'a, T: Fetchable + DeserializeOwned>(client: &'a Client, id: &str
 
 struct UnderstoodItem {
     effects: Vec<(Attribute, f64)>,
-    item: ItemType
+    item: ItemName
 }
 
 impl TryFrom<PlayerEquipment> for UnderstoodItem {
@@ -85,7 +85,7 @@ fn main() -> Result<(), Box<dyn Error>> {
 
     let team = mmolb_fetch::<Team>(&client, &args.team_id)?;
 
-    let _inventory = team.inventory.into_iter().flat_map(|a| UnderstoodItem::try_from(a)).collect::<Vec<_>>();
+    let _inventory = team.inventory?.into_iter().flat_map(|a| UnderstoodItem::try_from(a)).collect::<Vec<_>>();
 
     let mut badness = 0;
     let mut goodness = 0;

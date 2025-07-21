@@ -169,11 +169,11 @@ async fn main() {
 }
 
 async fn ingest_game(response: EntityResponse<Box<serde_json::value::RawValue>>, progress_report: bool, args: &Args) {
-    let _ingest_guard = tracing::span!(Level::INFO, "Entity Ingest", game_id = response.entity_id).entered();
+    let _ingest_guard = tracing::span!(Level::INFO, "Entity Ingest", entity_id = response.entity_id).entered();
 
     let game: Game = Game::deserialize(response.data.as_ref().into_deserializer()).map_err(|e| format!("Failed to deserialize {}, {e:?}", response.entity_id)).expect(&response.entity_id);
 
-    let _span_guard = tracing::span!(Level::INFO, "Game", game_id = response.entity_id, season = game.season, day = format!("{:?}", game.day), scale = format!("{:?}", game.league_scale)).entered();
+    let _span_guard = tracing::span!(Level::INFO, "Game", season = game.season, day = format!("{:?}", game.day), scale = format!("{:?}", game.league_scale)).entered();
 
     if args.round_trip {
         let data = serde_json::Value::deserialize(response.data.into_deserializer()).unwrap();
@@ -218,9 +218,10 @@ async fn ingest_game(response: EntityResponse<Box<serde_json::value::RawValue>>,
 }
 
 async fn ingest_team(response: EntityResponse<Box<serde_json::value::RawValue>>, args: &Args) {
+    let _ingest_guard = tracing::span!(Level::INFO, "Entity Ingest", entity_id = response.entity_id).entered();
     let team = Team::deserialize(response.data.as_ref().into_deserializer()).map_err(|e| format!("Failed to deserialize {}, {e:?}", response.entity_id)).expect(&response.entity_id);
 
-    let _team_span_guard = tracing::span!(Level::INFO, "Team", team_id = response.entity_id, name = team.name).entered();
+    let _team_span_guard = tracing::span!(Level::INFO, "Team", name = team.name).entered();
 
     let mut output = args.output_folder.as_ref().map(|folder| File::create(format!("{folder}/{}.ron", response.entity_id)).unwrap());
     
@@ -259,13 +260,12 @@ async fn ingest_team(response: EntityResponse<Box<serde_json::value::RawValue>>,
 }
 
 async fn ingest_player(response: EntityResponse<Box<serde_json::value::RawValue>>, args: &Args) {
-    let _player_span_guard = tracing::span!(Level::INFO, "Deserializing Player", player_id = response.entity_id).entered();
+    let _ingest_guard = tracing::span!(Level::INFO, "Entity Ingest", entity_id = response.entity_id).entered();
 
     let player = Player::deserialize(response.data.as_ref().into_deserializer()).map_err(|e| format!("Failed to deserialize {}, {e:?}", response.entity_id)).expect(&response.entity_id);
 
-    drop(_player_span_guard);
 
-    let _player_span_guard = tracing::span!(Level::INFO, "Player", player_id = response.entity_id, name = format!("{} {}", player.first_name, player.last_name)).entered();
+    let _player_span_guard = tracing::span!(Level::INFO, "Player", name = format!("{} {}", player.first_name, player.last_name)).entered();
     let mut output = args.output_folder.as_ref().map(|folder| File::create(format!("{folder}/{}.ron", response.entity_id)).unwrap());
     
     if args.round_trip {

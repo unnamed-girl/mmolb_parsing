@@ -1,7 +1,7 @@
-use nom::{branch::alt, bytes::complete::tag, character::complete::{i16, u8}, combinator::opt, error::context, multi::many1, sequence::{delimited, preceded, separated_pair, terminated}, Finish, Parser};
+use nom::{branch::alt, bytes::complete::{tag, take_while}, character::complete::{i16, u8}, combinator::{opt, verify}, error::context, multi::{many1, separated_list1}, sequence::{delimited, preceded, separated_pair, terminated}, Finish, Parser};
 use tracing::error;
 
-use crate::{enums::FeedEventType, feed_event::{AttributeChange, AttributeEqual, FeedEvent, FeedEventParseError, ParsedFeedEventText}, nom_parsing::shared::{emoji_team_eof, emojiless_item, feed_delivery, name_eof, parse_terminated, sentence_eof, try_from_word}};
+use crate::{enums::FeedEventType, feed_event::{AttributeChange, FeedEvent, FeedEventParseError, ParsedFeedEventText}, nom_parsing::shared::{emoji_team_eof, emojiless_item, feed_delivery, name_eof, parse_terminated, sentence_eof, try_from_word, try_from_words_m_n}, time::Breakpoints};
 
 use super::shared::Error;
 
@@ -20,7 +20,7 @@ pub fn parse_feed_event<'output>(event: &'output FeedEvent) -> ParsedFeedEventTe
 
     let result = match event_type {
         FeedEventType::Game => game().parse(&event.text),
-        FeedEventType::Augment => augment().parse(&event.text),
+        FeedEventType::Augment => augment(event).parse(&event.text),
     };
     match result.finish() {
         Ok(("", output)) => output,
@@ -43,12 +43,20 @@ fn game<'output>() -> impl FeedEventParser<'output> {
         feed_delivery("Delivery").map(|delivery| ParsedFeedEventText::Delivery { delivery } ),
         feed_delivery("Shipment").map(|delivery| ParsedFeedEventText::Shipment { delivery } ),
         feed_delivery("Special Delivery").map(|delivery| ParsedFeedEventText::SpecialDelivery { delivery } ),
+        prosperous(),
         hit_by_falling_star()
     )))
 }
 
 fn hit_by_falling_star<'output>() -> impl FeedEventParser<'output> {
     parse_terminated(" was hit by a Falling Star!").map(|player| ParsedFeedEventText::HitByFallingStar { player })
+}
+
+fn prosperous<'output>() -> impl FeedEventParser<'output> {
+    (
+        parse_terminated(" are Prosperous! They earned ").and_then(emoji_team_eof),
+        terminated(u8, tag(" 🪙."))
+    ).map(|(team, income)| ParsedFeedEventText::Prosperous { team, income })
 }
 
 fn game_result<'output>() -> impl FeedEventParser<'output> {
@@ -61,21 +69,28 @@ fn game_result<'output>() -> impl FeedEventParser<'output> {
     )
 }
 
-fn augment<'output>() -> impl FeedEventParser<'output> {
+fn augment<'output>(event: &'output FeedEvent) -> impl FeedEventParser<'output> {
     context("Augment Feed Event", alt((
         attribute_gain(),
         enchantment_s1a(),
         enchantment_s1b(),
         enchantment_s2(),
         enchantment_compensatory(),
-        robo(),
+        modification(),
         take_the_mound(),
         take_the_plate(),
-        attribute_equal_1(),
-        attribute_equal_2(),
-        attribute_equal_3(),
-        swap_places()
+        multiple_attribute_equal(event),
+        single_attribute_equal(event),
+        swap_places(),
+        recompose()
     )))
+}
+
+fn recompose<'output>() -> impl FeedEventParser<'output> {
+    (
+        parse_terminated(" was Recomposed into "),
+        sentence_eof(name_eof)
+    ).map(|(original, new)| ParsedFeedEventText::Recomposed { original, new })
 }
 
 fn attribute_gain<'output>() -> impl FeedEventParser<'output> {
@@ -88,34 +103,74 @@ fn attribute_gain<'output>() -> impl FeedEventParser<'output> {
     ).map(|changes| ParsedFeedEventText::AttributeChanges { changes })
 }
 
-fn attribute_equal_1<'output>() -> impl FeedEventParser<'output> {
-    many1(
+fn single_attribute_equal<'output>(event: &'output FeedEvent) -> impl FeedEventParser<'output> {
+    |input| if event.after(Breakpoints::Season3) {
         (
-            preceded(opt(tag(" ")), parse_terminated("'s ")),
+            parse_terminated("'s "),
             try_from_word,
             delimited(tag(" was set to their "), try_from_word, tag("."))
-        ).map(|(player_name, changing_attribute, value_attribute)| AttributeEqual { player_name, changing_attribute, value_attribute })
-    ).map(|equals| ParsedFeedEventText::AttributeEquals { equals })
-}
-
-fn attribute_equal_2<'output>() -> impl FeedEventParser<'output> {
-    many1(
+        ).map(|(player_name, changing_attribute, value_attribute)| ParsedFeedEventText::SingleAttributeEquals { player_name, changing_attribute, value_attribute })
+        .parse(input)
+    } else if event.after(Breakpoints::S1AttributeEqualChange) {
         (
-            preceded(opt(tag(" ")), parse_terminated("'s ")),
-            try_from_word,
-            delimited(tag(" became equal to their base "), try_from_word, tag("."))
-        ).map(|(player_name, changing_attribute, value_attribute)| AttributeEqual { player_name, changing_attribute, value_attribute })
-    ).map(|equals| ParsedFeedEventText::AttributeEquals { equals })
-}
-
-fn attribute_equal_3<'output>() -> impl FeedEventParser<'output> {
-    many1(
-        (
-            preceded(opt(tag(" ")), parse_terminated("'s ")),
+            parse_terminated("'s "),
             try_from_word,
             delimited(tag(" became equal to their current base "), try_from_word, tag("."))
-        ).map(|(player_name, changing_attribute, value_attribute)| AttributeEqual { player_name, changing_attribute, value_attribute })
-    ).map(|equals| ParsedFeedEventText::AttributeEquals { equals })
+        ).map(|(player_name, changing_attribute, value_attribute)| ParsedFeedEventText::SingleAttributeEquals { player_name, changing_attribute, value_attribute })
+        .parse(input)
+    } else {
+        (
+            parse_terminated("'s "),
+            try_from_word,
+            delimited(tag(" was set to their "), try_from_word, tag("."))
+        ).map(|(player_name, changing_attribute, value_attribute)| ParsedFeedEventText::SingleAttributeEquals { player_name, changing_attribute, value_attribute })
+        .parse(input)
+    }
+}
+
+fn multiple_attribute_equal<'output>(event: &'output FeedEvent) -> impl FeedEventParser<'output> {
+    |input| if event.after(Breakpoints::Season3) {
+        (
+            delimited(tag("Batters' "), try_from_word, tag(" was set to their ")),
+            terminated(try_from_word, tag(". Lineup:")),
+            separated_list1(
+                tag(","),
+                (
+                    delimited(tag(" "), u8, tag(". ")),
+                    terminated(try_from_word, tag(" ")),
+                    take_while(|c| c != ',').and_then(name_eof)
+                ).map(|(_, slot, name)| (Some(slot), name))
+            )
+        ).map(|(changing_attribute, value_attribute, players)| ParsedFeedEventText::MassAttributeEquals { players, changing_attribute, value_attribute })
+        .parse(input)
+    } else {
+        let f = |input| {
+            if event.after(Breakpoints::S1AttributeEqualChange) {
+                (
+                    parse_terminated("'s "),
+                    try_from_word,
+                    delimited(tag(" became equal to their current base "), try_from_word, tag("."))
+                ).parse(input)
+            } else {
+                (
+                    parse_terminated("'s "),
+                    try_from_word,
+                    delimited(tag(" became equal to their base "), try_from_word, tag("."))
+                ).parse(input)
+            }
+        };
+
+        verify(
+            separated_list1(tag(" "), f).map(|players| {
+                let (_, changing_attribute, value_attribute) = players.first().expect("separated_list1 is never empty");
+                (*changing_attribute, *value_attribute, players)
+            }),
+            |(changing_attribute, value_attribute, players)| players.iter().all(|(_, changing, value)| changing == changing_attribute && value == value_attribute)
+        ).map(|(changing_attribute, value_attribute, players)| {
+            ParsedFeedEventText::MassAttributeEquals { players: players.into_iter().map(|(player, _, _)| (None, player)).collect(), changing_attribute, value_attribute }
+        })
+        .parse(input)
+    }
 }
 
 fn enchantment_s1a<'output>() -> impl FeedEventParser<'output> {
@@ -162,9 +217,12 @@ fn enchantment_compensatory<'output>() -> impl FeedEventParser<'output> {
     ).map(|(player_name, item, (amount, attribute, enchant_two))| ParsedFeedEventText::S2Enchantment { player_name, item, amount, attribute, enchant_two, compensatory: true })
 }
 
-fn robo<'output>() -> impl FeedEventParser<'output> {
-    parse_terminated(" gained the ROBO Modification.")
-        .map(|player_name| ParsedFeedEventText::ROBO { player_name })
+fn modification<'output>() -> impl FeedEventParser<'output> {
+    (
+        parse_terminated(" gained the "),
+        terminated(try_from_words_m_n(1, 2), tag(" Modification.")),
+    )
+        .map(|(player_name, modification)| ParsedFeedEventText::Modification { player_name, modification })
 }
 
 fn take_the_mound<'output>() -> impl FeedEventParser<'output> {

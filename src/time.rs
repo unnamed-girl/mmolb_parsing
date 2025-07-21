@@ -37,7 +37,10 @@ impl DayEquivalent {
             Day::PostseasonPreview => DayEquivalent { day: 254, offset: 0 },
             Day::Preseason => DayEquivalent { day: 0, offset: 0 },
             Day::Election => DayEquivalent { day: 255, offset: 0 },
-            Day::Holiday => DayEquivalent { day: 255, offset: 1 }
+            Day::Holiday => DayEquivalent { day: 255, offset: 1 },
+            Day::Event => DayEquivalent { day: 255, offset: 1 },
+            Day::SpecialEvent => DayEquivalent { day: 255, offset: 1 },
+            Day::SuperstarGame => DayEquivalent { day: 120, offset: 1 },
         }
     }
 }

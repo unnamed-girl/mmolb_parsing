@@ -4,7 +4,7 @@ use serde::{Serialize, Deserialize};
 use strum::{EnumDiscriminants, EnumString, Display};
 use thiserror::Error;
 
-use crate::{enums::{Base, BaseNameVariant, BatterStat, Distance, EventType, FairBallDestination, FairBallType, FieldingErrorType, FoulType, GameOverMessage, HomeAway, ItemPrefix, ItemSuffix, ItemType, MoundVisitType, NowBattingStats, Place, StrikeType, TopBottom}, time::Breakpoints, Game, NotRecognized};
+use crate::{enums::{Base, BaseNameVariant, BatterStat, Distance, EventType, FairBallDestination, FairBallType, FieldingErrorType, FoulType, GameOverMessage, HomeAway, ItemPrefix, ItemSuffix, ItemName, MoundVisitType, NowBattingStats, Place, StrikeType, TopBottom}, time::Breakpoints, Game, NotRecognized};
 
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Error)]
 pub enum GameEventParseError {
@@ -562,7 +562,7 @@ pub enum ItemAffixes<S> {
 #[derive(Debug, Clone, Copy, Serialize, Deserialize, PartialEq)]
 pub struct Item<S> {
     pub item_emoji: S,
-    pub item: ItemType,
+    pub item: ItemName,
     pub affixes: ItemAffixes<S>
 }
 

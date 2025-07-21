@@ -3,7 +3,7 @@ use std::collections::HashMap;
 use serde::{Serialize, Deserialize};
 use serde_with::serde_as;
 
-use crate::{enums::{GameStat, Position, PositionType, RecordType, Slot}, feed_event::FeedEvent, player::PlayerEquipment, utils::{extra_fields_deserialize, AddedLaterResult, ExpectNone, MaybeRecognizedResult, NotRecognized}};
+use crate::{enums::{BallparkSuffix, GameStat, Position, PositionType, RecordType, Slot}, feed_event::FeedEvent, player::PlayerEquipment, utils::{extra_fields_deserialize, AddedLaterResult, ExpectNone, MaybeRecognizedResult, NotRecognized}};
 use crate::utils::{MaybeRecognizedHelper, SometimesMissingHelper};
 use super::raw_team::{RawTeamPlayer};
 
@@ -33,7 +33,27 @@ pub struct Team {
 
     pub location: String,
     pub full_location: String,
-    pub league: String,
+    pub league: Option<String>,
+
+    #[serde(default = "SometimesMissingHelper::default_result", skip_serializing_if = "AddedLaterResult::is_err")]
+    #[serde_as(as = "SometimesMissingHelper<_>")]
+    pub ballpark_name: AddedLaterResult<String>,
+    #[serde(default = "SometimesMissingHelper::default_result", skip_serializing_if = "AddedLaterResult::is_err")]
+    #[serde_as(as = "SometimesMissingHelper<MaybeRecognizedHelper<_>>")]
+    pub ballpark_suffix: AddedLaterResult<MaybeRecognizedResult<BallparkSuffix>>,
+    #[serde(default = "SometimesMissingHelper::default_result", skip_serializing_if = "AddedLaterResult::is_err")]
+    #[serde_as(as = "SometimesMissingHelper<_>")]
+    pub ballpark_use_city: AddedLaterResult<bool>,
+    #[serde(default = "SometimesMissingHelper::default_result", skip_serializing_if = "AddedLaterResult::is_err")]
+    #[serde_as(as = "SometimesMissingHelper<_>")]
+    pub ballpark_word_1: AddedLaterResult<Option<String>>,
+    #[serde(default = "SometimesMissingHelper::default_result", skip_serializing_if = "AddedLaterResult::is_err")]
+    #[serde_as(as = "SometimesMissingHelper<_>")]
+    pub ballpark_word_2: AddedLaterResult<Option<String>>,
+
+    #[serde(default = "SometimesMissingHelper::default_result", skip_serializing_if = "AddedLaterResult::is_err")]
+    #[serde_as(as = "SometimesMissingHelper<_>")]
+    pub eligible: AddedLaterResult<bool>,
 
     /// no modifications have been seen, so left as raw json
     #[serde_as(as = "Vec<ExpectNone<_>>")]
@@ -50,7 +70,10 @@ pub struct Team {
     pub record: HashMap<Result<RecordType, NotRecognized>, TeamRecord>,
     pub season_records: HashMap<String, String>,
 
-    pub inventory: Vec<PlayerEquipment>,
+    
+    #[serde(default = "SometimesMissingHelper::default_result", skip_serializing_if = "AddedLaterResult::is_err")]
+    #[serde_as(as = "SometimesMissingHelper<_>")]
+    pub inventory: AddedLaterResult<Vec<PlayerEquipment>>,
 
     #[serde(flatten, deserialize_with = "extra_fields_deserialize")]
     pub extra_fields: serde_json::Map<String, serde_json::Value>,

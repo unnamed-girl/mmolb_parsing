@@ -864,14 +864,28 @@ pub enum GameOverMessage {
 }
 
 #[derive(Clone, Copy, EnumString, Display, Debug, Serialize, Deserialize, PartialEq, Eq, Hash, EnumIter)]
-pub enum ItemType {
+pub enum ItemName {
     Cap,
     Gloves,
     #[strum(to_string = "T-Shirt")]
     #[serde(rename = "T-Shirt")]
     TShirt,
     Sneakers,
-    Ring
+    Ring,
+    #[strum(to_string = "Amplification Orb")]
+    #[serde(rename = "Amplification Orb")]
+    AmplificationOrb,
+    #[strum(to_string = "Progress Orb")]
+    #[serde(rename = "Progress Orb")]
+    ProgressOrb,
+    #[strum(to_string = "Ambition Orb")]
+    #[serde(rename = "Ambition Orb")]
+    AmbitionOrb
+}
+
+#[derive(Clone, Copy, EnumString, Display, Debug, Serialize, Deserialize, PartialEq, Eq, Hash, EnumIter)]
+pub enum SpecialItemType {
+    Material
 }
 
 #[derive(Debug, Clone, Copy, Serialize, Deserialize, EnumString, Display, PartialEq, Eq, Hash, EnumIter)]
@@ -890,7 +904,8 @@ pub enum SeasonStatus {
     SuperstarGame,
     Holiday,
     PostseasonRound(u8),
-    SpecialEvent
+    SpecialEvent,
+    Event
 }
 impl FromStr for SeasonStatus {
     type Err = &'static str;
@@ -902,6 +917,7 @@ impl FromStr for SeasonStatus {
             "Holiday" => Ok(SeasonStatus::Holiday),
             "Superstar Game" => Ok(SeasonStatus::SuperstarGame),
             "Special Event" => Ok(SeasonStatus::SpecialEvent),
+            "Event" => Ok(SeasonStatus::Event),
             s => s.strip_prefix("Postseason Round ")
                         .and_then(|s| s.parse().ok())
                         .map(SeasonStatus::PostseasonRound)
@@ -919,7 +935,8 @@ impl Display for SeasonStatus {
             SeasonStatus::SuperstarGame => Display::fmt("Superstar Game", f),
             SeasonStatus::Holiday => Display::fmt("Holiday", f),
             SeasonStatus::PostseasonRound(i) => write!(f, "Postseason Round {i}"),
-            SeasonStatus::SpecialEvent => write!(f, "Special Event")
+            SeasonStatus::SpecialEvent => write!(f, "Special Event"),
+            SeasonStatus::Event => write!(f, "Event")
         }
     }
 }
@@ -930,9 +947,14 @@ pub enum Day {
     SuperstarBreak,
     #[serde(rename = "Postseason Preview")]
     PostseasonPreview,
+    #[serde(rename = "Superstar Game")]
+    SuperstarGame,
     Holiday,
     Preseason,
     Election,
+    Event,
+    #[serde(rename = "Special Event")]
+    SpecialEvent,
     #[serde(untagged)]
     Day(u16),
     #[serde(untagged, deserialize_with = "superstar_day_de", serialize_with = "superstar_day_ser")]
@@ -974,7 +996,10 @@ impl Display for Day {
             Self::Election => write!(f, "Election"),
             Self::SuperstarDay(d) => write!(f, "Superstar Day {d}"),
             Self::PostseasonPreview => write!(f, "Postseason Preview"),
-            Self::PostseasonRound(r) => write!(f, "Postseason Round {r}")
+            Self::PostseasonRound(r) => write!(f, "Postseason Round {r}"),
+            Self::SpecialEvent => write!(f, "Special Event"),
+            Self::Event => write!(f, "Event"),
+            Self::SuperstarGame => write!(f, "Superstar Game"),
         }
     }
 }
@@ -1328,6 +1353,44 @@ pub enum FeedEventSource {
     Team
 }
 
+#[derive(Debug, Serialize, Deserialize, Clone, Copy, EnumIter, PartialEq, Eq, Hash, EnumString, Display)]
+pub enum BallparkSuffix {
+    Field,
+    Stadium,
+    Fairgrounds,
+    Dome,
+    Park,
+    Lot,
+    Coliseum,
+    Yards,
+    Grounds
+}
+
+#[derive(Debug, Serialize, Deserialize, Clone, Copy, EnumIter, PartialEq, Eq, Hash, EnumString, Display)]
+pub enum ModificationType {
+    #[strum(to_string = "Fire Elemental")]
+    #[serde(rename = "Fire Elemental")]
+    FireElemental,
+    #[strum(to_string = "Air Elemental")]
+    #[serde(rename = "Air Elemental")]
+    AirElemental,
+    #[strum(to_string = "Water Elemental")]
+    #[serde(rename = "Water Elemental")]
+    WaterElemental,
+    #[strum(to_string = "Earth Elemental")]
+    #[serde(rename = "Earth Elemental")]
+    EarthElemental,
+    Demonic,
+    ROBO,
+    Draconic,
+    Angelic,
+    Undead,
+    Giant,
+    Fae
+}
+
+
+
 #[cfg(test)]
 mod test {
     use std::fmt::Debug;
@@ -1367,7 +1430,7 @@ mod test {
         serde_round_trip_inner::<BatterStat>();
         serde_round_trip_inner::<GameStat>();
         serde_round_trip_inner::<GameOverMessage>();
-        serde_round_trip_inner::<ItemType>();
+        serde_round_trip_inner::<ItemName>();
         serde_round_trip_inner::<Day>();
         serde_round_trip_inner::<SeasonStatus>();
         serde_round_trip_inner::<FeedEventType>();
@@ -1381,5 +1444,7 @@ mod test {
         serde_round_trip_inner::<MoundVisitType>();
         serde_round_trip_inner::<LeagueScale>();
         serde_round_trip_inner::<Handedness>();
+        serde_round_trip_inner::<ModificationType>();
+        serde_round_trip_inner::<BallparkSuffix>();
     }
 }

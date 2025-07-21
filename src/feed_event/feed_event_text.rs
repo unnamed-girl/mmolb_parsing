@@ -3,7 +3,7 @@ use std::fmt::Display;
 use thiserror::Error;
 use serde::{Serialize, Deserialize};
 
-use crate::{enums::{Attribute, FeedEventSource, FeedEventType, ItemPrefix, ItemSuffix, ItemType}, feed_event::FeedEvent, parsed_event::{EmojiTeam, Item}, time::Breakpoints, NotRecognized};
+use crate::{enums::{Attribute, FeedEventSource, FeedEventType, ItemName, ItemPrefix, ItemSuffix, ModificationType, Slot}, feed_event::FeedEvent, parsed_event::{EmojiTeam, Item}, time::Breakpoints, NotRecognized};
 
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Error)]
 pub enum FeedEventParseError {
@@ -43,8 +43,15 @@ pub enum ParsedFeedEventText<S> {
     AttributeChanges {
         changes: Vec<AttributeChange<S>>
     },
-    AttributeEquals {
-        equals: Vec<AttributeEqual<S>>,
+    SingleAttributeEquals {
+        player_name: S,
+        changing_attribute: Attribute,
+        value_attribute: Attribute,
+    },
+    MassAttributeEquals {
+        players: Vec<(Option<Slot>, S)>,
+        changing_attribute: Attribute,
+        value_attribute: Attribute,
     },
     S1Enchantment {
         player_name: S,
@@ -60,9 +67,6 @@ pub enum ParsedFeedEventText<S> {
         enchant_two: Option<(u8, Attribute)>,
         compensatory: bool
     },
-    ROBO {
-        player_name: S,
-    },
     TakeTheMound {
         to_mound_player: S,
         to_lineup_player: S,
@@ -77,7 +81,19 @@ pub enum ParsedFeedEventText<S> {
     },
     HitByFallingStar {
         player: S
-    }
+    },
+    Prosperous {
+        team: EmojiTeam<S>,
+        income: u8
+    },
+    Recomposed {
+        original: S,
+        new: S
+    },
+    Modification {
+        player_name: S,
+        modification: ModificationType
+    },
 }
 
 #[derive(Clone, Debug, Serialize, Deserialize, PartialEq)]
@@ -85,13 +101,6 @@ pub struct AttributeChange<S> {
     pub player_name: S,
     pub amount: i16,
     pub attribute: Attribute,
-}
-
-#[derive(Clone, Debug, Serialize, Deserialize, PartialEq)]
-pub struct AttributeEqual<S> {
-    pub player_name: S,
-    pub changing_attribute: Attribute,
-    pub value_attribute: Attribute,
 }
 
 impl<S: Display> ParsedFeedEventText<S> {
@@ -116,20 +125,41 @@ impl<S: Display> ParsedFeedEventText<S> {
                     .collect::<Vec<_>>()
                     .join(" ")
             }
-            ParsedFeedEventText::AttributeEquals { equals } => {
-                let f = |change: &AttributeEqual<S>| {
-                    if Breakpoints::S1AttributeEqualChange.after(event.season as u32, event.day.as_ref().copied().ok(), None) {
-                        format!("{}'s {} became equal to their current base {}.", change.player_name, change.changing_attribute, change.value_attribute)
-                    } else if FeedEventSource::Player == source {
-                        format!("{}'s {} was set to their {}.", change.player_name, change.changing_attribute, change.value_attribute)
-                    } else {
-                        format!("{}'s {} became equal to their base {}.", change.player_name, change.changing_attribute, change.value_attribute)
-                    }
-                };
-                equals.iter()
-                    .map(f)
-                    .collect::<Vec<_>>()
-                    .join(" ")
+            ParsedFeedEventText::SingleAttributeEquals { player_name, changing_attribute, value_attribute } => {
+                if Breakpoints::Season3.after(event.season as u32, event.day.as_ref().copied().ok(), None) {
+                    format!("{}'s {} was set to their {}.", player_name, changing_attribute, value_attribute)
+                } else if Breakpoints::S1AttributeEqualChange.after(event.season as u32, event.day.as_ref().copied().ok(), None) {
+                    format!("{}'s {} became equal to their current base {}.", player_name, changing_attribute, value_attribute)
+                } else if FeedEventSource::Player == source {
+                    format!("{}'s {} was set to their {}.", player_name, changing_attribute, value_attribute)
+                } else {
+                    format!("{}'s {} became equal to their base {}.", player_name, changing_attribute, value_attribute)
+                }
+            },
+            ParsedFeedEventText::MassAttributeEquals { players, changing_attribute, value_attribute } => {
+                if Breakpoints::Season3.after(event.season as u32, event.day.as_ref().copied().ok(), None) {
+                    let intro = format!("Batters' {changing_attribute} was set to their {value_attribute}. Lineup:");
+                    let lineup = players.into_iter()
+                        .enumerate()
+                        .map(|(i, (slot, p))| format!(" {}. {} {p}", i+1, slot.as_ref().map(Slot::to_string).unwrap_or_default()))
+                        .collect::<Vec<_>>()
+                        .join(",");
+                    format!("{intro}{lineup}")
+                } else {
+                    let f = |player_name: &S, changing_attribute: &Attribute, value_attribute: &Attribute,| {
+                        if Breakpoints::S1AttributeEqualChange.after(event.season as u32, event.day.as_ref().copied().ok(), None) {
+                            format!("{}'s {} became equal to their current base {}.", player_name, changing_attribute, value_attribute)
+                        } else if FeedEventSource::Player == source {
+                            format!("{}'s {} was set to their {}.", player_name, changing_attribute, value_attribute)
+                        } else {
+                            format!("{}'s {} became equal to their base {}.", player_name, changing_attribute, value_attribute)
+                        }
+                    };
+                    players.into_iter()
+                        .map(|(_, p)| f(p, changing_attribute, value_attribute))
+                        .collect::<Vec<_>>()
+                        .join(" ")
+                }
             }
             ParsedFeedEventText::S1Enchantment { player_name, item, amount, attribute } => {
                 if Breakpoints::Season1EnchantmentChange.before(event.season as u32, event.day.as_ref().copied().ok(), None) {
@@ -145,8 +175,8 @@ impl<S: Display> ParsedFeedEventText<S> {
                     None =>  format!("The {enchant_type} Enchantment was a success! {player_name}'s {item} gained a +{amount} {attribute} bonus.")
                 }
             }
-            ParsedFeedEventText::ROBO { player_name } => {
-                format!("{player_name} gained the ROBO Modification.")
+            ParsedFeedEventText::Modification { player_name, modification } => {
+                format!("{player_name} gained the {modification} Modification.")
             }
             ParsedFeedEventText::TakeTheMound { to_mound_player, to_lineup_player } => {
                 format!("{to_mound_player} was moved to the mound. {to_lineup_player} was sent to the lineup.")
@@ -159,6 +189,12 @@ impl<S: Display> ParsedFeedEventText<S> {
             },
             ParsedFeedEventText::HitByFallingStar { player } => {
                 format!("{player} was hit by a Falling Star!")
+            },
+            ParsedFeedEventText::Prosperous { team, income } => {
+                format!("{team} are Prosperous! They earned {income} 🪙.")
+            },
+            ParsedFeedEventText::Recomposed { original, new } => {
+                format!("{original} was Recomposed into {new}.")
             }
         }
     }
@@ -187,7 +223,7 @@ impl<S: Display> FeedDelivery<S> {
 #[derive(Debug, Clone, Copy, Serialize, Deserialize, PartialEq)]
 pub struct EmojilessItem {
     pub prefix: Option<ItemPrefix>,
-    pub item: ItemType,
+    pub item: ItemName,
     pub suffix: Option<ItemSuffix>,
 }
 impl Display for EmojilessItem {

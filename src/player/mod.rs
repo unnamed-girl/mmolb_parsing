@@ -3,7 +3,7 @@ use std::collections::HashMap;
 pub use serde::{Serialize, Deserialize};
 use serde_with::serde_as;
 
-use crate::{enums::{Attribute, Day, EquipmentEffectType, EquipmentRarity, EquipmentSlot, GameStat, Handedness, ItemPrefix, ItemSuffix, ItemType, Position, PositionType, SeasonStatus}, feed_event::FeedEvent, utils::{AddedLaterResult, ExpectNone, MaybeRecognizedResult, RemovedLaterResult, StarHelper}};
+use crate::{enums::{Attribute, Day, EquipmentEffectType, EquipmentRarity, EquipmentSlot, GameStat, Handedness, ItemPrefix, ItemSuffix, ItemName, SpecialItemType, Position, PositionType, SeasonStatus}, feed_event::FeedEvent, utils::{AddedLaterResult, ExpectNone, MaybeRecognizedResult, RemovedLaterResult, StarHelper}};
 use crate::utils::{MaybeRecognizedHelper, SometimesMissingHelper, extra_fields_deserialize};
 
 #[serde_as]
@@ -165,7 +165,13 @@ pub struct PlayerEquipment {
     #[serde_as(as = "SometimesMissingHelper<MaybeRecognizedHelper<_>>")]
     slot: RemovedLaterResult<MaybeRecognizedResult<EquipmentSlot>>,
     #[serde_as(as = "MaybeRecognizedHelper<_>")]
-    pub name: MaybeRecognizedResult<ItemType>,
+    pub name: MaybeRecognizedResult<ItemName>,
+
+    #[serde(rename = "Type")]
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub special_type: Option<SpecialItemType>,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub description: Option<String>,
 
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub rare_name: Option<String>,
@@ -179,13 +185,16 @@ pub struct PlayerEquipment {
     #[serde_as(as = "SometimesMissingHelper<Option<MaybeRecognizedHelper<_>>>")]
     suffix: RemovedLaterResult<Option<MaybeRecognizedResult<ItemSuffix>>>,
 
-    #[serde_as(as = "Vec<MaybeRecognizedHelper<_>>")]
-    pub suffixes: Vec<MaybeRecognizedResult<ItemSuffix>>,
-    #[serde_as(as = "Vec<MaybeRecognizedHelper<_>>")]
-    pub prefixes: Vec<MaybeRecognizedResult<ItemPrefix>>,
+    #[serde(default = "SometimesMissingHelper::default_result", skip_serializing_if = "AddedLaterResult::is_err")]
+    #[serde_as(as = "SometimesMissingHelper<Vec<MaybeRecognizedHelper<_>>>")]
+    pub suffixes: AddedLaterResult<Vec<MaybeRecognizedResult<ItemSuffix>>>,
+    #[serde(default = "SometimesMissingHelper::default_result", skip_serializing_if = "AddedLaterResult::is_err")]
+    #[serde_as(as = "SometimesMissingHelper<Vec<MaybeRecognizedHelper<_>>>")]
+    pub prefixes: AddedLaterResult<Vec<MaybeRecognizedResult<ItemPrefix>>>,
 
-    #[serde_as(as = "MaybeRecognizedHelper<_>")]
-    pub rarity: MaybeRecognizedResult<EquipmentRarity>,
+    #[serde(default = "SometimesMissingHelper::default_result", skip_serializing_if = "AddedLaterResult::is_err")]
+    #[serde_as(as = "SometimesMissingHelper<MaybeRecognizedHelper<_>>")]
+    pub rarity: AddedLaterResult<MaybeRecognizedResult<EquipmentRarity>>,
 
     #[serde(flatten, deserialize_with = "extra_fields_deserialize")]
     pub extra_fields: serde_json::Map<String, serde_json::Value>,

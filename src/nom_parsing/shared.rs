@@ -3,7 +3,7 @@ use std::{fmt::Debug, str::FromStr};
 use nom::{branch::alt, bytes::complete::{tag, take, take_till, take_until, take_until1, take_while}, character::complete::{one_of, space0, u8}, combinator::{all_consuming, fail, opt, recognize, rest, value, verify}, error::{ErrorKind, ParseError}, multi::{count, many0, many1, separated_list1}, sequence::{delimited, preceded, separated_pair, terminated}, AsChar, Input, Parser};
 use nom_language::error::VerboseError;
 
-use crate::{enums::{Base, BatterStat, FairBallDestination, FairBallType, HomeAway, NowBattingStats}, feed_event::{EmojilessItem, FeedDelivery}, parsed_event::{BaseSteal, Cheer, Delivery, EmojiTeam, Item, ItemAffixes, PlacedPlayer, RunnerAdvance, RunnerOut}, time::Breakpoints, Game};
+use crate::{enums::{Base, BatterStat, FairBallDestination, FairBallType, HomeAway, NowBattingStats}, feed_event::{EmojilessItem, FeedDelivery, FeedEvent}, parsed_event::{BaseSteal, Cheer, Delivery, EmojiTeam, Item, ItemAffixes, PlacedPlayer, RunnerAdvance, RunnerOut}, time::Breakpoints, Game};
 
 pub(super) type Error<'a> = VerboseError<&'a str>;
 pub(super) type IResult<'a, I, O> = nom::IResult<I, O, Error<'a>>;
@@ -42,6 +42,15 @@ impl<'output, 'parse> ParsingContext<'output, 'parse> {
         let emoji = self.game.away_team_emoji.as_str();
         let name = self.game.away_team_name.as_str();
         EmojiTeam { emoji, name }
+    }
+}
+
+impl FeedEvent {
+    pub(crate) fn after(&self, breakpoint: Breakpoints) -> bool {
+        breakpoint.after(self.season as u32, self.day.as_ref().ok().copied(), None)
+    }
+    pub(crate) fn before(&self, breakpoint: Breakpoints) -> bool {
+        breakpoint.before(self.season as u32, self.day.as_ref().ok().copied(), None)
     }
 }
 
@@ -382,11 +391,12 @@ pub(super) fn now_batting_stats(input: &str) -> IResult<&str, NowBattingStats> {
 
 pub(super) fn item(input: &str) -> IResult<&str, Item<&str>> {
     alt((
-        (
+        verify((
             emoji,
             opt(preceded(tag(" "), try_from_word)),
             preceded(tag(" "), try_from_word),
-            opt(preceded(tag(" "), try_from_words_m_n(2,3)))
+            opt(preceded(tag(" "), try_from_words_m_n(2,3)))),
+            |(_, prefix, _, suffix)| prefix.is_some() || suffix.is_some()
         ).map(|(item_emoji, prefix, item, suffix)| Item { item_emoji, item, affixes: ItemAffixes::PrefixSuffix(prefix, suffix)}),
         (
             emoji,
