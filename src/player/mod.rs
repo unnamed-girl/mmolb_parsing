@@ -19,10 +19,7 @@ pub struct Player {
     pub bats: MaybeRecognizedResult<Handedness>,
     #[serde_as(as = "MaybeRecognizedHelper<_>")]
     pub birthday: MaybeRecognizedResult<Day>,
-    /// Not present on old, deleted players
-    #[serde(default = "SometimesMissingHelper::default_result", skip_serializing_if = "AddedLaterResult::is_err")]
-    #[serde_as(as = "SometimesMissingHelper<_>")]
-    pub birthseason: AddedLaterResult<u16>,
+    pub birthseason: u16,
     pub durability: f64,
     /// Not present on old, deleted players
     #[serde(default = "SometimesMissingHelper::default_result", skip_serializing_if = "AddedLaterResult::is_err")]
@@ -37,7 +34,8 @@ pub struct Player {
     pub home: String,
 
 
-    /// We have yet to see a greater boon. Word of god states they are modifications
+    /// We have yet to see a greater boon.
+    /// Word of god that lesser boons are a subcategory of modifications https://discord.com/channels/1136709081319604324/1148829574524850197/1365237630043820093
     #[serde_as(as = "ExpectNone<_>")]
     pub greater_boon: Option<Modification>,
     /// Word of god that lesser boons are a subcategory of modifications https://discord.com/channels/1136709081319604324/1148829574524850197/1365237630043820093
