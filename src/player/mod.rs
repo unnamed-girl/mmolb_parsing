@@ -37,8 +37,10 @@ pub struct Player {
     pub home: String,
 
 
+    /// We have yet to see a greater boon, and so it has been left as serde_json::Value.
+    /// Expect this type to change when greater_boons appear.
     #[serde_as(as = "ExpectNone<_>")]
-    greater_boon: Option<serde_json::Value>,
+    pub greater_boon: Option<serde_json::Value>,
     pub lesser_boon: Option<Boon>,
     pub modifications: Vec<Modification>,
 
@@ -163,7 +165,7 @@ pub struct PlayerEquipment {
     /// Removed in the current version of the API
     #[serde(default = "SometimesMissingHelper::default_result", skip_serializing_if = "RemovedLaterResult::is_err")]
     #[serde_as(as = "SometimesMissingHelper<MaybeRecognizedHelper<_>>")]
-    slot: RemovedLaterResult<MaybeRecognizedResult<EquipmentSlot>>,
+    pub slot: RemovedLaterResult<MaybeRecognizedResult<EquipmentSlot>>,
     #[serde_as(as = "MaybeRecognizedHelper<_>")]
     pub name: MaybeRecognizedResult<ItemName>,
 
@@ -178,12 +180,17 @@ pub struct PlayerEquipment {
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub cost: Option<u8>,
 
+    /// Only exists on deleted player's equipment. Was replaced with the "prefixes" field once multi-prefix items
+    /// were added.
     #[serde(default = "SometimesMissingHelper::default_result", skip_serializing_if = "RemovedLaterResult::is_err")]
     #[serde_as(as = "SometimesMissingHelper<Option<MaybeRecognizedHelper<_>>>")]
-    prefix: RemovedLaterResult<Option<MaybeRecognizedResult<ItemPrefix>>>,
+    pub prefix: RemovedLaterResult<Option<MaybeRecognizedResult<ItemPrefix>>>,
+    
+    /// Only exists on deleted player's equipment. Was replaced with the "suffixes" field once multi-suffix items
+    /// were added.
     #[serde(default = "SometimesMissingHelper::default_result", skip_serializing_if = "RemovedLaterResult::is_err")]
     #[serde_as(as = "SometimesMissingHelper<Option<MaybeRecognizedHelper<_>>>")]
-    suffix: RemovedLaterResult<Option<MaybeRecognizedResult<ItemSuffix>>>,
+    pub suffix: RemovedLaterResult<Option<MaybeRecognizedResult<ItemSuffix>>>,
 
     #[serde(default = "SometimesMissingHelper::default_result", skip_serializing_if = "AddedLaterResult::is_err")]
     #[serde_as(as = "SometimesMissingHelper<Vec<MaybeRecognizedHelper<_>>>")]
