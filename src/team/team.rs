@@ -55,9 +55,9 @@ pub struct Team {
     #[serde_as(as = "SometimesMissingHelper<_>")]
     pub eligible: AddedLaterResult<bool>,
 
-    /// no modifications have been seen, so left as raw json
+    /// no team modifications have been seen, so left as raw json
     #[serde_as(as = "Vec<ExpectNone<_>>")]
-    pub(super) modifications: Vec<Option<serde_json::Value>>,
+    pub modifications: Vec<Option<serde_json::Value>>,
     pub name: String,
 
     pub motto: Option<String>,

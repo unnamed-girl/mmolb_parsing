@@ -37,11 +37,11 @@ pub struct Player {
     pub home: String,
 
 
-    /// We have yet to see a greater boon, and so it has been left as serde_json::Value.
-    /// Expect this type to change when greater_boons appear.
+    /// We have yet to see a greater boon. Word of god states they are modifications
     #[serde_as(as = "ExpectNone<_>")]
-    pub greater_boon: Option<serde_json::Value>,
-    pub lesser_boon: Option<Boon>,
+    pub greater_boon: Option<Modification>,
+    /// Word of god that lesser boons are a subcategory of modifications https://discord.com/channels/1136709081319604324/1148829574524850197/1365237630043820093
+    pub lesser_boon: Option<Modification>,
     pub modifications: Vec<Modification>,
 
     pub likes: String,
@@ -225,18 +225,6 @@ pub struct EquipmentEffect {
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
 #[serde(rename_all = "PascalCase")]
 pub struct Modification {
-    pub emoji: String,
-    pub name: String,
-    pub description: String,
-
-    #[serde(flatten, deserialize_with = "extra_fields_deserialize")]
-    pub extra_fields: serde_json::Map<String, serde_json::Value>,
-}
-
-
-#[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
-#[serde(rename_all = "PascalCase")]
-pub struct Boon {
     pub emoji: String,
     pub name: String,
     pub description: String,
