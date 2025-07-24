@@ -1,7 +1,10 @@
+/// For a lot of this code I will have a function return a parser instead of the function just being a parser.
+/// This is because it makes it easier to inject context later when I inevitably need to use a timestamp to choose which parser to use
+
+
 use nom::{branch::alt, bytes::complete::{tag, take_while}, character::complete::{i16, u8}, combinator::{opt, verify}, error::context, multi::{many1, separated_list1}, sequence::{delimited, preceded, separated_pair, terminated}, Finish, Parser};
 use tracing::error;
-
-use crate::{enums::FeedEventType, feed_event::{AttributeChange, FeedEvent, FeedEventParseError, ParsedFeedEventText}, nom_parsing::shared::{emoji_team_eof, emojiless_item, feed_delivery, name_eof, parse_terminated, sentence_eof, try_from_word, try_from_words_m_n}, time::Breakpoints};
+use crate::{enums::{CelestialEnergyTier, FeedEventType}, feed_event::{AttributeChange, FeedEvent, FeedEventParseError, ParsedFeedEventText}, nom_parsing::shared::{emoji_team_eof, emojiless_item, feed_delivery, name_eof, parse_terminated, sentence_eof, try_from_word, try_from_words_m_n}, time::{Breakpoints, Timestamp}};
 
 use super::shared::Error;
 
@@ -19,8 +22,9 @@ pub fn parse_feed_event<'output>(event: &'output FeedEvent) -> ParsedFeedEventTe
     };
 
     let result = match event_type {
-        FeedEventType::Game => game().parse(&event.text),
+        FeedEventType::Game => game(event).parse(&event.text),
         FeedEventType::Augment => augment(event).parse(&event.text),
+        FeedEventType::Release => release().parse(&event.text)
     };
     match result.finish() {
         Ok(("", output)) => output,
@@ -37,36 +41,17 @@ pub fn parse_feed_event<'output>(event: &'output FeedEvent) -> ParsedFeedEventTe
     }
 }
 
-fn game<'output>() -> impl FeedEventParser<'output> {
+fn game<'output>(event: &'output FeedEvent) -> impl FeedEventParser<'output> {
     context("Game Feed Event", alt((
         game_result(),
         feed_delivery("Delivery").map(|delivery| ParsedFeedEventText::Delivery { delivery } ),
         feed_delivery("Shipment").map(|delivery| ParsedFeedEventText::Shipment { delivery } ),
         feed_delivery("Special Delivery").map(|delivery| ParsedFeedEventText::SpecialDelivery { delivery } ),
         prosperous(),
-        hit_by_falling_star()
+        retirement(),
+        injured_by_falling_star(event),
+        infused_by_falling_star(),
     )))
-}
-
-fn hit_by_falling_star<'output>() -> impl FeedEventParser<'output> {
-    parse_terminated(" was hit by a Falling Star!").map(|player| ParsedFeedEventText::HitByFallingStar { player })
-}
-
-fn prosperous<'output>() -> impl FeedEventParser<'output> {
-    (
-        parse_terminated(" are Prosperous! They earned ").and_then(emoji_team_eof),
-        terminated(u8, tag(" 🪙."))
-    ).map(|(team, income)| ParsedFeedEventText::Prosperous { team, income })
-}
-
-fn game_result<'output>() -> impl FeedEventParser<'output> {
-    (
-        parse_terminated(" vs. ").and_then(emoji_team_eof),
-        parse_terminated(" - ").and_then(emoji_team_eof),
-        preceded(tag("FINAL "), separated_pair(u8, tag("-"), u8))
-    ).map(|(away_team, home_team, (away_score, home_score))| 
-        ParsedFeedEventText::GameResult { home_team, away_team, home_score, away_score }
-    )
 }
 
 fn augment<'output>(event: &'output FeedEvent) -> impl FeedEventParser<'output> {
@@ -82,15 +67,79 @@ fn augment<'output>(event: &'output FeedEvent) -> impl FeedEventParser<'output> 
         multiple_attribute_equal(event),
         single_attribute_equal(event),
         swap_places(),
-        recompose()
+        recompose(event)
     )))
 }
 
-fn recompose<'output>() -> impl FeedEventParser<'output> {
+fn release<'output>() -> impl FeedEventParser<'output> {
+    context("Release Feed Event", 
+        preceded(tag("Released by the "), sentence_eof(name_eof)).map(|team| ParsedFeedEventText::Released { team })
+    )
+}
+
+fn injured_by_falling_star<'output>(event: &'output FeedEvent) -> impl FeedEventParser<'output> {
+    |input|
+        if event.after(Breakpoints::EternalBattle) {
+            parse_terminated(" was injured by the extreme force of the impact!")
+                .and_then(name_eof)
+                .map(|player| ParsedFeedEventText::InjuredByFallingStar { player })
+                .parse(input)
+        } else {
+            parse_terminated(" was hit by a Falling Star!")
+                .and_then(name_eof)
+                .map(|player| ParsedFeedEventText::InjuredByFallingStar { player })
+                .parse(input)   
+        }
+}
+
+fn infused_by_falling_star<'output>() -> impl FeedEventParser<'output> {
+    alt((
+        parse_terminated(" began to glow brightly with celestial energy!").and_then(name_eof).map(|player| (player, CelestialEnergyTier::BeganToGlow)),
+        parse_terminated(" was infused with a glimmer of celestial energy!").and_then(name_eof).map(|player| (player, CelestialEnergyTier::Infused)),
+        parse_terminated(" was fully charged with an abundance of celestial energy!").and_then(name_eof).map(|player| (player, CelestialEnergyTier::FullyCharged))
+    ))
+    .map(|(player, infusion_tier)| ParsedFeedEventText::InfusedByFallingStar { player, infusion_tier })
+}
+
+fn prosperous<'output>() -> impl FeedEventParser<'output> {
     (
-        parse_terminated(" was Recomposed into "),
-        sentence_eof(name_eof)
-    ).map(|(original, new)| ParsedFeedEventText::Recomposed { original, new })
+        parse_terminated(" are Prosperous! They earned ").and_then(emoji_team_eof),
+        terminated(u8, tag(" 🪙."))
+    ).map(|(team, income)| ParsedFeedEventText::Prosperous { team, income })
+}
+
+fn retirement<'output>() -> impl FeedEventParser<'output> {
+    (
+        preceded(tag("😇 "), parse_terminated(" retired from MMOLB!").and_then(name_eof)),
+        opt(preceded(tag(" "), parse_terminated(" was called up to take their place.").and_then(name_eof)))
+    ).map(|(original, new)| ParsedFeedEventText::Retirement { original, new })
+}
+
+fn game_result<'output>() -> impl FeedEventParser<'output> {
+    (
+        parse_terminated(" vs. ").and_then(emoji_team_eof),
+        parse_terminated(" - ").and_then(emoji_team_eof),
+        preceded(tag("FINAL "), separated_pair(u8, tag("-"), u8))
+    ).map(|(away_team, home_team, (away_score, home_score))| 
+        ParsedFeedEventText::GameResult { home_team, away_team, home_score, away_score }
+    )
+}
+
+fn recompose<'output>(event: &'output FeedEvent) -> impl FeedEventParser<'output> {
+    |input: &'output str|
+    if event.timestamp > Timestamp::Season3RecomposeChange.timestamp() {
+        (
+            parse_terminated(" was Recomposed into "),
+            sentence_eof(name_eof)
+        ).map(|(original, new)| ParsedFeedEventText::Recomposed { original, new })
+        .parse(input)
+    } else {
+        (
+            parse_terminated(" was Recomposed using "),
+            sentence_eof(name_eof)
+        ).map(|(original, new)| ParsedFeedEventText::Recomposed { original, new })
+        .parse(input)
+    }
 }
 
 fn attribute_gain<'output>() -> impl FeedEventParser<'output> {

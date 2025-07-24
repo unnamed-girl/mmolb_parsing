@@ -251,6 +251,12 @@ pub struct Talk {
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
 pub struct TalkCategory {
     pub quote: String,
+    #[serde(default = "SometimesMissingHelper::default_result", skip_serializing_if = "AddedLaterResult::is_err")]
+    #[serde_as(as = "SometimesMissingHelper<MaybeRecognizedHelper<_>>")]
+    pub day: AddedLaterResult<MaybeRecognizedResult<Day>>,
+    #[serde(default = "SometimesMissingHelper::default_result", skip_serializing_if = "AddedLaterResult::is_err")]
+    #[serde_as(as = "SometimesMissingHelper<_>")]
+    pub season: AddedLaterResult<u8>,
     #[serde_as(as = "HashMap<_, StarHelper>")]
     pub stars: HashMap<Attribute, u8>,
 

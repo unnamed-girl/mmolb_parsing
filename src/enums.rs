@@ -850,7 +850,12 @@ pub enum GameStat {
 
     // Season 2
     Balks,
-    BalksRisp
+    BalksRisp,
+
+    // Season 3
+    HomeRunChallengeAppearances,
+    HomeRunChallengeHomeRunsAllowed,
+    HomeRunChallengeHomeRuns
 }
 
 #[derive(Clone, Copy, EnumString, Display, Debug, Serialize, Deserialize, PartialEq, Eq, Hash, EnumIter)]
@@ -894,6 +899,7 @@ pub enum SpecialItemType {
 pub enum FeedEventType {
     Game,
     Augment,
+    Release
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, EnumIter, SerializeDisplay, DeserializeFromStr)]
@@ -1389,7 +1395,15 @@ pub enum ModificationType {
     Fae
 }
 
-
+#[derive(Debug, Serialize, Deserialize, Clone, Copy, EnumIter, PartialEq, Eq, Hash, EnumString, Display)]
+pub enum CelestialEnergyTier {
+    #[strum(to_string = "began to glow brightly with celestial energy!")]
+    BeganToGlow,
+    #[strum(to_string = "was infused with a glimmer of celestial energy!")]
+    Infused,
+    #[strum(to_string = "was fully charged with an abundance of celestial energy!")]
+    FullyCharged,
+}
 
 #[cfg(test)]
 mod test {

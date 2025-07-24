@@ -1231,7 +1231,7 @@ dependencies = [
 
 [[package]]
 name = "mmolb_parsing"
-version = "0.32.0"
+version = "0.33.0"
 dependencies = [
  "async-stream",
  "clap",
@@ -1250,6 +1250,7 @@ dependencies = [
  "serde_with",
  "strum",
  "thiserror 2.0.12",
+ "time",
  "tokio",
  "tracing",
  "tracing-subscriber",

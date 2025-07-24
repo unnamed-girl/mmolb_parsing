@@ -3,7 +3,7 @@ use std::fmt::Display;
 use thiserror::Error;
 use serde::{Serialize, Deserialize};
 
-use crate::{enums::{Attribute, FeedEventSource, FeedEventType, ItemName, ItemPrefix, ItemSuffix, ModificationType, Slot}, feed_event::FeedEvent, parsed_event::{EmojiTeam, Item}, time::Breakpoints, NotRecognized};
+use crate::{enums::{Attribute, CelestialEnergyTier, FeedEventSource, FeedEventType, ItemName, ItemPrefix, ItemSuffix, ModificationType, Slot}, feed_event::FeedEvent, parsed_event::{EmojiTeam, Item}, time::{Breakpoints, Timestamp}, NotRecognized};
 
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Error)]
 pub enum FeedEventParseError {
@@ -79,9 +79,6 @@ pub enum ParsedFeedEventText<S> {
         player_one: S,
         player_two: S,
     },
-    HitByFallingStar {
-        player: S
-    },
     Prosperous {
         team: EmojiTeam<S>,
         income: u8
@@ -94,13 +91,20 @@ pub enum ParsedFeedEventText<S> {
         player_name: S,
         modification: ModificationType
     },
-}
-
-#[derive(Clone, Debug, Serialize, Deserialize, PartialEq)]
-pub struct AttributeChange<S> {
-    pub player_name: S,
-    pub amount: i16,
-    pub attribute: Attribute,
+    Retirement {
+        original: S,
+        new: Option<S>
+    },
+    InjuredByFallingStar {
+        player: S
+    },
+    InfusedByFallingStar {
+        player: S,
+        infusion_tier: CelestialEnergyTier
+    },
+    Released {
+        team: S
+    }
 }
 
 impl<S: Display> ParsedFeedEventText<S> {
@@ -108,96 +112,121 @@ impl<S: Display> ParsedFeedEventText<S> {
         match self {
             ParsedFeedEventText::ParseError { text, .. } => text.to_string(),
             ParsedFeedEventText::GameResult { home_team, away_team, home_score, away_score } => {
-                format!("{} vs. {} - FINAL {}-{}", away_team, home_team, away_score, home_score)
-            }
+                        format!("{} vs. {} - FINAL {}-{}", away_team, home_team, away_score, home_score)
+                    }
             ParsedFeedEventText::Delivery { delivery } => {
-                delivery.unparse("Delivery")
-            }
+                        delivery.unparse("Delivery")
+                    }
             ParsedFeedEventText::SpecialDelivery { delivery } => {
-                delivery.unparse("Special Delivery")
-            }
+                        delivery.unparse("Special Delivery")
+                    }
             ParsedFeedEventText::Shipment { delivery } => {
-                delivery.unparse("Shipment")
-            }
+                        delivery.unparse("Shipment")
+                    }
             ParsedFeedEventText::AttributeChanges { changes } => {
-                changes.iter()
-                    .map(|change|  format!("{} gained +{} {}.", change.player_name, change.amount, change.attribute))
-                    .collect::<Vec<_>>()
-                    .join(" ")
-            }
+                        changes.iter()
+                            .map(|change|  format!("{} gained +{} {}.", change.player_name, change.amount, change.attribute))
+                            .collect::<Vec<_>>()
+                            .join(" ")
+                    }
             ParsedFeedEventText::SingleAttributeEquals { player_name, changing_attribute, value_attribute } => {
-                if Breakpoints::Season3.after(event.season as u32, event.day.as_ref().copied().ok(), None) {
-                    format!("{}'s {} was set to their {}.", player_name, changing_attribute, value_attribute)
-                } else if Breakpoints::S1AttributeEqualChange.after(event.season as u32, event.day.as_ref().copied().ok(), None) {
-                    format!("{}'s {} became equal to their current base {}.", player_name, changing_attribute, value_attribute)
-                } else if FeedEventSource::Player == source {
-                    format!("{}'s {} was set to their {}.", player_name, changing_attribute, value_attribute)
-                } else {
-                    format!("{}'s {} became equal to their base {}.", player_name, changing_attribute, value_attribute)
-                }
-            },
-            ParsedFeedEventText::MassAttributeEquals { players, changing_attribute, value_attribute } => {
-                if Breakpoints::Season3.after(event.season as u32, event.day.as_ref().copied().ok(), None) {
-                    let intro = format!("Batters' {changing_attribute} was set to their {value_attribute}. Lineup:");
-                    let lineup = players.into_iter()
-                        .enumerate()
-                        .map(|(i, (slot, p))| format!(" {}. {} {p}", i+1, slot.as_ref().map(Slot::to_string).unwrap_or_default()))
-                        .collect::<Vec<_>>()
-                        .join(",");
-                    format!("{intro}{lineup}")
-                } else {
-                    let f = |player_name: &S, changing_attribute: &Attribute, value_attribute: &Attribute,| {
-                        if Breakpoints::S1AttributeEqualChange.after(event.season as u32, event.day.as_ref().copied().ok(), None) {
+                        if Breakpoints::Season3.after(event.season as u32, event.day.as_ref().copied().ok(), None) {
+                            format!("{}'s {} was set to their {}.", player_name, changing_attribute, value_attribute)
+                        } else if Breakpoints::S1AttributeEqualChange.after(event.season as u32, event.day.as_ref().copied().ok(), None) {
                             format!("{}'s {} became equal to their current base {}.", player_name, changing_attribute, value_attribute)
                         } else if FeedEventSource::Player == source {
                             format!("{}'s {} was set to their {}.", player_name, changing_attribute, value_attribute)
                         } else {
                             format!("{}'s {} became equal to their base {}.", player_name, changing_attribute, value_attribute)
                         }
-                    };
-                    players.into_iter()
-                        .map(|(_, p)| f(p, changing_attribute, value_attribute))
-                        .collect::<Vec<_>>()
-                        .join(" ")
-                }
-            }
+                    },
+            ParsedFeedEventText::MassAttributeEquals { players, changing_attribute, value_attribute } => {
+                        if Breakpoints::Season3.after(event.season as u32, event.day.as_ref().copied().ok(), None) {
+                            let intro = format!("Batters' {changing_attribute} was set to their {value_attribute}. Lineup:");
+                            let lineup = players.into_iter()
+                                .enumerate()
+                                .map(|(i, (slot, p))| format!(" {}. {} {p}", i+1, slot.as_ref().map(Slot::to_string).unwrap_or_default()))
+                                .collect::<Vec<_>>()
+                                .join(",");
+                            format!("{intro}{lineup}")
+                        } else {
+                            let f = |player_name: &S, changing_attribute: &Attribute, value_attribute: &Attribute,| {
+                                if Breakpoints::S1AttributeEqualChange.after(event.season as u32, event.day.as_ref().copied().ok(), None) {
+                                    format!("{}'s {} became equal to their current base {}.", player_name, changing_attribute, value_attribute)
+                                } else if FeedEventSource::Player == source {
+                                    format!("{}'s {} was set to their {}.", player_name, changing_attribute, value_attribute)
+                                } else {
+                                    format!("{}'s {} became equal to their base {}.", player_name, changing_attribute, value_attribute)
+                                }
+                            };
+                            players.into_iter()
+                                .map(|(_, p)| f(p, changing_attribute, value_attribute))
+                                .collect::<Vec<_>>()
+                                .join(" ")
+                        }
+                    }
             ParsedFeedEventText::S1Enchantment { player_name, item, amount, attribute } => {
-                if Breakpoints::Season1EnchantmentChange.before(event.season as u32, event.day.as_ref().copied().ok(), None) {
-                    format!("{player_name}'s {item} was enchanted with +{amount} to {attribute}.")
-                } else {
-                    format!("The Item Enchantment was a success! {player_name}'s {item} gained a +{amount} {attribute} bonus.")
-                }
-            }
+                        if Breakpoints::Season1EnchantmentChange.before(event.season as u32, event.day.as_ref().copied().ok(), None) {
+                            format!("{player_name}'s {item} was enchanted with +{amount} to {attribute}.")
+                        } else {
+                            format!("The Item Enchantment was a success! {player_name}'s {item} gained a +{amount} {attribute} bonus.")
+                        }
+                    }
             ParsedFeedEventText::S2Enchantment { player_name, item, amount, attribute, enchant_two, compensatory } => {
-                let enchant_type = compensatory.then_some("Compensatory").unwrap_or("Item");
-                match enchant_two {
-                    Some((amount_two, attribute_two)) => format!("The {enchant_type} Enchantment was a success! {player_name}'s {item} was enchanted with +{amount} {attribute} and +{amount_two} {attribute_two}."),
-                    None =>  format!("The {enchant_type} Enchantment was a success! {player_name}'s {item} gained a +{amount} {attribute} bonus.")
+                        let enchant_type = compensatory.then_some("Compensatory").unwrap_or("Item");
+                        match enchant_two {
+                            Some((amount_two, attribute_two)) => format!("The {enchant_type} Enchantment was a success! {player_name}'s {item} was enchanted with +{amount} {attribute} and +{amount_two} {attribute_two}."),
+                            None =>  format!("The {enchant_type} Enchantment was a success! {player_name}'s {item} gained a +{amount} {attribute} bonus.")
+                        }
+                    }
+            ParsedFeedEventText::Modification { player_name, modification } => {
+                        format!("{player_name} gained the {modification} Modification.")
+                    }
+            ParsedFeedEventText::TakeTheMound { to_mound_player, to_lineup_player } => {
+                        format!("{to_mound_player} was moved to the mound. {to_lineup_player} was sent to the lineup.")
+                    }
+            ParsedFeedEventText::TakeThePlate { to_plate_player, from_lineup_player } => {
+                        format!("{to_plate_player} was sent to the plate. {from_lineup_player} was pulled from the lineup.")
+                    },
+            ParsedFeedEventText::SwapPlaces { player_one, player_two } => {
+                        format!("{player_one} swapped places with {player_two}.")
+                    },
+            ParsedFeedEventText::Prosperous { team, income } => {
+                        format!("{team} are Prosperous! They earned {income} 🪙.")
+                    },
+            ParsedFeedEventText::Recomposed { original, new } => {
+                if event.timestamp > Timestamp::Season3RecomposeChange.timestamp() {
+                    format!("{original} was Recomposed into {new}.")
+                } else {
+                    format!("{original} was Recomposed using {new}.")
+                }
+            },
+            ParsedFeedEventText::Retirement { original, new } => {
+                let new = new.as_ref().map(|new| format!(" {new} was called up to take their place.")).unwrap_or_default();
+                format!("😇 {original} retired from MMOLB!{new}")
+            },
+            ParsedFeedEventText::InjuredByFallingStar { player } => {
+                if event.after(Breakpoints::EternalBattle) {
+                    format!("{player} was injured by the extreme force of the impact!")
+                } else {
+                    format!("{player} was hit by a Falling Star!")
                 }
             }
-            ParsedFeedEventText::Modification { player_name, modification } => {
-                format!("{player_name} gained the {modification} Modification.")
-            }
-            ParsedFeedEventText::TakeTheMound { to_mound_player, to_lineup_player } => {
-                format!("{to_mound_player} was moved to the mound. {to_lineup_player} was sent to the lineup.")
-            }
-            ParsedFeedEventText::TakeThePlate { to_plate_player, from_lineup_player } => {
-                format!("{to_plate_player} was sent to the plate. {from_lineup_player} was pulled from the lineup.")
+            ParsedFeedEventText::InfusedByFallingStar { player, infusion_tier } => {
+                format!("{player} {infusion_tier}")
             },
-            ParsedFeedEventText::SwapPlaces { player_one, player_two } => {
-                format!("{player_one} swapped places with {player_two}.")
-            },
-            ParsedFeedEventText::HitByFallingStar { player } => {
-                format!("{player} was hit by a Falling Star!")
-            },
-            ParsedFeedEventText::Prosperous { team, income } => {
-                format!("{team} are Prosperous! They earned {income} 🪙.")
-            },
-            ParsedFeedEventText::Recomposed { original, new } => {
-                format!("{original} was Recomposed into {new}.")
+            ParsedFeedEventText::Released { team } => {
+                format!("Released by the {team}.")
             }
         }
     }
+}
+
+#[derive(Clone, Debug, Serialize, Deserialize, PartialEq)]
+pub struct AttributeChange<S> {
+    pub player_name: S,
+    pub amount: i16,
+    pub attribute: Attribute,
 }
 
 #[derive(Clone, Debug, Serialize, Deserialize, PartialEq)]

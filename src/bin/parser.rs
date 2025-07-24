@@ -236,7 +236,7 @@ async fn ingest_team(response: EntityResponse<Box<serde_json::value::RawValue>>,
     }
 
     for event in team.feed.unwrap_or_default() {
-        let _event_span_guard = tracing::span!(Level::INFO, "Feed Event", season = event.season, day = format!("{:?}", event.day), r#type = format!("{:?}", event.event_type), message = format!("{:?}", event.text)).entered();
+        let _event_span_guard = tracing::span!(Level::INFO, "Feed Event", season = event.season, day = format!("{:?}", event.day), timestamp = event.timestamp.to_string(), r#type = format!("{:?}", event.event_type), message = format!("{:?}", event.text)).entered();
 
         let parsed_text = parse_feed_event(&event);
         if tracing::enabled!(Level::ERROR) {
@@ -280,7 +280,7 @@ async fn ingest_player(response: EntityResponse<Box<serde_json::value::RawValue>
 
 
     for event in player.feed.unwrap_or_default() {
-        let _event_span_guard = tracing::span!(Level::INFO, "Feed Event", season = event.season, day = format!("{:?}", event.day), r#type = format!("{:?}", event.event_type), message = event.text).entered();
+        let _event_span_guard = tracing::span!(Level::INFO, "Feed Event", season = event.season, day = format!("{:?}", event.day), timestamp = event.timestamp.to_string(), r#type = format!("{:?}", event.event_type), message = event.text).entered();
 
         let parsed_text = parse_feed_event(&event);
         if tracing::enabled!(Level::ERROR) {

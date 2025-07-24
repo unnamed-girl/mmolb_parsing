@@ -1,4 +1,5 @@
 use std::cmp::Ordering;
+use time::{macros::datetime, OffsetDateTime};
 
 use crate::enums::Day;
 
@@ -36,11 +37,25 @@ impl DayEquivalent {
             Day::PostseasonRound(round) => DayEquivalent { day: 254, offset: round },
             Day::PostseasonPreview => DayEquivalent { day: 254, offset: 0 },
             Day::Preseason => DayEquivalent { day: 0, offset: 0 },
-            Day::Election => DayEquivalent { day: 255, offset: 0 },
-            Day::Holiday => DayEquivalent { day: 255, offset: 1 },
-            Day::Event => DayEquivalent { day: 255, offset: 1 },
-            Day::SpecialEvent => DayEquivalent { day: 255, offset: 1 },
+            Day::Election => DayEquivalent { day: 255, offset: 1 },
+            Day::Holiday => DayEquivalent { day: 255, offset: 2 },
+            Day::Event => DayEquivalent { day: 255, offset: 2 },
+            Day::SpecialEvent => DayEquivalent { day: 255, offset: 2 },
             Day::SuperstarGame => DayEquivalent { day: 120, offset: 1 },
+        }
+    }
+}
+
+/// To get resolution within a day for a feed event, compare timestamps
+#[derive(Clone, Copy, PartialEq, Eq, PartialOrd, Ord)]
+pub enum Timestamp {
+    Season3RecomposeChange,
+}
+
+impl Timestamp {
+    pub fn timestamp(&self) -> OffsetDateTime {
+        match self {
+            Timestamp::Season3RecomposeChange => datetime!(2025-07-14 11:30:00 UTC),
         }
     }
 }
@@ -53,7 +68,8 @@ pub enum Breakpoints {
     S2D169,
     Season3,
     CheersGetEmoji,
-    Season3PreSuperstarBreakUpdate
+    Season3PreSuperstarBreakUpdate,
+    EternalBattle
 }
 impl Breakpoints {
     fn ascending_transition_time(self) -> Time {
@@ -98,6 +114,12 @@ impl Breakpoints {
                 season: 3,
                 ascending_days: vec![
                     (DayEquivalent { day: 112, offset: 0 }, 0)
+                ]
+            },
+            Breakpoints::EternalBattle  => Time {
+                season: 2,
+                ascending_days: vec![
+                    (DayEquivalent { day: 255, offset: 0 }, 0)
                 ]
             },
         }
