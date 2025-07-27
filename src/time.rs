@@ -1,5 +1,5 @@
 use std::cmp::Ordering;
-use time::{macros::datetime, OffsetDateTime};
+use chrono::{DateTime, NaiveDate, Utc};
 
 use crate::enums::Day;
 
@@ -53,9 +53,9 @@ pub enum Timestamp {
 }
 
 impl Timestamp {
-    pub fn timestamp(&self) -> OffsetDateTime {
+    pub fn timestamp(&self) -> DateTime<Utc> {
         match self {
-            Timestamp::Season3RecomposeChange => datetime!(2025-07-14 11:30:00 UTC),
+            Timestamp::Season3RecomposeChange => NaiveDate::from_ymd_opt(2025, 7, 14).expect("hardcoded date").and_hms_opt(11, 30, 0).expect("hardcoded time").and_utc(),
         }
     }
 }

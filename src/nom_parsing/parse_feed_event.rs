@@ -112,7 +112,7 @@ fn retirement<'output>() -> impl FeedEventParser<'output> {
     (
         preceded(tag("😇 "), parse_terminated(" retired from MMOLB!").and_then(name_eof)),
         opt(preceded(tag(" "), parse_terminated(" was called up to take their place.").and_then(name_eof)))
-    ).map(|(original, new)| ParsedFeedEventText::Retirement { original, new })
+    ).map(|(original, new)| ParsedFeedEventText::Retirement { previous: original, new })
 }
 
 fn game_result<'output>() -> impl FeedEventParser<'output> {
@@ -131,13 +131,13 @@ fn recompose<'output>(event: &'output FeedEvent) -> impl FeedEventParser<'output
         (
             parse_terminated(" was Recomposed into "),
             sentence_eof(name_eof)
-        ).map(|(original, new)| ParsedFeedEventText::Recomposed { original, new })
+        ).map(|(original, new)| ParsedFeedEventText::Recomposed { previous: original, new })
         .parse(input)
     } else {
         (
             parse_terminated(" was Recomposed using "),
             sentence_eof(name_eof)
-        ).map(|(original, new)| ParsedFeedEventText::Recomposed { original, new })
+        ).map(|(original, new)| ParsedFeedEventText::Recomposed { previous: original, new })
         .parse(input)
     }
 }

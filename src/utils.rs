@@ -1,5 +1,6 @@
 use std::{any::type_name, fmt::Debug, marker::PhantomData, str::FromStr};
 
+use chrono::{DateTime, NaiveDateTime, Utc};
 use serde::{de::{Error, Visitor}, Deserialize, Deserializer, Serialize, Serializer};
 use serde_with::{de::DeserializeAsWrap, ser::SerializeAsWrap, DeserializeAs, PickFirst, Same, SerializeAs};
 use thiserror::Error;
@@ -257,6 +258,28 @@ impl SerializeAs<u8> for StarHelper {
         where
             S: Serializer {
         (0..*source).map(|_| '⭐').collect::<String>().serialize(serializer)
+    }
+}
+
+pub(crate) struct TimestampHelper;
+const FORMAT: &'static str = "%Y-%m-%dT%H:%M:%S%.6f+00:00";
+
+impl<'de> DeserializeAs<'de, DateTime<Utc>> for TimestampHelper {
+    fn deserialize_as<D>(deserializer: D) -> Result<DateTime<Utc>, D::Error>
+        where
+            D: Deserializer<'de> {
+        let s = String::deserialize(deserializer)?;
+        let dt = NaiveDateTime::parse_from_str(&s, FORMAT).map_err(serde::de::Error::custom)?;
+        Ok(DateTime::<Utc>::from_naive_utc_and_offset(dt, Utc))
+    }
+}
+
+impl SerializeAs<DateTime<Utc>> for TimestampHelper {
+    fn serialize_as<S>(date: &DateTime<Utc>, serializer: S) -> Result<S::Ok, S::Error>
+        where
+            S: Serializer {
+        let s = format!("{}", date.format(FORMAT));
+        serializer.serialize_str(&s)
     }
 }
 

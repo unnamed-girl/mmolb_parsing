@@ -84,7 +84,7 @@ pub enum ParsedFeedEventText<S> {
         income: u8
     },
     Recomposed {
-        original: S,
+        previous: S,
         new: S
     },
     Modification {
@@ -92,7 +92,7 @@ pub enum ParsedFeedEventText<S> {
         modification: ModificationType
     },
     Retirement {
-        original: S,
+        previous: S,
         new: Option<S>
     },
     InjuredByFallingStar {
@@ -194,16 +194,16 @@ impl<S: Display> ParsedFeedEventText<S> {
             ParsedFeedEventText::Prosperous { team, income } => {
                         format!("{team} are Prosperous! They earned {income} 🪙.")
                     },
-            ParsedFeedEventText::Recomposed { original, new } => {
+            ParsedFeedEventText::Recomposed { previous, new } => {
                 if event.timestamp > Timestamp::Season3RecomposeChange.timestamp() {
-                    format!("{original} was Recomposed into {new}.")
+                    format!("{previous} was Recomposed into {new}.")
                 } else {
-                    format!("{original} was Recomposed using {new}.")
+                    format!("{previous} was Recomposed using {new}.")
                 }
             },
-            ParsedFeedEventText::Retirement { original, new } => {
+            ParsedFeedEventText::Retirement { previous, new } => {
                 let new = new.as_ref().map(|new| format!(" {new} was called up to take their place.")).unwrap_or_default();
-                format!("😇 {original} retired from MMOLB!{new}")
+                format!("😇 {previous} retired from MMOLB!{new}")
             },
             ParsedFeedEventText::InjuredByFallingStar { player } => {
                 if event.after(Breakpoints::EternalBattle) {

@@ -21,6 +21,7 @@ tracing-subscriber = "0.3.19"
 
 [dependencies]
 async-stream = { version = "0.3.6", optional = true }
+chrono = "0.4.41"
 clap = { version = "4.5.40", features = ["derive"], optional = true }
 futures = { version = "0.3.31", optional = true }
 http-cache-reqwest = { version = "0.15.1", optional = true }
@@ -37,7 +38,6 @@ serde_json_diff = { version = "0.1.1", optional = true }
 serde_with = { version = "3.14.0", features = ["macros"] }
 strum = { version = "0.27.1", features = ["derive"] }
 thiserror = "2.0.12"
-time = { version = "0.3.41", features = ["formatting", "macros", "parsing", "serde"] }
 tokio = { version = "1.44.2", features = ["full"], optional = true }
 tracing = { version = "0.1.41" }
 tracing-subscriber = { version = "0.3.19", optional = true }
