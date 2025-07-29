@@ -3,7 +3,7 @@ use std::{fmt::Debug, str::FromStr};
 use nom::{branch::alt, bytes::complete::{tag, take, take_till, take_until, take_until1, take_while}, character::complete::{one_of, space0, u8}, combinator::{all_consuming, fail, opt, recognize, rest, value, verify}, error::{ErrorKind, ParseError}, multi::{count, many0, many1, separated_list1}, sequence::{delimited, preceded, separated_pair, terminated}, AsChar, Input, Parser};
 use nom_language::error::VerboseError;
 
-use crate::{enums::{Base, BatterStat, FairBallDestination, FairBallType, HomeAway, NowBattingStats}, feed_event::{EmojilessItem, FeedDelivery, FeedEvent}, parsed_event::{BaseSteal, Cheer, Delivery, EmojiTeam, Item, ItemAffixes, PlacedPlayer, RunnerAdvance, RunnerOut}, time::Breakpoints, Game};
+use crate::{enums::{Base, BatterStat, Day, FairBallDestination, FairBallType, HomeAway, NowBattingStats}, feed_event::{EmojilessItem, FeedDelivery, FeedEvent}, game::Event, parsed_event::{BaseSteal, Cheer, Delivery, EmojiTeam, Item, ItemAffixes, PlacedPlayer, RunnerAdvance, RunnerOut}, time::Breakpoints, Game};
 
 pub(super) type Error<'a> = VerboseError<&'a str>;
 pub(super) type IResult<'a, I, O> = nom::IResult<I, O, Error<'a>>;
@@ -13,35 +13,32 @@ impl<'output, T, P: Parser<&'output str, Output = T, Error = Error<'output>>> My
 
 /// Context necessary for parsing. The 'output lifetime is linked to ParsedEvents parsed in this context.
 #[derive(Clone, Debug)]
-pub struct ParsingContext<'output, 'parse> {
+pub struct ParsingContext<'parse> {
     pub game_id: &'parse str,
-    pub game: &'output Game,
-    pub event_index: Option<u16>
+    pub event_log: &'parse [Event],
+    pub event_index: Option<u16>,
+    pub home_emoji_team: EmojiTeam<&'parse str>,
+    pub away_emoji_team: EmojiTeam<&'parse str>,
+    pub season: u32,
+    pub day: Option<Day>
 }
-impl<'output, 'parse> ParsingContext<'output, 'parse> {
-    pub fn new(game_id: &'parse str, game: &'output Game, event_index: Option<u16>) -> Self {
+impl<'parse> ParsingContext<'parse> {
+    pub fn new(game_id: &'parse str, game: &'parse Game, event_index: Option<u16>) -> Self {
         Self {
             game_id,
-            game,
-            event_index
+            event_index,
+            event_log: &game.event_log,
+            home_emoji_team: EmojiTeam { emoji: &game.home_team_emoji, name: &game.home_team_name },
+            away_emoji_team: EmojiTeam { emoji: &game.away_team_emoji, name: &game.away_team_name },
+            season: game.season,
+            day: game.day.as_ref().copied().ok()
         }
     }
     pub(crate) fn before(&self, breakpoint: Breakpoints) -> bool {
-        breakpoint.before(self.game.season, self.game.day.as_ref().copied().ok(), self.event_index)
+        breakpoint.before(self.season, self.day, self.event_index)
     }
     pub(crate) fn after(&self, breakpoint: Breakpoints) -> bool {
-        breakpoint.after(self.game.season, self.game.day.as_ref().copied().ok(), self.event_index)
-    }
-
-    pub(crate) fn home_emoji_team(&'parse self) -> EmojiTeam<&'parse str> {
-        let emoji = self.game.home_team_emoji.as_str();
-        let name = self.game.home_team_name.as_str();
-        EmojiTeam { emoji, name }
-    }
-    pub(crate) fn away_emoji_team(&'parse self) -> EmojiTeam<&'parse str> {
-        let emoji = self.game.away_team_emoji.as_str();
-        let name = self.game.away_team_name.as_str();
-        EmojiTeam { emoji, name }
+        breakpoint.after(self.season, self.day, self.event_index)
     }
 }
 
@@ -54,10 +51,12 @@ impl FeedEvent {
     }
 }
 
-impl EmojiTeam<&str> {
-    pub(super) fn parser<'output, 'parse>(&'parse self) -> impl MyParser<'output, EmojiTeam<&'output str>> + 'parse {
-        |input: &'output str| {
-            separated_pair(tag(self.emoji), tag(" "), tag(self.name))
+impl<'parse> EmojiTeam<&'parse str> {
+    pub(super) fn parser<'output, 'a>(&'a self) -> impl MyParser<'output, EmojiTeam<&'output str>> + 'parse {
+        let emoji = self.emoji;
+        let name = self.name;
+        move |input: &'output str| {
+            separated_pair(tag(emoji), tag(" "), tag(name))
                 .map(|(emoji, name)| EmojiTeam {emoji, name})
                 .parse(input)
         }
@@ -159,22 +158,6 @@ pub(super) fn fielders_eof(input: &str) -> IResult<&str, Vec<PlacedPlayer<&str>>
         parse_terminated(" unassisted").and_then(placed_player_eof).map(|fielder| vec![fielder])
     )))
     .parse(input)
-}
-
-pub(super) fn home_emoji_team<'output, 'parse>(parsing_context: &'parse ParsingContext<'output, 'parse>) -> impl Parser<&'output str, Output = EmojiTeam<&'output str>, Error = Error<'output>> + 'parse {
-    move |i: &'output str| {
-        separated_pair(emoji, tag(" "), tag(parsing_context.game.home_team_name.as_str()))
-            .map(|(emoji, name)| EmojiTeam {emoji, name})
-            .parse(i)
-    }
-}
-
-pub(super) fn away_emoji_team<'output, 'parse>(parsing_context: &'parse ParsingContext<'output, 'parse>) -> impl Parser<&'output str, Output = EmojiTeam<&'output str>, Error = Error<'output>> + 'parse {
-    move |i: &'output str| {
-        separated_pair(emoji, tag(" "), tag(parsing_context.game.away_team_name.as_str()))
-            .map(|(emoji, name)| EmojiTeam {emoji, name})
-            .parse(i)
-    }
 }
 
 /// A single instance of an out, e.g. "Franklin Shoebill out at home"
@@ -404,7 +387,7 @@ pub(super) fn item(input: &str) -> IResult<&str, Item<&str>> {
         ).map(|(item_emoji, item, )| Item { item_emoji, item, affixes: ItemAffixes::None}),
         (
             emoji,
-            preceded(tag(" "), parse_and(try_from_word, " "))
+            preceded(tag(" "), parse_and(fail_once(try_from_word), " ")) // fail_once janky fix for rarenames being two words.
         ).map(|(item_emoji, (rare_name, item))| Item { item_emoji, item, affixes: ItemAffixes::RareName(rare_name)})
     ))
     .parse(input)
@@ -419,13 +402,13 @@ pub(super) fn emojiless_item(input: &str) -> IResult<&str, EmojilessItem> {
     .parse(input)
 }
 
-pub(super) fn delivery<'parse, 'output>(parsing_context: &'parse ParsingContext<'output, 'parse>, label: &'output str) -> impl MyParser<'output, Delivery<&'output str>> + 'parse {
+pub(super) fn delivery<'parse, 'output: 'parse>(parsing_context: &'parse ParsingContext<'parse>, label: &'parse str) -> impl MyParser<'output, Delivery<&'output str>> + 'parse {
     let success = (
         alt(( // Alt needs the later context to distinguish "Buffalo Buffalo" and "Buffalo Buffalo Buffalo"
-            terminated(away_emoji_team(parsing_context), tag(" received a ")).map(|team| (team, None)),
-            (away_emoji_team(parsing_context), preceded(tag(" "), parse_terminated(" received a ").map(Some))),
-            terminated(home_emoji_team(parsing_context), tag(" received a ")).map(|team| (team, None)),
-            (home_emoji_team(parsing_context), preceded(tag(" "), parse_terminated(" received a ").map(Some))),
+            terminated(parsing_context.away_emoji_team.parser(), tag(" received a ")).map(|team| (team, None)),
+            (parsing_context.away_emoji_team.parser(), preceded(tag(" "), parse_terminated(" received a ").map(Some))),
+            terminated(parsing_context.home_emoji_team.parser(), tag(" received a ")).map(|team| (team, None)),
+            (parsing_context.home_emoji_team.parser(), preceded(tag(" "), parse_terminated(" received a ").map(Some))),
         )),
         terminated(item, (tag(" "), tag(label), tag("."))),
         opt(delimited(tag(" They discarded their "), item, tag(".")))
@@ -447,7 +430,7 @@ pub(super) fn feed_delivery<'output>(label: &'output str) -> impl MyParser<'outp
         ).map(|(player, item, discarded)| FeedDelivery {player, item, discarded} )
 }
 
-pub(super) fn cheer<'parse, 'output>(parsing_context: &'parse ParsingContext<'output, 'parse>) -> impl MyParser<'output, Cheer> + 'parse {
+pub(super) fn cheer<'parse, 'output: 'parse>(parsing_context: &'parse ParsingContext<'parse>) -> impl MyParser<'output, Cheer> + 'parse {
     |input| {
         if parsing_context.before(Breakpoints::Season3) {
             fail().parse(input)
@@ -462,17 +445,35 @@ pub(super) fn cheer<'parse, 'output>(parsing_context: &'parse ParsingContext<'ou
     }
 }
 
-pub(super) fn team_emoji<'parse, 'output>(side: HomeAway, parsing_context: &'parse ParsingContext<'output, 'parse>) -> impl MyParser<'output, &'output str> + 'parse {
+pub(super) fn team_emoji<'parse, 'output, 'a>(side: HomeAway, parsing_context: &'a ParsingContext<'parse>) -> impl MyParser<'output, &'output str> + 'parse {
+    let home_team_emoji = parsing_context.home_emoji_team.emoji;
+    let away_team_emoji = parsing_context.away_emoji_team.emoji;
     move |input| match side {
-        HomeAway::Home => tag(parsing_context.game.home_team_emoji.as_str()).parse(input),
-        HomeAway::Away => tag(parsing_context.game.away_team_emoji.as_str()).parse(input),
+        HomeAway::Home => tag(home_team_emoji).parse(input),
+        HomeAway::Away => tag(away_team_emoji).parse(input),
+    }
+}
+
+pub(super) fn fail_once<'output, F, O>(
+    mut f: F,
+) -> impl Parser<&'output str, Output = O, Error = Error<'output>>
+where F: Parser<&'output str, Output = O, Error = Error<'output>>,
+{
+    let mut failed = false;
+    move |input: &'output str| {
+        if failed {
+            f.parse(input)
+        } else {
+            failed = true;
+            fail().parse(input)
+        }
     }
 }
 
 #[cfg(test)]
 mod test {
     use nom::Parser;
-    use crate::{enums::{BaseNameVariant, FairBallType, TopBottom}, nom_parsing::shared::{emoji, out, parse_and, try_from_word, try_from_words_m_n}, parsed_event::RunnerOut};
+    use crate::{enums::{BaseNameVariant, Day, FairBallType, TopBottom}, nom_parsing::{shared::{delivery, emoji, out, parse_and, try_from_word, try_from_words_m_n}, ParsingContext}, parsed_event::{EmojiTeam, RunnerOut}};
 
     #[test]
     fn test_parse_and() {
@@ -493,5 +494,14 @@ mod test {
     #[test]
     fn test_emoji() {
         assert_eq!(Ok(("", "\u{26be}")), emoji("\u{26be}"));
+    }
+
+    #[test]
+    fn whale_bones() {
+        let text = "🏴󠁧󠁢󠁷󠁬󠁳󠁿 Llanfairpwllgwyngyll Whale Bones received a 🧢 Artistic Gloves Cap Special Delivery.";
+
+        let mut parser = delivery(&ParsingContext { game_id: "", event_log: &[], event_index: None, home_emoji_team: EmojiTeam { emoji: "", name: "" }, away_emoji_team: EmojiTeam { emoji: "🏴󠁧󠁢󠁷󠁬󠁳󠁿", name: "Llanfairpwllgwyngyll Whale Bones" }, season: 3, day: Some(Day::Day(166)) }, "Special Delivery");
+
+        parser.parse(text).unwrap();
     }
 }
