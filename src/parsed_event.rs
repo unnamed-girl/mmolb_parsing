@@ -17,7 +17,7 @@ pub enum GameEventParseError {
     }
 }
 
-/// S is the string type used. S = &'output str is used by the parser, 
+/// S is the string type used. S = &'output str is used by the parser,
 /// but a mutable type is necessary when directly deserializing, because some players have escaped characters in their names
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq, EnumDiscriminants)]
 #[serde(tag = "event_type")]
@@ -89,7 +89,7 @@ pub enum ParsedEventMessage<S> {
     },
 
     // Pitch
-    Ball { steals: Vec<BaseSteal<S>>, count:(u8, u8), cheer: Option<Cheer>},
+    Ball { steals: Vec<BaseSteal<S>>, count:(u8, u8), cheer: Option<Cheer>, aurora_photos: Option<SnappedPhotos<S>>},
     Strike { strike: StrikeType, steals: Vec<BaseSteal<S>>, count:(u8, u8), cheer: Option<Cheer>},
     Foul { foul: FoulType, steals: Vec<BaseSteal<S>>, count:(u8, u8), cheer: Option<Cheer> },
     Walk { batter: S, scores: Vec<S>, advances: Vec<RunnerAdvance<S>>, cheer: Option<Cheer> },
@@ -204,7 +204,7 @@ impl<S: Display> ParsedEventMessage<S> {
                         String::new()
                     }
                 };
-                format!("Now batting: {batter}{stats}")               
+                format!("Now batting: {batter}{stats}")
             },
             Self::InningEnd {number, side} => {
                 let ordinal = match number {
@@ -215,7 +215,7 @@ impl<S: Display> ParsedEventMessage<S> {
                     4.. => format!("{number}th")
                 };
                 format!("End of the {side} of the {ordinal}.")
-            },        
+            },
             Self::MoundVisit {team, mound_visit_type } => {
                 match mound_visit_type {
                     MoundVisitType::MoundVisit => format!("The {team} manager is making a mound visit."),
@@ -229,11 +229,11 @@ impl<S: Display> ParsedEventMessage<S> {
                 let arriving_pitcher_place = arriving_pitcher_place.map(|place| format!("{place} ")).unwrap_or_default();
                 let leaving_pitcher_emoji = leaving_pitcher_emoji.as_ref().map(|emoji| format!("{emoji} ")).unwrap_or_default();
                 let arriving_pitcher_emoji = arriving_pitcher_emoji.as_ref().map(|emoji| format!("{emoji} ")).unwrap_or_default();
-                
+
                 format!("{leaving_pitcher_emoji}{leaving_pitcher} is leaving the game. {arriving_pitcher_emoji}{arriving_pitcher_place}{arriving_pitcher_name} takes the mound.")
             },
 
-            Self::Ball { steals, count, cheer } => {
+            Self::Ball { steals, count, cheer, aurora_photos } => {
                 let steals = once(String::new()).chain(steals.iter().map(BaseSteal::to_string))
                     .collect::<Vec<String>>()
                     .join(" ");
@@ -241,7 +241,9 @@ impl<S: Display> ParsedEventMessage<S> {
 
                 let cheer = cheer.as_ref().map(|c| c.unparse(game, event_index)).unwrap_or_default();
 
-                format!("{space}Ball. {}-{}.{steals}{cheer}", count.0, count.1,)
+                let aurora_photos = aurora_photos.as_ref().map(|p| p.unparse()).unwrap_or_default();
+
+                format!("{space}Ball. {}-{}.{steals}{cheer}{aurora_photos}", count.0, count.1,)
             },
             Self::Strike { strike, steals, count, cheer } => {
                 let steals: Vec<String> = once(String::new()).chain(steals.into_iter().map(|steal| steal.to_string())).collect();
@@ -281,7 +283,7 @@ impl<S: Display> ParsedEventMessage<S> {
                 let space = old_space(game, event_index);
 
                 let cheer = cheer.as_ref().map(|c| c.unparse(game, event_index)).unwrap_or_default();
-                
+
                 format!("{space}{batter} hits a {fair_ball_type} to {destination}.{cheer}")
             }
             Self::StrikeOut { foul, batter, strike, steals, cheer } => {
@@ -317,7 +319,7 @@ impl<S: Display> ParsedEventMessage<S> {
                 let scores_and_advances = unparse_scores_and_advances(scores, advances);
                 let sacrifice = if *sacrifice {"on a sacrifice fly "} else {""};
                 let perfect = if *perfect {" <strong>Perfect catch!</strong>"} else {""};
-                
+
                 format!("{batter} {fair_ball_type} out {sacrifice}to {catcher}.{perfect}{scores_and_advances}")
             }
             Self::GroundedOut { batter, fielders, scores, advances, perfect } => {
@@ -337,7 +339,7 @@ impl<S: Display> ParsedEventMessage<S> {
                 match result {
                     FieldingAttempt::Out {out} => {
                         let fielders = unparse_fielders_for_play(fielders);
-                        
+
                         format!("{batter} reaches on a fielder's choice out{fielders}. {out}{scores_and_advances}")
                     }
                     FieldingAttempt::Error { fielder, error } => {
@@ -376,7 +378,7 @@ impl<S: Display> ParsedEventMessage<S> {
                 } else {
                     String::new()
                 };
-                
+
                 let outcome_msg = match outcome {
                     FallingStarOutcome::Injury => format!("{player_name} was injured by the extreme force of the impact!"),
                     FallingStarOutcome::Retired(None) => format!("😇 {player_name} retired from MMOLB!"),
@@ -387,7 +389,7 @@ impl<S: Display> ParsedEventMessage<S> {
                     FallingStarOutcome::InfusionII => format!("{player_name} began to glow brightly with celestial energy!"),
                     FallingStarOutcome::InfusionIII => format!("{player_name} was fully charged with an abundance of celestial energy!")
                 };
-                
+
                 format!(" <strong>{deflection_msg}{outcome_msg}</strong>")
             },
             Self::WeatherShipment { deliveries } => {
@@ -654,9 +656,9 @@ fn old_space(game: &Game, event_index: Option<u16>) -> &'static str {
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq, EnumDiscriminants)]
 pub enum KnownBug<S> {
     /// https://mmolb.com/watch/6851bb34f419fdc04f9d0ed5 "Genevieve Hirose reaches on a fielder's choice out, 1B N. Kitagawa"
-    /// 
+    ///
     /// Potentially fixed on S2D152
-    /// 
+    ///
     /// Properties:
     /// - They are called fielders choice outs
     /// - They (so far) always occur when no runners are on base
@@ -667,12 +669,12 @@ pub enum KnownBug<S> {
         first_baseman: S
     },
     /// https://mmolb.com/watch/68758c796154982c31f5d803?event=412 ""
-    /// 
+    ///
     /// Potentially fixed as a side effect of the Season 3 Pre-Superstar Break Update, s3d112
-    /// 
+    ///
     /// NPC teams cannot earn Tokens. Before s3d112, teams that got shutout didn't prosper.
     /// Thus, if an npc team shut out a player team, then an empty prosperity message would be displayed.
-    /// 
+    ///
     /// Properties
     /// - It displays as an empty string
     /// - It is a prosperity event in which neither team earned any tokens.
@@ -927,5 +929,24 @@ impl Cheer {
         } else {
             format!(" 📣 {self}!")
         }
+    }
+}
+
+
+#[derive(Debug, Clone, Copy, Serialize, Deserialize, PartialEq)]
+pub struct SnappedPhotos<S> {
+    pub away_team_emoji: S,
+    pub away_player: PlacedPlayer<S>,
+    pub home_team_emoji: S,
+    pub home_player: PlacedPlayer<S>,
+}
+
+impl<S: Display> SnappedPhotos<S> {
+    pub fn unparse(&self) -> String {
+        // The trailing space is part of it
+        format!(
+            " The Geomagnetic Storms Intensify! {} {} and {} {} snapped photos of the aurora.",
+            self.away_team_emoji, self.away_player, self.home_team_emoji, self.home_player,
+        )
     }
 }
