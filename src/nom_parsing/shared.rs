@@ -3,7 +3,7 @@ use std::{fmt::Debug, str::FromStr};
 use nom::{branch::alt, bytes::complete::{tag, take, take_till, take_until, take_until1, take_while}, character::complete::{one_of, space0, u8}, combinator::{all_consuming, fail, opt, recognize, rest, value, verify}, error::{ErrorKind, ParseError}, multi::{count, many0, many1, separated_list1}, sequence::{delimited, preceded, separated_pair, terminated}, AsChar, Input, Parser};
 use nom_language::error::VerboseError;
 
-use crate::{enums::{Base, BatterStat, Day, FairBallDestination, FairBallType, HomeAway, NowBattingStats}, feed_event::{EmojilessItem, FeedDelivery, FeedEvent}, game::Event, parsed_event::{BaseSteal, Cheer, Delivery, EmojiTeam, Item, ItemAffixes, PlacedPlayer, RunnerAdvance, RunnerOut}, time::Breakpoints, Game};
+use crate::{enums::{Base, BatterStat, Day, FairBallDestination, FairBallType, HomeAway, NowBattingStats}, feed_event::{EmojilessItem, FeedDelivery, FeedEvent}, game::Event, parsed_event::{BaseSteal, Cheer, Delivery, EmojiTeam, Item, ItemAffixes, PlacedPlayer, RunnerAdvance, RunnerOut, SnappedPhotos}, time::Breakpoints, Game};
 
 pub(super) type Error<'a> = VerboseError<&'a str>;
 pub(super) type IResult<'a, I, O> = nom::IResult<I, O, Error<'a>>;
@@ -72,7 +72,7 @@ pub(super) fn debugger<'output, E: ParseError<&'output str> + Debug, F: Parser<&
                 tracing::error!("{r:?}");
                 r
             },
-            o => o 
+            o => o
         }
     }
 }
@@ -183,7 +183,7 @@ pub fn runner_advance_sentence(input: &str) -> IResult<&str, RunnerAdvance<&str>
     .parse(input)
 }
 
-/// The suffix of an ordinal, e.g. the "th" of 4th 
+/// The suffix of an ordinal, e.g. the "th" of 4th
 pub(super) fn ordinal_suffix(i: &str) -> IResult<&str, &str> {
     alt((
         tag("th"),
@@ -229,11 +229,11 @@ pub(super) fn score_update(i: &str) -> IResult<&str, (u8, u8)> {
 }
 
 /// Splits the first sentence out of the input, passes it into the `sentence` parser and then passes the remainder into the `rest` parser.
-/// Sentences split full stop boundaries, but may contain full stops - this implementation uses backtracking, 
+/// Sentences split full stop boundaries, but may contain full stops - this implementation uses backtracking,
 /// splitting at each full stop until it finds a split that satisfies both parsers.
-/// 
-/// Fails if it can't find a split point that satisfies both parsers. 
-/// 
+///
+/// Fails if it can't find a split point that satisfies both parsers.
+///
 /// E.g. "BATTER flies out to SS M. Lastname. FIELDER to second." would attempt to split at character 0, 25, 35 and 54.
 pub(super) fn all_consuming_sentence_and<'output, F: Parser<&'output str, Output = O, Error = Error<'output>>, F2: Parser<&'output str, Output = O2, Error = Error<'output>>, O, O2>(mut sentence: F, mut rest: F2) -> impl Parser<&'output str, Output = (O, O2), Error = Error<'output>> {
     move |input| {
@@ -260,7 +260,7 @@ pub(super) fn all_consuming_sentence_and<'output, F: Parser<&'output str, Output
 
 
 /// Keeps searching for the delimiter until it finds an instance immediately followed by a valid input to the child parser.
-/// Returns everything up to the delimiter and the output of the child parser. 
+/// Returns everything up to the delimiter and the output of the child parser.
 pub fn parse_and<'output, F, O>(
     mut f: F,
     delimiter: &'output str,
@@ -309,7 +309,7 @@ pub(super) fn placed_player_eof(input: &str) -> IResult<&str, PlacedPlayer<&str>
 }
 
 pub(super) fn name_eof(input: &str) -> IResult<&str, &str> {
-    verify(rest,  |name: &str| 
+    verify(rest,  |name: &str|
         name.input_len() >= 2 &&
         name.split_whitespace().all(|word| word.len() == 0 || word.chars().any(|i| i.is_ascii())) &&
         // Removed for now because of early season 1 bug where feed names didn't print their spaces
@@ -442,6 +442,28 @@ pub(super) fn cheer<'parse, 'output: 'parse>(parsing_context: &'parse ParsingCon
                 parse_terminated("!").map(Cheer::new)
             ).parse(input)
         }
+    }
+}
+
+pub(super) fn aurora<'parse, 'output: 'parse>(parsing_context: &'parse ParsingContext<'parse>) -> impl MyParser<'output, SnappedPhotos<&'output str>> + 'parse {
+    |input| {
+        let (input, _) = tag("The Geomagnetic Storms Intensify! ").parse(input)?;
+
+        // Assuming for now that it's away,home always
+        let (input, away_team_emoji) = tag(parsing_context.away_emoji_team.emoji).parse(input)?;
+        let (input, _) = tag(" ").parse(input)?;
+        let (input, away_player) = parse_terminated(" and ").and_then(placed_player_eof).parse(input)?;
+
+        let (input, home_team_emoji) = tag(parsing_context.home_emoji_team.emoji).parse(input)?;
+        let (input, _) = tag(" ").parse(input)?;
+        let (input, home_player) = parse_terminated(" snapped photos of the aurora.").and_then(placed_player_eof).parse(input)?;
+
+        Ok((input, SnappedPhotos {
+            away_team_emoji,
+            away_player,
+            home_team_emoji,
+            home_player,
+        }))
     }
 }
 
