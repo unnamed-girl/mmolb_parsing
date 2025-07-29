@@ -3,7 +3,7 @@ use std::str::FromStr;
 use nom::{branch::alt, bytes::complete::{tag, take_until}, character::complete::{digit1, u8}, combinator::{all_consuming, cut, fail, opt, rest, value, verify}, error::context, multi::{many0, many1, separated_list1}, sequence::{delimited, preceded, separated_pair, terminated}, Finish, Parser};
 use phf::phf_map;
 
-use crate::{enums::{EventType, GameOverMessage, HomeAway, MoundVisitType, NowBattingStats}, game::Event, nom_parsing::shared::{aurora, cheer, delivery, team_emoji, try_from_word, try_from_words_m_n, MyParser}, parsed_event::{EmojiTeam, FallingStarOutcome, FieldingAttempt, GameEventParseError, KnownBug, StartOfInningPitcher}, time::Breakpoints, ParsedEventMessage};
+use crate::{enums::{EventType, GameOverMessage, HomeAway, MoundVisitType, NowBattingStats}, game::Event, nom_parsing::shared::{aurora, cheer, ejection, delivery, team_emoji, try_from_word, try_from_words_m_n, MyParser}, parsed_event::{EmojiTeam, FallingStarOutcome, FieldingAttempt, GameEventParseError, KnownBug, StartOfInningPitcher}, time::Breakpoints, ParsedEventMessage};
 
 use super::{shared::{all_consuming_sentence_and, base_steal_sentence, bold, destination, emoji_team_eof, exclamation, fair_ball_type_verb_name, fielders_eof, fly_ball_type_verb_name, name_eof, now_batting_stats, ordinal_suffix, out, parse_and, parse_terminated, placed_player_eof, score_update, scores_and_advances, scores_sentence, sentence, sentence_eof}, ParsingContext};
 
@@ -44,7 +44,7 @@ pub fn parse_event<'parse, 'output: 'parse>(event: &'output Event, parsing_conte
         EventType::PitchingMatchup => pitching_matchup(parsing_context).parse(&event.message),
         EventType::MoundVisit => mound_visit(event, parsing_context).parse(&event.message),
         EventType::GameOver => game_over().parse(&event.message),
-        EventType::Field => field().parse(&event.message),
+        EventType::Field => field(parsing_context).parse(&event.message),
         EventType::HomeLineup => lineup(HomeAway::Home).parse(&event.message),
         EventType::Recordkeeping => record_keeping().parse(&event.message),
         EventType::LiveNow => live_now(parsing_context).parse(&event.message),
@@ -63,7 +63,7 @@ pub fn parse_event<'parse, 'output: 'parse>(event: &'output Event, parsing_conte
         EventType::Balk => balk().parse(&event.message),
         EventType::PhotoContest => photo_contest(parsing_context).parse(event.message.as_str()),
     }.finish().map(|(_, o)| o)
-    .unwrap_or_else(|_| {
+    .unwrap_or_else(move |_| {
             let error = GameEventParseError::FailedParsingMessage { event_type: *event_type, message: event.message.clone() };
             tracing::error!("Parse error: {}", error);
             ParsedEventMessage::ParseError { error, message: &event.message }
@@ -237,7 +237,7 @@ fn now_batting<'output>() -> impl MyParser<'output, ParsedEventMessage<&'output 
     ))))
 }
 
-fn field<'output>() -> impl MyParser<'output, ParsedEventMessage<&'output str>> {
+fn field<'parse, 'output: 'parse>(parsing_context: &'parse ParsingContext<'parse>) -> impl MyParser<'output, ParsedEventMessage<&'output str>> + 'parse {
     let batter_to_base = all_consuming_sentence_and(
         (parse_and(try_from_word, " "), preceded(tag(" on a "), try_from_words_m_n(1,2)), preceded(tag(" to "), placed_player_eof)),
         scores_and_advances
@@ -274,10 +274,11 @@ fn field<'output>() -> impl MyParser<'output, ParsedEventMessage<&'output str>> 
         ),
         (
             scores_and_advances,
+            opt(ejection(parsing_context)),
             opt(bold(exclamation(tag("Perfect catch")))).map(|perfect| perfect.is_some())
         )
     )
-    .map(|((batter, fielders), ((scores, advances), perfect))| ParsedEventMessage::GroundedOut { batter, fielders, scores, advances, perfect });
+    .map(|((batter, fielders), ((scores, advances), ejection, perfect))| ParsedEventMessage::GroundedOut { batter, fielders, scores, advances, perfect, ejection });
 
     let forced_out = all_consuming_sentence_and(
         (
