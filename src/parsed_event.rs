@@ -106,7 +106,7 @@ pub enum ParsedEventMessage<S> {
     BatterToBase { batter: S, distance: Distance, fair_ball_type: FairBallType, fielder: PlacedPlayer<S>, scores: Vec<S>, advances: Vec<RunnerAdvance<S>> },
     HomeRun { batter: S, fair_ball_type: FairBallType, destination: FairBallDestination, scores: Vec<S>, grand_slam: bool },
     CaughtOut { batter: S, fair_ball_type: FairBallType, caught_by: PlacedPlayer<S>, scores: Vec<S>, advances: Vec<RunnerAdvance<S>>, sacrifice: bool, perfect: bool },
-    GroundedOut { batter: S, fielders: Vec<PlacedPlayer<S>>, scores: Vec<S>, advances: Vec<RunnerAdvance<S>>, perfect: bool },
+    GroundedOut { batter: S, fielders: Vec<PlacedPlayer<S>>, scores: Vec<S>, advances: Vec<RunnerAdvance<S>>, perfect: bool, ejection: Option<Ejection<S>> },
     ForceOut { batter: S, fielders: Vec<PlacedPlayer<S>>, fair_ball_type: FairBallType, out:RunnerOut<S>, scores: Vec<S>, advances: Vec<RunnerAdvance<S>> },
     ReachOnFieldersChoice { batter: S, fielders: Vec<PlacedPlayer<S>>, result:FieldingAttempt<S>, scores: Vec<S>, advances: Vec<RunnerAdvance<S>> },
     DoublePlayGrounded { batter: S, fielders: Vec<PlacedPlayer<S>>, out_one:RunnerOut<S>, out_two:RunnerOut<S>, scores: Vec<S>, advances: Vec<RunnerAdvance<S>>, sacrifice: bool },
@@ -322,11 +322,12 @@ impl<S: Display> ParsedEventMessage<S> {
 
                 format!("{batter} {fair_ball_type} out {sacrifice}to {catcher}.{perfect}{scores_and_advances}")
             }
-            Self::GroundedOut { batter, fielders, scores, advances, perfect } => {
+            Self::GroundedOut { batter, fielders, scores, advances, perfect, ejection } => {
                 let scores_and_advances = unparse_scores_and_advances(scores, advances);
                 let fielders = unparse_fielders(fielders);
                 let perfect = if *perfect {" <strong>Perfect catch!</strong>"} else {""};
-                format!("{batter} grounds out{fielders}.{scores_and_advances}{perfect}")
+                let ejection = if let Some(ej) = ejection { ej.unparse() } else { String::new() };
+                format!("{batter} grounds out{fielders}.{scores_and_advances}{perfect}{ejection}")
             }
             Self::ForceOut { batter, fielders, fair_ball_type, out, scores, advances } => {
                 let scores_and_advances = unparse_scores_and_advances(scores, advances);
@@ -932,6 +933,35 @@ impl Cheer {
     }
 }
 
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, EnumString, Display)]
+#[strum(
+    parse_err_fn = check,
+    parse_err_ty = Infallible
+)]
+pub enum EjectionReason {
+    #[strum(to_string = "eating a hotdog")]
+    EatingAHotdog,
+
+    #[strum(default)]
+    Unknown(String)
+}
+
+impl EjectionReason {
+    pub fn new(value: &str) -> Self {
+        let r = EjectionReason::from_str(value)
+            .expect("This error type is infallible");
+
+        if matches!(r, EjectionReason::Unknown(_)) {
+            tracing::warn!("Failed to match ejection reason '{value}'");
+        }
+
+        r
+    }
+
+    pub fn unparse(&self) -> String {
+        format!("{self}")
+    }
+}
 
 #[derive(Debug, Clone, Copy, Serialize, Deserialize, PartialEq)]
 pub struct SnappedPhotos<S> {
@@ -943,10 +973,30 @@ pub struct SnappedPhotos<S> {
 
 impl<S: Display> SnappedPhotos<S> {
     pub fn unparse(&self) -> String {
-        // The trailing space is part of it
         format!(
             " The Geomagnetic Storms Intensify! {} {} and {} {} snapped photos of the aurora.",
             self.away_team_emoji, self.away_player, self.home_team_emoji, self.home_player,
+        )
+    }
+}
+
+
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
+pub struct Ejection<S> {
+    pub team: EmojiTeam<S>,
+    pub ejected_player: PlacedPlayer<S>,
+    pub reason: EjectionReason,
+    pub replacement_player_name: S,
+}
+
+impl<S: Display> Ejection<S> {
+    pub fn unparse(&self) -> String {
+        format!(
+            " 🤖 ROBO-UMP ejected {} {} for a Sportsmanship Violation ({}). Bench Player {} takes their place.",
+            self.team,
+            self.ejected_player,
+            self.reason,
+            self.replacement_player_name,
         )
     }
 }

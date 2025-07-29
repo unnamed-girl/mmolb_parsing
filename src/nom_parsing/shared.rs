@@ -1,9 +1,9 @@
 use std::{fmt::Debug, str::FromStr};
 
-use nom::{branch::alt, bytes::complete::{tag, take, take_till, take_until, take_until1, take_while}, character::complete::{one_of, space0, u8}, combinator::{all_consuming, fail, opt, recognize, rest, value, verify}, error::{ErrorKind, ParseError}, multi::{count, many0, many1, separated_list1}, sequence::{delimited, preceded, separated_pair, terminated}, AsChar, Input, Parser};
+use nom::{branch::alt, bytes::complete::{tag, take, take_till, take_until, take_until1, take_while}, character::complete::{one_of, space0, u8}, combinator::{all_consuming, fail, opt, recognize, rest, value, verify, peek}, error::{ErrorKind, ParseError}, multi::{count, many0, many1, separated_list1}, sequence::{delimited, preceded, separated_pair, terminated}, AsChar, Input, Parser};
 use nom_language::error::VerboseError;
 
-use crate::{enums::{Base, BatterStat, Day, FairBallDestination, FairBallType, HomeAway, NowBattingStats}, feed_event::{EmojilessItem, FeedDelivery, FeedEvent}, game::Event, parsed_event::{BaseSteal, Cheer, Delivery, EmojiTeam, Item, ItemAffixes, PlacedPlayer, RunnerAdvance, RunnerOut, SnappedPhotos}, time::Breakpoints, Game};
+use crate::{enums::{Base, BatterStat, Day, FairBallDestination, FairBallType, HomeAway, NowBattingStats}, feed_event::{EmojilessItem, FeedDelivery, FeedEvent}, game::Event, parsed_event::{BaseSteal, Cheer, EjectionReason, Delivery, EmojiTeam, Item, ItemAffixes, PlacedPlayer, RunnerAdvance, RunnerOut, SnappedPhotos, Ejection}, parsing, time::Breakpoints, Game};
 
 pub(super) type Error<'a> = VerboseError<&'a str>;
 pub(super) type IResult<'a, I, O> = nom::IResult<I, O, Error<'a>>;
@@ -463,6 +463,32 @@ pub(super) fn aurora<'parse, 'output: 'parse>(parsing_context: &'parse ParsingCo
             away_player,
             home_team_emoji,
             home_player,
+        }))
+    }
+}
+
+pub(super) fn ejection<'parse, 'output: 'parse>(parsing_context: &'parse ParsingContext<'parse>) -> impl MyParser<'output, Ejection<&'output str>> + 'parse {
+    |input| {
+        let (input, _) = tag(" 🤖 ROBO-UMP ejected ").parse(input)?;
+
+        let (input, team) = alt((
+            parsing_context.away_emoji_team.parser(),
+            parsing_context.home_emoji_team.parser(),
+        )).parse(input)?;
+
+        let (input, _) = tag(" ").parse(input)?;
+
+        let (input, ejected_player) = parse_terminated(" for a Sportsmanship Violation (").and_then(placed_player_eof).parse(input)?;
+
+        let (input, reason) = parse_terminated("). Bench Player ").map(EjectionReason::new).parse(input)?;
+
+        let (input, replacement_player_name) = parse_terminated(" takes their place.").parse(input)?;
+
+        Ok((input, Ejection {
+            team,
+            ejected_player,
+            reason,
+            replacement_player_name,
         }))
     }
 }
