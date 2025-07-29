@@ -25,7 +25,8 @@ pub struct Player {
     #[serde(default = "SometimesMissingHelper::default_result", skip_serializing_if = "AddedLaterResult::is_err")]
     #[serde_as(as = "SometimesMissingHelper<_>")]
     pub equipment: AddedLaterResult<PlayerEquipmentMap>,
-    /// Not present on old, deleted players
+
+    /// Not present on old, deleted players. No longer present on s4 players
     #[serde(default = "SometimesMissingHelper::default_result", skip_serializing_if = "AddedLaterResult::is_err")]
     #[serde_as(as = "SometimesMissingHelper<_>")]
     pub feed: AddedLaterResult<Vec<FeedEvent>>,

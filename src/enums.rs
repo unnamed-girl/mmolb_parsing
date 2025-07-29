@@ -42,7 +42,10 @@ pub enum EventType {
     // Season 3
     #[strum(to_string = "Weather_Prosperity")]
     #[serde(rename = "Weather_Prosperity")]
-    WeatherProsperity
+    WeatherProsperity,
+
+    // Season 4,
+    PhotoContest
 }
 
 /// Top or bottom of an inning.

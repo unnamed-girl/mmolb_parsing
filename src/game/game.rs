@@ -73,8 +73,50 @@ pub struct Game {
     #[serde_as(as = "SometimesMissingHelper<ExpectNone<_>>")]
     pub(super) hype_end_index: AddedLaterResult<Option<serde_json::Value>>,
 
+    
+    #[serde(default = "SometimesMissingHelper::default_result", skip_serializing_if = "Result::is_err")]
+    #[serde_as(as = "SometimesMissingHelper<_>")]
+    pub aurora_photos: AddedLaterResult<Vec<AuroraPhoto>>,
+
+    #[serde(default = "SometimesMissingHelper::default_result", skip_serializing_if = "Result::is_err")]
+    #[serde_as(as = "SometimesMissingHelper<_>")]
+    /// ids
+    pub ejected_players: AddedLaterResult<Vec<String>>,
+
+    #[serde(default = "SometimesMissingHelper::default_result", skip_serializing_if = "Result::is_err")]
+    #[serde_as(as = "SometimesMissingHelper<_>")]
+    pub geomagnetic_pending: AddedLaterResult<bool>,
+
+    #[serde(default = "SometimesMissingHelper::default_result", skip_serializing_if = "Result::is_err")]
+    #[serde_as(as = "SometimesMissingHelper<_>")]
+    /// Team id => bench
+    pub original_bench: AddedLaterResult<HashMap<String, Bench>>,
+
+    #[serde(default = "SometimesMissingHelper::default_result", skip_serializing_if = "Result::is_err")]
+    #[serde_as(as = "SometimesMissingHelper<_>")]
+    /// Team id => slot => player id
+    pub original_rosters: AddedLaterResult<HashMap<String, HashMap<Slot, String>>>,
+
     pub event_log: Vec<Event>,
 
     #[serde(flatten, deserialize_with = "extra_fields_deserialize")]
     pub extra_fields: serde_json::Map<String, serde_json::Value>,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct AuroraPhoto {
+    pub luck: f64,
+    /// id
+    pub player: String,
+    pub slot: Slot,
+    pub team: String
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize)]
+#[serde(rename_all = "PascalCase")]
+pub struct Bench {
+    /// ids
+    pub batters: Vec<String>,
+    /// ids
+    pub pitchers: Vec<String>
 }

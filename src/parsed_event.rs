@@ -135,6 +135,18 @@ pub enum ParsedEventMessage<S> {
     WeatherProsperity {
         home_income: u8,
         away_income: u8
+    },
+
+    // Season 4
+    PhotoContest {
+        winning_team: EmojiTeam<S>,
+        winning_tokens: u8,
+        winning_player: S,
+        winning_score: u8,
+        losing_team: EmojiTeam<S>,
+        losing_tokens: u8,
+        losing_player: S,
+        losing_score: u8,
     }
 }
 impl<S: Display> ParsedEventMessage<S> {
@@ -403,6 +415,11 @@ impl<S: Display> ParsedEventMessage<S> {
                         format!("{home}{gap}{away}")
                     }
                 }
+            },
+            Self::PhotoContest { winning_team, winning_tokens, winning_score, winning_player, losing_team, losing_tokens, losing_score, losing_player } => {
+                let winning_emoji = &winning_team.emoji;
+                let losing_emoji = &losing_team.emoji;
+                format!("{winning_team} earned {winning_tokens} 🪙. {losing_team} earned {losing_tokens} 🪙.<br>Top scoring Photos:<br>{winning_emoji} {winning_player} - {winning_score} {losing_emoji} {losing_player} - {losing_score}")
             }
         }
     }

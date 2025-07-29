@@ -60,13 +60,39 @@ pub fn parse_event<'parse, 'output: 'parse>(event: &'output Event, parsing_conte
         EventType::WeatherShipment => weather_shipment(parsing_context).parse(&event.message),
         EventType::WeatherSpecialDelivery => special_delivery(parsing_context).parse(&event.message),
         EventType::WeatherProsperity => weather_prosperity(parsing_context).parse(&event.message),
-        EventType::Balk => balk().parse(&event.message)
+        EventType::Balk => balk().parse(&event.message),
+        EventType::PhotoContest => photo_contest(parsing_context).parse(event.message.as_str()),
     }.finish().map(|(_, o)| o)
     .unwrap_or_else(|_| {
             let error = GameEventParseError::FailedParsingMessage { event_type: *event_type, message: event.message.clone() };
             tracing::error!("Parse error: {}", error);
             ParsedEventMessage::ParseError { error, message: &event.message }
         }
+    )
+}
+fn photo_contest<'parse, 'output: 'parse>(parsing_context: &'parse ParsingContext<'parse>) -> impl MyParser<'output, ParsedEventMessage<&'output str>> + 'parse {
+    let team = |team: EmojiTeam<&'parse str>| (terminated(team.parser(), tag(" earned ")), terminated(u8, tag(" 🪙.")));
+    let player = |emoji: &'parse str| (terminated(tag(emoji), tag(" ")), parse_terminated(" - "), u8);
+    
+    context("Photo Contest", all_consuming(verify((
+        alt((
+            separated_pair(team(parsing_context.away_emoji_team), tag(" "), team(parsing_context.home_emoji_team)),
+            separated_pair(team(parsing_context.home_emoji_team), tag(" "), team(parsing_context.away_emoji_team)),
+        )),
+        preceded(
+            tag("<br>Top scoring Photos:<br>"),
+            alt((
+                separated_pair(player(parsing_context.home_emoji_team.emoji), tag(" "), player(parsing_context.away_emoji_team.emoji)),
+                separated_pair(player(parsing_context.away_emoji_team.emoji), tag(" "), player(parsing_context.home_emoji_team.emoji)),
+            ))
+        )),
+    |(((winning_team, _), (losing_team, _)), 
+        ((winning_emoji, _, _), (losing_emoji, _, _)))|
+        winning_team.emoji == *winning_emoji && losing_team.emoji == *losing_emoji
+    )))
+    .map(|(((winning_team, winning_tokens), (losing_team, losing_tokens)), 
+        ((_, winning_player, winning_score), (_, losing_player, losing_score)))|
+        ParsedEventMessage::PhotoContest { winning_team, winning_tokens, winning_player, winning_score, losing_team, losing_tokens, losing_player, losing_score }    
     )
 }
 
