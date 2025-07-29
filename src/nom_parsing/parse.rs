@@ -309,10 +309,10 @@ fn field<'parse, 'output: 'parse>(parsing_context: &'parse ParsingContext<'parse
 
     let reaches_on_error = all_consuming_sentence_and(
         (parse_terminated(" reaches on a ").and_then(name_eof), terminated(try_from_word, tag(" error by ")), placed_player_eof),
-        scores_and_advances
+        scores_and_advances.and(opt(ejection(parsing_context)))
     )
-    .map(|((batter, error, fielder), (scores, advances))| {
-        ParsedEventMessage::ReachOnFieldingError {batter, fielder, error, scores, advances }
+    .map(|((batter, error, fielder), ((scores, advances), ejection))| {
+        ParsedEventMessage::ReachOnFieldingError {batter, fielder, error, scores, advances, ejection }
     });
 
     let double_play_grounded = all_consuming_sentence_and(
@@ -359,9 +359,10 @@ fn pitch<'parse, 'output: 'parse>(parsing_context: &'parse ParsingContext<'parse
             try_from_words_m_n(1,2),
             preceded(tag(" to "), destination)
         )),
-        opt(preceded(tag(" "), cheer(parsing_context)))
+        opt(preceded(tag(" "), cheer(parsing_context))),
+        opt(preceded(tag(" "), ejection(parsing_context)))
     )
-    .map(|((batter, fair_ball_type, destination), cheer)| ParsedEventMessage::FairBall { batter, fair_ball_type, destination, cheer });
+    .map(|((batter, fair_ball_type, destination), cheer, ejection)| ParsedEventMessage::FairBall { batter, fair_ball_type, destination, cheer, ejection });
 
     let struck_out = (
         opt(sentence(preceded(tag("Foul "), try_from_word))),

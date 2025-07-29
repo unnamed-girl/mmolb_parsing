@@ -98,7 +98,8 @@ pub enum ParsedEventMessage<S> {
         batter: S,
         fair_ball_type: FairBallType,
         destination: FairBallDestination,
-        cheer: Option<Cheer>
+        cheer: Option<Cheer>,
+        ejection: Option<Ejection<S>>,
     },
     StrikeOut { foul: Option<FoulType>, batter: S, strike: StrikeType, steals: Vec<BaseSteal<S>>, cheer: Option<Cheer> },
 
@@ -111,7 +112,7 @@ pub enum ParsedEventMessage<S> {
     ReachOnFieldersChoice { batter: S, fielders: Vec<PlacedPlayer<S>>, result:FieldingAttempt<S>, scores: Vec<S>, advances: Vec<RunnerAdvance<S>> },
     DoublePlayGrounded { batter: S, fielders: Vec<PlacedPlayer<S>>, out_one:RunnerOut<S>, out_two:RunnerOut<S>, scores: Vec<S>, advances: Vec<RunnerAdvance<S>>, sacrifice: bool },
     DoublePlayCaught { batter: S, fair_ball_type: FairBallType, fielders: Vec<PlacedPlayer<S>>, out_two:RunnerOut<S>, scores: Vec<S>, advances: Vec<RunnerAdvance<S>> },
-    ReachOnFieldingError { batter: S, fielder:PlacedPlayer<S>, error: FieldingErrorType, scores: Vec<S>, advances: Vec<RunnerAdvance<S>> },
+    ReachOnFieldingError { batter: S, fielder:PlacedPlayer<S>, error: FieldingErrorType, scores: Vec<S>, advances: Vec<RunnerAdvance<S>>, ejection: Option<Ejection<S>> },
 
     // Season 1
     WeatherDelivery { delivery: Delivery<S> },
@@ -279,12 +280,13 @@ impl<S: Display> ParsedEventMessage<S> {
 
                 format!("{space}{batter} was hit by the pitch and advances to first base.{scores_and_advances}{cheer}")
             }
-            Self::FairBall { batter, fair_ball_type, destination, cheer } => {
+            Self::FairBall { batter, fair_ball_type, destination, cheer, ejection } => {
                 let space = old_space(game, event_index);
 
                 let cheer = cheer.as_ref().map(|c| c.unparse(game, event_index)).unwrap_or_default();
+                let ejection = ejection.as_ref().map(|e| e.unparse()).unwrap_or_default();
 
-                format!("{space}{batter} hits a {fair_ball_type} to {destination}.{cheer}")
+                format!("{space}{batter} hits a {fair_ball_type} to {destination}.{cheer}{ejection}")
             }
             Self::StrikeOut { foul, batter, strike, steals, cheer } => {
                 let foul = match foul {
@@ -362,10 +364,11 @@ impl<S: Display> ParsedEventMessage<S> {
                 let scores_and_advances = unparse_scores_and_advances(scores, advances);
                 format!("{batter} {fair_ball_type} into a double play{fielders}. {out_two}{scores_and_advances}")
             }
-            Self::ReachOnFieldingError { batter, fielder, error, scores, advances } => {
+            Self::ReachOnFieldingError { batter, fielder, error, scores, advances, ejection } => {
                 let scores_and_advances = unparse_scores_and_advances(scores, advances);
                 let error = error.lowercase();
-                format!("{batter} reaches on a {error} error by {fielder}.{scores_and_advances}")
+                let ejection = if let Some(e) = ejection { e.unparse() } else { String::new() };
+                format!("{batter} reaches on a {error} error by {fielder}.{scores_and_advances}{ejection}")
             }
             Self::WeatherDelivery {delivery } => {
                 delivery.unparse("Delivery")
