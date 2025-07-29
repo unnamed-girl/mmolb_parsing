@@ -855,7 +855,10 @@ pub enum GameStat {
     // Season 3
     HomeRunChallengeAppearances,
     HomeRunChallengeHomeRunsAllowed,
-    HomeRunChallengeHomeRuns
+    HomeRunChallengeHomeRuns,
+
+    // Season 4
+    Ejected
 }
 
 #[derive(Clone, Copy, EnumString, Display, Debug, Serialize, Deserialize, PartialEq, Eq, Hash, EnumIter)]
