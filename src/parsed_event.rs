@@ -106,7 +106,7 @@ pub enum ParsedEventMessage<S> {
 
     // Field
     BatterToBase { batter: S, distance: Distance, fair_ball_type: FairBallType, fielder: PlacedPlayer<S>, scores: Vec<S>, advances: Vec<RunnerAdvance<S>>, ejection: Option<Ejection<S>> },
-    HomeRun { batter: S, fair_ball_type: FairBallType, destination: FairBallDestination, scores: Vec<S>, grand_slam: bool },
+    HomeRun { batter: S, fair_ball_type: FairBallType, destination: FairBallDestination, scores: Vec<S>, grand_slam: bool, ejection: Option<Ejection<S>> },
     CaughtOut { batter: S, fair_ball_type: FairBallType, caught_by: PlacedPlayer<S>, scores: Vec<S>, advances: Vec<RunnerAdvance<S>>, sacrifice: bool, perfect: bool, ejection: Option<Ejection<S>>},
     GroundedOut { batter: S, fielders: Vec<PlacedPlayer<S>>, scores: Vec<S>, advances: Vec<RunnerAdvance<S>>, perfect: bool, ejection: Option<Ejection<S>> },
     ForceOut { batter: S, fielders: Vec<PlacedPlayer<S>>, fair_ball_type: FairBallType, out:RunnerOut<S>, scores: Vec<S>, advances: Vec<RunnerAdvance<S>>, ejection: Option<Ejection<S>> },
@@ -254,7 +254,7 @@ impl<S: Display> ParsedEventMessage<S> {
                 let cheer = cheer.as_ref().map(|c| c.unparse(game, event_index)).unwrap_or_default();
                 let aurora_photos = aurora_photos.as_ref().map(|p| p.unparse()).unwrap_or_default();
 
-                format!("{space}Strike, {strike}. {}-{}.{steals}{cheer}{aurora_photos}", count.0, count.1)
+                format!("{space}Strike, {strike}. {}-{}.{steals}{aurora_photos}{cheer}", count.0, count.1)
             }
             Self::Foul { foul, steals, count, cheer, aurora_photos } => {
                 let steals: Vec<String> = once(String::new()).chain(steals.into_iter().map(|steal| steal.to_string())).collect();
@@ -292,7 +292,7 @@ impl<S: Display> ParsedEventMessage<S> {
                 let aurora_photos = aurora_photos.as_ref().map(|p| p.unparse()).unwrap_or_default();
                 let ejection = ejection.as_ref().map(|e| e.unparse()).unwrap_or_default();
 
-                format!("{space}{batter} hits a {fair_ball_type} to {destination}.{cheer}{aurora_photos}{ejection}")
+                format!("{space}{batter} hits a {fair_ball_type} to {destination}.{aurora_photos}{cheer}{ejection}")
             }
             Self::StrikeOut { foul, batter, strike, steals, cheer, aurora_photos, ejection } => {
                 let foul = match foul {
@@ -314,15 +314,16 @@ impl<S: Display> ParsedEventMessage<S> {
                 let ejection = ejection.as_ref().map(|e| e.unparse()).unwrap_or_default();
                 format!("{batter} {distance} on a {fair_ball_type} to {fielder}.{scores_and_advances}{ejection}")
             }
-            Self::HomeRun { batter, fair_ball_type, destination, scores, grand_slam } => {
+            Self::HomeRun { batter, fair_ball_type, destination, scores, grand_slam, ejection } => {
                 let scores = once(String::new()).chain(scores.into_iter().map(|runner| format!("<strong>{runner} scores!</strong>")))
                     .collect::<Vec<String>>()
                     .join(" ");
+                let ejection = ejection.as_ref().map(|e| e.unparse()).unwrap_or_default();
 
                 if !grand_slam {
-                    format!("<strong>{batter} homers on a {fair_ball_type} to {destination}!</strong>{scores}")
+                    format!("<strong>{batter} homers on a {fair_ball_type} to {destination}!</strong>{scores}{ejection}")
                 } else {
-                    format!("<strong>{batter} hits a grand slam on a {fair_ball_type} to {destination}!</strong>{scores}")
+                    format!("<strong>{batter} hits a grand slam on a {fair_ball_type} to {destination}!</strong>{scores}{ejection}")
                 }
             }
             Self::CaughtOut { batter, fair_ball_type, caught_by: catcher, scores, advances, ejection, sacrifice, perfect } => {
@@ -965,12 +966,28 @@ pub enum EjectionReason {
     WhisperingSomethingToAnotherPlayer,
     #[strum(to_string = "dancing")]
     Dancing,
+    #[strum(to_string = "not looking excited enough")]
+    NotLookingExcitedEnough,
+    #[strum(to_string = "picking their nose")]
+    PickingTheirNose,
+    #[strum(to_string = "drinking beer")]
+    DrinkingBeer,
+    #[strum(to_string = "taking a phone call")]
+    TakingAPhoneCall,
+    #[strum(to_string = "using a foreign substance")]
+    UsingAForeignSubstance,
+    #[strum(to_string = "eating nachos")]
+    EatingNachos,
 
     // Uniform violations
     #[strum(to_string = "hat worn at improper rotational value")]
     HatWornAtImproperRotationalValue,
     #[strum(to_string = "mismatched socks")]
     MismatchedSocks,
+    #[strum(to_string = "wrinkled shirt")]
+    WrinkledShirt,
+    #[strum(to_string = "shoe untied")]
+    ShoeUntied,
 
     // Communication violations
     #[strum(to_string = "making weird hand signals")]
@@ -983,6 +1000,10 @@ pub enum EjectionReason {
     TellingABadJoke,
     #[strum(to_string = "winking at someone in the crowd")]
     WinkingAtSomeoneInTheCrowd,
+    #[strum(to_string = "saying a bad word")]
+    SayingABadWord,
+    #[strum(to_string = "humming")]
+    Humming,
 
     #[strum(default)]
     Unknown(String)
