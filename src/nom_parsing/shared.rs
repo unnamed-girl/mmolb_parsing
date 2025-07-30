@@ -3,7 +3,7 @@ use std::{fmt::Debug, str::FromStr};
 use nom::{branch::alt, bytes::complete::{tag, take, take_till, take_until, take_until1, take_while}, character::complete::{one_of, space0, u8}, combinator::{all_consuming, fail, opt, recognize, rest, value, verify}, error::{ErrorKind, ParseError}, multi::{count, many0, many1, separated_list1}, sequence::{delimited, preceded, separated_pair, terminated}, AsChar, Input, Parser};
 use nom_language::error::VerboseError;
 
-use crate::{enums::{Base, BatterStat, Day, FairBallDestination, FairBallType, HomeAway, NowBattingStats}, feed_event::{EmojilessItem, FeedDelivery, FeedEvent}, game::Event, parsed_event::{BaseSteal, Cheer, EjectionReason, Delivery, EmojiTeam, Item, ItemAffixes, PlacedPlayer, RunnerAdvance, RunnerOut, SnappedPhotos, Ejection}, time::Breakpoints, Game};
+use crate::{enums::{Base, BatterStat, Day, FairBallDestination, FairBallType, HomeAway, NowBattingStats}, feed_event::{EmojilessItem, FeedDelivery, FeedEvent}, game::Event, parsed_event::{BaseSteal, Cheer, Delivery, Ejection, EjectionReason, EmojiTeam, Item, ItemAffixes, PlacedPlayer, RunnerAdvance, RunnerOut, SnappedPhotos, ViolationType}, time::Breakpoints, Game};
 
 pub(super) type Error<'a> = VerboseError<&'a str>;
 pub(super) type IResult<'a, I, O> = nom::IResult<I, O, Error<'a>>;
@@ -445,24 +445,50 @@ pub(super) fn cheer<'parse, 'output: 'parse>(parsing_context: &'parse ParsingCon
     }
 }
 
+pub(super) fn aurora_players<'parse, 'output: 'parse>(first: EmojiTeam<&'parse str>, second: EmojiTeam<&'parse str>) -> impl MyParser<'output, (&'output str, PlacedPlayer<&'output str>, &'output str, PlacedPlayer<&'output str>)> + 'parse {
+    move |input| {
+        let (input, first_team_emoji) = tag(first.emoji).parse(input)?;
+        let (input, _) = tag(" ").parse(input)?;
+        let (input, first_player) = parse_terminated(" and ").and_then(placed_player_eof).parse(input)?;
+        println!("Parsed aurora player {first_team_emoji} {first_player}");
+
+        let (input, second_team_emoji) = tag(second.emoji).parse(input)?;
+        let (input, _) = tag(" ").parse(input)?;
+        let (input, second_player) = parse_terminated(" snapped photos of the aurora.").and_then(placed_player_eof).parse(input)?;
+        println!("Parsed aurora player {second_team_emoji} {second_player}");
+
+        Ok((input, (
+            first_team_emoji,
+            first_player,
+            second_team_emoji,
+            second_player,
+        )))
+    }
+}
+
 pub(super) fn aurora<'parse, 'output: 'parse>(parsing_context: &'parse ParsingContext<'parse>) -> impl MyParser<'output, SnappedPhotos<&'output str>> + 'parse {
     |input| {
         let (input, _) = tag("The Geomagnetic Storms Intensify! ").parse(input)?;
+        println!("Parsing aurora");
 
-        // Assuming for now that it's away,home always
-        let (input, away_team_emoji) = tag(parsing_context.away_emoji_team.emoji).parse(input)?;
-        let (input, _) = tag(" ").parse(input)?;
-        let (input, away_player) = parse_terminated(" and ").and_then(placed_player_eof).parse(input)?;
-
-        let (input, home_team_emoji) = tag(parsing_context.home_emoji_team.emoji).parse(input)?;
-        let (input, _) = tag(" ").parse(input)?;
-        let (input, home_player) = parse_terminated(" snapped photos of the aurora.").and_then(placed_player_eof).parse(input)?;
+        println!("To parse: '{}', input: '{}'", parsing_context.away_emoji_team.emoji, input);
+        // Note: if you try to expose which of home and away is first, consider that they
+        // might match in either order
+        let (input, (
+            first_team_emoji,
+            first_player,
+            second_team_emoji,
+            second_player,
+        )) = alt((
+            aurora_players(parsing_context.home_emoji_team, parsing_context.away_emoji_team),
+            aurora_players(parsing_context.away_emoji_team, parsing_context.home_emoji_team),
+        )).parse(input)?;
 
         Ok((input, SnappedPhotos {
-            away_team_emoji,
-            away_player,
-            home_team_emoji,
-            home_player,
+            first_team_emoji,
+            first_player,
+            second_team_emoji,
+            second_player,
         }))
     }
 }
@@ -470,23 +496,38 @@ pub(super) fn aurora<'parse, 'output: 'parse>(parsing_context: &'parse ParsingCo
 pub(super) fn ejection<'parse, 'output: 'parse>(parsing_context: &'parse ParsingContext<'parse>) -> impl MyParser<'output, Ejection<&'output str>> + 'parse {
     |input| {
         let (input, _) = tag(" 🤖 ROBO-UMP ejected ").parse(input)?;
+        println!("Parsing ejection");
 
         let (input, team) = alt((
             parsing_context.away_emoji_team.parser(),
             parsing_context.home_emoji_team.parser(),
         )).parse(input)?;
 
+        println!("Ejection team: '{team}'");
+
         let (input, _) = tag(" ").parse(input)?;
 
-        let (input, ejected_player) = parse_terminated(" for a Sportsmanship Violation (").and_then(placed_player_eof).parse(input)?;
+        // " for a " is borderline but I still think probably OK to assume will never be part of a name
+        let (input, ejected_player) = parse_terminated(" for a ").and_then(placed_player_eof).parse(input)?;
+
+        println!("Ejected player: '{ejected_player}'");
+
+        let (input, violation_type) = parse_terminated(" Violation (").map(ViolationType::new).parse(input)?;
+
+        println!("Violation type: '{violation_type}'");
 
         let (input, reason) = parse_terminated("). Bench Player ").map(EjectionReason::new).parse(input)?;
 
+        println!("Reason: '{reason}'");
+
         let (input, replacement_player_name) = parse_terminated(" takes their place.").parse(input)?;
+
+        println!("Replacement player: '{replacement_player_name}'");
 
         Ok((input, Ejection {
             team,
             ejected_player,
+            violation_type,
             reason,
             replacement_player_name,
         }))
