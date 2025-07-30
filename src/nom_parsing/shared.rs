@@ -450,12 +450,10 @@ pub(super) fn aurora_players<'parse, 'output: 'parse>(first: EmojiTeam<&'parse s
         let (input, first_team_emoji) = tag(first.emoji).parse(input)?;
         let (input, _) = tag(" ").parse(input)?;
         let (input, first_player) = parse_terminated(" and ").and_then(placed_player_eof).parse(input)?;
-        println!("Parsed aurora player {first_team_emoji} {first_player}");
 
         let (input, second_team_emoji) = tag(second.emoji).parse(input)?;
         let (input, _) = tag(" ").parse(input)?;
         let (input, second_player) = parse_terminated(" snapped photos of the aurora.").and_then(placed_player_eof).parse(input)?;
-        println!("Parsed aurora player {second_team_emoji} {second_player}");
 
         Ok((input, (
             first_team_emoji,
@@ -469,11 +467,9 @@ pub(super) fn aurora_players<'parse, 'output: 'parse>(first: EmojiTeam<&'parse s
 pub(super) fn aurora<'parse, 'output: 'parse>(parsing_context: &'parse ParsingContext<'parse>) -> impl MyParser<'output, SnappedPhotos<&'output str>> + 'parse {
     |input| {
         let (input, _) = tag("The Geomagnetic Storms Intensify! ").parse(input)?;
-        println!("Parsing aurora");
 
-        println!("To parse: '{}', input: '{}'", parsing_context.away_emoji_team.emoji, input);
-        // Note: if you try to expose which of home and away is first, consider that they
-        // might match in either order
+        // Note: if you try to expose which of home and away is first, consider that it's
+        // technically possible for two teams with the same name and emoji to play each other
         let (input, (
             first_team_emoji,
             first_player,
@@ -496,33 +492,22 @@ pub(super) fn aurora<'parse, 'output: 'parse>(parsing_context: &'parse ParsingCo
 pub(super) fn ejection<'parse, 'output: 'parse>(parsing_context: &'parse ParsingContext<'parse>) -> impl MyParser<'output, Ejection<&'output str>> + 'parse {
     |input| {
         let (input, _) = tag(" 🤖 ROBO-UMP ejected ").parse(input)?;
-        println!("Parsing ejection");
 
         let (input, team) = alt((
             parsing_context.away_emoji_team.parser(),
             parsing_context.home_emoji_team.parser(),
         )).parse(input)?;
 
-        println!("Ejection team: '{team}'");
-
         let (input, _) = tag(" ").parse(input)?;
 
         // " for a " is borderline but I still think probably OK to assume will never be part of a name
         let (input, ejected_player) = parse_terminated(" for a ").and_then(placed_player_eof).parse(input)?;
 
-        println!("Ejected player: '{ejected_player}'");
-
         let (input, violation_type) = parse_terminated(" Violation (").map(ViolationType::new).parse(input)?;
-
-        println!("Violation type: '{violation_type}'");
 
         let (input, reason) = parse_terminated("). Bench Player ").map(EjectionReason::new).parse(input)?;
 
-        println!("Reason: '{reason}'");
-
         let (input, replacement_player_name) = parse_terminated(" takes their place.").parse(input)?;
-
-        println!("Replacement player: '{replacement_player_name}'");
 
         Ok((input, Ejection {
             team,
