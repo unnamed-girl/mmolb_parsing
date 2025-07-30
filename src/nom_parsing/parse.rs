@@ -248,11 +248,13 @@ fn field<'parse, 'output: 'parse>(parsing_context: &'parse ParsingContext<'parse
 
     let homers = bold(exclamation((parse_terminated(" homers on a "), try_from_words_m_n(1,2), preceded(tag(" to "), destination))))
     .and(many0(scores_sentence))
-    .map(|((batter, fair_ball_type, destination), scores)| ParsedEventMessage::HomeRun { batter, fair_ball_type, destination, scores, grand_slam: false });
+    .and(opt(ejection(parsing_context)))
+    .map(|(((batter, fair_ball_type, destination), scores), ejection)| ParsedEventMessage::HomeRun { batter, fair_ball_type, destination, scores, grand_slam: false, ejection });
 
     let grand_slam = bold(exclamation((parse_terminated(" hits a grand slam on a "), try_from_words_m_n(1,2), preceded(tag(" to "), destination))))
     .and(many0(scores_sentence))
-    .map(|((batter, fair_ball_type, destination), scores)| ParsedEventMessage::HomeRun { batter, fair_ball_type, destination, scores, grand_slam: true });
+    .and(opt(ejection(parsing_context)))
+    .map(|(((batter, fair_ball_type, destination), scores), ejection)| ParsedEventMessage::HomeRun { batter, fair_ball_type, destination, scores, grand_slam: true, ejection });
 
     let caught_out = all_consuming_sentence_and(
         (
@@ -371,11 +373,11 @@ fn pitch<'parse, 'output: 'parse>(parsing_context: &'parse ParsingContext<'parse
             try_from_words_m_n(1,2),
             preceded(tag(" to "), destination)
         )),
-        opt(preceded(tag(" "), cheer(parsing_context))),
         opt(preceded(tag(" "), aurora(parsing_context))),
-        opt(preceded(tag(" "), ejection(parsing_context)))
+        opt(preceded(tag(" "), cheer(parsing_context))),
+        opt(ejection(parsing_context))
     )
-    .map(|((batter, fair_ball_type, destination), cheer, aurora_photos, ejection)| ParsedEventMessage::FairBall { batter, fair_ball_type, destination, cheer, aurora_photos, ejection });
+    .map(|((batter, fair_ball_type, destination), aurora_photos, cheer, ejection)| ParsedEventMessage::FairBall { batter, fair_ball_type, destination, cheer, aurora_photos, ejection });
 
     let struck_out = (
         opt(sentence(preceded(tag("Foul "), try_from_word))),
@@ -421,9 +423,9 @@ fn pitch<'parse, 'output: 'parse>(parsing_context: &'parse ParsingContext<'parse
     let foul = sentence(preceded(tag("Foul "), try_from_word))
     .and(sentence(score_update))
     .and(many0(base_steal_sentence))
-    .and(opt(preceded(tag(" "), cheer(parsing_context))))
     .and(opt(preceded(tag(" "), aurora(parsing_context))))
-    .map(|((((foul, count), steals), cheer), aurora_photos)| ParsedEventMessage::Foul { foul, steals, count, cheer, aurora_photos });
+    .and(opt(preceded(tag(" "), cheer(parsing_context))))
+    .map(|((((foul, count), steals), aurora_photos), cheer)| ParsedEventMessage::Foul { foul, steals, count, cheer, aurora_photos });
 
     let pitch_options = alt((
         struck_out,
