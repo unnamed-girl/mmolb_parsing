@@ -93,7 +93,7 @@ pub struct Player {
 pub struct PlayerEquipmentMap {
     #[serde(flatten)]
     #[serde_as(as = "HashMap<MaybeRecognizedHelper<_>, _>")]
-    fields: HashMap<MaybeRecognizedResult<EquipmentSlot>, Option<PlayerEquipment>>,
+    pub inner: HashMap<MaybeRecognizedResult<EquipmentSlot>, Option<PlayerEquipment>>,
 }
 
 impl PlayerEquipmentMap {
@@ -107,7 +107,7 @@ impl PlayerEquipmentMap {
 
 impl Into<HashMap<MaybeRecognizedResult<EquipmentSlot>, PlayerEquipment>> for PlayerEquipmentMap {
     fn into(self) -> HashMap<MaybeRecognizedResult<EquipmentSlot>, PlayerEquipment> {
-        self.fields.into_iter()
+        self.inner.into_iter()
             .flat_map(|(slot, equipment)| equipment.and_then(|e| Some((slot, e))))
             .collect()
     }
@@ -115,13 +115,13 @@ impl Into<HashMap<MaybeRecognizedResult<EquipmentSlot>, PlayerEquipment>> for Pl
 
 impl Into<HashMap<MaybeRecognizedResult<EquipmentSlot>, Option<PlayerEquipment>>> for PlayerEquipmentMap {
     fn into(self) -> HashMap<MaybeRecognizedResult<EquipmentSlot>, Option<PlayerEquipment>> {
-        self.fields
+        self.inner
     }
 }
 
 impl Into<Vec<PlayerEquipment>> for PlayerEquipmentMap {
     fn into(self) -> Vec<PlayerEquipment> {
-        self.fields.into_values().flatten().collect()
+        self.inner.into_values().flatten().collect()
     }
 }
 
@@ -135,10 +135,10 @@ pub trait _GetHelper<Index> {
 impl _GetHelper<EquipmentSlot> for PlayerEquipmentMap {
     type Output = PlayerEquipment;
     fn _get(&self, index: EquipmentSlot) -> Option<&Self::Output> {
-        self.fields.get(&Ok(index)).map(Option::as_ref).flatten()
+        self.inner.get(&Ok(index)).map(Option::as_ref).flatten()
     }
     fn _get_mut(&mut self, index: EquipmentSlot) -> Option<&mut Self::Output> {
-        self.fields.get_mut(&Ok(index)).map(Option::as_mut).flatten()
+        self.inner.get_mut(&Ok(index)).map(Option::as_mut).flatten()
     }
 }
 
@@ -146,10 +146,10 @@ impl _GetHelper<&MaybeRecognizedResult<EquipmentSlot>> for PlayerEquipmentMap {
     type Output = PlayerEquipment;
 
     fn _get(&self, index: &MaybeRecognizedResult<EquipmentSlot>) -> Option<&Self::Output> {
-        self.fields.get(index).map(Option::as_ref).flatten()
+        self.inner.get(index).map(Option::as_ref).flatten()
     }
     fn _get_mut(&mut self, index: &MaybeRecognizedResult<EquipmentSlot>) -> Option<&mut Self::Output> {
-        self.fields.get_mut(index).map(Option::as_mut).flatten()
+        self.inner.get_mut(index).map(Option::as_mut).flatten()
     }
 }
 
