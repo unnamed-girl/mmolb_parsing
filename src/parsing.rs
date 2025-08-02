@@ -1,7 +1,7 @@
 use crate::{game::Event, nom_parsing::{parse_event, ParsingContext}, parsed_event::ParsedEventMessage, Game};
 
 /// Convenience method to call process_event for every event in a game
-pub fn process_game<'output, 'parse>(game: &'output Game, game_id: &'parse str) -> Vec<ParsedEventMessage<&'output str>> {
+pub fn process_game<'output, 'parse: 'output>(game: &'output Game, game_id: &'parse str) -> Vec<ParsedEventMessage<&'output str>> {
     let mut result = Vec::new();
 
     for event in &game.event_log {
@@ -11,7 +11,7 @@ pub fn process_game<'output, 'parse>(game: &'output Game, game_id: &'parse str) 
 }
 
 /// Processes an event into a ParsedEventMessage. Zero-copy parsing, the strings in the returned ParsedEventMessage are references to the strings in event and game.
-pub fn process_event<'output, 'parse>(event: &'output Event, game: &'output Game, game_id: &'parse str) -> ParsedEventMessage<&'output str> {
+pub fn process_event<'output, 'parse: 'output>(event: &'output Event, game: &'output Game, game_id: &'parse str) -> ParsedEventMessage<&'output str> {
     let parsing_context = ParsingContext::new(game_id, game, event.index);
     let parsed_event_message = parse_event(event, &parsing_context);
     parsed_event_message
@@ -22,7 +22,7 @@ pub fn process_event<'output, 'parse>(event: &'output Event, game: &'output Game
 mod test {
     use std::{error::Error, fs::File, io::Read};
 
-    
+
 
     use crate::{process_game, utils::no_tracing_errs, Game, ParsedEventMessage};
 
