@@ -4,6 +4,7 @@ use nom::{branch::alt, bytes::complete::{tag, take, take_till, take_until, take_
 use nom_language::error::VerboseError;
 
 use crate::{enums::{Base, BatterStat, Day, FairBallDestination, FairBallType, HomeAway, NowBattingStats}, feed_event::{EmojilessItem, FeedDelivery, FeedEvent}, game::Event, parsed_event::{BaseSteal, Cheer, Delivery, Ejection, EjectionReason, EmojiTeam, Item, ItemAffixes, PlacedPlayer, RunnerAdvance, RunnerOut, SnappedPhotos, ViolationType}, time::Breakpoints, Game};
+use crate::parsed_event::EjectionReplacement;
 
 pub(super) type Error<'a> = VerboseError<&'a str>;
 pub(super) type IResult<'a, I, O> = nom::IResult<I, O, Error<'a>>;
@@ -489,10 +490,25 @@ pub(super) fn aurora<'parse, 'output: 'parse>(parsing_context: &'parse ParsingCo
     }
 }
 
+// TODO Delete the leading space from this and instead add it in all the
+//   places this is used as a child parser
 pub(super) fn ejection<'parse, 'output: 'parse>(parsing_context: &'parse ParsingContext<'parse>) -> impl MyParser<'output, Ejection<&'output str>> + 'parse {
     |input| {
         let (input, _) = tag(" 🤖 ROBO-UMP ejected ").parse(input)?;
 
+        let (input, output)  = ejection_tail(parsing_context).parse(input)?;
+
+        // ejection_tail intentionally doesn't consume the period
+        let (input, _) = tag(".").parse(input)?;
+
+        Ok((input, output))
+    }
+}
+
+// This is an ejection when the leading " 🤖 ROBO-UMP ejected " has already
+// been consumed, e.g. by a parse_terminated
+pub(super) fn ejection_tail<'parse, 'output: 'parse>(parsing_context: &'parse ParsingContext<'parse>) -> impl MyParser<'output, Ejection<&'output str>> + 'parse {
+    |input| {
         let (input, team) = alt((
             parsing_context.away_emoji_team.parser(),
             parsing_context.home_emoji_team.parser(),
@@ -505,16 +521,23 @@ pub(super) fn ejection<'parse, 'output: 'parse>(parsing_context: &'parse Parsing
 
         let (input, violation_type) = parse_terminated(" Violation (").map(ViolationType::new).parse(input)?;
 
-        let (input, reason) = parse_terminated("). Bench Player ").map(EjectionReason::new).parse(input)?;
-
-        let (input, replacement_player_name) = parse_terminated(" takes their place.").parse(input)?;
+        let (input, (reason, replacement)) = alt((
+              (
+                  parse_terminated("). Bench Player ").map(EjectionReason::new),
+                  parse_terminated(" takes their place").map(|player_name| EjectionReplacement::BenchPlayer { player_name }),
+              ),
+              (
+                  terminated(parse_terminated("). "), terminated(tag(team.emoji), tag(" "))).map(EjectionReason::new),
+                  parse_terminated(" takes the mound").and_then(placed_player_eof).map(|player| EjectionReplacement::RosterPlayer { player }),
+              ),
+        )).parse(input)?;
 
         Ok((input, Ejection {
             team,
             ejected_player,
             violation_type,
             reason,
-            replacement_player_name,
+            replacement,
         }))
     }
 }

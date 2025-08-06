@@ -1,6 +1,8 @@
+use crate::nom_parsing::shared::ejection_tail;
 use std::str::FromStr;
 
-use nom::{branch::alt, bytes::complete::{tag, take_until}, character::complete::{digit1, u8}, combinator::{all_consuming, cut, fail, opt, rest, value, verify}, error::context, multi::{many0, many1, separated_list1}, sequence::{delimited, preceded, separated_pair, terminated}, Finish, Parser};
+use nom::{branch::alt, bytes::complete::{tag, take_until}, character::complete::{digit1, u8, u16}, combinator::{all_consuming, cut, fail, opt, rest, value, verify}, error::context, multi::{many0, many1, separated_list1}, sequence::{delimited, preceded, separated_pair, terminated}, Finish, Parser};
+use nom::sequence::pair;
 use phf::phf_map;
 
 use crate::{enums::{EventType, GameOverMessage, HomeAway, MoundVisitType, NowBattingStats}, game::Event, nom_parsing::shared::{aurora, cheer, ejection, delivery, team_emoji, try_from_word, try_from_words_m_n, MyParser}, parsed_event::{EmojiTeam, FallingStarOutcome, FieldingAttempt, GameEventParseError, KnownBug, StartOfInningPitcher}, time::Breakpoints, ParsedEventMessage};
@@ -72,7 +74,7 @@ pub fn parse_event<'parse, 'output: 'parse>(event: &'output Event, parsing_conte
 }
 fn photo_contest<'parse, 'output: 'parse>(parsing_context: &'parse ParsingContext<'parse>) -> impl MyParser<'output, ParsedEventMessage<&'output str>> + 'parse {
     let team = |team: EmojiTeam<&'parse str>| (terminated(team.parser(), tag(" earned ")), terminated(u8, tag(" 🪙.")));
-    let player = |emoji: &'parse str| (terminated(tag(emoji), tag(" ")), parse_terminated(" - "), u8);
+    let player = |emoji: &'parse str| (terminated(tag(emoji), tag(" ")), parse_terminated(" - "), u16);
 
     context("Photo Contest", all_consuming(verify((
         alt((
@@ -313,11 +315,13 @@ fn field<'parse, 'output: 'parse>(parsing_context: &'parse ParsingContext<'parse
         (parse_terminated(" reaches on a fielder's choice, fielded by ").and_then(name_eof), placed_player_eof),
         (
             scores_and_advances,
-            sentence_eof(separated_pair(try_from_word, tag(" error by "), name_eof)),
-            opt(ejection(parsing_context)),
+            sentence_eof(separated_pair(try_from_word, tag(" error by "), alt((
+                pair(parse_terminated(". 🤖 ROBO-UMP ejected "), ejection_tail(parsing_context)).map(|(name, ejection)| (name, Some(ejection))),
+                name_eof.map(|name| (name, None)),
+            )))),
         )
     )
-    .map(|((batter, fielder), ((scores, advances), (error, error_fielder), ejection))| {
+    .map(|((batter, fielder), ((scores, advances), (error, (error_fielder, ejection))))| {
         ParsedEventMessage::ReachOnFieldersChoice {batter,  fielders: vec![fielder], result: FieldingAttempt::Error { fielder: error_fielder, error }, scores, advances, ejection }
     });
 
@@ -335,18 +339,18 @@ fn field<'parse, 'output: 'parse>(parsing_context: &'parse ParsingContext<'parse
             terminated(opt(tag("sacrifice ")).map(|s| s.is_some()), tag("double play, ")),
             fielders_eof
         ),
-        (sentence(out), sentence(out),scores_and_advances)
+        (sentence(out), sentence(out), scores_and_advances, opt(ejection(parsing_context)))
     )
-    .map(|((batter, sacrifice, fielders), (out_one, out_two, (scores, advances)))|
-        ParsedEventMessage::DoublePlayGrounded { batter, fielders, out_one, out_two, scores, advances, sacrifice }
+    .map(|((batter, sacrifice, fielders), (out_one, out_two, (scores, advances), ejection))|
+        ParsedEventMessage::DoublePlayGrounded { batter, fielders, out_one, out_two, scores, advances, sacrifice, ejection }
     );
 
     let double_play_caught = all_consuming_sentence_and(
         (terminated(parse_and( fair_ball_type_verb_name, " "), tag(" into a double play, ")),fielders_eof),
-        (sentence(out), scores_and_advances)
+        (sentence(out), scores_and_advances, opt(ejection(parsing_context)))
     )
-    .map(|(((batter, fair_ball_type), fielders), (out_two, (scores, advances)))|
-        ParsedEventMessage::DoublePlayCaught { batter, fair_ball_type, fielders, out_two, scores, advances }
+    .map(|(((batter, fair_ball_type), fielders), (out_two, (scores, advances), ejection))|
+        ParsedEventMessage::DoublePlayCaught { batter, fair_ball_type, fielders, out_two, scores, advances, ejection }
     );
 
     let fielding_outcomes = alt((
@@ -386,39 +390,42 @@ fn pitch<'parse, 'output: 'parse>(parsing_context: &'parse ParsingContext<'parse
             try_from_word)
     ))
     .and(many0(base_steal_sentence))
-    .and(opt(preceded(tag(" "), cheer(parsing_context))))
     .and(opt(preceded(tag(" "), aurora(parsing_context))))
+    .and(opt(preceded(tag(" "), cheer(parsing_context))))
     .and(opt(ejection(parsing_context)))
-    .map(|(((((foul, (batter, strike)), steals), cheer), aurora_photos), ejection)|
+    .map(|(((((foul, (batter, strike)), steals), aurora_photos), cheer), ejection)|
         ParsedEventMessage::StrikeOut { foul, batter, strike, steals, cheer, aurora_photos, ejection }
     );
 
     let hit_by_pitch = sentence(parse_terminated(" was hit by the pitch and advances to first base"))
     .and(scores_and_advances)
+    .and(opt(preceded(tag(" "), aurora(parsing_context))))
     .and(opt(preceded(tag(" "), cheer(parsing_context))))
     .and(opt(ejection(parsing_context)))
-    .map(|(((batter, (scores, advances)), cheer), ejection)| ParsedEventMessage::HitByPitch { batter, scores, advances, cheer, ejection });
+    .map(|((((batter, (scores, advances)), aurora_photos), cheer), ejection)| ParsedEventMessage::HitByPitch { batter, scores, advances, cheer, aurora_photos, ejection });
 
     let walks = preceded(
         sentence(tag("Ball 4")),
         sentence(parse_terminated(" walks"))
     ).and(scores_and_advances)
-    .and(opt(preceded(tag(" "), cheer(parsing_context))))
     .and(opt(preceded(tag(" "), aurora(parsing_context))))
+    .and(opt(preceded(tag(" "), cheer(parsing_context))))
     .and(opt(ejection(parsing_context)))
-    .map(|((((batter, (scores, advances)), cheer), aurora_photos), ejection)| ParsedEventMessage::Walk { batter, scores, advances, cheer, aurora_photos, ejection });
+    .map(|((((batter, (scores, advances)), aurora_photos), cheer), ejection)| ParsedEventMessage::Walk { batter, scores, advances, cheer, aurora_photos, ejection });
 
     let ball = (preceded(sentence(tag("Ball")), sentence(score_update)))
     .and(many0(base_steal_sentence))
-    .and(opt(preceded(tag(" "), cheer(parsing_context)))) // TODO Order w/r/t/ cheer and steals
     .and(opt(preceded(tag(" "), aurora(parsing_context))))
-    .map(|(((count, steals), cheer), aurora_photos)| ParsedEventMessage::Ball { steals, count, cheer, aurora_photos });
+    .and(opt(preceded(tag(" "), cheer(parsing_context))))
+    .and(opt(ejection(parsing_context)))
+    .map(|((((count, steals), aurora_photos), cheer), ejection)| ParsedEventMessage::Ball { steals, count, cheer, aurora_photos, ejection });
 
     let strike = sentence(preceded(tag("Strike, "), try_from_word))
     .and(cut((sentence(score_update), many0(base_steal_sentence))))
-    .and(opt(preceded(tag(" "), cheer(parsing_context))))
     .and(opt(preceded(tag(" "), aurora(parsing_context))))
-    .map(|(((strike, (count, steals)), cheer), aurora_photos)| ParsedEventMessage::Strike { strike, steals, count, cheer, aurora_photos });
+    .and(opt(preceded(tag(" "), cheer(parsing_context))))
+    .and(opt(ejection(parsing_context)))
+    .map(|((((strike, (count, steals)), aurora_photos), cheer), ejection)| ParsedEventMessage::Strike { strike, steals, count, cheer, aurora_photos, ejection });
 
     let foul = sentence(preceded(tag("Foul "), try_from_word))
     .and(sentence(score_update))

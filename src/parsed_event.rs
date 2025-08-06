@@ -89,11 +89,11 @@ pub enum ParsedEventMessage<S> {
     },
 
     // Pitch
-    Ball { steals: Vec<BaseSteal<S>>, count:(u8, u8), cheer: Option<Cheer>, aurora_photos: Option<SnappedPhotos<S>> },
-    Strike { strike: StrikeType, steals: Vec<BaseSteal<S>>, count:(u8, u8), cheer: Option<Cheer>, aurora_photos: Option<SnappedPhotos<S>> },
+    Ball { steals: Vec<BaseSteal<S>>, count:(u8, u8), cheer: Option<Cheer>, aurora_photos: Option<SnappedPhotos<S>>, ejection: Option<Ejection<S>> },
+    Strike { strike: StrikeType, steals: Vec<BaseSteal<S>>, count:(u8, u8), cheer: Option<Cheer>, aurora_photos: Option<SnappedPhotos<S>>, ejection: Option<Ejection<S>> },
     Foul { foul: FoulType, steals: Vec<BaseSteal<S>>, count:(u8, u8), cheer: Option<Cheer>, aurora_photos: Option<SnappedPhotos<S>> },
     Walk { batter: S, scores: Vec<S>, advances: Vec<RunnerAdvance<S>>, cheer: Option<Cheer>, aurora_photos: Option<SnappedPhotos<S>>, ejection: Option<Ejection<S>> },
-    HitByPitch { batter: S, scores: Vec<S>, advances: Vec<RunnerAdvance<S>>, cheer: Option<Cheer>, ejection: Option<Ejection<S>> },
+    HitByPitch { batter: S, scores: Vec<S>, advances: Vec<RunnerAdvance<S>>, cheer: Option<Cheer>, aurora_photos: Option<SnappedPhotos<S>>, ejection: Option<Ejection<S>> },
     FairBall {
         batter: S,
         fair_ball_type: FairBallType,
@@ -111,8 +111,8 @@ pub enum ParsedEventMessage<S> {
     GroundedOut { batter: S, fielders: Vec<PlacedPlayer<S>>, scores: Vec<S>, advances: Vec<RunnerAdvance<S>>, perfect: bool, ejection: Option<Ejection<S>> },
     ForceOut { batter: S, fielders: Vec<PlacedPlayer<S>>, fair_ball_type: FairBallType, out:RunnerOut<S>, scores: Vec<S>, advances: Vec<RunnerAdvance<S>>, ejection: Option<Ejection<S>> },
     ReachOnFieldersChoice { batter: S, fielders: Vec<PlacedPlayer<S>>, result:FieldingAttempt<S>, scores: Vec<S>, advances: Vec<RunnerAdvance<S>>, ejection: Option<Ejection<S>> },
-    DoublePlayGrounded { batter: S, fielders: Vec<PlacedPlayer<S>>, out_one:RunnerOut<S>, out_two:RunnerOut<S>, scores: Vec<S>, advances: Vec<RunnerAdvance<S>>, sacrifice: bool },
-    DoublePlayCaught { batter: S, fair_ball_type: FairBallType, fielders: Vec<PlacedPlayer<S>>, out_two:RunnerOut<S>, scores: Vec<S>, advances: Vec<RunnerAdvance<S>> },
+    DoublePlayGrounded { batter: S, fielders: Vec<PlacedPlayer<S>>, out_one:RunnerOut<S>, out_two:RunnerOut<S>, scores: Vec<S>, advances: Vec<RunnerAdvance<S>>, sacrifice: bool, ejection: Option<Ejection<S>> },
+    DoublePlayCaught { batter: S, fair_ball_type: FairBallType, fielders: Vec<PlacedPlayer<S>>, out_two:RunnerOut<S>, scores: Vec<S>, advances: Vec<RunnerAdvance<S>>, ejection: Option<Ejection<S>> },
     ReachOnFieldingError { batter: S, fielder:PlacedPlayer<S>, error: FieldingErrorType, scores: Vec<S>, advances: Vec<RunnerAdvance<S>>, ejection: Option<Ejection<S>> },
 
     // Season 1
@@ -144,11 +144,11 @@ pub enum ParsedEventMessage<S> {
         winning_team: EmojiTeam<S>,
         winning_tokens: u8,
         winning_player: S,
-        winning_score: u8,
+        winning_score: u16,
         losing_team: EmojiTeam<S>,
         losing_tokens: u8,
         losing_player: S,
-        losing_score: u8,
+        losing_score: u16,
     }
 }
 impl<S: Display> ParsedEventMessage<S> {
@@ -235,7 +235,7 @@ impl<S: Display> ParsedEventMessage<S> {
                 format!("{leaving_pitcher_emoji}{leaving_pitcher} is leaving the game. {arriving_pitcher_emoji}{arriving_pitcher_place}{arriving_pitcher_name} takes the mound.")
             },
 
-            Self::Ball { steals, count, cheer, aurora_photos } => {
+            Self::Ball { steals, count, cheer, aurora_photos, ejection } => {
                 let steals = once(String::new()).chain(steals.iter().map(BaseSteal::to_string))
                     .collect::<Vec<String>>()
                     .join(" ");
@@ -243,18 +243,20 @@ impl<S: Display> ParsedEventMessage<S> {
 
                 let cheer = cheer.as_ref().map(|c| c.unparse(game, event_index)).unwrap_or_default();
                 let aurora_photos = aurora_photos.as_ref().map(|p| p.unparse()).unwrap_or_default();
+                let ejection = ejection.as_ref().map(|e| e.unparse()).unwrap_or_default();
 
-                format!("{space}Ball. {}-{}.{steals}{cheer}{aurora_photos}", count.0, count.1,)
+                format!("{space}Ball. {}-{}.{steals}{aurora_photos}{ejection}{cheer}", count.0, count.1,)
             },
-            Self::Strike { strike, steals, count, cheer, aurora_photos } => {
+            Self::Strike { strike, steals, count, cheer, aurora_photos, ejection } => {
                 let steals: Vec<String> = once(String::new()).chain(steals.into_iter().map(|steal| steal.to_string())).collect();
                 let steals = steals.join(" ");
                 let space = old_space(game, event_index);
 
                 let cheer = cheer.as_ref().map(|c| c.unparse(game, event_index)).unwrap_or_default();
                 let aurora_photos = aurora_photos.as_ref().map(|p| p.unparse()).unwrap_or_default();
+                let ejection = ejection.as_ref().map(|e| e.unparse()).unwrap_or_default();
 
-                format!("{space}Strike, {strike}. {}-{}.{steals}{aurora_photos}{cheer}", count.0, count.1)
+                format!("{space}Strike, {strike}. {}-{}.{steals}{aurora_photos}{ejection}{cheer}", count.0, count.1)
             }
             Self::Foul { foul, steals, count, cheer, aurora_photos } => {
                 let steals: Vec<String> = once(String::new()).chain(steals.into_iter().map(|steal| steal.to_string())).collect();
@@ -264,7 +266,7 @@ impl<S: Display> ParsedEventMessage<S> {
                 let cheer = cheer.as_ref().map(|c| c.unparse(game, event_index)).unwrap_or_default();
                 let aurora_photos = aurora_photos.as_ref().map(|p| p.unparse()).unwrap_or_default();
 
-                format!("{space}Foul {foul}. {}-{}.{steals}{cheer}{aurora_photos}", count.0, count.1)
+                format!("{space}Foul {foul}. {}-{}.{steals}{aurora_photos}{cheer}", count.0, count.1)
             }
             Self::Walk { batter, scores, advances, cheer, aurora_photos, ejection } => {
                 let scores_and_advances = unparse_scores_and_advances(scores, advances);
@@ -274,16 +276,18 @@ impl<S: Display> ParsedEventMessage<S> {
                 let aurora_photos = aurora_photos.as_ref().map(|p| p.unparse()).unwrap_or_default();
                 let ejection = ejection.as_ref().map(|e| e.unparse()).unwrap_or_default();
 
-                format!("{space}Ball 4. {batter} walks.{scores_and_advances}{cheer}{aurora_photos}{ejection}")
+                // Proof cheer is before ejection: https://mmolb.com/watch/6887e503f142e23550fc1254?event=369
+                format!("{space}Ball 4. {batter} walks.{scores_and_advances}{aurora_photos}{cheer}{ejection}")
             }
-            Self::HitByPitch { batter, scores, advances, cheer, ejection } => {
+            Self::HitByPitch { batter, scores, advances, cheer, aurora_photos, ejection } => {
                 let scores_and_advances = unparse_scores_and_advances(scores, advances);
                 let space = old_space(game, event_index);
 
                 let cheer = cheer.as_ref().map(|c| c.unparse(game, event_index)).unwrap_or_default();
+                let aurora_photos = aurora_photos.as_ref().map(|p| p.unparse()).unwrap_or_default();
                 let ejection = ejection.as_ref().map(|e| e.unparse()).unwrap_or_default();
 
-                format!("{space}{batter} was hit by the pitch and advances to first base.{scores_and_advances}{cheer}{ejection}")
+                format!("{space}{batter} was hit by the pitch and advances to first base.{scores_and_advances}{aurora_photos}{cheer}{ejection}")
             }
             Self::FairBall { batter, fair_ball_type, destination, cheer, aurora_photos, ejection } => {
                 let space = old_space(game, event_index);
@@ -292,7 +296,7 @@ impl<S: Display> ParsedEventMessage<S> {
                 let aurora_photos = aurora_photos.as_ref().map(|p| p.unparse()).unwrap_or_default();
                 let ejection = ejection.as_ref().map(|e| e.unparse()).unwrap_or_default();
 
-                format!("{space}{batter} hits a {fair_ball_type} to {destination}.{aurora_photos}{cheer}{ejection}")
+                format!("{space}{batter} hits a {fair_ball_type} to {destination}.{aurora_photos}{ejection}{cheer}")
             }
             Self::StrikeOut { foul, batter, strike, steals, cheer, aurora_photos, ejection } => {
                 let foul = match foul {
@@ -307,7 +311,9 @@ impl<S: Display> ParsedEventMessage<S> {
                 let aurora_photos = aurora_photos.as_ref().map(|p| p.unparse()).unwrap_or_default();
                 let ejection = ejection.as_ref().map(|e| e.unparse()).unwrap_or_default();
 
-                format!("{space}{foul}{batter} struck out {strike}.{steals}{cheer}{aurora_photos}{ejection}")
+                // I do have proof that cheer is before ejection at least on this event
+                // (game 6887e4f9f142e23550fc1134 event 265)
+                format!("{space}{foul}{batter} struck out {strike}.{steals}{aurora_photos}{cheer}{ejection}")
             }
             Self::BatterToBase { batter, distance, fair_ball_type, fielder, scores, advances, ejection } => {
                 let scores_and_advances = unparse_scores_and_advances(scores, advances);
@@ -365,17 +371,23 @@ impl<S: Display> ParsedEventMessage<S> {
                     }
                 }
             }
-            Self::DoublePlayGrounded { batter, fielders, out_one, out_two, scores, advances, sacrifice } => {
+            Self::DoublePlayGrounded { batter, fielders, out_one, out_two, scores, advances, sacrifice, ejection } => {
                 let fielders = unparse_fielders_for_play(fielders);
                 let scores_and_advances = unparse_scores_and_advances(scores, advances);
                 let sacrifice = if *sacrifice {"sacrifice "} else {""};
-                format!("{batter} grounded into a {sacrifice}double play{fielders}. {out_one} {out_two}{scores_and_advances}")
+
+                let ejection = if let Some(ej) = ejection { ej.unparse() } else { String::new() };
+
+                format!("{batter} grounded into a {sacrifice}double play{fielders}. {out_one} {out_two}{scores_and_advances}{ejection}")
             }
-            Self::DoublePlayCaught { batter, fair_ball_type, fielders, out_two, scores, advances } => {
+            Self::DoublePlayCaught { batter, fair_ball_type, fielders, out_two, scores, advances, ejection } => {
                 let fair_ball_type = fair_ball_type.verb_name();
                 let fielders = unparse_fielders_for_play(fielders);
                 let scores_and_advances = unparse_scores_and_advances(scores, advances);
-                format!("{batter} {fair_ball_type} into a double play{fielders}. {out_two}{scores_and_advances}")
+
+                let ejection = if let Some(ej) = ejection { ej.unparse() } else { String::new() };
+
+                format!("{batter} {fair_ball_type} into a double play{fielders}. {out_two}{scores_and_advances}{ejection}")
             }
             Self::ReachOnFieldingError { batter, fielder, error, scores, advances, ejection } => {
                 let scores_and_advances = unparse_scores_and_advances(scores, advances);
@@ -978,6 +990,10 @@ pub enum EjectionReason {
     UsingAForeignSubstance,
     #[strum(to_string = "eating nachos")]
     EatingNachos,
+    #[strum(to_string = "chewing gum too loud")]
+    ChewingGumTooLoud,
+    #[strum(to_string = "texting during play")]
+    TextingDuringPlay,
 
     // Uniform violations
     #[strum(to_string = "hat worn at improper rotational value")]
@@ -1074,6 +1090,15 @@ impl<S: Display> SnappedPhotos<S> {
     }
 }
 
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, EnumDiscriminants)]
+pub enum EjectionReplacement<S> {
+    BenchPlayer {
+        player_name: S
+    },
+    RosterPlayer {
+        player: PlacedPlayer<S>,
+    },
+}
 
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
 pub struct Ejection<S> {
@@ -1081,18 +1106,29 @@ pub struct Ejection<S> {
     pub ejected_player: PlacedPlayer<S>,
     pub violation_type: ViolationType,
     pub reason: EjectionReason,
-    pub replacement_player_name: S,
+    pub replacement: EjectionReplacement<S>,
 }
 
 impl<S: Display> Ejection<S> {
     pub fn unparse(&self) -> String {
-        format!(
-            " 🤖 ROBO-UMP ejected {} {} for a {} Violation ({}). Bench Player {} takes their place.",
-            self.team,
-            self.ejected_player,
-            self.violation_type,
-            self.reason,
-            self.replacement_player_name,
-        )
+        match &self.replacement {
+            EjectionReplacement::BenchPlayer { player_name } => format!(
+                " 🤖 ROBO-UMP ejected {} {} for a {} Violation ({}). Bench Player {} takes their place.",
+                self.team,
+                self.ejected_player,
+                self.violation_type,
+                self.reason,
+                player_name,
+            ),
+            EjectionReplacement::RosterPlayer { player } => format!(
+                " 🤖 ROBO-UMP ejected {} {} for a {} Violation ({}). {} {} takes the mound.",
+                self.team,
+                self.ejected_player,
+                self.violation_type,
+                self.reason,
+                self.team.emoji,
+                player,
+            ),
+        }
     }
 }
