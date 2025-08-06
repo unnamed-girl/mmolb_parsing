@@ -505,16 +505,24 @@ pub(super) fn ejection<'parse, 'output: 'parse>(parsing_context: &'parse Parsing
 
         let (input, violation_type) = parse_terminated(" Violation (").map(ViolationType::new).parse(input)?;
 
-        let (input, reason) = parse_terminated("). Bench Player ").map(EjectionReason::new).parse(input)?;
-
-        let (input, replacement_player_name) = parse_terminated(" takes their place.").parse(input)?;
+        // TODO: this is not time based, this is position-based
+        let (input, (reason, replacement_player_place, replacement_player_name)) = if parsing_context.before(Breakpoints::Season4EjectionChange) {
+            let (input, reason) = parse_terminated("). Bench Player ").map(EjectionReason::new).parse(input)?;
+            let (input, replacement_player_name) = parse_terminated(" takes their place.").and_then(name_eof).parse(input)?;
+            (input, (reason, None, replacement_player_name))
+        } else {
+            let (input, reason) = parse_terminated(&format!("). {} ", team.emoji)).map(EjectionReason::new).parse(input)?;
+            let (input, replacement_player) = parse_terminated(" takes the mound.").and_then(placed_player_eof).parse(input)?;
+            (input, (reason, Some(replacement_player.place), replacement_player.name))
+        };
 
         Ok((input, Ejection {
             team,
             ejected_player,
             violation_type,
             reason,
-            replacement_player_name,
+            replacement_player_place,
+            replacement_player_name
         }))
     }
 }

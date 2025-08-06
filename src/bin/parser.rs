@@ -188,7 +188,7 @@ async fn ingest_game(response: EntityResponse<Box<serde_json::value::RawValue>>,
     let mut output = args.output_folder.as_ref().map(|folder| File::create(format!("{folder}/{}.ron", response.entity_id)).unwrap());
 
     for event in &game.event_log {
-        let _event_span_guard = tracing::span!(Level::INFO, "Event", index = event.index, r#type = format!("{:?}", event.event), message = event.message).entered();
+        let _event_span_guard = tracing::span!(Level::INFO, "Event", index = event.index, r#type = format!("{:?}", event.event)).entered();
 
         let parsed_event_message = process_event(event, &game, &response.entity_id);
         if tracing::enabled!(Level::ERROR) {
@@ -236,7 +236,7 @@ async fn ingest_team(response: EntityResponse<Box<serde_json::value::RawValue>>,
     }
 
     for event in team.feed.unwrap_or_default() {
-        let _event_span_guard = tracing::span!(Level::INFO, "Feed Event", season = event.season, day = format!("{:?}", event.day), timestamp = event.timestamp.to_string(), r#type = format!("{:?}", event.event_type), message = format!("{:?}", event.text)).entered();
+        let _event_span_guard = tracing::span!(Level::INFO, "Feed Event", season = event.season, day = format!("{:?}", event.day), timestamp = event.timestamp.to_string(), r#type = format!("{:?}", event.event_type)).entered();
 
         let parsed_text = parse_feed_event(&event);
         if tracing::enabled!(Level::ERROR) {
@@ -280,7 +280,7 @@ async fn ingest_player(response: EntityResponse<Box<serde_json::value::RawValue>
 
 
     for event in player.feed.unwrap_or_default() {
-        let _event_span_guard = tracing::span!(Level::INFO, "Feed Event", season = event.season, day = format!("{:?}", event.day), timestamp = event.timestamp.to_string(), r#type = format!("{:?}", event.event_type), message = event.text).entered();
+        let _event_span_guard = tracing::span!(Level::INFO, "Feed Event", season = event.season, day = format!("{:?}", event.day), timestamp = event.timestamp.to_string(), r#type = format!("{:?}", event.event_type)).entered();
 
         let parsed_text = parse_feed_event(&event);
         if tracing::enabled!(Level::ERROR) {

@@ -272,7 +272,7 @@ impl<S: Display> ParsedEventMessage<S> {
 
                 let cheer = cheer.as_ref().map(|c| c.unparse(game, event_index)).unwrap_or_default();
                 let aurora_photos = aurora_photos.as_ref().map(|p| p.unparse()).unwrap_or_default();
-                let ejection = ejection.as_ref().map(|e| e.unparse()).unwrap_or_default();
+                let ejection = ejection.as_ref().map(|e| e.unparse(game, event_index)).unwrap_or_default();
 
                 format!("{space}Ball 4. {batter} walks.{scores_and_advances}{cheer}{aurora_photos}{ejection}")
             }
@@ -281,7 +281,7 @@ impl<S: Display> ParsedEventMessage<S> {
                 let space = old_space(game, event_index);
 
                 let cheer = cheer.as_ref().map(|c| c.unparse(game, event_index)).unwrap_or_default();
-                let ejection = ejection.as_ref().map(|e| e.unparse()).unwrap_or_default();
+                let ejection = ejection.as_ref().map(|e| e.unparse(game, event_index)).unwrap_or_default();
 
                 format!("{space}{batter} was hit by the pitch and advances to first base.{scores_and_advances}{cheer}{ejection}")
             }
@@ -290,7 +290,7 @@ impl<S: Display> ParsedEventMessage<S> {
 
                 let cheer = cheer.as_ref().map(|c| c.unparse(game, event_index)).unwrap_or_default();
                 let aurora_photos = aurora_photos.as_ref().map(|p| p.unparse()).unwrap_or_default();
-                let ejection = ejection.as_ref().map(|e| e.unparse()).unwrap_or_default();
+                let ejection = ejection.as_ref().map(|e| e.unparse(game, event_index)).unwrap_or_default();
 
                 format!("{space}{batter} hits a {fair_ball_type} to {destination}.{aurora_photos}{cheer}{ejection}")
             }
@@ -305,20 +305,20 @@ impl<S: Display> ParsedEventMessage<S> {
 
                 let cheer = cheer.as_ref().map(|c| c.unparse(game, event_index)).unwrap_or_default();
                 let aurora_photos = aurora_photos.as_ref().map(|p| p.unparse()).unwrap_or_default();
-                let ejection = ejection.as_ref().map(|e| e.unparse()).unwrap_or_default();
+                let ejection = ejection.as_ref().map(|e| e.unparse(game, event_index)).unwrap_or_default();
 
                 format!("{space}{foul}{batter} struck out {strike}.{steals}{cheer}{aurora_photos}{ejection}")
             }
             Self::BatterToBase { batter, distance, fair_ball_type, fielder, scores, advances, ejection } => {
                 let scores_and_advances = unparse_scores_and_advances(scores, advances);
-                let ejection = ejection.as_ref().map(|e| e.unparse()).unwrap_or_default();
+                let ejection = ejection.as_ref().map(|e| e.unparse(game, event_index)).unwrap_or_default();
                 format!("{batter} {distance} on a {fair_ball_type} to {fielder}.{scores_and_advances}{ejection}")
             }
             Self::HomeRun { batter, fair_ball_type, destination, scores, grand_slam, ejection } => {
                 let scores = once(String::new()).chain(scores.into_iter().map(|runner| format!("<strong>{runner} scores!</strong>")))
                     .collect::<Vec<String>>()
                     .join(" ");
-                let ejection = ejection.as_ref().map(|e| e.unparse()).unwrap_or_default();
+                let ejection = ejection.as_ref().map(|e| e.unparse(game, event_index)).unwrap_or_default();
 
                 if !grand_slam {
                     format!("<strong>{batter} homers on a {fair_ball_type} to {destination}!</strong>{scores}{ejection}")
@@ -331,7 +331,7 @@ impl<S: Display> ParsedEventMessage<S> {
                 let scores_and_advances = unparse_scores_and_advances(scores, advances);
                 let sacrifice = if *sacrifice {"on a sacrifice fly "} else {""};
                 let perfect = if *perfect {" <strong>Perfect catch!</strong>"} else {""};
-                let ejection = if let Some(ej) = ejection { ej.unparse() } else { String::new() };
+                let ejection = if let Some(ej) = ejection { ej.unparse(game, event_index) } else { String::new() };
 
                 format!("{batter} {fair_ball_type} out {sacrifice}to {catcher}.{perfect}{scores_and_advances}{ejection}")
             }
@@ -339,19 +339,19 @@ impl<S: Display> ParsedEventMessage<S> {
                 let scores_and_advances = unparse_scores_and_advances(scores, advances);
                 let fielders = unparse_fielders(fielders);
                 let perfect = if *perfect {" <strong>Perfect catch!</strong>"} else {""};
-                let ejection = if let Some(ej) = ejection { ej.unparse() } else { String::new() };
+                let ejection = if let Some(ej) = ejection { ej.unparse(game, event_index) } else { String::new() };
                 format!("{batter} grounds out{fielders}.{scores_and_advances}{perfect}{ejection}")
             }
             Self::ForceOut { batter, fielders, fair_ball_type, out, scores, advances, ejection } => {
                 let scores_and_advances = unparse_scores_and_advances(scores, advances);
                 let fielders = unparse_fielders_for_play(fielders);
                 let fair_ball_type = fair_ball_type.verb_name();
-                let ejection = if let Some(ej) = ejection { ej.unparse() } else { String::new() };
+                let ejection = if let Some(ej) = ejection { ej.unparse(game, event_index) } else { String::new() };
                 format!("{batter} {fair_ball_type} into a force out{fielders}. {out}{scores_and_advances}{ejection}")
             }
             Self::ReachOnFieldersChoice { batter, fielders, result, scores, advances, ejection } => {
                 let scores_and_advances = unparse_scores_and_advances(scores, advances);
-                let ejection = if let Some(ej) = ejection { ej.unparse() } else { String::new() };
+                let ejection = if let Some(ej) = ejection { ej.unparse(game, event_index) } else { String::new() };
                 match result {
                     FieldingAttempt::Out {out} => {
                         let fielders = unparse_fielders_for_play(fielders);
@@ -380,7 +380,7 @@ impl<S: Display> ParsedEventMessage<S> {
             Self::ReachOnFieldingError { batter, fielder, error, scores, advances, ejection } => {
                 let scores_and_advances = unparse_scores_and_advances(scores, advances);
                 let error = error.lowercase();
-                let ejection = if let Some(e) = ejection { e.unparse() } else { String::new() };
+                let ejection = if let Some(e) = ejection { e.unparse(game, event_index) } else { String::new() };
                 format!("{batter} reaches on a {error} error by {fielder}.{scores_and_advances}{ejection}")
             }
             Self::WeatherDelivery {delivery } => {
@@ -1081,13 +1081,22 @@ pub struct Ejection<S> {
     pub ejected_player: PlacedPlayer<S>,
     pub violation_type: ViolationType,
     pub reason: EjectionReason,
+    pub replacement_player_place: Option<Place>,
     pub replacement_player_name: S,
 }
 
 impl<S: Display> Ejection<S> {
-    pub fn unparse(&self) -> String {
+    pub fn unparse(&self, game: &Game, event_index: Option<u16>) -> String {
+        let replacement_message = if Breakpoints::Season4EjectionChange.before(game.season, game.day.as_ref().ok().copied(), event_index) {
+            "takes their place"
+        } else {
+            "takes the mound"
+        };
+
+        let replacement_intro = self.replacement_player_place.map(|p| format!("{} {p}", self.team.emoji)).unwrap_or_else(|| "Bench Player".to_string());
+
         format!(
-            " 🤖 ROBO-UMP ejected {} {} for a {} Violation ({}). Bench Player {} takes their place.",
+            " 🤖 ROBO-UMP ejected {} {} for a {} Violation ({}). {replacement_intro} {} {replacement_message}.",
             self.team,
             self.ejected_player,
             self.violation_type,
