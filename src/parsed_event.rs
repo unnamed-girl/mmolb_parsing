@@ -537,6 +537,15 @@ impl<S: Display> Display for PlacedPlayer<S> {
     }
 }
 
+impl<S: AsRef<str>> PlacedPlayer<S> {
+    fn as_ref(&self) -> PlacedPlayer<&str> {
+        PlacedPlayer {
+            name: self.name.as_ref(),
+            place: self.place,
+        }
+    }
+}
+
 #[derive(Debug, Clone, Copy, Serialize, Deserialize, PartialEq)]
 pub struct RunnerOut<S> {
     pub runner: S,
@@ -1087,6 +1096,17 @@ impl<S: Display> SnappedPhotos<S> {
             " The Geomagnetic Storms Intensify! {} {} and {} {} snapped photos of the aurora.",
             self.first_team_emoji, self.first_player, self.second_team_emoji, self.second_player,
         )
+    }
+}
+
+impl<S: AsRef<str>> SnappedPhotos<S> {
+    pub fn as_ref(&self) -> SnappedPhotos<&str> {
+        SnappedPhotos {
+            first_team_emoji: self.first_team_emoji.as_ref(),
+            first_player: self.first_player.as_ref(),
+            second_team_emoji: self.second_team_emoji.as_ref(),
+            second_player: self.second_player.as_ref(),
+        }
     }
 }
 
