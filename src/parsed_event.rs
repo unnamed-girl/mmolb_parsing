@@ -1188,5 +1188,3 @@ impl<S: AsRef<str>> Ejection<S> {
         }
     }
 }
-
-pub struct TestStruct; // Testing something in RustRover, this will be deleted next commit
