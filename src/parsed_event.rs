@@ -1188,3 +1188,39 @@ impl<S: AsRef<str>> Ejection<S> {
         }
     }
 }
+
+#[cfg(test)]
+mod test {
+    use std::fs::File;
+
+    use serde::Deserialize;
+
+    use crate::{process_game, utils::no_tracing_errs, Game};
+
+    //https://freecashe.ws/api/chron/v0/entities?kind=game&id=6851bb34f419fdc04f9d0ed5,685b744530d8d1ac659c30de,68611cb61e65f5fb52cb618f,68611cb61e65f5fb52cb61d6,68799d0621c82ae41451ca4f,68782f7d206bc4d2a2003b05,6879f14e21c82ae41451e785,6893c2899361d52a6890a9f0
+    #[test]
+    fn first_baseman_chooses_a_ghost() -> Result<(), Box<dyn std::error::Error>> {
+        #[derive(Deserialize)]
+        pub struct FreeCashewResponse {
+            pub items: Vec<GameEntity>,
+        }
+
+        #[derive(Deserialize)]
+        pub struct GameEntity {
+            pub data: Game,
+            pub entity_id: String
+        }
+
+        let no_tracing_errors = no_tracing_errs();
+
+        let f = File::open("test_data/fbcag.json")?;
+        let response: FreeCashewResponse = serde_json::from_reader(f)?;
+
+        for entity in response.items {
+            process_game(&entity.data, &entity.entity_id);
+        }
+
+        drop(no_tracing_errors);
+        Ok(())
+    }
+}

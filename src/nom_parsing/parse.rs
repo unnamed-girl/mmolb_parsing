@@ -9,15 +9,7 @@ use crate::{enums::{EventType, GameOverMessage, HomeAway, MoundVisitType, NowBat
 
 use super::{shared::{all_consuming_sentence_and, base_steal_sentence, bold, destination, emoji_team_eof, exclamation, fair_ball_type_verb_name, fielders_eof, fly_ball_type_verb_name, name_eof, now_batting_stats, ordinal_suffix, out, parse_and, parse_terminated, placed_player_eof, score_update, scores_and_advances, scores_sentence, sentence, sentence_eof}, ParsingContext};
 
-const OVERRIDES: phf::Map<&'static str, phf::Map<u16, ParsedEventMessage<&'static str>>> = phf_map!(
-    "6851bb34f419fdc04f9d0ed5" => phf_map!(196u16 => ParsedEventMessage::KnownBug { bug: KnownBug::FirstBasemanChoosesAGhost { batter: "Genevieve Hirose", first_baseman: "N. Kitagawa" } }),
-    "685b744530d8d1ac659c30de" => phf_map!(265u16 => ParsedEventMessage::KnownBug { bug: KnownBug::FirstBasemanChoosesAGhost { batter: "Cameron Villalobos", first_baseman: "R. Marin" } }),
-    "68611cb61e65f5fb52cb618f" => phf_map!(316u16 => ParsedEventMessage::KnownBug { bug: KnownBug::FirstBasemanChoosesAGhost { batter: "Liliana Marte", first_baseman: "Razzmatazz Koufax" } }),
-    "68611cb61e65f5fb52cb61d6" => phf_map!(30u16 => ParsedEventMessage::KnownBug { bug: KnownBug::FirstBasemanChoosesAGhost { batter: "Zoom Savić", first_baseman: "Ana Carolina Finch" } }),
-    "68799d0621c82ae41451ca4f" => phf_map!(65u16 => ParsedEventMessage::KnownBug { bug: KnownBug::FirstBasemanChoosesAGhost { batter: "Stacy de Groot", first_baseman: "Lucky Moroz" } }),
-    "68782f7d206bc4d2a2003b05" => phf_map!(18u16 => ParsedEventMessage::KnownBug { bug: KnownBug::FirstBasemanChoosesAGhost { batter: "Finn Bondar", first_baseman: "Walter Fitzgerald" } }),
-    "6879f14e21c82ae41451e785" => phf_map!(202u16 => ParsedEventMessage::KnownBug { bug: KnownBug::FirstBasemanChoosesAGhost { batter: "Bert Delić", first_baseman: "Asuka Loveless" } }),
-);
+const OVERRIDES: phf::Map<&'static str, phf::Map<u16, ParsedEventMessage<&'static str>>> = phf_map!();
 
 pub fn parse_event<'parse, 'output: 'parse>(event: &'output Event, parsing_context: &ParsingContext<'parse>) -> ParsedEventMessage<&'output str> {
     if let Some(game_overrides) = OVERRIDES.get(parsing_context.game_id) {
@@ -353,6 +345,10 @@ fn field<'parse, 'output: 'parse>(parsing_context: &'parse ParsingContext<'parse
         ParsedEventMessage::DoublePlayCaught { batter, fair_ball_type, fielders, out_two, scores, advances, ejection }
     );
 
+    let first_baseman_chooses_a_ghost = parse_terminated(" reaches on a fielder's choice out, 1B ").and_then(name_eof)
+    .and(name_eof)
+    .map(|(batter, first_baseman)| ParsedEventMessage::KnownBug { bug: KnownBug::FirstBasemanChoosesAGhost { batter, first_baseman } });
+
     let fielding_outcomes = alt((
         batter_to_base,
         homers,
@@ -365,6 +361,7 @@ fn field<'parse, 'output: 'parse>(parsing_context: &'parse ParsingContext<'parse
         reaches_on_error,
         double_play_grounded,
         double_play_caught,
+        first_baseman_chooses_a_ghost,
         fail()
     ));
 
