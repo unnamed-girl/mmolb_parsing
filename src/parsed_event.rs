@@ -526,6 +526,15 @@ impl<S: Display> Display for EmojiTeam<S> {
     }
 }
 
+impl<S: AsRef<str>> EmojiTeam<S> {
+    fn as_ref(&self) -> EmojiTeam<&str> {
+        EmojiTeam {
+            emoji: self.emoji.as_ref(),
+            name: self.name.as_ref(),
+        }
+    }
+}
+
 #[derive(Debug, Clone, Copy, Serialize, Deserialize, PartialEq)]
 pub struct PlacedPlayer<S> {
     pub name: S,
@@ -1120,6 +1129,19 @@ pub enum EjectionReplacement<S> {
     },
 }
 
+impl<S: AsRef<str>> EjectionReplacement<S> {
+    pub fn as_ref(&self) -> EjectionReplacement<&str> {
+        match self {
+            EjectionReplacement::BenchPlayer { player_name } => {
+                EjectionReplacement::BenchPlayer { player_name: player_name.as_ref() }
+            }
+            EjectionReplacement::RosterPlayer { player } => {
+                EjectionReplacement::RosterPlayer { player: player.as_ref() }
+            }
+        }
+    }
+}
+
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
 pub struct Ejection<S> {
     pub team: EmojiTeam<S>,
@@ -1152,3 +1174,19 @@ impl<S: Display> Ejection<S> {
         }
     }
 }
+
+impl<S: AsRef<str>> Ejection<S> {
+    // This does clone violation_type and reason, which may (rarely) hold strings.
+    // Perhaps it should be named something other than as_ref?
+    pub fn as_ref(&self) -> Ejection<&str> {
+        Ejection {
+            team: self.team.as_ref(),
+            ejected_player: self.ejected_player.as_ref(),
+            violation_type: self.violation_type.clone(),
+            reason: self.reason.clone(),
+            replacement: self.replacement.as_ref(),
+        }
+    }
+}
+
+pub struct TestStruct; // Testing something in RustRover, this will be deleted next commit
