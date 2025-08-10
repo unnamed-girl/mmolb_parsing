@@ -605,7 +605,8 @@ pub enum Distance {
 }
 
 /// Possible followup to "Now batting: [BATTER]". (e.g. "(1st PA of game)")
-#[derive(Clone, Debug, Serialize, Deserialize, PartialEq, Eq, Hash, EnumIter)]
+#[derive(Clone, Debug, Serialize, Deserialize, PartialEq, Eq, Hash, EnumIter, EnumDiscriminants)]
+#[strum_discriminants(derive(Display))]
 pub enum NowBattingStats {
     FirstPA,
     Stats(Vec<BatterStat>),

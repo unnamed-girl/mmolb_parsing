@@ -1,14 +1,13 @@
-use std::{fs::File, io::Write, pin::pin};
-
+use std::{collections::HashSet, fs::File, io::{Read, Write}, path::Path, pin::pin};
 use clap::{Parser, ValueEnum};
 use futures::{Stream, StreamExt};
-use mmolb_parsing::{enums::FeedEventSource, feed_event::parse_feed_event, player::Player, process_event, team::Team, Game};
+use mmolb_parsing::{enums::{FeedEventSource, FoulType}, feed_event::parse_feed_event, player::Player, process_event, team::Team, Game, ParsedEventMessage};
 use serde::{Deserialize, Serialize, de::IntoDeserializer};
 
 use reqwest::Client;
 use tracing::{error, info, Level};
 use tracing_subscriber::fmt::writer::MakeWriterExt;
-
+use strum::{IntoDiscriminant};
 
 #[derive(Serialize, Deserialize)]
 pub struct FreeCashewResponse<T> {
@@ -64,6 +63,13 @@ struct Args {
     #[clap(long, default_value = "game")]
     kind: Kind,
 
+    /// Gather distinct versions of each parsed event, and save the list to the given file. Also loads
+    /// the current list from that file. 
+    ///
+    /// Exclusive to games right now.
+    #[clap(long)]
+    export_event_variants: Option<String>,
+
     #[clap(long)]
     output_folder: Option<String>,
 }
@@ -114,10 +120,22 @@ async fn main() {
 
     let args = Args::parse();
 
-    let func = async |response, progress_report| match args.kind {
-        Kind::Game => ingest_game(response, progress_report, &args).await,
-        Kind::Team => ingest_team(response, &args).await,
-        Kind::Player => ingest_player(response, &args).await
+    let mut event_variants = args.export_event_variants.as_ref().map(|f| {
+        let set = if Path::new(f).exists() {
+            let mut text = String::new();
+            let mut file = File::open(f).unwrap();
+            file.read_to_string(&mut text).unwrap();
+            text.lines().map(|s| s.split("###").next().unwrap()).map(str::to_string).collect()
+        } else {
+            HashSet::new()
+        };
+        (set, f.clone())
+    });
+    
+    let mut func = |response, progress_report| match args.kind {
+        Kind::Game => ingest_game(response, progress_report, &args, event_variants.as_mut()),
+        Kind::Team => ingest_team(response, &args),
+        Kind::Player => ingest_player(response, &args)
     };
 
     if let Some(id) = &args.id {
@@ -131,7 +149,7 @@ async fn main() {
         let url = format!("https://freecashe.ws/api/chron/v0/entities?kind={kind}&id={id}");
         let entities = client.get(&url).send().await.unwrap().json::<FreeCashewResponse<EntityResponse<Box<serde_json::value::RawValue>>>>().await.unwrap().items;
         for game in entities.into_iter() {
-            func(game, true).await;
+            func(game, true);
         }
         return;
     }
@@ -144,18 +162,18 @@ async fn main() {
     let client = Client::new();
 
 
-    let fetch = pin!(cashews_fetch_json(&client, args.kind, extra, args.start_page.clone()));
-    fetch.flat_map(|games| {
+    let mut fetch = pin!(cashews_fetch_json(&client, args.kind, extra, args.start_page.clone()));
+
+    while let Some(games) = fetch.next().await {
         let last = games.len().max(1) - 1;
-        futures::stream::iter(games.into_iter().enumerate().map(move |(i, o)| (i == last, o)))
-    })
-    .then(|(progress_report, game_json)| func(game_json, progress_report))
-    .collect::<Vec<_>>()
-    .await;
+        for (i, game) in games.into_iter().enumerate() {
+            func(game, i == last)
+        }
+    }
     drop(guard);
 }
 
-async fn ingest_game(response: EntityResponse<Box<serde_json::value::RawValue>>, progress_report: bool, args: &Args) {
+fn ingest_game(response: EntityResponse<Box<serde_json::value::RawValue>>, progress_report: bool, args: &Args, event_variants: Option<&mut (HashSet<String>, String)>) {
     let _ingest_guard = tracing::span!(Level::INFO, "Entity Ingest", entity_id = response.entity_id).entered();
 
     let game: Game = Game::deserialize(response.data.as_ref().into_deserializer()).map_err(|e| format!("Failed to deserialize {}, {e:?}", response.entity_id)).expect(&response.entity_id);
@@ -173,6 +191,10 @@ async fn ingest_game(response: EntityResponse<Box<serde_json::value::RawValue>>,
     }
 
     let mut output = args.output_folder.as_ref().map(|folder| File::create(format!("{folder}/{}.ron", response.entity_id)).unwrap());
+    let mut event_variants = event_variants.map(|(set, f)| {
+            let f = File::options().append(true).open(f).unwrap();
+            (set, f)
+    });
 
     for event in &game.event_log {
         let _event_span_guard = tracing::span!(Level::INFO, "Event", index = event.index, r#type = format!("{:?}", event.event), message = event.message).entered();
@@ -187,6 +209,14 @@ async fn ingest_game(response: EntityResponse<Box<serde_json::value::RawValue>>,
 
         if args.verbose {
             info!("{:?} ({})", parsed_event_message, event.message);
+        }
+
+        if let Some((ref mut event_variants, ref mut f)) = event_variants {
+            let checked = check(&parsed_event_message);
+            if !event_variants.contains(&checked) {
+                writeln!(f, "{checked}###{}?event={}", response.entity_id, event.index.map(|n| n as i32).unwrap_or(-1)).unwrap();
+                event_variants.insert(checked);
+            }
         }
 
         if let Some(f) = &mut output {
@@ -204,7 +234,7 @@ async fn ingest_game(response: EntityResponse<Box<serde_json::value::RawValue>>,
     drop(_span_guard);
 }
 
-async fn ingest_team(response: EntityResponse<Box<serde_json::value::RawValue>>, args: &Args) {
+fn ingest_team(response: EntityResponse<Box<serde_json::value::RawValue>>, args: &Args) {
     let _ingest_guard = tracing::span!(Level::INFO, "Entity Ingest", entity_id = response.entity_id).entered();
     let team = Team::deserialize(response.data.as_ref().into_deserializer()).map_err(|e| format!("Failed to deserialize {}, {e:?}", response.entity_id)).expect(&response.entity_id);
 
@@ -246,7 +276,7 @@ async fn ingest_team(response: EntityResponse<Box<serde_json::value::RawValue>>,
     drop(_team_span_guard);
 }
 
-async fn ingest_player(response: EntityResponse<Box<serde_json::value::RawValue>>, args: &Args) {
+fn ingest_player(response: EntityResponse<Box<serde_json::value::RawValue>>, args: &Args) {
     let _ingest_guard = tracing::span!(Level::INFO, "Entity Ingest", entity_id = response.entity_id).entered();
 
     let player = Player::deserialize(response.data.as_ref().into_deserializer()).map_err(|e| format!("Failed to deserialize {}, {e:?}", response.entity_id)).expect(&response.entity_id);
@@ -288,4 +318,102 @@ async fn ingest_player(response: EntityResponse<Box<serde_json::value::RawValue>
         drop(_event_span_guard);
     }
     drop(_player_span_guard);
+}
+
+fn check<S>(event: &ParsedEventMessage<S>) -> String {
+    let discriminant_name = event.discriminant().to_string();
+    let unique = match event {
+        ParsedEventMessage::ParseError { error: _, message: _ } => "".to_string(),
+        ParsedEventMessage::KnownBug { bug } => {
+            format!("Bug: {}", bug.discriminant())
+        },
+        ParsedEventMessage::LiveNow { away_team: _, home_team: _, stadium } => {
+            format!("Stadium: {}", stadium.is_some())
+        },
+        ParsedEventMessage::PitchingMatchup { away_team: _, home_team: _, home_pitcher: _, away_pitcher: _ } => "".to_string(),
+        ParsedEventMessage::Lineup { side, players } => {
+            format!("Side: {side}, player_count: {}", players.len())
+        },
+        ParsedEventMessage::PlayBall => "".to_string(),
+        ParsedEventMessage::GameOver { message } => format!("Message: {message}"),
+        ParsedEventMessage::Recordkeeping { winning_team: _, losing_team: _, winning_score: _, losing_score: _ } => "".to_string(),
+        ParsedEventMessage::InningStart { number, side, batting_team: _, automatic_runner, pitcher_status } => {
+            format!("number: {number}, side: {side}, automatic_runner: {}, pitcher_status: {}", automatic_runner.is_some(), pitcher_status.discriminant())
+        },
+        ParsedEventMessage::NowBatting { batter: _, stats } => {
+            format!("stats: {}", stats.discriminant())
+        },
+        ParsedEventMessage::InningEnd { number, side } => {
+            format!("number: {number}, side: {side}")
+        },
+        ParsedEventMessage::MoundVisit { team: _, mound_visit_type } => {
+            format!("type: {}", mound_visit_type)
+        },
+        ParsedEventMessage::PitcherRemains { remaining_pitcher: _ } => "".to_string(),
+        ParsedEventMessage::PitcherSwap { leaving_pitcher_emoji, leaving_pitcher: _, arriving_pitcher_emoji, arriving_pitcher_place, arriving_pitcher_name: _ } => {
+            format!("leaving_pitcher_emoji: {}, arriving_pitcher_emoji: {}, arriving_pitcher_place: {}", leaving_pitcher_emoji.is_some(), arriving_pitcher_emoji.is_some(), arriving_pitcher_place.is_some())  
+        },
+        ParsedEventMessage::Ball { steals, count: _, cheer, aurora_photos, ejection } => {
+            format!("steals: {}, cheer: {}, aurora_photos: {}, ejection: {}", steals.len(), cheer.is_some(), aurora_photos.is_some(), ejection.is_some())
+        },
+        ParsedEventMessage::Strike { strike, steals, count: _, cheer, aurora_photos, ejection } => {
+            format!("strike: {strike}, steals: {}, cheer: {}, aurora_photos: {}, ejection: {}", steals.len(), cheer.is_some(), aurora_photos.is_some(), ejection.is_some())
+        },
+        ParsedEventMessage::Foul { foul, steals, count: _, cheer, aurora_photos } => {
+            format!("foul: {foul}, steals: {}, cheer: {}, aurora_photos: {}", steals.len(), cheer.is_some(), aurora_photos.is_some())
+        },
+        ParsedEventMessage::Walk { batter: _, scores, advances: _, cheer, aurora_photos, ejection } => {
+            format!("scores: {}, cheer: {}, aurora_photos: {}, ejection: {}", scores.len(), cheer.is_some(), aurora_photos.is_some(), ejection.is_some())
+        },
+        ParsedEventMessage::HitByPitch { batter: _, scores, advances: _, cheer, aurora_photos, ejection } => {
+            format!("scores: {}, cheer: {}, aurora_photos: {}, ejection: {}", scores.len(), cheer.is_some(), aurora_photos.is_some(), ejection.is_some())
+        },
+        ParsedEventMessage::FairBall { batter: _, fair_ball_type, destination, cheer, aurora_photos } => {
+            format!("fair_ball_type: {fair_ball_type}, destination: {destination}, cheer: {}, aurora_photos: {}", cheer.is_some(), aurora_photos.is_some())
+        },
+        ParsedEventMessage::StrikeOut { foul, batter: _, strike, steals, cheer, aurora_photos, ejection } => {
+            format!("foul: {}, strike: {strike}, steals: {}, cheer: {}, aurora_photos: {}, ejection: {}", foul.as_ref().map(FoulType::to_string).unwrap_or_else(|| "False".to_string()), steals.len(), cheer.is_some(), aurora_photos.is_some(), ejection.is_some())
+        },
+        ParsedEventMessage::BatterToBase { batter: _, distance, fair_ball_type, fielder: _, scores, advances, ejection } => {
+            format!("distance: {distance}, fair_ball_type: {fair_ball_type}, scores: {}, advances: {}, ejection: {}", scores.len(), advances.len(), ejection.is_some())
+        },
+        ParsedEventMessage::HomeRun { batter: _, fair_ball_type, destination, scores, grand_slam, ejection } => {
+            format!("fair_ball_type: {fair_ball_type}, destination: {destination}, grand_slam: {grand_slam}, scores: {}, ejection: {}", scores.len(), ejection.is_some())
+        },
+        ParsedEventMessage::CaughtOut { batter: _, fair_ball_type, caught_by: _, scores, advances, sacrifice, perfect, ejection } => {
+            format!("fair_ball_type: {fair_ball_type}, sacrifice: {sacrifice}, perfect: {perfect}, scores: {}, advances: {}, ejection: {}", scores.len(), advances.len(), ejection.is_some())
+        },
+        ParsedEventMessage::GroundedOut { batter: _, fielders, scores, advances, perfect, ejection } => {
+            format!("fielders: {}, perfect: {perfect}, scores: {}, advances: {}, ejection: {}", fielders.len(), scores.len(), advances.len(), ejection.is_some())
+        },
+        ParsedEventMessage::ForceOut { batter: _, fielders, fair_ball_type: _, out: _, scores, advances, ejection } => {
+            format!("fielders: {}, scores: {}, advances: {}, ejection: {}", fielders.len(), scores.len(), advances.len(), ejection.is_some())
+        },
+        ParsedEventMessage::ReachOnFieldersChoice { batter: _, fielders, result, scores, advances, ejection } => {
+            format!("fielders: {}, result: {}, scores: {}, advances: {}, ejection: {}", fielders.len(), result.discriminant(), scores.len(), advances.len(), ejection.is_some())
+        },
+        ParsedEventMessage::DoublePlayGrounded { batter: _, fielders, out_one: _, out_two: _, scores, advances, sacrifice, ejection } => {
+            format!("fielders: {}, sacrifice: {sacrifice}, scores: {}, advances: {}, ejection: {}", fielders.len(), scores.len(), advances.len(), ejection.is_some())
+        },
+        ParsedEventMessage::DoublePlayCaught { batter: _, fair_ball_type, fielders, out_two: _, scores, advances, ejection } => {
+            format!("fielders: {}, fair_ball_type: {fair_ball_type}, scores: {}, advances: {}, ejection: {}", fielders.len(), scores.len(), advances.len(), ejection.is_some())
+        },
+        ParsedEventMessage::ReachOnFieldingError { batter: _, fielder: _, error, scores, advances, ejection } => {
+            format!("error: {error}, scores: {}, advances: {}, ejection: {}", scores.len(), advances.len(), ejection.is_some())
+        },
+        ParsedEventMessage::WeatherDelivery { delivery: _ } => "".to_string(),
+        ParsedEventMessage::FallingStar { player_name: _ } => "".to_string(),
+        ParsedEventMessage::FallingStarOutcome { deflection, player_name: _, outcome } => {
+            format!("deflection: {}, outcome: {}", deflection.is_some(), outcome.discriminant())
+        },
+        ParsedEventMessage::WeatherShipment { deliveries } => format!("deliveries: {}", deliveries.len()),
+        ParsedEventMessage::WeatherSpecialDelivery { delivery: _ } => "".to_string(),
+        ParsedEventMessage::Balk { pitcher: _, scores, advances } => {
+            format!("scores: {}, advances: {}", scores.len(), advances.len())
+        },
+        ParsedEventMessage::WeatherProsperity { home_income: _, away_income: _ } => "".to_string(),
+        ParsedEventMessage::PhotoContest { winning_team: _, winning_tokens: _, winning_player: _, winning_score: _, losing_team: _, losing_tokens: _, losing_player: _, losing_score: _ } => "".to_string(),
+    };
+
+    format!("{discriminant_name} ({unique})")
 }

@@ -376,9 +376,8 @@ fn pitch<'parse, 'output: 'parse>(parsing_context: &'parse ParsingContext<'parse
         )),
         opt(preceded(tag(" "), aurora(parsing_context))),
         opt(preceded(tag(" "), cheer(parsing_context))),
-        opt(ejection(parsing_context))
     )
-    .map(|((batter, fair_ball_type, destination), aurora_photos, cheer, ejection)| ParsedEventMessage::FairBall { batter, fair_ball_type, destination, cheer, aurora_photos, ejection });
+    .map(|((batter, fair_ball_type, destination), aurora_photos, cheer)| ParsedEventMessage::FairBall { batter, fair_ball_type, destination, cheer, aurora_photos });
 
     let struck_out = (
         opt(sentence(preceded(tag("Foul "), try_from_word))),

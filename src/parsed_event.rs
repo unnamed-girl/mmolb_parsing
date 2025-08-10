@@ -20,6 +20,7 @@ pub enum GameEventParseError {
 /// S is the string type used. S = &'output str is used by the parser,
 /// but a mutable type is necessary when directly deserializing, because some players have escaped characters in their names
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq, EnumDiscriminants)]
+#[strum_discriminants(derive(Display))]
 #[serde(tag = "event_type")]
 pub enum ParsedEventMessage<S> {
     ParseError {
@@ -100,7 +101,6 @@ pub enum ParsedEventMessage<S> {
         destination: FairBallDestination,
         cheer: Option<Cheer>,
         aurora_photos: Option<SnappedPhotos<S>>,
-        ejection: Option<Ejection<S>>,
     },
     StrikeOut { foul: Option<FoulType>, batter: S, strike: StrikeType, steals: Vec<BaseSteal<S>>, cheer: Option<Cheer>, aurora_photos: Option<SnappedPhotos<S>>, ejection: Option<Ejection<S>> },
 
@@ -289,14 +289,13 @@ impl<S: Display> ParsedEventMessage<S> {
 
                 format!("{space}{batter} was hit by the pitch and advances to first base.{scores_and_advances}{aurora_photos}{cheer}{ejection}")
             }
-            Self::FairBall { batter, fair_ball_type, destination, cheer, aurora_photos, ejection } => {
+            Self::FairBall { batter, fair_ball_type, destination, cheer, aurora_photos } => {
                 let space = old_space(game, event_index);
 
                 let cheer = cheer.as_ref().map(|c| c.unparse(game, event_index)).unwrap_or_default();
                 let aurora_photos = aurora_photos.as_ref().map(|p| p.unparse()).unwrap_or_default();
-                let ejection = ejection.as_ref().map(|e| e.unparse()).unwrap_or_default();
 
-                format!("{space}{batter} hits a {fair_ball_type} to {destination}.{aurora_photos}{ejection}{cheer}")
+                format!("{space}{batter} hits a {fair_ball_type} to {destination}.{aurora_photos}{cheer}")
             }
             Self::StrikeOut { foul, batter, strike, steals, cheer, aurora_photos, ejection } => {
                 let foul = match foul {
@@ -478,7 +477,8 @@ fn unparse_scores_and_advances<S: Display>(scores: &Vec<S>, advances: &Vec<Runne
         .join(" ")
 }
 
-#[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, EnumDiscriminants)]
+#[strum_discriminants(derive(Display))]
 pub enum StartOfInningPitcher<S> {
     Same {emoji: S, name: S},
     Different {
@@ -490,7 +490,8 @@ pub enum StartOfInningPitcher<S> {
 }
 
 /// Either an Out or an Error - e.g. for a Fielder's Choice.
-#[derive(Debug, Clone, Copy, Serialize, Deserialize, PartialEq)]
+#[derive(Debug, Clone, Copy, Serialize, Deserialize, PartialEq, EnumDiscriminants)]
+#[strum_discriminants(derive(Display))]
 pub enum FieldingAttempt<S> {
     Out {
         out: RunnerOut<S>,
@@ -613,7 +614,8 @@ impl<S> TryFrom<BaseSteal<S>> for RunnerAdvance<S> {
     }
 }
 
-#[derive(Debug, Clone, Copy, Serialize, Deserialize, PartialEq)]
+#[derive(Debug, Clone, Copy, Serialize, Deserialize, PartialEq, EnumDiscriminants)]
+#[strum_discriminants(derive(Display))]
 pub enum FallingStarOutcome<S> {
     Injury,
     Retired(Option<S>),
@@ -701,6 +703,7 @@ fn old_space(game: &Game, event_index: Option<u16>) -> &'static str {
 
 /// See individual variant documentation for an example of each bug, and the known properties of their events.
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq, EnumDiscriminants)]
+#[strum_discriminants(derive(Display))]
 pub enum KnownBug<S> {
     /// https://mmolb.com/watch/6851bb34f419fdc04f9d0ed5 "Genevieve Hirose reaches on a fielder's choice out, 1B N. Kitagawa"
     ///
