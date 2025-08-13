@@ -1145,6 +1145,15 @@ impl<S: AsRef<str>> EjectionReplacement<S> {
     }
 }
 
+impl<S> EjectionReplacement<S> {
+    pub fn player_name(&self) -> &S {
+        match self {
+            EjectionReplacement::BenchPlayer { player_name } => player_name,
+            EjectionReplacement::RosterPlayer { player } => &player.name,
+        }
+    }
+}
+
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
 pub struct Ejection<S> {
     pub team: EmojiTeam<S>,
