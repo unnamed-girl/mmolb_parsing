@@ -3,7 +3,7 @@ use std::collections::HashMap;
 use serde::{Serialize, Deserialize};
 use serde_with::serde_as;
 
-use crate::{enums::{BallparkSuffix, GameStat, Position, PositionType, RecordType, Slot}, feed_event::FeedEvent, player::PlayerEquipment, utils::{extra_fields_deserialize, AddedLaterResult, ExpectNone, MaybeRecognizedResult, NotRecognized}};
+use crate::{enums::{BallparkSuffix, GameStat, Position, PositionType, RecordType, Slot}, feed_event::FeedEvent, player::PlayerEquipment, utils::{extra_fields_deserialize, AddedLaterResult, ExpectNone, MaybeRecognizedResult, NotRecognized}, RemovedLaterResult};
 use crate::utils::{MaybeRecognizedHelper, SometimesMissingHelper};
 use super::raw_team::{RawTeamPlayer};
 
@@ -15,19 +15,23 @@ pub struct Team {
     #[serde(rename = "_id", skip_serializing_if = "Option::is_none")]
     pub(super) _id: Option<String>,
     pub abbreviation: String,
-    pub active: bool,
-    pub augments: u16,
+    #[serde(default = "SometimesMissingHelper::default_result", skip_serializing_if = "Result::is_err")]
+    #[serde_as(as = "SometimesMissingHelper<_>")]
+    pub active: RemovedLaterResult<bool>,
+    #[serde(default = "SometimesMissingHelper::default_result", skip_serializing_if = "Result::is_err")]
+    #[serde_as(as = "SometimesMissingHelper<_>")]
+    pub augments: RemovedLaterResult<u16>,
     pub championships: u8,
     pub color: String,
     pub emoji: String,
 
     /// Only present on some deleted teams
-    #[serde(default = "SometimesMissingHelper::default_result", skip_serializing_if = "AddedLaterResult::is_err")]
+    #[serde(default = "SometimesMissingHelper::default_result", skip_serializing_if = "Result::is_err")]
     #[serde_as(as = "SometimesMissingHelper<_>")]
     pub feed: AddedLaterResult<Vec<FeedEvent>>,
 
     /// Not present on some deleted teams.
-    #[serde(default = "SometimesMissingHelper::default_result", skip_serializing_if = "AddedLaterResult::is_err")]
+    #[serde(default = "SometimesMissingHelper::default_result", skip_serializing_if = "Result::is_err")]
     #[serde_as(as = "SometimesMissingHelper<_>")]
     pub motes_used: AddedLaterResult<u8>,
 
@@ -35,23 +39,23 @@ pub struct Team {
     pub full_location: String,
     pub league: Option<String>,
 
-    #[serde(default = "SometimesMissingHelper::default_result", skip_serializing_if = "AddedLaterResult::is_err")]
+    #[serde(default = "SometimesMissingHelper::default_result", skip_serializing_if = "Result::is_err")]
     #[serde_as(as = "SometimesMissingHelper<_>")]
     pub ballpark_name: AddedLaterResult<String>,
-    #[serde(default = "SometimesMissingHelper::default_result", skip_serializing_if = "AddedLaterResult::is_err")]
+    #[serde(default = "SometimesMissingHelper::default_result", skip_serializing_if = "Result::is_err")]
     #[serde_as(as = "SometimesMissingHelper<MaybeRecognizedHelper<_>>")]
     pub ballpark_suffix: AddedLaterResult<MaybeRecognizedResult<BallparkSuffix>>,
-    #[serde(default = "SometimesMissingHelper::default_result", skip_serializing_if = "AddedLaterResult::is_err")]
+    #[serde(default = "SometimesMissingHelper::default_result", skip_serializing_if = "Result::is_err")]
     #[serde_as(as = "SometimesMissingHelper<_>")]
     pub ballpark_use_city: AddedLaterResult<bool>,
-    #[serde(default = "SometimesMissingHelper::default_result", skip_serializing_if = "AddedLaterResult::is_err")]
+    #[serde(default = "SometimesMissingHelper::default_result", skip_serializing_if = "Result::is_err")]
     #[serde_as(as = "SometimesMissingHelper<_>")]
     pub ballpark_word_1: AddedLaterResult<Option<String>>,
-    #[serde(default = "SometimesMissingHelper::default_result", skip_serializing_if = "AddedLaterResult::is_err")]
+    #[serde(default = "SometimesMissingHelper::default_result", skip_serializing_if = "Result::is_err")]
     #[serde_as(as = "SometimesMissingHelper<_>")]
     pub ballpark_word_2: AddedLaterResult<Option<String>>,
 
-    #[serde(default = "SometimesMissingHelper::default_result", skip_serializing_if = "AddedLaterResult::is_err")]
+    #[serde(default = "SometimesMissingHelper::default_result", skip_serializing_if = "Result::is_err")]
     #[serde_as(as = "SometimesMissingHelper<_>")]
     pub eligible: AddedLaterResult<bool>,
 
@@ -60,10 +64,14 @@ pub struct Team {
     pub modifications: Vec<Option<serde_json::Value>>,
     pub name: String,
 
-    pub motto: Option<String>,
+    #[serde(default = "SometimesMissingHelper::default_result", skip_serializing_if = "Result::is_err")]
+    #[serde_as(as = "SometimesMissingHelper<_>")]
+    pub motto: RemovedLaterResult<Option<String>>,
 
     #[serde(rename = "OwnerID")]
-    pub owner_id: Option<String>,
+    #[serde(default = "SometimesMissingHelper::default_result", skip_serializing_if = "Result::is_err")]
+    #[serde_as(as = "SometimesMissingHelper<_>")]
+    pub owner_id: RemovedLaterResult<Option<String>>,
 
     pub players: Vec<TeamPlayer>,
     #[serde_as(as = "HashMap<MaybeRecognizedHelper<_>, _>")]

@@ -1035,11 +1035,40 @@ impl Display for Day {
     }
 }
 
-#[derive(Debug, Clone, Copy, Serialize, Deserialize, EnumString, IntoStaticStr, Display, PartialEq, Eq, Hash, EnumIter)]
+#[derive(Debug, Clone, Copy, SerializeDisplay, DeserializeFromStr, IntoStaticStr, PartialEq, Eq, Hash, EnumIter)]
 pub enum RecordType {
-    #[strum(to_string = "Regular Season")]
-    #[serde(rename = "Regular Season")]
     RegularSeason,
+    Kumite,
+    PostseasonRound(u8),
+    SuperstarGame,
+    HomeRunChallenge
+}
+impl FromStr for RecordType {
+    type Err = &'static str;
+    fn from_str(s: &str) -> Result<Self, Self::Err> {
+        match s {
+            "Regular Season" => Ok(RecordType::RegularSeason),
+            "Superstar Game" => Ok(RecordType::SuperstarGame),
+            "Kumite" => Ok(RecordType::Kumite),
+            "Home Run Challenge" => Ok(RecordType::HomeRunChallenge),
+            s => s.strip_prefix("Postseason Round ")
+                        .and_then(|s| s.parse().ok())
+                        .map(RecordType::PostseasonRound)
+                        .ok_or(())
+        }.map_err(|_| "Did not match any known RecordType variants")
+    }
+}
+
+impl Display for RecordType {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        match self {
+            RecordType::RegularSeason => Display::fmt("Regular Season", f),
+            RecordType::PostseasonRound(i) => write!(f, "Postseason Round {i}"),
+            RecordType::Kumite => write!(f, "Kumite"),
+            RecordType::SuperstarGame => write!(f, "Superstar Game"),
+            RecordType::HomeRunChallenge => write!(f, "Home Run Challenge"),
+        }
+    }
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize, EnumString, IntoStaticStr, Display, PartialEq, Eq, Hash, EnumIter)]
