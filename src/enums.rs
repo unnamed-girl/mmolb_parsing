@@ -2,11 +2,11 @@ use std::{convert::Infallible, fmt::{Debug, Display}, str::FromStr};
 
 use nom::{branch::alt, bytes::complete::tag, character::complete::u8, combinator::{all_consuming, opt}, sequence::{preceded, separated_pair, terminated}, Parser};
 use serde::{Deserialize, Deserializer, Serialize, Serializer, de::Error};
-use strum::{Display, EnumDiscriminants, EnumIter, EnumString, IntoDiscriminant};
+use strum::{Display, EnumDiscriminants, EnumIter, EnumString, IntoDiscriminant, IntoStaticStr};
 use serde_with::{SerializeDisplay, DeserializeFromStr};
 
 /// Possible values of the "event" field of an mmolb event. 
-#[derive(Debug, Clone, Copy, Serialize, Deserialize, EnumString, Display, PartialEq, Eq, Hash, EnumIter)]
+#[derive(Debug, Clone, Copy, Serialize, Deserialize, EnumString, IntoStaticStr, Display, PartialEq, Eq, Hash, EnumIter)]
 pub enum EventType {
     // Season 0
     PitchingMatchup,
@@ -65,7 +65,7 @@ pub enum EventType {
 /// assert_eq!(TopBottom::try_from(2), Err(NotASide(2)));
 /// assert_eq!(u8::from(TopBottom::Bottom), 1);
 /// ```
-#[derive(Debug, Clone, Copy, Serialize, Deserialize, PartialEq, Eq, Hash, EnumString, Display, EnumIter, Default)]
+#[derive(Debug, Clone, Copy, Serialize, Deserialize, PartialEq, Eq, Hash, EnumString, IntoStaticStr, Display, EnumIter, Default)]
 pub enum TopBottom {
     #[default]
     #[strum(to_string = "top")]
@@ -149,7 +149,7 @@ impl From<HomeAway> for TopBottom {
 /// 
 /// assert_eq!(HomeAway::from(TopBottom::Top), HomeAway::Away);
 /// ```
-#[derive(Debug, Clone, Copy, Serialize, Deserialize, PartialEq, Eq, Hash, EnumString, Display, EnumIter)]
+#[derive(Debug, Clone, Copy, Serialize, Deserialize, PartialEq, Eq, Hash, EnumString, IntoStaticStr, Display, EnumIter)]
 pub enum HomeAway {
     Away,
     Home,
@@ -302,7 +302,7 @@ impl Inning {
 /// 
 /// assert_eq!(Position::FirstBaseman.to_string(), "1B");
 /// ```
-#[derive(EnumString, Display, Debug, Serialize, Deserialize, Clone, Copy, EnumIter, PartialEq, Eq, Hash)]
+#[derive(EnumString, IntoStaticStr, Display, Debug, Serialize, Deserialize, Clone, Copy, EnumIter, PartialEq, Eq, Hash)]
 pub enum Position {
     #[strum(to_string = "P")]
     #[serde(rename = "P")]
@@ -349,7 +349,7 @@ pub enum Position {
 /// 
 /// assert_eq!(FairBallDestination::ShortStop.to_string(), "the shortstop");
 /// ```
-#[derive(EnumString, Display, Debug, Serialize, Deserialize, Clone, Copy, PartialEq, Eq, Hash, EnumIter)]
+#[derive(EnumString, IntoStaticStr, Display, Debug, Serialize, Deserialize, Clone, Copy, PartialEq, Eq, Hash, EnumIter)]
 pub enum FairBallDestination {
     #[strum(to_string = "the shortstop")]
     ShortStop,
@@ -381,7 +381,7 @@ pub enum FairBallDestination {
 /// assert_eq!(FairBallType::GroundBall.to_string(), "ground ball");
 /// assert_eq!(FairBallType::GroundBall.verb_name(), "grounds");
 /// ```
-#[derive(Clone, Copy, EnumString, Display, Debug, Serialize, Deserialize, PartialEq, Eq, Hash, EnumIter)]
+#[derive(Clone, Copy, EnumString, IntoStaticStr, Display, Debug, Serialize, Deserialize, PartialEq, Eq, Hash, EnumIter)]
 pub enum FairBallType {
     #[strum(to_string = "ground ball")]
     GroundBall,
@@ -413,7 +413,7 @@ impl FairBallType {
 /// 
 /// assert_eq!(PitchType::KnuckleCurve.to_string(), "Knuckle Curve");
 /// ```
-#[derive(Clone, Copy, EnumString, Display, Debug, Serialize, Deserialize, PartialEq, Eq, Hash, EnumIter)]
+#[derive(Clone, Copy, EnumString, IntoStaticStr, Display, Debug, Serialize, Deserialize, PartialEq, Eq, Hash, EnumIter)]
 pub enum PitchType {
     Fastball,
     Sinker,
@@ -432,7 +432,7 @@ pub enum PitchType {
 /// 
 /// assert_eq!(StrikeType::Looking.to_string(), "looking");
 /// ```
-#[derive(Clone, Copy, EnumString, Display, Debug, Serialize, Deserialize, PartialEq, Eq, Hash, EnumIter)]
+#[derive(Clone, Copy, EnumString, IntoStaticStr, Display, Debug, Serialize, Deserialize, PartialEq, Eq, Hash, EnumIter)]
 pub enum StrikeType {
     #[strum(to_string = "looking")]
     Looking,
@@ -447,7 +447,7 @@ pub enum StrikeType {
 /// assert_eq!(FieldingErrorType::Throwing.uppercase(), "Throwing");
 /// assert_eq!(FieldingErrorType::Throwing.lowercase(), "throwing");
 /// ```
-#[derive(Clone, Copy, EnumString, Display, Debug, Serialize, Deserialize, PartialEq, Eq, Hash, EnumIter)]
+#[derive(Clone, Copy, EnumString, IntoStaticStr, Display, Debug, Serialize, Deserialize, PartialEq, Eq, Hash, EnumIter)]
 pub enum FieldingErrorType {
     #[strum(to_string="Throwing", serialize="throwing")]
     Throwing,
@@ -485,7 +485,7 @@ impl FieldingErrorType {
 /// 
 /// assert_eq!(FoulType::Tip.to_string(), "tip");
 /// ```
-#[derive(Clone, Copy, EnumString, Display, Debug, Serialize, Deserialize, PartialEq, Eq, Hash, EnumIter)]
+#[derive(Clone, Copy, EnumString, IntoStaticStr, Display, Debug, Serialize, Deserialize, PartialEq, Eq, Hash, EnumIter)]
 pub enum FoulType {
     #[strum(to_string = "tip")]
     Tip,
@@ -500,7 +500,7 @@ pub enum FoulType {
 /// assert_eq!(Base::First.to_base_str(), "first base");
 /// assert_eq!(Base::Home.to_base_str(), "home");
 /// ```
-#[derive(Clone, Copy, EnumString, Display, Debug, Serialize, Deserialize, PartialEq, Eq, Hash, EnumIter)]
+#[derive(Clone, Copy, EnumString, IntoStaticStr, Display, Debug, Serialize, Deserialize, PartialEq, Eq, Hash, EnumIter)]
 pub enum Base {
     #[strum(to_string = "home")]
     Home,
@@ -554,7 +554,7 @@ impl From<BaseNameVariant> for Base {
 /// assert_eq!(BaseNameVariant::basic_name(Base::First), BaseNameVariant::First);
 /// assert_eq!(Base::from(BaseNameVariant::OneB), Base::First);
 /// ```
-#[derive(Clone, Copy, EnumString, Display, Debug, Serialize, Deserialize, PartialEq, Eq, Hash, EnumIter)]
+#[derive(Clone, Copy, EnumString, IntoStaticStr, Display, Debug, Serialize, Deserialize, PartialEq, Eq, Hash, EnumIter)]
 pub enum BaseNameVariant {
     #[strum(to_string = "first")]
     First,
@@ -594,7 +594,7 @@ impl BaseNameVariant {
 /// 
 /// assert_eq!(Distance::Single.to_string(), "singles");
 /// ```
-#[derive(Clone, Copy, EnumString, Display, Debug, Serialize, Deserialize, PartialEq, Eq, Hash, EnumIter)]
+#[derive(Clone, Copy, EnumString, IntoStaticStr, Display, Debug, Serialize, Deserialize, PartialEq, Eq, Hash, EnumIter)]
 pub enum Distance {
     #[strum(to_string = "singles")]
     Single,
@@ -623,7 +623,7 @@ pub enum NowBattingStats {
 /// assert_eq!(BatterStatDiscriminants::HitsForAtBats.to_string(), "HitsForAtBats"); // mmolb implies this stat, it doesn't have an acronym.
 /// ```
 #[derive(Clone, Debug, EnumDiscriminants, Serialize, Deserialize, PartialEq, Eq, Hash, EnumIter)]
-#[strum_discriminants(derive(EnumString, Display))]
+#[strum_discriminants(derive(EnumString, IntoStaticStr, Display))]
 #[serde(tag = "stat", content = "value")]
 pub enum BatterStat {
     // Season 0
@@ -865,7 +865,7 @@ pub enum GameStat {
     Ejected
 }
 
-#[derive(Clone, Copy, EnumString, Display, Debug, Serialize, Deserialize, PartialEq, Eq, Hash, EnumIter)]
+#[derive(Clone, Copy, EnumString, IntoStaticStr, Display, Debug, Serialize, Deserialize, PartialEq, Eq, Hash, EnumIter)]
 pub enum GameOverMessage {
     /// Early season 0 "Game over." e.g. 6805db4bac48194de3cd42d2 
     #[strum(to_string = "Game over.")]
@@ -875,7 +875,7 @@ pub enum GameOverMessage {
     QuotedGAMEOVER
 }
 
-#[derive(Clone, Copy, EnumString, Display, Debug, Serialize, Deserialize, PartialEq, Eq, Hash, EnumIter)]
+#[derive(Clone, Copy, EnumString, IntoStaticStr, Display, Debug, Serialize, Deserialize, PartialEq, Eq, Hash, EnumIter)]
 pub enum ItemName {
     Cap,
     Gloves,
@@ -895,12 +895,12 @@ pub enum ItemName {
     AmbitionOrb
 }
 
-#[derive(Clone, Copy, EnumString, Display, Debug, Serialize, Deserialize, PartialEq, Eq, Hash, EnumIter)]
+#[derive(Clone, Copy, EnumString, IntoStaticStr, Display, Debug, Serialize, Deserialize, PartialEq, Eq, Hash, EnumIter)]
 pub enum SpecialItemType {
     Material
 }
 
-#[derive(Debug, Clone, Copy, Serialize, Deserialize, EnumString, Display, PartialEq, Eq, Hash, EnumIter)]
+#[derive(Debug, Clone, Copy, Serialize, Deserialize, EnumString, IntoStaticStr, Display, PartialEq, Eq, Hash, EnumIter)]
 #[strum(serialize_all = "lowercase")]
 #[serde(rename_all = "lowercase")]
 pub enum FeedEventType {
@@ -910,7 +910,7 @@ pub enum FeedEventType {
     Season
 }
 
-#[derive(Debug, Clone, Copy, Serialize, Deserialize, EnumString, Display, PartialEq, Eq, Hash, EnumIter)]
+#[derive(Debug, Clone, Copy, Serialize, Deserialize, EnumString, IntoStaticStr, Display, PartialEq, Eq, Hash, EnumIter)]
 #[strum(serialize_all = "lowercase")]
 #[serde(rename_all = "lowercase")]
 pub enum LinkType {
@@ -1035,21 +1035,21 @@ impl Display for Day {
     }
 }
 
-#[derive(Debug, Clone, Copy, Serialize, Deserialize, EnumString, Display, PartialEq, Eq, Hash, EnumIter)]
+#[derive(Debug, Clone, Copy, Serialize, Deserialize, EnumString, IntoStaticStr, Display, PartialEq, Eq, Hash, EnumIter)]
 pub enum RecordType {
     #[strum(to_string = "Regular Season")]
     #[serde(rename = "Regular Season")]
     RegularSeason,
 }
 
-#[derive(Debug, Clone, Serialize, Deserialize, EnumString, Display, PartialEq, Eq, Hash, EnumIter)]
+#[derive(Debug, Clone, Serialize, Deserialize, EnumString, IntoStaticStr, Display, PartialEq, Eq, Hash, EnumIter)]
 pub enum PositionType {
     Pitcher,
     Batter,
 }
 
 #[derive(Debug, Clone, Copy, EnumIter, PartialEq, Eq, Hash, EnumDiscriminants, SerializeDisplay, DeserializeFromStr)]
-#[strum_discriminants(derive(EnumString, Display))]
+#[strum_discriminants(derive(EnumString, IntoStaticStr, Display))]
 pub enum Slot {
     #[strum_discriminants(strum(to_string = "C"))]
     Catcher,
@@ -1112,7 +1112,7 @@ impl FromStr for Slot {
     }
 }
 
-#[derive(EnumString, Display, Debug, SerializeDisplay, DeserializeFromStr, Clone, Copy, EnumIter, PartialEq, Eq, Hash)]
+#[derive(EnumString, IntoStaticStr, Display, Debug, SerializeDisplay, DeserializeFromStr, Clone, Copy, EnumIter, PartialEq, Eq, Hash)]
 pub enum Attribute {
     Priority,
     Luck,
@@ -1173,7 +1173,7 @@ impl From<Attribute> for AttributeCategory {
     }
 }
 
-#[derive(EnumString, Display, Debug, SerializeDisplay, DeserializeFromStr, Clone, Copy, EnumIter, PartialEq, Eq, Hash)]
+#[derive(EnumString, IntoStaticStr, Display, Debug, SerializeDisplay, DeserializeFromStr, Clone, Copy, EnumIter, PartialEq, Eq, Hash)]
 pub enum ItemPrefix {
     Sharp,
     Consistent,
@@ -1204,7 +1204,7 @@ pub enum ItemPrefix {
     Sneaky,
 }
 
-#[derive(EnumString, Display, Debug, SerializeDisplay, DeserializeFromStr, Clone, Copy, EnumIter, PartialEq, Eq, Hash)]
+#[derive(EnumString, IntoStaticStr, Display, Debug, SerializeDisplay, DeserializeFromStr, Clone, Copy, EnumIter, PartialEq, Eq, Hash)]
 pub enum ItemSuffix {
     #[strum(to_string = "of the Acrobat")]
     Acrobat,
@@ -1228,7 +1228,7 @@ pub enum ItemSuffix {
 
 /// The various places a player in a game has been said to be.
 #[derive(Debug, SerializeDisplay, DeserializeFromStr, Clone, Copy, EnumIter, PartialEq, Eq, Hash, EnumDiscriminants)]
-#[strum_discriminants(derive(EnumString, Display))]
+#[strum_discriminants(derive(EnumString, IntoStaticStr, Display))]
 pub enum Place {
     #[strum_discriminants(strum(to_string = "P"))]
     Pitcher,
@@ -1329,7 +1329,7 @@ impl Display for Place {
     }
 }
 
-#[derive(EnumString, Display, Debug, Serialize, Deserialize, Clone, Copy, EnumIter, PartialEq, Eq, Hash)]
+#[derive(EnumString, IntoStaticStr, Display, Debug, Serialize, Deserialize, Clone, Copy, EnumIter, PartialEq, Eq, Hash)]
 pub enum MoundVisitType {
     #[strum(to_string = "mound visit")]
     MoundVisit,
@@ -1337,14 +1337,14 @@ pub enum MoundVisitType {
     PitchingChange
 }
 
-#[derive(Debug, Serialize, Deserialize, Clone, Copy, EnumIter, PartialEq, Eq, Hash, EnumString, Display)]
+#[derive(Debug, Serialize, Deserialize, Clone, Copy, EnumIter, PartialEq, Eq, Hash, EnumString, IntoStaticStr, Display)]
 pub enum LeagueScale {
     Lesser,
     Greater,
     Special
 }
 
-#[derive(Debug, Serialize, Deserialize, Clone, Copy, EnumIter, PartialEq, Eq, Hash, EnumString, Display)]
+#[derive(Debug, Serialize, Deserialize, Clone, Copy, EnumIter, PartialEq, Eq, Hash, EnumString, IntoStaticStr, Display)]
 pub enum Handedness {
     #[strum(to_string = "L")]
     #[serde(rename = "L")]
@@ -1357,19 +1357,19 @@ pub enum Handedness {
     Switch
 }
 
-#[derive(Debug, Serialize, Deserialize, Clone, Copy, EnumIter, PartialEq, Eq, Hash, EnumString, Display)]
+#[derive(Debug, Serialize, Deserialize, Clone, Copy, EnumIter, PartialEq, Eq, Hash, EnumString, IntoStaticStr, Display)]
 pub enum EquipmentEffectType {
     FlatBonus
 }
 
-#[derive(Debug, Serialize, Deserialize, Clone, Copy, EnumIter, PartialEq, Eq, Hash, EnumString, Display)]
+#[derive(Debug, Serialize, Deserialize, Clone, Copy, EnumIter, PartialEq, Eq, Hash, EnumString, IntoStaticStr, Display)]
 pub enum EquipmentRarity {
     Normal,
     Rare,
     Magic
 }
 
-#[derive(Debug, Serialize, Deserialize, Clone, Copy, EnumIter, PartialEq, Eq, Hash, EnumString, Display)]
+#[derive(Debug, Serialize, Deserialize, Clone, Copy, EnumIter, PartialEq, Eq, Hash, EnumString, IntoStaticStr, Display)]
 pub enum EquipmentSlot {
     Accessory,
     Head,
@@ -1378,13 +1378,13 @@ pub enum EquipmentSlot {
     Body
 }
 
-#[derive(Debug, Serialize, Deserialize, Clone, Copy, EnumIter, PartialEq, Eq, Hash, EnumString, Display)]
+#[derive(Debug, Serialize, Deserialize, Clone, Copy, EnumIter, PartialEq, Eq, Hash, EnumString, IntoStaticStr, Display)]
 pub enum FeedEventSource {
     Player,
     Team
 }
 
-#[derive(Debug, Serialize, Deserialize, Clone, Copy, EnumIter, PartialEq, Eq, Hash, EnumString, Display)]
+#[derive(Debug, Serialize, Deserialize, Clone, Copy, EnumIter, PartialEq, Eq, Hash, EnumString, IntoStaticStr, Display)]
 pub enum BallparkSuffix {
     Field,
     Stadium,
@@ -1401,7 +1401,7 @@ fn _check(_: &str) -> Infallible {
     unreachable!("This is dead code that exists for a strum parse_err_fn")
 }
 
-#[derive(Debug, Serialize, Deserialize, Clone, EnumIter, PartialEq, Eq, Hash, EnumString, Display)]
+#[derive(Debug, Serialize, Deserialize, Clone, EnumIter, PartialEq, Eq, Hash, EnumString, IntoStaticStr, Display)]
 #[strum(
     parse_err_fn = check,
     parse_err_ty = Infallible
@@ -1472,7 +1472,7 @@ impl ModificationType {
     }
 }
 
-#[derive(Debug, Serialize, Deserialize, Clone, Copy, EnumIter, PartialEq, Eq, Hash, EnumString, Display)]
+#[derive(Debug, Serialize, Deserialize, Clone, Copy, EnumIter, PartialEq, Eq, Hash, EnumString, IntoStaticStr, Display)]
 pub enum CelestialEnergyTier {
     #[strum(to_string = "began to glow brightly with celestial energy!")]
     BeganToGlow,

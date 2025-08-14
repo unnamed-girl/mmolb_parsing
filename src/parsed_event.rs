@@ -1,7 +1,7 @@
 use std::{convert::Infallible, fmt::{Display, Write}, iter::once, str::FromStr};
 
 use serde::{Serialize, Deserialize};
-use strum::{EnumDiscriminants, EnumString, Display};
+use strum::{EnumDiscriminants, EnumString, Display, IntoStaticStr};
 use thiserror::Error;
 
 use crate::{enums::{Base, BaseNameVariant, BatterStat, Distance, EventType, FairBallDestination, FairBallType, FieldingErrorType, FoulType, GameOverMessage, HomeAway, ItemPrefix, ItemSuffix, ItemName, MoundVisitType, NowBattingStats, Place, StrikeType, TopBottom}, time::Breakpoints, Game, NotRecognized};
@@ -756,7 +756,7 @@ fn _check(_: &str) -> Infallible {
     unreachable!("This is dead code that exists for a strum parse_err_fn")
 }
 
-#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, EnumString, Display)]
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, EnumString, IntoStaticStr, Display)]
 #[strum(
     parse_err_fn = check,
     parse_err_ty = Infallible
@@ -990,7 +990,7 @@ impl Cheer {
     }
 }
 
-#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, EnumString, Display)]
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, EnumString, IntoStaticStr, Display)]
 #[strum(
     parse_err_fn = check,
     parse_err_ty = Infallible
@@ -1071,7 +1071,7 @@ impl EjectionReason {
     }
 }
 
-#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, EnumString, Display)]
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, EnumString, IntoStaticStr, Display)]
 #[strum(
     parse_err_fn = check,
     parse_err_ty = Infallible
