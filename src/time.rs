@@ -10,6 +10,41 @@ pub struct Time {
     pub ascending_days: Vec<(DayEquivalent, u16)>
 }
 
+impl Time {
+    /// Is the time before self
+    pub fn before(&self, season: u32, day: Option<Day>, event_index: Option<u16>) -> bool {
+        let event_index = event_index.unwrap_or(0);
+        let day = day.map(|day| DayEquivalent::new(season, day));
+
+        match season.cmp(&self.season) {
+            Ordering::Less => true, // earlier season is before
+            Ordering::Greater => false, // later season is after
+            Ordering::Equal => match day {
+                None => return false, // Assume unknown days are at end of season, and therefore after
+                Some(day) => {
+                    // Because of overflow, transition happens on multiple days
+                    for (transition_day, transition_event_index) in &self.ascending_days {
+                        match day.cmp(&transition_day) {
+                            Ordering::Greater => (), // Move on to check the next day in the transition period
+                            Ordering::Equal => match event_index.cmp(&transition_event_index) {
+                                Ordering::Greater | Ordering::Equal => return false,
+                                Ordering::Less => return true,
+                            },
+                            Ordering::Less => return true // Before a transition day, so before (only works because its in ascending order)
+                        }
+                    }
+                    false // After the transition point, so after
+                }
+            }
+        }
+    }
+
+    /// Is the time after self
+    pub fn after(&self, season: u32, day: Option<Day>, event_index: Option<u16>) -> bool {
+        return !self.before(season, day, event_index)
+    }
+}
+
 #[derive(Debug, PartialEq, Eq)]
 pub struct DayEquivalent {
     pub day: u16,
@@ -71,7 +106,17 @@ pub enum Breakpoints {
     Season3PreSuperstarBreakUpdate,
     EternalBattle
 }
+impl From<Breakpoints> for Time {
+    fn from(value: Breakpoints) -> Self {
+        value.ascending_transition_time()
+    }
+}
 impl Breakpoints {
+    pub fn season(season: u32) -> Time {
+        Time { season, ascending_days: vec![
+            (DayEquivalent { day: 0, offset: 0 }, 0),
+        ] }
+    }
     fn ascending_transition_time(self) -> Time {
         match self {
             Breakpoints::Season1EnchantmentChange => Time {
@@ -124,34 +169,11 @@ impl Breakpoints {
             },
         }
     }
+    /// Is the time before the breakpoint
     pub fn before(&self, season: u32, day: Option<Day>, event_index: Option<u16>) -> bool {
-        let event_index = event_index.unwrap_or(0);
-        let day = day.map(|day| DayEquivalent::new(season, day));
-
-        let transition = self.ascending_transition_time();
-
-        match season.cmp(&transition.season) {
-            Ordering::Less => true, // earlier season is before
-            Ordering::Greater => false, // later season is after
-            Ordering::Equal => match day {
-                None => return false, // Assume unknown days are at end of season, and therefore after
-                Some(day) => {
-                    // Because of overflow, transition happens on multiple days
-                    for (transition_day, transition_event_index) in transition.ascending_days {
-                        match day.cmp(&transition_day) {
-                            Ordering::Greater => (), // Move on to check the next day in the transition period
-                            Ordering::Equal => match event_index.cmp(&transition_event_index) {
-                                Ordering::Greater | Ordering::Equal => return false,
-                                Ordering::Less => return true,
-                            },
-                            Ordering::Less => return true // Before a transition day, so before (only works because its in ascending order)
-                        }
-                    }
-                    false // After the transition point, so after
-                }
-            }
-        }
+        self.ascending_transition_time().before(season, day, event_index)
     }
+    /// Is the time after the breakpoint
     pub fn after(&self, season: u32, day: Option<Day>, event_index: Option<u16>) -> bool {
         !self.before(season, day, event_index)
     }

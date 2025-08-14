@@ -1,11 +1,11 @@
 use std::{collections::HashSet, fs::File, io::{Read, Write}, path::Path, pin::pin};
 use clap::{Parser, ValueEnum};
 use futures::{Stream, StreamExt};
-use mmolb_parsing::{enums::{FeedEventSource, FoulType}, feed_event::parse_feed_event, player::Player, process_event, team::Team, Game, ParsedEventMessage};
+use mmolb_parsing::{enums::{FeedEventSource, FoulType}, feed_event::parse_feed_event, player::Player, player_feed::{parse_player_feed_event, PlayerFeed}, process_event, team::Team, Game, ParsedEventMessage};
 use serde::{Deserialize, Serialize, de::IntoDeserializer};
 
 use reqwest::Client;
-use tracing::{error, info, Level};
+use tracing::{error, info, span::EnteredSpan, Level};
 use tracing_subscriber::fmt::writer::MakeWriterExt;
 use strum::{IntoDiscriminant};
 
@@ -79,14 +79,18 @@ enum Kind {
     #[default]
     Game,
     Team,
-    Player
+    Player,
+    PlayerFeed,
+    GameFeed
 }
 
 fn cashews_fetch_json<'a>(client: &'a Client, kind: Kind, extra: String, start_page: Option<String>) -> impl Stream<Item = Vec<EntityResponse<Box<serde_json::value::RawValue>>>> + 'a {
     let kind = match kind {
         Kind::Game => "game",
         Kind::Team => "team",
-        Kind::Player => "player"
+        Kind::Player => "player",
+        Kind::PlayerFeed => "player_feed",
+        Kind::GameFeed => "game_feed",
     };
     async_stream::stream! {
         let (mut url, mut page) = match start_page {
@@ -109,6 +113,9 @@ fn cashews_fetch_json<'a>(client: &'a Client, kind: Kind, extra: String, start_p
     }
 }
 
+
+static mut EVENT_VARIANTS: Option<HashSet<String>> = None;
+
 #[tokio::main]
 async fn main() {
     let writer = std::io::stderr.with_max_level(Level::WARN).and(std::io::stdout);
@@ -120,29 +127,33 @@ async fn main() {
 
     let args = Args::parse();
 
-    let mut event_variants = args.export_event_variants.as_ref().map(|f| {
-        let set = if Path::new(f).exists() {
+    if let Some(f) = &args.export_event_variants {
+        if Path::new(f).exists() {
             let mut text = String::new();
             let mut file = File::open(f).unwrap();
             file.read_to_string(&mut text).unwrap();
-            text.lines().map(|s| s.split("###").next().unwrap()).map(str::to_string).collect()
-        } else {
-            HashSet::new()
-        };
-        (set, f.clone())
-    });
+            let variants = text.lines().map(|s| s.split("###").next().unwrap()).map(str::to_string).collect();
+            unsafe {
+                EVENT_VARIANTS = Some(variants)
+            }
+        }
+    } 
     
-    let mut func = |response, progress_report| match args.kind {
-        Kind::Game => ingest_game(response, progress_report, &args, event_variants.as_mut()),
-        Kind::Team => ingest_team(response, &args),
-        Kind::Player => ingest_player(response, &args)
+    let func = |response, progress_report| match args.kind {
+        Kind::Game=>ingest(response, &args,progress_report, game_inner),
+        Kind::Team=>ingest(response, &args,progress_report, team_inner),
+        Kind::Player=>ingest(response, &args,progress_report, player_inner),
+        Kind::PlayerFeed => ingest(response, &args, progress_report, player_feed_inner),
+        Kind::GameFeed => todo!(),
     };
 
     if let Some(id) = &args.id {
         let kind = match args.kind {
-            Kind::Game => "game",
-            Kind::Team => "team",
-            Kind::Player => "player"
+            Kind::Game=>"game",
+            Kind::Team=>"team",
+            Kind::Player=>"player",
+            Kind::PlayerFeed => "player_feed",
+            Kind::GameFeed => "team_feed",
         };
 
         let client = Client::new();
@@ -173,16 +184,14 @@ async fn main() {
     drop(guard);
 }
 
-fn ingest_game(response: EntityResponse<Box<serde_json::value::RawValue>>, progress_report: bool, args: &Args, event_variants: Option<&mut (HashSet<String>, String)>) {
+fn ingest<'de, T: for<'a> Deserialize<'a> + Serialize>(response: EntityResponse<Box<serde_json::value::RawValue>>, args: &Args, progress_report: bool, inner_checks: impl Fn(T, EntityResponse<Box<serde_json::value::RawValue>>, &Args) -> EnteredSpan) {
     let _ingest_guard = tracing::span!(Level::INFO, "Entity Ingest", entity_id = response.entity_id).entered();
 
-    let game: Game = Game::deserialize(response.data.as_ref().into_deserializer()).map_err(|e| format!("Failed to deserialize {}, {e:?}", response.entity_id)).expect(&response.entity_id);
-
-    let _span_guard = tracing::span!(Level::INFO, "Game", season = game.season, day = format!("{:?}", game.day), scale = format!("{:?}", game.league_scale)).entered();
-
+    let entity = T::deserialize(response.data.as_ref().into_deserializer()).map_err(|e| format!("Failed to deserialize {}, {e:?}", response.entity_id)).expect(&response.entity_id);
+    
     if args.round_trip {
         let data = serde_json::Value::deserialize(response.data.into_deserializer()).unwrap();
-        let round_tripped = serde_json::to_value(&game).unwrap();
+        let round_tripped = serde_json::to_value(&entity).unwrap();
 
         let diff = serde_json_diff::values(data, round_tripped);
         if let Some(diff) = diff {
@@ -190,67 +199,46 @@ fn ingest_game(response: EntityResponse<Box<serde_json::value::RawValue>>, progr
         }
     }
 
+    let span = inner_checks(entity, response, args);
+
+    if progress_report {
+        tracing::info!("Reached");
+    }
+
+    drop(span);
+}
+
+fn player_inner(player: Player,response: EntityResponse<Box<serde_json::value::RawValue>>,  args: &Args) -> EnteredSpan {
+    let _player_span_guard = tracing::span!(Level::INFO, "Player", name = format!("{} {}", player.first_name, player.last_name)).entered();
     let mut output = args.output_folder.as_ref().map(|folder| File::create(format!("{folder}/{}.ron", response.entity_id)).unwrap());
-    let mut event_variants = event_variants.map(|(set, f)| {
-            let f = File::options().append(true).open(f).unwrap();
-            (set, f)
-    });
+    
+    for event in player.feed.unwrap_or_default() {
+        let _event_span_guard = tracing::span!(Level::INFO, "Feed Event", season = event.season, day = format!("{:?}", event.day), timestamp = event.timestamp.to_string(), r#type = format!("{:?}", event.event_type), message = event.text).entered();
 
-    for event in &game.event_log {
-        let _event_span_guard = tracing::span!(Level::INFO, "Event", index = event.index, r#type = format!("{:?}", event.event), message = event.message).entered();
-
-        let parsed_event_message = process_event(event, &game, &response.entity_id);
+        let parsed_text = parse_feed_event(&event);
         if tracing::enabled!(Level::ERROR) {
-            let unparsed = parsed_event_message.unparse(&game, event.index);
-            if event.message != unparsed {
-                error!("Event round trip failure expected:\n'{}'\nGot:\n'{}'", event.message, unparsed);
+            let unparsed = parsed_text.unparse(&event, FeedEventSource::Player);
+            if event.text != unparsed {
+                error!("Feed event round trip failure expected:\n'{}'\nGot:\n'{}'", event.text, unparsed);
             }
         }
 
         if args.verbose {
-            info!("{:?} ({})", parsed_event_message, event.message);
-        }
-
-        if let Some((ref mut event_variants, ref mut f)) = event_variants {
-            let checked = check(&parsed_event_message);
-            if !event_variants.contains(&checked) {
-                writeln!(f, "{checked}###{}?event={}", response.entity_id, event.index.map(|n| n as i32).unwrap_or(-1)).unwrap();
-                event_variants.insert(checked);
-            }
+            info!("{:?} ({})", parsed_text, event.text);
         }
 
         if let Some(f) = &mut output {
-            writeln!(f, "{}", ron::to_string(&parsed_event_message).unwrap()).unwrap();
+            writeln!(f, "{}", ron::to_string(&parsed_text).unwrap()).unwrap();
         }
-        
+
         drop(_event_span_guard);
     }
-
-    if progress_report {
-        let round_tripped = args.round_trip.then_some(" with round trip").unwrap_or_default();
-        info!("Parse{round_tripped} completed");
-    }
-
-    drop(_span_guard);
+    _player_span_guard
 }
 
-fn ingest_team(response: EntityResponse<Box<serde_json::value::RawValue>>, args: &Args) {
-    let _ingest_guard = tracing::span!(Level::INFO, "Entity Ingest", entity_id = response.entity_id).entered();
-    let team = Team::deserialize(response.data.as_ref().into_deserializer()).map_err(|e| format!("Failed to deserialize {}, {e:?}", response.entity_id)).expect(&response.entity_id);
-
+fn team_inner(team: Team, response: EntityResponse<Box<serde_json::value::RawValue>>,  args: &Args) -> EnteredSpan {
     let _team_span_guard = tracing::span!(Level::INFO, "Team", name = team.name).entered();
-
     let mut output = args.output_folder.as_ref().map(|folder| File::create(format!("{folder}/{}.ron", response.entity_id)).unwrap());
-    
-    if args.round_trip {
-        let data = serde_json::Value::deserialize(response.data.into_deserializer()).unwrap();
-        let round_tripped = serde_json::to_value(&team).unwrap();
-
-        let diff = serde_json_diff::values(data, round_tripped);
-        if let Some(diff) = diff {
-            error!("round trip failed. Diff: {}", serde_json::to_string(&diff).unwrap());
-        }
-    }
 
     for event in team.feed.unwrap_or_default() {
         let _event_span_guard = tracing::span!(Level::INFO, "Feed Event", season = event.season, day = format!("{:?}", event.day), timestamp = event.timestamp.to_string(), r#type = format!("{:?}", event.event_type), message = format!("{:?}", event.text)).entered();
@@ -273,35 +261,68 @@ fn ingest_team(response: EntityResponse<Box<serde_json::value::RawValue>>, args:
 
         drop(_event_span_guard);
     }
-    drop(_team_span_guard);
+
+    _team_span_guard
 }
 
-fn ingest_player(response: EntityResponse<Box<serde_json::value::RawValue>>, args: &Args) {
-    let _ingest_guard = tracing::span!(Level::INFO, "Entity Ingest", entity_id = response.entity_id).entered();
+fn game_inner(game: Game, response: EntityResponse<Box<serde_json::value::RawValue>>,  args: &Args) -> EnteredSpan {
+    let _game_guard = tracing::span!(Level::INFO, "Game", season = game.season, day = format!("{:?}", game.day), scale = format!("{:?}", game.league_scale)).entered();
 
-    let player = Player::deserialize(response.data.as_ref().into_deserializer()).map_err(|e| format!("Failed to deserialize {}, {e:?}", response.entity_id)).expect(&response.entity_id);
+    let mut output = args.output_folder.as_ref().map(|folder| File::create(format!("{folder}/{}.ron", response.entity_id)).unwrap());
+    let mut event_variants_file = args.export_event_variants.as_ref().map(|f| {
+            File::options().append(true).open(f).unwrap()
+    });
 
+    for event in &game.event_log {
+        let _event_span_guard = tracing::span!(Level::INFO, "Event", index = event.index, r#type = format!("{:?}", event.event), message = event.message).entered();
 
-    let _player_span_guard = tracing::span!(Level::INFO, "Player", name = format!("{} {}", player.first_name, player.last_name)).entered();
+        let parsed_event_message = process_event(event, &game, &response.entity_id);
+        if tracing::enabled!(Level::ERROR) {
+            let unparsed = parsed_event_message.unparse(&game, event.index);
+            if event.message != unparsed {
+                error!("Event round trip failure expected:\n'{}'\nGot:\n'{}'", event.message, unparsed);
+            }
+        }
+
+        if args.verbose {
+            info!("{:?} ({})", parsed_event_message, event.message);
+        }
+
+        if let Some(ref mut f) = event_variants_file {
+            let checked = check(&parsed_event_message);
+            // SAFETY: we're single threaded and we later use `let _ = event_variants_ref` to stop holding onto the reference.
+            // todo: do this literally any other way
+            let event_variants_ref = unsafe {
+                 EVENT_VARIANTS.as_mut().unwrap()
+            };
+            if !event_variants_ref.contains(&checked) {
+                writeln!(f, "{checked}###{}?event={}", response.entity_id, event.index.map(|n| n as i32).unwrap_or(-1)).unwrap();
+                
+                event_variants_ref.insert(checked);
+            }
+
+            let _ = event_variants_ref; // stops us from accidentally holding onto a copy of a mutable reference
+        }
+
+        if let Some(f) = &mut output {
+            writeln!(f, "{}", ron::to_string(&parsed_event_message).unwrap()).unwrap();
+        }
+        
+        drop(_event_span_guard);
+    }
+    _game_guard
+}
+
+fn player_feed_inner(feed: PlayerFeed, response: EntityResponse<Box<serde_json::value::RawValue>>,  args: &Args) -> EnteredSpan {
+    let _player_feed_span_guard = tracing::span!(Level::INFO, "Player Feed").entered();
     let mut output = args.output_folder.as_ref().map(|folder| File::create(format!("{folder}/{}.ron", response.entity_id)).unwrap());
     
-    if args.round_trip {
-        let data = serde_json::Value::deserialize(response.data.into_deserializer()).unwrap();
-        let round_tripped = serde_json::to_value(&player).unwrap();
-
-        let diff = serde_json_diff::values(data, round_tripped);
-        if let Some(diff) = diff {
-            error!("round trip failed. Diff: {}", serde_json::to_string(&diff).unwrap());
-        }
-    }
-
-
-    for event in player.feed.unwrap_or_default() {
+    for event in feed.feed {
         let _event_span_guard = tracing::span!(Level::INFO, "Feed Event", season = event.season, day = format!("{:?}", event.day), timestamp = event.timestamp.to_string(), r#type = format!("{:?}", event.event_type), message = event.text).entered();
 
-        let parsed_text = parse_feed_event(&event);
+        let parsed_text = parse_player_feed_event(&event);
         if tracing::enabled!(Level::ERROR) {
-            let unparsed = parsed_text.unparse(&event, FeedEventSource::Player);
+            let unparsed = parsed_text.unparse(&event);
             if event.text != unparsed {
                 error!("Feed event round trip failure expected:\n'{}'\nGot:\n'{}'", event.text, unparsed);
             }
@@ -317,7 +338,7 @@ fn ingest_player(response: EntityResponse<Box<serde_json::value::RawValue>>, arg
 
         drop(_event_span_guard);
     }
-    drop(_player_span_guard);
+    _player_feed_span_guard
 }
 
 fn check<S>(event: &ParsedEventMessage<S>) -> String {

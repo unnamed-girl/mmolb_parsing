@@ -1,7 +1,3 @@
-/// For a lot of this code I will have a function return a parser instead of the function just being a parser.
-/// This is because it makes it easier to inject context later when I inevitably need to use a timestamp to choose which parser to use
-
-
 use nom::{branch::alt, bytes::complete::{tag, take_while}, character::complete::{i16, u8}, combinator::{opt, verify}, error::context, multi::{many1, separated_list1}, sequence::{delimited, preceded, separated_pair, terminated}, Finish, Parser};
 use tracing::error;
 use crate::{enums::{CelestialEnergyTier, FeedEventType}, feed_event::{AttributeChange, FeedEvent, FeedEventParseError, ParsedFeedEventText}, nom_parsing::shared::{emoji_team_eof, emojiless_item, feed_delivery, name_eof, parse_terminated, sentence_eof, try_from_word, try_from_words_m_n}, time::{Breakpoints, Timestamp}};

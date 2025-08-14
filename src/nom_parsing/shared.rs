@@ -3,7 +3,7 @@ use std::{fmt::Debug, str::FromStr};
 use nom::{branch::alt, bytes::complete::{tag, take, take_till, take_until, take_until1, take_while}, character::complete::{one_of, space0, u8}, combinator::{all_consuming, fail, opt, recognize, rest, value, verify}, error::{ErrorKind, ParseError}, multi::{count, many0, many1, separated_list1}, sequence::{delimited, preceded, separated_pair, terminated}, AsChar, Input, Parser};
 use nom_language::error::VerboseError;
 
-use crate::{enums::{Base, BatterStat, Day, FairBallDestination, FairBallType, HomeAway, NowBattingStats}, feed_event::{EmojilessItem, FeedDelivery, FeedEvent}, game::Event, parsed_event::{BaseSteal, Cheer, Delivery, Ejection, EjectionReason, EmojiTeam, Item, ItemAffixes, PlacedPlayer, RunnerAdvance, RunnerOut, SnappedPhotos, ViolationType}, time::Breakpoints, Game};
+use crate::{enums::{Base, BatterStat, Day, FairBallDestination, FairBallType, HomeAway, NowBattingStats}, feed_event::{EmojilessItem, FeedDelivery, FeedEvent}, game::Event, parsed_event::{BaseSteal, Cheer, Delivery, Ejection, EjectionReason, EmojiTeam, Item, ItemAffixes, PlacedPlayer, RunnerAdvance, RunnerOut, SnappedPhotos, ViolationType}, time::{Breakpoints, Time}, Game};
 use crate::parsed_event::EjectionReplacement;
 
 pub(super) type Error<'a> = VerboseError<&'a str>;
@@ -35,20 +35,22 @@ impl<'parse> ParsingContext<'parse> {
             day: game.day.as_ref().copied().ok()
         }
     }
-    pub(crate) fn before(&self, breakpoint: Breakpoints) -> bool {
-        breakpoint.before(self.season, self.day, self.event_index)
+    pub(crate) fn before(&self, time: impl Into<Time>) -> bool {
+        time.into().before(self.season, self.day, self.event_index)
     }
-    pub(crate) fn after(&self, breakpoint: Breakpoints) -> bool {
-        breakpoint.after(self.season, self.day, self.event_index)
+    pub(crate) fn after(&self, time: impl Into<Time>) -> bool {
+        time.into().after(self.season, self.day, self.event_index)
     }
 }
 
 impl FeedEvent {
-    pub(crate) fn after(&self, breakpoint: Breakpoints) -> bool {
-        breakpoint.after(self.season as u32, self.day.as_ref().ok().copied(), None)
+    pub(crate) fn after(&self, time: impl Into<Time>) -> bool {
+        time.into().after(self.season as u32, self.day.as_ref().ok().copied(), None)
     }
-    pub(crate) fn before(&self, breakpoint: Breakpoints) -> bool {
-        breakpoint.before(self.season as u32, self.day.as_ref().ok().copied(), None)
+
+    #[allow(dead_code)]
+    pub(crate) fn before(&self, time: impl Into<Time>) -> bool {
+        time.into().before(self.season as u32, self.day.as_ref().ok().copied(), None)
     }
 }
 
