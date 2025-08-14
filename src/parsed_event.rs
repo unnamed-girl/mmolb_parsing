@@ -407,16 +407,7 @@ impl<S: Display> ParsedEventMessage<S> {
                     String::new()
                 };
 
-                let outcome_msg = match outcome {
-                    FallingStarOutcome::Injury => format!("{player_name} was injured by the extreme force of the impact!"),
-                    FallingStarOutcome::Retired(None) => format!("😇 {player_name} retired from MMOLB!"),
-                    FallingStarOutcome::Retired(Some(replacement_player_name)) => {
-                        format!("😇 {player_name} retired from MMOLB! {replacement_player_name} was called up to take their place.")
-                    },
-                    FallingStarOutcome::InfusionI => format!("{player_name} was infused with a glimmer of celestial energy!"),
-                    FallingStarOutcome::InfusionII => format!("{player_name} began to glow brightly with celestial energy!"),
-                    FallingStarOutcome::InfusionIII => format!("{player_name} was fully charged with an abundance of celestial energy!"),
-                };
+                let outcome_msg = outcome.unparse(player_name.to_string().as_str());
 
                 format!(" <strong>{deflection_msg}{outcome_msg}</strong>")
             },
@@ -621,7 +612,24 @@ pub enum FallingStarOutcome<S> {
     Retired(Option<S>),
     InfusionI,
     InfusionII,
-    InfusionIII
+    InfusionIII,
+    DeflectedHarmlessly
+}
+
+impl<S: Display> FallingStarOutcome<S> {
+    pub fn unparse(&self, player_name: &str) -> String {
+        match self {
+            FallingStarOutcome::Injury => format!("{player_name} was injured by the extreme force of the impact!"),
+            FallingStarOutcome::Retired(None) => format!("😇 {player_name} retired from MMOLB!"),
+            FallingStarOutcome::Retired(Some(replacement_player_name)) => {
+                format!("😇 {player_name} retired from MMOLB! {replacement_player_name} was called up to take their place.")
+            },
+            FallingStarOutcome::InfusionI => format!("{player_name} was infused with a glimmer of celestial energy!"),
+            FallingStarOutcome::InfusionII => format!("{player_name} began to glow brightly with celestial energy!"),
+            FallingStarOutcome::InfusionIII => format!("{player_name} was fully charged with an abundance of celestial energy!"),
+            FallingStarOutcome::DeflectedHarmlessly => format!("It deflected off {player_name} harmlessly.")
+        }
+    }
 }
 
 #[derive(Debug, Clone, Copy, Serialize, Deserialize, PartialEq)]

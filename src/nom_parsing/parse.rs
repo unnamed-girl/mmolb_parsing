@@ -168,6 +168,8 @@ fn weather<'output>() -> impl MyParser<'output, ParsedEventMessage<&'output str>
                 .map(|name| (name, FallingStarOutcome::InfusionII)),
             parse_terminated(" was fully charged with an abundance of celestial energy!")
                 .map(|name| (name, FallingStarOutcome::InfusionIII)),
+            preceded(tag("It deflected off "), parse_terminated(" harmlessly.")).and_then(name_eof)
+                .map(|name| (name, FallingStarOutcome::DeflectedHarmlessly)),
         )),
         tag("</strong>")
     );
