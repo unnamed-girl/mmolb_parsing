@@ -1,7 +1,7 @@
 use chrono::{DateTime, Utc};
 use serde::{Deserialize, Serialize};
 use serde_with::serde_as;
-use crate::{enums::{Day, FeedEventType, SeasonStatus}, utils::{MaybeRecognizedResult,TimestampHelper, MaybeRecognizedHelper, extra_fields_deserialize}};
+use crate::{enums::{Day, FeedEventType, LinkType, SeasonStatus}, utils::{extra_fields_deserialize, MaybeRecognizedHelper, MaybeRecognizedResult, TimestampHelper}};
 
 #[serde_as]
 #[derive(Clone, Debug, Serialize, Deserialize, PartialEq)]
@@ -21,11 +21,22 @@ pub struct FeedEvent {
     #[serde_as(as = "MaybeRecognizedHelper<_>")]
     pub event_type: MaybeRecognizedResult<FeedEventType>,
 
-    /// TODO
-    pub(crate) links: serde_json::Value,
+    pub links: Vec<Link>,
 
     #[serde(flatten, deserialize_with = "extra_fields_deserialize")]
     pub extra_fields: serde_json::Map<String, serde_json::Value>,
+}
+
+#[serde_as]
+#[derive(Clone, Debug, Serialize, Deserialize, PartialEq)]
+pub struct Link {
+    pub id: String,
+    #[serde(rename = "type")]
+    #[serde_as(as = "MaybeRecognizedHelper<_>")]
+    pub link_type: MaybeRecognizedResult<LinkType>,
+    pub index: Option<u16>,
+    #[serde(rename = "match")]
+    pub link_match: String 
 }
 
 #[cfg(test)]

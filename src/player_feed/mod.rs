@@ -3,13 +3,17 @@ use std::fmt::Display;
 use serde::{Deserialize, Serialize};
 use serde_with::serde_as;
 
-use crate::{enums::{Attribute, CelestialEnergyTier, ModificationType}, feed_event::{EmojilessItem, FeedDelivery, FeedEvent, FeedEventParseError}, time::{Breakpoints, Timestamp}};
+use crate::{enums::{Attribute, CelestialEnergyTier, ModificationType}, feed_event::{EmojilessItem, FeedDelivery, FeedEvent, FeedEventParseError}, time::{Breakpoints, Timestamp}, utils::extra_fields_deserialize};
+
 pub use crate::nom_parsing::parse_player_feed_event::parse_player_feed_event;
 
 #[serde_as]
 #[derive(Serialize, Deserialize, Debug, Clone)]
 pub struct PlayerFeed {
-    pub feed: Vec<FeedEvent>
+    pub feed: Vec<FeedEvent>,
+
+    #[serde(flatten, deserialize_with = "extra_fields_deserialize")]
+    pub extra_fields: serde_json::Map<String, serde_json::Value>,
 }
 
 #[derive(Clone, Debug, Serialize, Deserialize, PartialEq)]

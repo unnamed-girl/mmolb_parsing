@@ -909,6 +909,14 @@ pub enum FeedEventType {
     Release
 }
 
+#[derive(Debug, Clone, Copy, Serialize, Deserialize, EnumString, Display, PartialEq, Eq, Hash, EnumIter)]
+#[strum(serialize_all = "lowercase")]
+#[serde(rename_all = "lowercase")]
+pub enum LinkType {
+    Player,
+    Game
+}
+
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, EnumIter, SerializeDisplay, DeserializeFromStr)]
 pub enum SeasonStatus {
     RegularSeason,
