@@ -3,7 +3,7 @@ use std::fmt::Display;
 use serde::{Deserialize, Serialize};
 use serde_with::serde_as;
 
-use crate::{enums::{Attribute, CelestialEnergyTier, ModificationType}, feed_event::{EmojilessItem, FeedDelivery, FeedEvent, FeedEventParseError}, time::{Breakpoints, Timestamp}, utils::extra_fields_deserialize};
+use crate::{enums::{Attribute, FeedEventType, ModificationType}, feed_event::{EmojilessItem, FeedDelivery, FeedEvent, FeedEventParseError, FeedFallingStarOutcome}, time::{Breakpoints, Timestamp}, utils::extra_fields_deserialize};
 
 pub use crate::nom_parsing::parse_player_feed_event::parse_player_feed_event;
 
@@ -64,12 +64,9 @@ pub enum ParsedPlayerFeedEventText<S> {
         compensatory: bool
     },
 
-    InjuredByFallingStar {
-        player: S
-    },
-    InfusedByFallingStar {
-        player: S,
-        infusion_tier: CelestialEnergyTier
+    FallingStarOutcome {
+        player_name: S,
+        outcome: FeedFallingStarOutcome
     },
     Recomposed {
         previous: S,
@@ -78,8 +75,13 @@ pub enum ParsedPlayerFeedEventText<S> {
     Released {
         team: S
     },
+    Retirement {
+        previous: S,
+        new: Option<S>
+    },
     Modification {
         player_name: S,
+        lost_modification: Option<ModificationType>,
         modification: ModificationType
     },
 }
@@ -91,14 +93,19 @@ impl<S: Display> ParsedPlayerFeedEventText<S> {
             ParsedPlayerFeedEventText::Delivery { delivery } => delivery.unparse("Delivery"),
             ParsedPlayerFeedEventText::SpecialDelivery { delivery } => delivery.unparse("Special Delivery"),
             ParsedPlayerFeedEventText::Shipment { delivery } => delivery.unparse("Shipment"),
-            ParsedPlayerFeedEventText::InjuredByFallingStar { player } => {
+            ParsedPlayerFeedEventText::FallingStarOutcome { player_name, outcome } => {
+                match outcome {
+                    FeedFallingStarOutcome::Injury => {
                         if event.after(Breakpoints::EternalBattle) {
-                            format!("{player} was injured by the extreme force of the impact!")
+                            format!("{player_name} was injured by the extreme force of the impact!")
                         } else {
-                            format!("{player} was hit by a Falling Star!")
+                            format!("{player_name} was hit by a Falling Star!")
                         }
-                    }
-            ParsedPlayerFeedEventText::InfusedByFallingStar { player, infusion_tier } => format!("{player} {infusion_tier}"),
+                    },
+                    FeedFallingStarOutcome::Infusion(infusion_tier) => format!("{player_name} {infusion_tier}"),
+                    FeedFallingStarOutcome::DeflectedHarmlessly => format!("It deflected off {player_name} harmlessly.")
+                }
+            }
             ParsedPlayerFeedEventText::AttributeChanges { player_name, amount, attribute } => format!("{player_name} gained +{amount} {attribute}."),
             ParsedPlayerFeedEventText::AttributeEquals { player_name, changing_attribute, value_attribute } => {
                         if Breakpoints::Season3.after(event.season as u32, event.day.as_ref().copied().ok(), None) {
@@ -145,7 +152,17 @@ impl<S: Display> ParsedPlayerFeedEventText<S> {
                         }
                     },
             ParsedPlayerFeedEventText::Released { team } => format!("Released by the {team}."),
-            ParsedPlayerFeedEventText::Modification { player_name, modification } => format!("{player_name} gained the {modification} Modification."),
+            ParsedPlayerFeedEventText::Modification { player_name, lost_modification, modification } => {
+                match lost_modification {
+                    Some(lost_modification) => format!("{player_name} lost the {lost_modification} Modification. {player_name} gained the {modification} Modification."),
+                    None => format!("{player_name} gained the {modification} Modification.")
+                }
+            },
+            ParsedPlayerFeedEventText::Retirement { previous, new } => {
+                let new = new.as_ref().map(|new| format!(" {new} was called up to take their place.")).unwrap_or_default();
+                let emoji = (matches!(event.event_type, Ok(FeedEventType::Game))).then_some("😇 ").unwrap_or_default();
+                format!("{emoji}{previous} retired from MMOLB!{new}")
+            }
         }
     }
 }

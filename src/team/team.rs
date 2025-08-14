@@ -21,7 +21,7 @@ pub struct Team {
     pub color: String,
     pub emoji: String,
 
-    /// Not present on some deleted teams.
+    /// Only present on some deleted teams
     #[serde(default = "SometimesMissingHelper::default_result", skip_serializing_if = "AddedLaterResult::is_err")]
     #[serde_as(as = "SometimesMissingHelper<_>")]
     pub feed: AddedLaterResult<Vec<FeedEvent>>,

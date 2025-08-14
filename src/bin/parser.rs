@@ -188,6 +188,8 @@ fn ingest<'de, T: for<'a> Deserialize<'a> + Serialize>(response: EntityResponse<
     let _ingest_guard = tracing::span!(Level::INFO, "Entity Ingest", entity_id = response.entity_id).entered();
 
     let entity = T::deserialize(response.data.as_ref().into_deserializer()).map_err(|e| format!("Failed to deserialize {}, {e:?}", response.entity_id)).expect(&response.entity_id);
+
+    let valid_from = response.valid_from.clone();
     
     if args.round_trip {
         let data = serde_json::Value::deserialize(response.data.into_deserializer()).unwrap();
@@ -202,7 +204,7 @@ fn ingest<'de, T: for<'a> Deserialize<'a> + Serialize>(response: EntityResponse<
     let span = inner_checks(entity, response, args);
 
     if progress_report {
-        tracing::info!("Reached");
+        tracing::info!("Reached {}", valid_from);
     }
 
     drop(span);
@@ -215,9 +217,9 @@ fn player_inner(player: Player,response: EntityResponse<Box<serde_json::value::R
     for event in player.feed.unwrap_or_default() {
         let _event_span_guard = tracing::span!(Level::INFO, "Feed Event", season = event.season, day = format!("{:?}", event.day), timestamp = event.timestamp.to_string(), r#type = format!("{:?}", event.event_type), message = event.text).entered();
 
-        let parsed_text = parse_feed_event(&event);
+        let parsed_text = parse_player_feed_event(&event);
         if tracing::enabled!(Level::ERROR) {
-            let unparsed = parsed_text.unparse(&event, FeedEventSource::Player);
+            let unparsed = parsed_text.unparse(&event);
             if event.text != unparsed {
                 error!("Feed event round trip failure expected:\n'{}'\nGot:\n'{}'", event.text, unparsed);
             }

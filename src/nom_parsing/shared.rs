@@ -437,6 +437,7 @@ pub(super) fn feed_delivery<'output>(label: &'output str) -> impl MyParser<'outp
 pub(super) fn cheer<'parse, 'output: 'parse>(parsing_context: &'parse ParsingContext<'parse>) -> impl MyParser<'output, Cheer> + 'parse {
     |input| {
         if parsing_context.before(Breakpoints::Season3) {
+            tracing::warn!("Cheer before season 3");
             fail().parse(input)
         } else if parsing_context.before(Breakpoints::CheersGetEmoji) {
             parse_terminated("!").map(Cheer::new).parse(input)

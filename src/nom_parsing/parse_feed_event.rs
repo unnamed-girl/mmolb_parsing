@@ -1,4 +1,4 @@
-use nom::{branch::alt, bytes::complete::{tag, take_while}, character::complete::{i16, u8}, combinator::{opt, verify}, error::context, multi::{many1, separated_list1}, sequence::{delimited, preceded, separated_pair, terminated}, Finish, Parser};
+use nom::{branch::alt, bytes::complete::{tag, take_while}, character::complete::{i16, u8}, combinator::{fail, opt, verify}, error::context, multi::{many1, separated_list1}, sequence::{delimited, preceded, separated_pair, terminated}, Finish, Parser};
 use tracing::error;
 use crate::{enums::{CelestialEnergyTier, FeedEventType}, feed_event::{AttributeChange, FeedEvent, FeedEventParseError, ParsedFeedEventText}, nom_parsing::shared::{emoji_team_eof, emojiless_item, feed_delivery, name_eof, parse_terminated, sentence_eof, try_from_word, try_from_words_m_n}, time::{Breakpoints, Timestamp}};
 
@@ -20,7 +20,8 @@ pub fn parse_feed_event<'output>(event: &'output FeedEvent) -> ParsedFeedEventTe
     let result = match event_type {
         FeedEventType::Game => game(event).parse(&event.text),
         FeedEventType::Augment => augment(event).parse(&event.text),
-        FeedEventType::Release => release().parse(&event.text)
+        FeedEventType::Release => release().parse(&event.text),
+        FeedEventType::Season => fail().parse(event.text.as_str())
     };
     match result.finish() {
         Ok(("", output)) => output,

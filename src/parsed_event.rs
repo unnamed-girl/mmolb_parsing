@@ -415,7 +415,7 @@ impl<S: Display> ParsedEventMessage<S> {
                     },
                     FallingStarOutcome::InfusionI => format!("{player_name} was infused with a glimmer of celestial energy!"),
                     FallingStarOutcome::InfusionII => format!("{player_name} began to glow brightly with celestial energy!"),
-                    FallingStarOutcome::InfusionIII => format!("{player_name} was fully charged with an abundance of celestial energy!")
+                    FallingStarOutcome::InfusionIII => format!("{player_name} was fully charged with an abundance of celestial energy!"),
                 };
 
                 format!(" <strong>{deflection_msg}{outcome_msg}</strong>")

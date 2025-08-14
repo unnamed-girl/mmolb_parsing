@@ -1,4 +1,4 @@
-use std::{fmt::{Debug, Display}, str::FromStr};
+use std::{convert::Infallible, fmt::{Debug, Display}, str::FromStr};
 
 use nom::{branch::alt, bytes::complete::tag, character::complete::u8, combinator::{all_consuming, opt}, sequence::{preceded, separated_pair, terminated}, Parser};
 use serde::{Deserialize, Deserializer, Serialize, Serializer, de::Error};
@@ -906,7 +906,8 @@ pub enum SpecialItemType {
 pub enum FeedEventType {
     Game,
     Augment,
-    Release
+    Release,
+    Season
 }
 
 #[derive(Debug, Clone, Copy, Serialize, Deserialize, EnumString, Display, PartialEq, Eq, Hash, EnumIter)]
@@ -926,7 +927,10 @@ pub enum SeasonStatus {
     Holiday,
     PostseasonRound(u8),
     SpecialEvent,
-    Event
+    Event,
+    Election,
+    Preseason,
+    PostseasonPreview
 }
 impl FromStr for SeasonStatus {
     type Err = &'static str;
@@ -939,6 +943,9 @@ impl FromStr for SeasonStatus {
             "Superstar Game" => Ok(SeasonStatus::SuperstarGame),
             "Special Event" => Ok(SeasonStatus::SpecialEvent),
             "Event" => Ok(SeasonStatus::Event),
+            "Election" => Ok(SeasonStatus::Election),
+            "Preseason" => Ok(SeasonStatus::Preseason),
+            "Postseason Preview" => Ok(SeasonStatus::PostseasonPreview),
             s => s.strip_prefix("Postseason Round ")
                         .and_then(|s| s.parse().ok())
                         .map(SeasonStatus::PostseasonRound)
@@ -957,7 +964,10 @@ impl Display for SeasonStatus {
             SeasonStatus::Holiday => Display::fmt("Holiday", f),
             SeasonStatus::PostseasonRound(i) => write!(f, "Postseason Round {i}"),
             SeasonStatus::SpecialEvent => write!(f, "Special Event"),
-            SeasonStatus::Event => write!(f, "Event")
+            SeasonStatus::Event => write!(f, "Event"),
+            SeasonStatus::Election => write!(f, "Election"),
+            SeasonStatus::Preseason => write!(f, "Preseason"),
+            SeasonStatus::PostseasonPreview => write!(f, "Postseason Preview")
         }
     }
 }
@@ -1387,7 +1397,15 @@ pub enum BallparkSuffix {
     Grounds
 }
 
-#[derive(Debug, Serialize, Deserialize, Clone, Copy, EnumIter, PartialEq, Eq, Hash, EnumString, Display)]
+fn _check(_: &str) -> Infallible {
+    unreachable!("This is dead code that exists for a strum parse_err_fn")
+}
+
+#[derive(Debug, Serialize, Deserialize, Clone, EnumIter, PartialEq, Eq, Hash, EnumString, Display)]
+#[strum(
+    parse_err_fn = check,
+    parse_err_ty = Infallible
+)]
 pub enum ModificationType {
     #[strum(to_string = "Fire Elemental")]
     #[serde(rename = "Fire Elemental")]
@@ -1407,7 +1425,51 @@ pub enum ModificationType {
     Angelic,
     Undead,
     Giant,
-    Fae
+    Fae,
+
+    #[strum(to_string = "Archer's Mark")]
+    #[serde(rename = "Archer's Mark")]
+    ArchersMark,
+    Spectral,
+    #[strum(to_string = "Tenacious Badger")]
+    #[serde(rename = "Tenacious Badger")]
+    TenaciousBadger,
+    Stormrider,
+    UFO,
+    Psychic,
+    #[strum(to_string = "One With All")]
+    #[serde(rename = "One With All")]
+    OneWithAll,
+    Amphibian,
+    #[strum(to_string = "Geometry Expert")]
+    #[serde(rename = "Geometry Expert")]
+    GeometryExpert,
+    #[strum(to_string = "The Light")]
+    #[serde(rename = "The Light")]
+    TheLight,
+    Insectoid,
+    Shiny,
+    Scooter,
+    Calculated,
+    Mer,
+    Clean,    
+
+    #[strum(default)]
+    #[serde(untagged)]
+    Unknown(String),
+}
+
+impl ModificationType {
+    pub fn new(value: &str) -> Self {
+        let r = ModificationType::from_str(value)
+            .expect("This error type is infallible");
+
+        if matches!(r, ModificationType::Unknown(_)) {
+            tracing::warn!("Failed to match modification '{value}'");
+        }
+
+        r
+    }
 }
 
 #[derive(Debug, Serialize, Deserialize, Clone, Copy, EnumIter, PartialEq, Eq, Hash, EnumString, Display)]

@@ -1,5 +1,5 @@
-use nom::{branch::alt, bytes::complete::tag, character::complete::{i16, u8}, combinator::{fail, opt}, error::context, sequence::{delimited, preceded, separated_pair, terminated}, Finish, Parser};
-use crate::{enums::{CelestialEnergyTier, FeedEventType}, feed_event::{FeedEvent, FeedEventParseError}, nom_parsing::shared::{emojiless_item, feed_delivery, name_eof, parse_terminated, sentence_eof, try_from_word, try_from_words_m_n}, player_feed::ParsedPlayerFeedEventText, time::{Breakpoints, Timestamp}};
+use nom::{branch::alt, bytes::complete::tag, character::complete::{i16, u8}, combinator::{cond, fail, opt}, error::context, sequence::{delimited, preceded, separated_pair, terminated}, Finish, Parser};
+use crate::{enums::{CelestialEnergyTier, FeedEventType, ModificationType}, feed_event::{FeedEvent, FeedEventParseError, FeedFallingStarOutcome}, nom_parsing::shared::{emojiless_item, feed_delivery, name_eof, parse_terminated, sentence_eof, try_from_word}, player_feed::ParsedPlayerFeedEventText, time::{Breakpoints, Timestamp}};
 
 use super::shared::Error;
 
@@ -20,7 +20,8 @@ pub fn parse_player_feed_event<'output>(event: &'output FeedEvent) -> ParsedPlay
     let result = match event_type {
         FeedEventType::Game => game(event).parse(&event.text),
         FeedEventType::Augment => augment(event).parse(&event.text),
-        FeedEventType::Release => release(event).parse(&event.text)
+        FeedEventType::Release => release(event).parse(&event.text),
+        FeedEventType::Season => season(event).parse(event.text.as_str())
     };
     match result.finish() {
         Ok(("", output)) => output,
@@ -29,9 +30,9 @@ pub fn parse_player_feed_event<'output>(event: &'output FeedEvent) -> ParsedPlay
             let error = FeedEventParseError::FailedParsingText { event_type: *event_type, text: event.text.clone() };
             ParsedPlayerFeedEventText::ParseError { error, text: &event.text }
         }
-        Err(_) => {
+        Err(e) => {
             let error = FeedEventParseError::FailedParsingText { event_type: *event_type, text: event.text.clone() };
-            tracing::error!("Parse error: {}", error);
+            tracing::error!("Parse error: {e:?}");
             ParsedPlayerFeedEventText::ParseError { error, text: &event.text }
         }
     }
@@ -44,6 +45,8 @@ fn game<'output>(event: &'output FeedEvent) -> impl PlayerFeedEventParser<'outpu
         feed_delivery("Special Delivery").map(|delivery| ParsedPlayerFeedEventText::SpecialDelivery { delivery } ),
         injured_by_falling_star(event),
         infused_by_falling_star(),
+        deflected_falling_star_harmlessly(),
+        retirement(true),
         fail(),
     )))
 }
@@ -68,6 +71,12 @@ fn augment<'output>(event: &'output FeedEvent) -> impl PlayerFeedEventParser<'ou
 fn release<'output>(_event: &'output FeedEvent) -> impl PlayerFeedEventParser<'output> {
     context("Release Feed Event", alt((
         preceded(tag("Released by the "), sentence_eof(name_eof)).map(|team| ParsedPlayerFeedEventText::Released { team }),
+    )))
+}
+
+fn season<'output>(_event: &'output FeedEvent) -> impl PlayerFeedEventParser<'output> {
+    context("Season Feed Event", alt((
+        retirement(false),
     )))
 }
 
@@ -109,12 +118,12 @@ fn injured_by_falling_star<'output>(event: &'output FeedEvent) -> impl PlayerFee
         if event.after(Breakpoints::EternalBattle) {
             parse_terminated(" was injured by the extreme force of the impact!")
                 .and_then(name_eof)
-                .map(|player| ParsedPlayerFeedEventText::InjuredByFallingStar { player })
+                .map(|player_name| ParsedPlayerFeedEventText::FallingStarOutcome { player_name, outcome: FeedFallingStarOutcome::Injury })
                 .parse(input)
         } else {
             parse_terminated(" was hit by a Falling Star!")
                 .and_then(name_eof)
-                .map(|player| ParsedPlayerFeedEventText::InjuredByFallingStar { player })
+                .map(|player_name| ParsedPlayerFeedEventText::FallingStarOutcome { player_name, outcome: FeedFallingStarOutcome::Injury })
                 .parse(input)   
         }
 }
@@ -125,7 +134,15 @@ fn infused_by_falling_star<'output>() -> impl PlayerFeedEventParser<'output> {
         parse_terminated(" was infused with a glimmer of celestial energy!").and_then(name_eof).map(|player| (player, CelestialEnergyTier::Infused)),
         parse_terminated(" was fully charged with an abundance of celestial energy!").and_then(name_eof).map(|player| (player, CelestialEnergyTier::FullyCharged))
     ))
-    .map(|(player, infusion_tier)| ParsedPlayerFeedEventText::InfusedByFallingStar { player, infusion_tier })
+    .map(|(player_name, infusion_tier)| ParsedPlayerFeedEventText::FallingStarOutcome { player_name, outcome: FeedFallingStarOutcome::Infusion(infusion_tier) })
+}
+
+fn deflected_falling_star_harmlessly<'output>() -> impl PlayerFeedEventParser<'output> {
+    preceded(
+        tag("It deflected off "),
+        parse_terminated(" harmlessly.").and_then(name_eof)
+    )
+    .map(|player_name| ParsedPlayerFeedEventText::FallingStarOutcome { player_name, outcome: FeedFallingStarOutcome::DeflectedHarmlessly })
 }
 
 fn recompose<'output>(event: &'output FeedEvent) -> impl PlayerFeedEventParser<'output> {
@@ -214,9 +231,28 @@ fn swap_places<'output>() -> impl PlayerFeedEventParser<'output> {
 }
 
 fn modification<'output>() -> impl PlayerFeedEventParser<'output> {
+    |input| {
+        if let Ok((input, player_name)) = (parse_terminated(" lost the ")).parse(input) {
+            let (_, player_name) = name_eof(player_name)?;
+            let (input, lost_modification) = parse_terminated(" Modification. ").map(ModificationType::new).parse(input)?;
+            let (input, _) = (tag(player_name), tag(" gained the ")).parse(input)?;
+            let (input, modification) = parse_terminated(" Modification.").map(ModificationType::new).parse(input)?;
+            Ok((input, ParsedPlayerFeedEventText::Modification { player_name, modification, lost_modification: Some(lost_modification) }))
+        } else {
+            let (input, (player_name, modification)) = (   
+                parse_terminated(" gained the "),
+                parse_terminated(" Modification.").map(ModificationType::new),
+            )
+            .parse(input)?;
+
+            Ok((input, ParsedPlayerFeedEventText::Modification { player_name, modification, lost_modification: None }))
+        }
+    }
+}
+
+fn retirement<'output>(emoji: bool) -> impl PlayerFeedEventParser<'output> {
     (
-        parse_terminated(" gained the "),
-        terminated(try_from_words_m_n(1, 2), tag(" Modification.")),
-    )
-        .map(|(player_name, modification)| ParsedPlayerFeedEventText::Modification { player_name, modification })
+        preceded(cond(emoji, tag("😇 ")), parse_terminated(" retired from MMOLB!").and_then(name_eof)),
+        opt(preceded(tag(" "), parse_terminated(" was called up to take their place.").and_then(name_eof)))
+    ).map(|(original, new)| ParsedPlayerFeedEventText::Retirement { previous: original, new })
 }

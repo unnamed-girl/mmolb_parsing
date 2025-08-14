@@ -1,7 +1,7 @@
 use chrono::{DateTime, Utc};
 use serde::{Deserialize, Serialize};
 use serde_with::serde_as;
-use crate::{enums::{Day, FeedEventType, LinkType, SeasonStatus}, utils::{extra_fields_deserialize, MaybeRecognizedHelper, MaybeRecognizedResult, TimestampHelper}};
+use crate::{enums::{CelestialEnergyTier, Day, FeedEventType, LinkType, SeasonStatus}, utils::{extra_fields_deserialize, MaybeRecognizedHelper, MaybeRecognizedResult, TimestampHelper}};
 
 #[serde_as]
 #[derive(Clone, Debug, Serialize, Deserialize, PartialEq)]
@@ -36,7 +36,17 @@ pub struct Link {
     pub link_type: MaybeRecognizedResult<LinkType>,
     pub index: Option<u16>,
     #[serde(rename = "match")]
-    pub link_match: String 
+    pub link_match: String,
+
+    #[serde(flatten, deserialize_with = "extra_fields_deserialize")]
+    pub extra_fields: serde_json::Map<String, serde_json::Value>,
+}
+
+#[derive(Debug, Clone, Copy, Serialize, Deserialize, PartialEq)]
+pub enum FeedFallingStarOutcome {
+    Injury,
+    Infusion(CelestialEnergyTier),
+    DeflectedHarmlessly
 }
 
 #[cfg(test)]
