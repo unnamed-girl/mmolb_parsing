@@ -90,17 +90,18 @@ pub enum ParsedEventMessage<S> {
     },
 
     // Pitch
-    Ball { steals: Vec<BaseSteal<S>>, count:(u8, u8), cheer: Option<Cheer>, aurora_photos: Option<SnappedPhotos<S>>, ejection: Option<Ejection<S>> },
-    Strike { strike: StrikeType, steals: Vec<BaseSteal<S>>, count:(u8, u8), cheer: Option<Cheer>, aurora_photos: Option<SnappedPhotos<S>>, ejection: Option<Ejection<S>> },
-    Foul { foul: FoulType, steals: Vec<BaseSteal<S>>, count:(u8, u8), cheer: Option<Cheer>, aurora_photos: Option<SnappedPhotos<S>> },
+    Ball { steals: Vec<BaseSteal<S>>, count:(u8, u8), cheer: Option<Cheer>, aurora_photos: Option<SnappedPhotos<S>>, ejection: Option<Ejection<S>>, door_prizes: Vec<DoorPrize<S>> },
+    Strike { strike: StrikeType, steals: Vec<BaseSteal<S>>, count:(u8, u8), cheer: Option<Cheer>, aurora_photos: Option<SnappedPhotos<S>>, ejection: Option<Ejection<S>>, door_prizes: Vec<DoorPrize<S>> },
+    Foul { foul: FoulType, steals: Vec<BaseSteal<S>>, count:(u8, u8), cheer: Option<Cheer>, aurora_photos: Option<SnappedPhotos<S>>, door_prizes: Vec<DoorPrize<S>> },
     Walk { batter: S, scores: Vec<S>, advances: Vec<RunnerAdvance<S>>, cheer: Option<Cheer>, aurora_photos: Option<SnappedPhotos<S>>, ejection: Option<Ejection<S>> },
-    HitByPitch { batter: S, scores: Vec<S>, advances: Vec<RunnerAdvance<S>>, cheer: Option<Cheer>, aurora_photos: Option<SnappedPhotos<S>>, ejection: Option<Ejection<S>> },
+    HitByPitch { batter: S, scores: Vec<S>, advances: Vec<RunnerAdvance<S>>, cheer: Option<Cheer>, aurora_photos: Option<SnappedPhotos<S>>, ejection: Option<Ejection<S>>, door_prizes: Vec<DoorPrize<S>> },
     FairBall {
         batter: S,
         fair_ball_type: FairBallType,
         destination: FairBallDestination,
         cheer: Option<Cheer>,
         aurora_photos: Option<SnappedPhotos<S>>,
+        door_prizes: Vec<DoorPrize<S>>
     },
     StrikeOut { foul: Option<FoulType>, batter: S, strike: StrikeType, steals: Vec<BaseSteal<S>>, cheer: Option<Cheer>, aurora_photos: Option<SnappedPhotos<S>>, ejection: Option<Ejection<S>> },
 
@@ -149,7 +150,7 @@ pub enum ParsedEventMessage<S> {
         losing_tokens: u8,
         losing_player: S,
         losing_score: u16,
-    }
+    },
 }
 impl<S: Display> ParsedEventMessage<S> {
     /// Recreate the event message this ParsedEvent was built out of.
@@ -235,7 +236,7 @@ impl<S: Display> ParsedEventMessage<S> {
                 format!("{leaving_pitcher_emoji}{leaving_pitcher} is leaving the game. {arriving_pitcher_emoji}{arriving_pitcher_place}{arriving_pitcher_name} takes the mound.")
             },
 
-            Self::Ball { steals, count, cheer, aurora_photos, ejection } => {
+            Self::Ball { steals, count, cheer, aurora_photos, ejection, door_prizes } => {
                 let steals = once(String::new()).chain(steals.iter().map(BaseSteal::to_string))
                     .collect::<Vec<String>>()
                     .join(" ");
@@ -244,10 +245,11 @@ impl<S: Display> ParsedEventMessage<S> {
                 let cheer = cheer.as_ref().map(|c| c.unparse(game, event_index)).unwrap_or_default();
                 let aurora_photos = aurora_photos.as_ref().map(|p| p.unparse()).unwrap_or_default();
                 let ejection = ejection.as_ref().map(|e| e.unparse()).unwrap_or_default();
+                let door_prizes = once(String::new()).chain(door_prizes.iter().map(|d| d.unparse())).collect::<Vec<_>>().join("<br>");
 
-                format!("{space}Ball. {}-{}.{steals}{aurora_photos}{ejection}{cheer}", count.0, count.1,)
+                format!("{space}Ball. {}-{}.{steals}{aurora_photos}{ejection}{cheer}{door_prizes}", count.0, count.1,)
             },
-            Self::Strike { strike, steals, count, cheer, aurora_photos, ejection } => {
+            Self::Strike { strike, steals, count, cheer, aurora_photos, ejection, door_prizes } => {
                 let steals: Vec<String> = once(String::new()).chain(steals.into_iter().map(|steal| steal.to_string())).collect();
                 let steals = steals.join(" ");
                 let space = old_space(game, event_index);
@@ -255,18 +257,20 @@ impl<S: Display> ParsedEventMessage<S> {
                 let cheer = cheer.as_ref().map(|c| c.unparse(game, event_index)).unwrap_or_default();
                 let aurora_photos = aurora_photos.as_ref().map(|p| p.unparse()).unwrap_or_default();
                 let ejection = ejection.as_ref().map(|e| e.unparse()).unwrap_or_default();
+                let door_prizes = once(String::new()).chain(door_prizes.iter().map(|d| d.unparse())).collect::<Vec<_>>().join("<br>");
 
-                format!("{space}Strike, {strike}. {}-{}.{steals}{aurora_photos}{ejection}{cheer}", count.0, count.1)
+                format!("{space}Strike, {strike}. {}-{}.{steals}{aurora_photos}{ejection}{cheer}{door_prizes}", count.0, count.1)
             }
-            Self::Foul { foul, steals, count, cheer, aurora_photos } => {
+            Self::Foul { foul, steals, count, cheer, aurora_photos, door_prizes } => {
                 let steals: Vec<String> = once(String::new()).chain(steals.into_iter().map(|steal| steal.to_string())).collect();
                 let steals = steals.join(" ");
                 let space = old_space(game, event_index);
 
                 let cheer = cheer.as_ref().map(|c| c.unparse(game, event_index)).unwrap_or_default();
                 let aurora_photos = aurora_photos.as_ref().map(|p| p.unparse()).unwrap_or_default();
+                let door_prizes = once(String::new()).chain(door_prizes.iter().map(|d| d.unparse())).collect::<Vec<_>>().join("<br>");
 
-                format!("{space}Foul {foul}. {}-{}.{steals}{aurora_photos}{cheer}", count.0, count.1)
+                format!("{space}Foul {foul}. {}-{}.{steals}{aurora_photos}{cheer}{door_prizes}", count.0, count.1)
             }
             Self::Walk { batter, scores, advances, cheer, aurora_photos, ejection } => {
                 let scores_and_advances = unparse_scores_and_advances(scores, advances);
@@ -279,23 +283,25 @@ impl<S: Display> ParsedEventMessage<S> {
                 // Proof cheer is before ejection: https://mmolb.com/watch/6887e503f142e23550fc1254?event=369
                 format!("{space}Ball 4. {batter} walks.{scores_and_advances}{aurora_photos}{cheer}{ejection}")
             }
-            Self::HitByPitch { batter, scores, advances, cheer, aurora_photos, ejection } => {
+            Self::HitByPitch { batter, scores, advances, cheer, aurora_photos, ejection, door_prizes } => {
                 let scores_and_advances = unparse_scores_and_advances(scores, advances);
                 let space = old_space(game, event_index);
 
                 let cheer = cheer.as_ref().map(|c| c.unparse(game, event_index)).unwrap_or_default();
                 let aurora_photos = aurora_photos.as_ref().map(|p| p.unparse()).unwrap_or_default();
                 let ejection = ejection.as_ref().map(|e| e.unparse()).unwrap_or_default();
+                let door_prizes = once(String::new()).chain(door_prizes.iter().map(|d| d.unparse())).collect::<Vec<_>>().join("<br>");
 
-                format!("{space}{batter} was hit by the pitch and advances to first base.{scores_and_advances}{aurora_photos}{cheer}{ejection}")
+                format!("{space}{batter} was hit by the pitch and advances to first base.{scores_and_advances}{aurora_photos}{cheer}{ejection}{door_prizes}")
             }
-            Self::FairBall { batter, fair_ball_type, destination, cheer, aurora_photos } => {
+            Self::FairBall { batter, fair_ball_type, destination, cheer, aurora_photos, door_prizes } => {
                 let space = old_space(game, event_index);
 
                 let cheer = cheer.as_ref().map(|c| c.unparse(game, event_index)).unwrap_or_default();
                 let aurora_photos = aurora_photos.as_ref().map(|p| p.unparse()).unwrap_or_default();
+                let door_prizes = once(String::new()).chain(door_prizes.iter().map(|d| d.unparse())).collect::<Vec<_>>().join("<br>");
 
-                format!("{space}{batter} hits a {fair_ball_type} to {destination}.{aurora_photos}{cheer}")
+                format!("{space}{batter} hits a {fair_ball_type} to {destination}.{aurora_photos}{cheer}{door_prizes}")
             }
             Self::StrikeOut { foul, batter, strike, steals, cheer, aurora_photos, ejection } => {
                 let foul = match foul {
@@ -441,7 +447,7 @@ impl<S: Display> ParsedEventMessage<S> {
                 let winning_emoji = &winning_team.emoji;
                 let losing_emoji = &losing_team.emoji;
                 format!("{winning_team} earned {winning_tokens} 🪙. {losing_team} earned {losing_tokens} 🪙.<br>Top scoring Photos:<br>{winning_emoji} {winning_player} - {winning_score} {losing_emoji} {losing_player} - {losing_score}")
-            }
+            },
         }
     }
 }
@@ -639,11 +645,31 @@ pub enum ItemAffixes<S> {
     RareName(S)
 }
 
+impl<S: AsRef<str>> ItemAffixes<S> {
+    pub fn to_ref(&self) -> ItemAffixes<&str> {
+        match self {
+            ItemAffixes::RareName(s) => ItemAffixes::RareName(s.as_ref()),
+            ItemAffixes::PrefixSuffix(prefix, suffix) => ItemAffixes::PrefixSuffix(prefix.as_ref().copied(), suffix.as_ref().copied()),
+            ItemAffixes::None => ItemAffixes::None,
+        }
+    }
+}
+
 #[derive(Debug, Clone, Copy, Serialize, Deserialize, PartialEq)]
 pub struct Item<S> {
     pub item_emoji: S,
     pub item: ItemName,
     pub affixes: ItemAffixes<S>
+}
+
+impl<S: AsRef<str>> Item<S> {
+    pub fn to_ref(&self) -> Item<&str> {
+        Item {
+            item_emoji: self.item_emoji.as_ref(),
+            item: self.item,
+            affixes: self.affixes.to_ref()
+        }
+    }
 }
 
 impl<S: Display> Display for Item<S> {
@@ -1205,6 +1231,55 @@ impl<S: AsRef<str>> Ejection<S> {
             violation_type: self.violation_type.clone(),
             reason: self.reason.clone(),
             replacement: self.replacement.as_ref(),
+        }
+    }
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
+pub enum Prize<S> {
+    Tokens(u16),
+    Items(Vec<Item<S>>)
+}
+
+impl<S: Display> Prize<S> {
+    pub fn unparse(&self) -> String {
+        match self {
+            Prize::Tokens(tokens) => format!("{tokens} 🪙"),
+            Prize::Items(items) => items.iter().map(Item::to_string).collect::<Vec<_>>().join(", ")
+        }
+    }
+}
+
+impl<S: AsRef<str>> Prize<S> {
+    pub fn to_ref(&self) -> Prize<&str> {
+        match self {
+            Prize::Items(items) => Prize::Items(items.iter().map(Item::to_ref).collect()),
+            Prize::Tokens(t) => Prize::Tokens(*t)
+        }
+    }
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
+pub struct DoorPrize<S> {
+    pub player: S,
+    /// None when they don't win.
+    pub prize: Option<Prize<S>>
+}
+
+impl<S: Display> DoorPrize<S> {
+    pub fn unparse(&self) -> String {
+        match &self.prize {
+            Some(prize) => format!("🥳 {} won a Door Prize: {}.", self.player, prize.unparse()),
+            None => format!("🥳 {} didn't win a Door Prize.", self.player)
+        }
+    }
+}
+
+impl<S: AsRef<str>> DoorPrize<S> {
+    pub fn to_ref(&self) -> DoorPrize<&str> {
+        DoorPrize {
+            player: self.player.as_ref(),
+            prize: self.prize.as_ref().map(Prize::to_ref)
         }
     }
 }

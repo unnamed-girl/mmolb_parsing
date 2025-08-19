@@ -1,9 +1,9 @@
 use std::{fmt::Debug, str::FromStr};
 
-use nom::{branch::alt, bytes::complete::{tag, take, take_till, take_until, take_until1, take_while}, character::complete::{one_of, space0, u8}, combinator::{all_consuming, fail, opt, recognize, rest, value, verify}, error::{ErrorKind, ParseError}, multi::{count, many0, many1, separated_list1}, sequence::{delimited, preceded, separated_pair, terminated}, AsChar, Input, Parser};
+use nom::{branch::alt, bytes::complete::{tag, take, take_till, take_until, take_until1, take_while}, character::complete::{one_of, space0, u8, u16}, combinator::{all_consuming, fail, opt, recognize, rest, value, verify}, error::{ErrorKind, ParseError}, multi::{count, many0, many1, separated_list1}, sequence::{delimited, preceded, separated_pair, terminated}, AsChar, Input, Parser};
 use nom_language::error::VerboseError;
 
-use crate::{enums::{Base, BatterStat, Day, FairBallDestination, FairBallType, HomeAway, NowBattingStats}, feed_event::{EmojilessItem, FeedDelivery, FeedEvent}, game::Event, parsed_event::{BaseSteal, Cheer, Delivery, Ejection, EjectionReason, EmojiTeam, Item, ItemAffixes, PlacedPlayer, RunnerAdvance, RunnerOut, SnappedPhotos, ViolationType}, time::{Breakpoints, Time}, Game};
+use crate::{enums::{Base, BatterStat, Day, FairBallDestination, FairBallType, HomeAway, NowBattingStats}, feed_event::{EmojilessItem, FeedDelivery, FeedEvent}, game::Event, parsed_event::{BaseSteal, Cheer, Delivery, DoorPrize, Ejection, EjectionReason, EmojiTeam, Item, ItemAffixes, PlacedPlayer, Prize, RunnerAdvance, RunnerOut, SnappedPhotos, ViolationType}, time::{Breakpoints, Time}, Game};
 use crate::parsed_event::EjectionReplacement;
 
 pub(super) type Error<'a> = VerboseError<&'a str>;
@@ -544,6 +544,32 @@ pub(super) fn ejection_tail<'parse, 'output: 'parse>(parsing_context: &'parse Pa
             replacement,
         }))
     }
+}
+
+pub(super) fn door_prizes(input: &str) -> IResult<&str, Vec<DoorPrize<&str>>> {
+    many0(preceded(tag("<br>"), door_prize)).parse(input)
+}
+
+pub(super) fn door_prize<'output>(input: &'output str) -> IResult<'output, &'output str, DoorPrize<&'output str>> {
+    let not_win = |input: &'output str| {
+        let (input, player) = parse_terminated(" didn't win a Door Prize.").parse(input)?;
+        Ok((input, DoorPrize { player, prize: None }))
+    };
+    let win = |input: &'output str| {
+        let (input, player) = parse_terminated(" won a Door Prize: ").parse(input)?;
+        let (input, prize) = alt((
+            terminated(u16, tag(" 🪙")).map(Prize::Tokens),
+            separated_list1(tag(", "), item).map(Prize::Items)
+        )).parse(input)?;
+        let (input, _) = tag(".").parse(input)?;
+        Ok((input, DoorPrize { player, prize: Some(prize) }))
+    };
+    let (input, _) = tag("🥳 ").parse(input)?;
+
+    alt((
+        not_win,
+        win
+    )).parse(input)
 }
 
 pub(super) fn team_emoji<'parse, 'output, 'a>(side: HomeAway, parsing_context: &'a ParsingContext<'parse>) -> impl MyParser<'output, &'output str> + 'parse {

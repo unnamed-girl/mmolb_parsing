@@ -45,7 +45,7 @@ struct Args {
     start_page: Option<String>,
 
     #[clap(long, action)]
-    round_trip: bool,
+    no_round_trip: bool,
 
     #[clap(short, long, action)]
     refetch: bool,
@@ -191,7 +191,7 @@ fn ingest<'de, T: for<'a> Deserialize<'a> + Serialize>(response: EntityResponse<
 
     let valid_from = response.valid_from.clone();
     
-    if args.round_trip {
+    if !args.no_round_trip {
         let data = serde_json::Value::deserialize(response.data.into_deserializer()).unwrap();
         let round_tripped = serde_json::to_value(&entity).unwrap();
 
@@ -376,23 +376,23 @@ fn check<S>(event: &ParsedEventMessage<S>) -> String {
         ParsedEventMessage::PitcherSwap { leaving_pitcher_emoji, leaving_pitcher: _, arriving_pitcher_emoji, arriving_pitcher_place, arriving_pitcher_name: _ } => {
             format!("leaving_pitcher_emoji: {}, arriving_pitcher_emoji: {}, arriving_pitcher_place: {}", leaving_pitcher_emoji.is_some(), arriving_pitcher_emoji.is_some(), arriving_pitcher_place.is_some())  
         },
-        ParsedEventMessage::Ball { steals, count: _, cheer, aurora_photos, ejection } => {
-            format!("steals: {}, cheer: {}, aurora_photos: {}, ejection: {}", steals.len(), cheer.is_some(), aurora_photos.is_some(), ejection.is_some())
+        ParsedEventMessage::Ball { steals, count: _, cheer, aurora_photos, ejection, door_prizes } => {
+            format!("steals: {}, cheer: {}, aurora_photos: {}, ejection: {}, door_prizes: {}", steals.len(), cheer.is_some(), aurora_photos.is_some(), ejection.is_some(), door_prizes.len())
         },
-        ParsedEventMessage::Strike { strike, steals, count: _, cheer, aurora_photos, ejection } => {
-            format!("strike: {strike}, steals: {}, cheer: {}, aurora_photos: {}, ejection: {}", steals.len(), cheer.is_some(), aurora_photos.is_some(), ejection.is_some())
+        ParsedEventMessage::Strike { strike, steals, count: _, cheer, aurora_photos, ejection, door_prizes } => {
+            format!("strike: {strike}, steals: {}, cheer: {}, aurora_photos: {}, ejection: {}, door_prizes: {}", steals.len(), cheer.is_some(), aurora_photos.is_some(), ejection.is_some(), door_prizes.len())
         },
-        ParsedEventMessage::Foul { foul, steals, count: _, cheer, aurora_photos } => {
-            format!("foul: {foul}, steals: {}, cheer: {}, aurora_photos: {}", steals.len(), cheer.is_some(), aurora_photos.is_some())
+        ParsedEventMessage::Foul { foul, steals, count: _, cheer, aurora_photos, door_prizes } => {
+            format!("foul: {foul}, steals: {}, cheer: {}, aurora_photos: {}, door_prizes: {}", steals.len(), cheer.is_some(), aurora_photos.is_some(), door_prizes.len())
         },
         ParsedEventMessage::Walk { batter: _, scores, advances: _, cheer, aurora_photos, ejection } => {
             format!("scores: {}, cheer: {}, aurora_photos: {}, ejection: {}", scores.len(), cheer.is_some(), aurora_photos.is_some(), ejection.is_some())
         },
-        ParsedEventMessage::HitByPitch { batter: _, scores, advances: _, cheer, aurora_photos, ejection } => {
-            format!("scores: {}, cheer: {}, aurora_photos: {}, ejection: {}", scores.len(), cheer.is_some(), aurora_photos.is_some(), ejection.is_some())
+        ParsedEventMessage::HitByPitch { batter: _, scores, advances: _, cheer, aurora_photos, ejection, door_prizes } => {
+            format!("scores: {}, cheer: {}, aurora_photos: {}, ejection: {}, door_prizes: {}", scores.len(), cheer.is_some(), aurora_photos.is_some(), ejection.is_some(), door_prizes.len())
         },
-        ParsedEventMessage::FairBall { batter: _, fair_ball_type, destination, cheer, aurora_photos } => {
-            format!("fair_ball_type: {fair_ball_type}, destination: {destination}, cheer: {}, aurora_photos: {}", cheer.is_some(), aurora_photos.is_some())
+        ParsedEventMessage::FairBall { batter: _, fair_ball_type, destination, cheer, aurora_photos, door_prizes } => {
+            format!("fair_ball_type: {fair_ball_type}, destination: {destination}, cheer: {}, aurora_photos: {}, door_prizes: {}", cheer.is_some(), aurora_photos.is_some(), door_prizes.len())
         },
         ParsedEventMessage::StrikeOut { foul, batter: _, strike, steals, cheer, aurora_photos, ejection } => {
             format!("foul: {}, strike: {strike}, steals: {}, cheer: {}, aurora_photos: {}, ejection: {}", foul.as_ref().map(FoulType::to_string).unwrap_or_else(|| "False".to_string()), steals.len(), cheer.is_some(), aurora_photos.is_some(), ejection.is_some())

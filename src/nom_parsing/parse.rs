@@ -1,4 +1,4 @@
-use crate::nom_parsing::shared::ejection_tail;
+use crate::nom_parsing::shared::{door_prizes, ejection_tail};
 use std::str::FromStr;
 
 use nom::{branch::alt, bytes::complete::{tag, take_until}, character::complete::{digit1, u8, u16}, combinator::{all_consuming, cut, fail, opt, rest, value, verify}, error::context, multi::{many0, many1, separated_list1}, sequence::{delimited, preceded, separated_pair, terminated}, Finish, Parser};
@@ -378,8 +378,9 @@ fn pitch<'parse, 'output: 'parse>(parsing_context: &'parse ParsingContext<'parse
         )),
         opt(preceded(tag(" "), aurora(parsing_context))),
         opt(preceded(tag(" "), cheer(parsing_context))),
+        door_prizes
     )
-    .map(|((batter, fair_ball_type, destination), aurora_photos, cheer)| ParsedEventMessage::FairBall { batter, fair_ball_type, destination, cheer, aurora_photos });
+    .map(|((batter, fair_ball_type, destination), aurora_photos, cheer, door_prizes)| ParsedEventMessage::FairBall { batter, fair_ball_type, destination, cheer, aurora_photos, door_prizes });
 
     let struck_out = (
         opt(sentence(preceded(tag("Foul "), try_from_word))),
@@ -400,7 +401,8 @@ fn pitch<'parse, 'output: 'parse>(parsing_context: &'parse ParsingContext<'parse
     .and(opt(preceded(tag(" "), aurora(parsing_context))))
     .and(opt(preceded(tag(" "), cheer(parsing_context))))
     .and(opt(ejection(parsing_context)))
-    .map(|((((batter, (scores, advances)), aurora_photos), cheer), ejection)| ParsedEventMessage::HitByPitch { batter, scores, advances, cheer, aurora_photos, ejection });
+    .and(door_prizes)
+    .map(|(((((batter, (scores, advances)), aurora_photos), cheer), ejection), door_prizes)| ParsedEventMessage::HitByPitch { batter, scores, advances, cheer, aurora_photos, ejection, door_prizes });
 
     let walks = preceded(
         sentence(tag("Ball 4")),
@@ -416,21 +418,24 @@ fn pitch<'parse, 'output: 'parse>(parsing_context: &'parse ParsingContext<'parse
     .and(opt(preceded(tag(" "), aurora(parsing_context))))
     .and(opt(preceded(tag(" "), cheer(parsing_context))))
     .and(opt(ejection(parsing_context)))
-    .map(|((((count, steals), aurora_photos), cheer), ejection)| ParsedEventMessage::Ball { steals, count, cheer, aurora_photos, ejection });
+    .and(door_prizes)
+    .map(|(((((count, steals), aurora_photos), cheer), ejection), door_prizes)| ParsedEventMessage::Ball { steals, count, cheer, aurora_photos, ejection, door_prizes });
 
     let strike = sentence(preceded(tag("Strike, "), try_from_word))
     .and(cut((sentence(score_update), many0(base_steal_sentence))))
     .and(opt(preceded(tag(" "), aurora(parsing_context))))
     .and(opt(preceded(tag(" "), cheer(parsing_context))))
     .and(opt(ejection(parsing_context)))
-    .map(|((((strike, (count, steals)), aurora_photos), cheer), ejection)| ParsedEventMessage::Strike { strike, steals, count, cheer, aurora_photos, ejection });
+    .and(door_prizes)
+    .map(|(((((strike, (count, steals)), aurora_photos), cheer), ejection), door_prizes)| ParsedEventMessage::Strike { strike, steals, count, cheer, aurora_photos, ejection, door_prizes});
 
     let foul = sentence(preceded(tag("Foul "), try_from_word))
     .and(sentence(score_update))
     .and(many0(base_steal_sentence))
     .and(opt(preceded(tag(" "), aurora(parsing_context))))
     .and(opt(preceded(tag(" "), cheer(parsing_context))))
-    .map(|((((foul, count), steals), aurora_photos), cheer)| ParsedEventMessage::Foul { foul, steals, count, cheer, aurora_photos });
+    .and(door_prizes)
+    .map(|(((((foul, count), steals), aurora_photos), cheer), door_prizes)| ParsedEventMessage::Foul { foul, steals, count, cheer, aurora_photos, door_prizes });
 
     let pitch_options = alt((
         struck_out,

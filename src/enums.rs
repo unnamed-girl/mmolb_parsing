@@ -915,7 +915,8 @@ pub enum FeedEventType {
 #[serde(rename_all = "lowercase")]
 pub enum LinkType {
     Player,
-    Game
+    Game,
+    Team
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, EnumIter, SerializeDisplay, DeserializeFromStr)]
