@@ -11,7 +11,8 @@ use super::raw_team::{RawTeamPlayer};
 #[serde(untagged)]
 enum TeamPlayerCollectionHelper {
     Vec(Vec<TeamPlayer>),
-    Map(HashMap<String, TeamPlayer>),
+    // Using this third-party map type instead of HashMap to preserve key order
+    Map(indexmap::IndexMap<String, TeamPlayer>),
 }
 
 impl SerializeAs<Vec<TeamPlayer>> for TeamPlayerCollectionHelper {
