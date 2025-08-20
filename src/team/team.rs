@@ -83,6 +83,9 @@ pub struct Team {
     #[serde_as(as = "SometimesMissingHelper<_>")]
     pub inventory: AddedLaterResult<Vec<PlayerEquipment>>,
 
+    #[serde(skip_serializing_if = "Option::is_none", default)]
+    pub fund: Option<i32>,
+
     #[serde(flatten, deserialize_with = "extra_fields_deserialize")]
     pub extra_fields: serde_json::Map<String, serde_json::Value>,
 }
@@ -107,9 +110,9 @@ pub struct TeamPlayer {
     /// Undrafted player's positions are just their slot.
     pub position: Option<MaybeRecognizedResult<Position>>,
 
-    pub slot: MaybeRecognizedResult<Slot>,
+    pub slot: AddedLaterResult<MaybeRecognizedResult<Slot>>,
 
-    pub(crate) position_type_overidden: bool,
+    pub(crate) position_type_overridden: bool,
     pub position_type: MaybeRecognizedResult<PositionType>,
 
 

@@ -18,8 +18,9 @@ pub(crate) struct RawTeamPlayer {
     #[serde(rename = "PlayerID")]
     pub player_id: String,
     pub position: String,
-    #[serde_as(as = "MaybeRecognizedHelper<_>")]
-    pub slot: MaybeRecognizedResult<Slot>,
+    #[serde_as(as = "SometimesMissingHelper<MaybeRecognizedHelper<_>>")]
+    #[serde(default = "SometimesMissingHelper::default_result", skip_serializing_if = "AddedLaterResult::is_err")]
+    pub slot: AddedLaterResult<MaybeRecognizedResult<Slot>>,
     #[serde_as(as = "SometimesMissingHelper<MaybeRecognizedHelper<_>>")]
     #[serde(default = "SometimesMissingHelper::default_result", skip_serializing_if = "AddedLaterResult::is_err")]
     pub position_type: AddedLaterResult<MaybeRecognizedResult<PositionType>>,
@@ -42,18 +43,19 @@ impl From<RawTeamPlayer> for TeamPlayer {
         // Undrafted player's positions are just their slot
         let position = (player_id != "#").then(|| maybe_recognized_from_str(&position));
 
-        TeamPlayer { emoji, first_name, last_name, number, player_id, position, slot, position_type, stats, position_type_overidden, extra_fields }
+        TeamPlayer { emoji, first_name, last_name, number, player_id, position, slot, position_type, stats, position_type_overridden: position_type_overidden, extra_fields }
     }
 }
 
 impl From<TeamPlayer> for RawTeamPlayer {
     fn from(value: TeamPlayer) -> Self {
-        let TeamPlayer { emoji, first_name, last_name, number, player_id, position, slot, position_type, stats, position_type_overidden, extra_fields } = value;
+        let TeamPlayer { emoji, first_name, last_name, number, player_id, position, slot, position_type, stats, position_type_overridden: position_type_overidden, extra_fields } = value;
 
-        let position = match (position, position_type_overidden) {
-            (Some(position), _) => maybe_recognized_to_string(&position),
-            (None, true) => maybe_recognized_to_string(&position_type),
-            (None, false) => maybe_recognized_to_string(&slot)
+        let position = match (position, position_type_overidden, &slot) {
+            (Some(position), _, _) => maybe_recognized_to_string(&position),
+            (None, true, _) => maybe_recognized_to_string(&position_type),
+            (None, false, Ok(slot)) => maybe_recognized_to_string(&slot),
+            (None, false, Err(AddedLater)) => panic!("TODO woofy what should I do here?"),
         };
 
         let position_type = (!position_type_overidden).then_some(position_type).ok_or(AddedLater);
