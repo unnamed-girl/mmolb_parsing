@@ -436,6 +436,7 @@ fn check<S>(event: &ParsedEventMessage<S>) -> String {
         },
         ParsedEventMessage::WeatherProsperity { home_income: _, away_income: _ } => "".to_string(),
         ParsedEventMessage::PhotoContest { winning_team: _, winning_tokens: _, winning_player: _, winning_score: _, losing_team: _, losing_tokens: _, losing_player: _, losing_score: _ } => "".to_string(),
+        ParsedEventMessage::Party { pitcher_name: _, pitcher_amount_gained: _, pitcher_attribute: _, batter_name: _, batter_amount_gained: _, batter_attribute: _ } => "".to_string(),
     };
 
     format!("{discriminant_name} ({unique})")

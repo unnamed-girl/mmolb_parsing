@@ -5,6 +5,7 @@ use strum::{EnumDiscriminants, EnumString, Display, IntoStaticStr};
 use thiserror::Error;
 
 use crate::{enums::{Base, BaseNameVariant, BatterStat, Distance, EventType, FairBallDestination, FairBallType, FieldingErrorType, FoulType, GameOverMessage, HomeAway, ItemPrefix, ItemSuffix, ItemName, MoundVisitType, NowBattingStats, Place, StrikeType, TopBottom}, time::Breakpoints, Game, NotRecognized};
+use crate::enums::Attribute;
 
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Error)]
 pub enum GameEventParseError {
@@ -150,6 +151,16 @@ pub enum ParsedEventMessage<S> {
         losing_tokens: u8,
         losing_player: S,
         losing_score: u16,
+    },
+
+    // Season 5
+    Party {
+        pitcher_name: S,
+        pitcher_amount_gained: u8,
+        pitcher_attribute: Attribute,
+        batter_name: S,
+        batter_amount_gained: u8,
+        batter_attribute: Attribute,
     },
 }
 impl<S: Display> ParsedEventMessage<S> {
@@ -448,6 +459,9 @@ impl<S: Display> ParsedEventMessage<S> {
                 let losing_emoji = &losing_team.emoji;
                 format!("{winning_team} earned {winning_tokens} 🪙. {losing_team} earned {losing_tokens} 🪙.<br>Top scoring Photos:<br>{winning_emoji} {winning_player} - {winning_score} {losing_emoji} {losing_player} - {losing_score}")
             },
+            Self::Party { pitcher_name, pitcher_amount_gained, pitcher_attribute, batter_name, batter_amount_gained, batter_attribute } => {
+                format!("<strong>🥳 {pitcher_name} and {batter_name} are Partying!</strong> {pitcher_name} gained +{pitcher_amount_gained} {pitcher_attribute}. {batter_name} gained +{batter_amount_gained} {batter_attribute}. Both players lose 3 Durability.")
+            }
         }
     }
 }

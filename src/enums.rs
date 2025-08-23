@@ -44,8 +44,11 @@ pub enum EventType {
     #[serde(rename = "Weather_Prosperity")]
     WeatherProsperity,
 
-    // Season 4,
-    PhotoContest
+    // Season 4
+    PhotoContest,
+
+    // Season 5
+    Party,
 }
 
 /// Top or bottom of an inning.
