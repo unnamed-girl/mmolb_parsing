@@ -300,10 +300,10 @@ fn field<'parse, 'output: 'parse>(parsing_context: &'parse ParsingContext<'parse
         (
             scores_and_advances,
             opt(ejection(parsing_context)),
-            opt(bold(exclamation(tag("Perfect catch")))).map(|perfect| perfect.is_some())
+            opt(bold(exclamation(tag(if parsing_context.season < 5 { "Perfect catch" } else { "Amazing throw" })))).map(|perfect| perfect.is_some())
         )
     )
-    .map(|((batter, fielders), ((scores, advances), ejection, perfect))| ParsedEventMessage::GroundedOut { batter, fielders, scores, advances, perfect, ejection });
+    .map(|((batter, fielders), ((scores, advances), ejection, amazing))| ParsedEventMessage::GroundedOut { batter, fielders, scores, advances, amazing, ejection });
 
     let forced_out = all_consuming_sentence_and(
         (

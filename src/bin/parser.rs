@@ -406,8 +406,8 @@ fn check<S>(event: &ParsedEventMessage<S>) -> String {
         ParsedEventMessage::CaughtOut { batter: _, fair_ball_type, caught_by: _, scores, advances, sacrifice, perfect, ejection } => {
             format!("fair_ball_type: {fair_ball_type}, sacrifice: {sacrifice}, perfect: {perfect}, scores: {}, advances: {}, ejection: {}", scores.len(), advances.len(), ejection.is_some())
         },
-        ParsedEventMessage::GroundedOut { batter: _, fielders, scores, advances, perfect, ejection } => {
-            format!("fielders: {}, perfect: {perfect}, scores: {}, advances: {}, ejection: {}", fielders.len(), scores.len(), advances.len(), ejection.is_some())
+        ParsedEventMessage::GroundedOut { batter: _, fielders, scores, advances, amazing, ejection } => {
+            format!("fielders: {}, amazing: {amazing}, scores: {}, advances: {}, ejection: {}", fielders.len(), scores.len(), advances.len(), ejection.is_some())
         },
         ParsedEventMessage::ForceOut { batter: _, fielders, fair_ball_type: _, out: _, scores, advances, ejection } => {
             format!("fielders: {}, scores: {}, advances: {}, ejection: {}", fielders.len(), scores.len(), advances.len(), ejection.is_some())

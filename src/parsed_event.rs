@@ -110,7 +110,7 @@ pub enum ParsedEventMessage<S> {
     BatterToBase { batter: S, distance: Distance, fair_ball_type: FairBallType, fielder: PlacedPlayer<S>, scores: Vec<S>, advances: Vec<RunnerAdvance<S>>, ejection: Option<Ejection<S>> },
     HomeRun { batter: S, fair_ball_type: FairBallType, destination: FairBallDestination, scores: Vec<S>, grand_slam: bool, ejection: Option<Ejection<S>> },
     CaughtOut { batter: S, fair_ball_type: FairBallType, caught_by: PlacedPlayer<S>, scores: Vec<S>, advances: Vec<RunnerAdvance<S>>, sacrifice: bool, perfect: bool, ejection: Option<Ejection<S>>},
-    GroundedOut { batter: S, fielders: Vec<PlacedPlayer<S>>, scores: Vec<S>, advances: Vec<RunnerAdvance<S>>, perfect: bool, ejection: Option<Ejection<S>> },
+    GroundedOut { batter: S, fielders: Vec<PlacedPlayer<S>>, scores: Vec<S>, advances: Vec<RunnerAdvance<S>>, amazing: bool, ejection: Option<Ejection<S>> },
     ForceOut { batter: S, fielders: Vec<PlacedPlayer<S>>, fair_ball_type: FairBallType, out:RunnerOut<S>, scores: Vec<S>, advances: Vec<RunnerAdvance<S>>, ejection: Option<Ejection<S>> },
     ReachOnFieldersChoice { batter: S, fielders: Vec<PlacedPlayer<S>>, result:FieldingAttempt<S>, scores: Vec<S>, advances: Vec<RunnerAdvance<S>>, ejection: Option<Ejection<S>> },
     DoublePlayGrounded { batter: S, fielders: Vec<PlacedPlayer<S>>, out_one:RunnerOut<S>, out_two:RunnerOut<S>, scores: Vec<S>, advances: Vec<RunnerAdvance<S>>, sacrifice: bool, ejection: Option<Ejection<S>> },
@@ -357,10 +357,12 @@ impl<S: Display> ParsedEventMessage<S> {
 
                 format!("{batter} {fair_ball_type} out {sacrifice}to {catcher}.{perfect}{scores_and_advances}{ejection}")
             }
-            Self::GroundedOut { batter, fielders, scores, advances, perfect, ejection } => {
+            Self::GroundedOut { batter, fielders, scores, advances, amazing, ejection } => {
                 let scores_and_advances = unparse_scores_and_advances(scores, advances);
                 let fielders = unparse_fielders(fielders);
-                let perfect = if *perfect {" <strong>Perfect catch!</strong>"} else {""};
+                let perfect = if *amazing {
+                    if game.season < 5 {" <strong>Perfect catch!</strong>"} else {" <strong>Amazing throw!</strong>"}
+                } else {""};
                 let ejection = if let Some(ej) = ejection { ej.unparse() } else { String::new() };
                 format!("{batter} grounds out{fielders}.{scores_and_advances}{perfect}{ejection}")
             }
