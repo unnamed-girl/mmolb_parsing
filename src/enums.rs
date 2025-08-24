@@ -29,6 +29,21 @@ pub enum EventType {
     WeatherDelivery,
     FallingStar,
     Weather,
+    #[strum(to_string = "HRC_LiveNow")]
+    #[serde(rename = "HRC_LiveNow")]
+    HrcLiveNow,
+    #[strum(to_string = "HRC_PitchingMatchup")]
+    #[serde(rename = "HRC_PitchingMatchup")]
+    HrcPitchingMatchup,
+    #[strum(to_string = "HRC_BattingMatchup")]
+    #[serde(rename = "HRC_BattingMatchup")]
+    HrcBattingMatchup,
+    #[strum(to_string = "HRC_PlayBall")]
+    #[serde(rename = "HRC_PlayBall")]
+    HrcPlayBall,
+    #[strum(to_string = "HRC_Change")]
+    #[serde(rename = "HRC_Change")]
+    HrcChange,
 
     // Season 2
     #[strum(to_string = "Weather_Shipment")]
