@@ -51,6 +51,11 @@ pub fn parse_event<'parse, 'output: 'parse>(event: &'output Event, parsing_conte
         EventType::WeatherDelivery => weather_delivery(parsing_context).parse(&event.message),
         EventType::FallingStar => falling_star().parse(&event.message),
         EventType::Weather => weather().parse(&event.message),
+        EventType::HrcLiveNow |
+        EventType::HrcPitchingMatchup |
+        EventType::HrcBattingMatchup |
+        EventType::HrcPlayBall |
+        EventType::HrcChange => fail().parse(event.message.as_str()),
         EventType::WeatherShipment => weather_shipment(parsing_context).parse(&event.message),
         EventType::WeatherSpecialDelivery => special_delivery(parsing_context).parse(&event.message),
         EventType::WeatherProsperity => weather_prosperity(parsing_context).parse(&event.message),
