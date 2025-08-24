@@ -319,7 +319,7 @@ pub(super) fn name_eof(input: &str) -> IResult<&str, &str> {
         // name.chars().any(|c| c == ' ') && // From the API, we know players have first/last name, so there should always be a space
         !name.chars().any(|c| [',', '(', ')', '<', '>', '\\', '\u{FE0F}'].contains(&c)) && // These characters should not be in names
         !['.', ' '].contains(&name.chars().nth(0).unwrap()) && // Names shouldn't start with these, and this catches some common logic errors ("forgot to parse the space before the name")
-        !['.', ' '].contains(&name.chars().last().unwrap()) // Names shouldn't end with these, and this catches some common logic errors ("forgot to parse the space before the name")
+        ![' '].contains(&name.chars().last().unwrap()) // Names shouldn't end with these, and this catches some common logic errors ("forgot to parse the space before the name")
     )
     .parse(input)
 }
