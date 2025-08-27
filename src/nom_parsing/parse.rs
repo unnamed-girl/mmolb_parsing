@@ -51,11 +51,17 @@ pub fn parse_event<'parse, 'output: 'parse>(event: &'output Event, parsing_conte
         EventType::WeatherDelivery => weather_delivery(parsing_context).parse(&event.message),
         EventType::FallingStar => falling_star().parse(&event.message),
         EventType::Weather => weather().parse(&event.message),
+        EventType::HrcLiveNow |
+        EventType::HrcPitchingMatchup |
+        EventType::HrcBattingMatchup |
+        EventType::HrcPlayBall |
+        EventType::HrcChange => fail().parse(event.message.as_str()),
         EventType::WeatherShipment => weather_shipment(parsing_context).parse(&event.message),
         EventType::WeatherSpecialDelivery => special_delivery(parsing_context).parse(&event.message),
         EventType::WeatherProsperity => weather_prosperity(parsing_context).parse(&event.message),
         EventType::Balk => balk().parse(&event.message),
         EventType::PhotoContest => photo_contest(parsing_context).parse(event.message.as_str()),
+        EventType::Party => party(parsing_context).parse(event.message.as_str()),
     }.finish().map(|(_, o)| o)
     .unwrap_or_else(move |_| {
             let error = GameEventParseError::FailedParsingMessage { event_type: *event_type, message: event.message.clone() };
@@ -87,6 +93,28 @@ fn photo_contest<'parse, 'output: 'parse>(parsing_context: &'parse ParsingContex
     .map(|(((winning_team, winning_tokens), (losing_team, losing_tokens)),
         ((_, winning_player, winning_score), (_, losing_player, losing_score)))|
         ParsedEventMessage::PhotoContest { winning_team, winning_tokens, winning_player, winning_score, losing_team, losing_tokens, losing_player, losing_score }
+    )
+}
+fn party<'parse, 'output: 'parse>(parsing_context: &'parse ParsingContext<'parse>) -> impl MyParser<'output, ParsedEventMessage<&'output str>> + 'parse {
+    context("Party", all_consuming(verify(
+        preceded(
+            tag("<strong>🥳 "),
+            (
+                parse_terminated(" and "),
+                parse_terminated(" are Partying!</strong> "),
+                parse_terminated(" gained +"),
+                terminated(u8, tag(" ")),
+                terminated(try_from_word, tag(". ")), // attribute
+                parse_terminated(" gained +"),
+                terminated(u8, tag(" ")),
+                terminated(try_from_word, tag(". Both players lose 3 Durability.")), // attribute
+            ),
+        ),
+    |(pitcher_name_1, batter_name_1, pitcher_name_2, _, _, batter_name_2, _, _)|
+        pitcher_name_1 == pitcher_name_2 && batter_name_1 == batter_name_2
+    )))
+    .map(|(_, _, pitcher_name, pitcher_amount_gained, pitcher_attribute, batter_name, batter_amount_gained, batter_attribute)|
+        ParsedEventMessage::Party { pitcher_name, pitcher_amount_gained, pitcher_attribute, batter_name, batter_amount_gained, batter_attribute }
     )
 }
 
@@ -277,10 +305,10 @@ fn field<'parse, 'output: 'parse>(parsing_context: &'parse ParsingContext<'parse
         (
             scores_and_advances,
             opt(ejection(parsing_context)),
-            opt(bold(exclamation(tag("Perfect catch")))).map(|perfect| perfect.is_some())
+            opt(bold(exclamation(tag(if parsing_context.season < 5 { "Perfect catch" } else { "Amazing throw" })))).map(|perfect| perfect.is_some())
         )
     )
-    .map(|((batter, fielders), ((scores, advances), ejection, perfect))| ParsedEventMessage::GroundedOut { batter, fielders, scores, advances, perfect, ejection });
+    .map(|((batter, fielders), ((scores, advances), ejection, amazing))| ParsedEventMessage::GroundedOut { batter, fielders, scores, advances, amazing, ejection });
 
     let forced_out = all_consuming_sentence_and(
         (

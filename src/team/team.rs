@@ -4,8 +4,39 @@ use serde::{Serialize, Deserialize};
 use serde_with::serde_as;
 
 use crate::{enums::{BallparkSuffix, GameStat, Position, PositionType, RecordType, Slot}, feed_event::FeedEvent, player::PlayerEquipment, utils::{extra_fields_deserialize, AddedLaterResult, ExpectNone, MaybeRecognizedResult, NotRecognized}, RemovedLaterResult};
-use crate::utils::{MaybeRecognizedHelper, SometimesMissingHelper};
+use crate::utils::{maybe_recognized_from_str, MaybeRecognizedHelper, SometimesMissingHelper};
 use super::raw_team::{RawTeamPlayer};
+
+#[derive(Debug, Clone, Serialize, Deserialize)]
+#[serde(untagged)]
+pub enum TeamPlayerCollection {
+    Vec(Vec<TeamPlayer>),
+    // Using this third-party map type instead of HashMap to preserve key order
+    Map(indexmap::IndexMap<String, TeamPlayer>),
+}
+
+impl Into<Vec<TeamPlayer>> for TeamPlayerCollection {
+    fn into(self) -> Vec<TeamPlayer> {
+        match self {
+            TeamPlayerCollection::Vec(v) => v,
+            TeamPlayerCollection::Map(m) => {
+                m.into_iter()
+                    .map(|(k, mut v)| {
+                        v.slot = Ok(maybe_recognized_from_str(&k));
+                        v
+                    })
+                    .collect()
+            }
+        }
+    }
+}
+
+impl From<Vec<TeamPlayer>> for TeamPlayerCollection {
+    fn from(value: Vec<TeamPlayer>) -> Self {
+        TeamPlayerCollection::Vec(value)
+    }
+}
+
 
 #[serde_as]
 #[derive(Serialize, Deserialize, Debug, Clone)]
@@ -73,7 +104,8 @@ pub struct Team {
     #[serde_as(as = "SometimesMissingHelper<_>")]
     pub owner_id: RemovedLaterResult<Option<String>>,
 
-    pub players: Vec<TeamPlayer>,
+    /// For all current teams this is a Vec. For some historical team versions this was a map.
+    pub players: TeamPlayerCollection,
     #[serde_as(as = "HashMap<MaybeRecognizedHelper<_>, _>")]
     pub record: HashMap<Result<RecordType, NotRecognized>, TeamRecord>,
     pub season_records: HashMap<String, String>,
@@ -82,6 +114,9 @@ pub struct Team {
     #[serde(default = "SometimesMissingHelper::default_result", skip_serializing_if = "AddedLaterResult::is_err")]
     #[serde_as(as = "SometimesMissingHelper<_>")]
     pub inventory: AddedLaterResult<Vec<PlayerEquipment>>,
+
+    #[serde(skip_serializing_if = "Option::is_none", default)]
+    pub fund: Option<i32>,
 
     #[serde(flatten, deserialize_with = "extra_fields_deserialize")]
     pub extra_fields: serde_json::Map<String, serde_json::Value>,
@@ -104,13 +139,13 @@ pub struct TeamPlayer {
     pub number: u8,
     pub player_id: String,
 
-    /// Undrafted player's positions are just their slot.
+    /// Undrafted player's positions are deeply unreliable.
     pub position: Option<MaybeRecognizedResult<Position>>,
+    pub(crate) actual_position: String,
 
-    pub slot: MaybeRecognizedResult<Slot>,
+    pub slot: AddedLaterResult<MaybeRecognizedResult<Slot>>,
 
-    pub(crate) position_type_overidden: bool,
-    pub position_type: MaybeRecognizedResult<PositionType>,
+    pub position_type: AddedLaterResult<MaybeRecognizedResult<PositionType>>,
 
 
     pub stats: AddedLaterResult<HashMap<MaybeRecognizedResult<GameStat>, i32>>,

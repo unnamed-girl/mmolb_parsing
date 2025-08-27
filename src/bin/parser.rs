@@ -63,7 +63,11 @@ struct Args {
     #[clap(long, default_value = "game")]
     kind: Kind,
 
-    /// Gather distinct versions of each parsed event, and save the list to the given file. Also loads
+    /// Grab from cashews' /versions endpoint instead of /entities
+    #[clap(long, action)]
+    versions: bool,
+
+    /// When a new combination of fields for an event is seen, save it to the given file. Also loads
     /// the current list from that file. 
     ///
     /// Exclusive to games right now.
@@ -84,7 +88,7 @@ enum Kind {
     GameFeed
 }
 
-fn cashews_fetch_json<'a>(client: &'a Client, kind: Kind, extra: String, start_page: Option<String>) -> impl Stream<Item = Vec<EntityResponse<Box<serde_json::value::RawValue>>>> + 'a {
+fn cashews_fetch_json<'a>(client: &'a Client, endpoint: &'a str, kind: Kind, extra: String, start_page: Option<String>) -> impl Stream<Item = Vec<EntityResponse<Box<serde_json::value::RawValue>>>> + 'a {
     let kind = match kind {
         Kind::Game => "game",
         Kind::Team => "team",
@@ -94,8 +98,8 @@ fn cashews_fetch_json<'a>(client: &'a Client, kind: Kind, extra: String, start_p
     };
     async_stream::stream! {
         let (mut url, mut page) = match start_page {
-            Some(page) => (format!("https://freecashe.ws/api/chron/v0/entities?kind={kind}&count=1000{extra}&page={page}"), Some(page)),
-            None => (format!("https://freecashe.ws/api/chron/v0/entities?kind={kind}&count=1000{extra}"), None)
+            Some(page) => (format!("https://freecashe.ws/api/chron/v0/{endpoint}?kind={kind}&count=1000{extra}&page={page}"), Some(page)),
+            None => (format!("https://freecashe.ws/api/chron/v0/{endpoint}?kind={kind}&count=1000{extra}"), None)
         };
         loop {
             info!("Fetching {kind}s from cashews page {page:?}");
@@ -105,7 +109,7 @@ fn cashews_fetch_json<'a>(client: &'a Client, kind: Kind, extra: String, start_p
             yield response.items;
 
             if let Some(page) = &page {
-                url = format!("https://freecashe.ws/api/chron/v0/entities?kind={kind}&count=1000&page={page}{extra}");
+                url = format!("https://freecashe.ws/api/chron/v0/{endpoint}?kind={kind}&count=1000&page={page}{extra}");
             } else {
                 break
             }
@@ -126,6 +130,7 @@ async fn main() {
     let guard = tracing::subscriber::set_default(subscriber);
 
     let args = Args::parse();
+    let endpoint = if args.versions {"versions"} else {"entities"};
 
     if let Some(f) = &args.export_event_variants {
         if Path::new(f).exists() {
@@ -157,7 +162,7 @@ async fn main() {
         };
 
         let client = Client::new();
-        let url = format!("https://freecashe.ws/api/chron/v0/entities?kind={kind}&id={id}");
+        let url = format!("https://freecashe.ws/api/chron/v0/{endpoint}?kind={kind}&id={id}");
         let entities = client.get(&url).send().await.unwrap().json::<FreeCashewResponse<EntityResponse<Box<serde_json::value::RawValue>>>>().await.unwrap().items;
         for game in entities.into_iter() {
             func(game, true);
@@ -173,7 +178,7 @@ async fn main() {
     let client = Client::new();
 
 
-    let mut fetch = pin!(cashews_fetch_json(&client, args.kind, extra, args.start_page.clone()));
+    let mut fetch = pin!(cashews_fetch_json(&client, endpoint, args.kind, extra, args.start_page.clone()));
 
     while let Some(games) = fetch.next().await {
         let last = games.len().max(1) - 1;
@@ -406,8 +411,8 @@ fn check<S>(event: &ParsedEventMessage<S>) -> String {
         ParsedEventMessage::CaughtOut { batter: _, fair_ball_type, caught_by: _, scores, advances, sacrifice, perfect, ejection } => {
             format!("fair_ball_type: {fair_ball_type}, sacrifice: {sacrifice}, perfect: {perfect}, scores: {}, advances: {}, ejection: {}", scores.len(), advances.len(), ejection.is_some())
         },
-        ParsedEventMessage::GroundedOut { batter: _, fielders, scores, advances, perfect, ejection } => {
-            format!("fielders: {}, perfect: {perfect}, scores: {}, advances: {}, ejection: {}", fielders.len(), scores.len(), advances.len(), ejection.is_some())
+        ParsedEventMessage::GroundedOut { batter: _, fielders, scores, advances, amazing, ejection } => {
+            format!("fielders: {}, amazing: {amazing}, scores: {}, advances: {}, ejection: {}", fielders.len(), scores.len(), advances.len(), ejection.is_some())
         },
         ParsedEventMessage::ForceOut { batter: _, fielders, fair_ball_type: _, out: _, scores, advances, ejection } => {
             format!("fielders: {}, scores: {}, advances: {}, ejection: {}", fielders.len(), scores.len(), advances.len(), ejection.is_some())
@@ -436,6 +441,7 @@ fn check<S>(event: &ParsedEventMessage<S>) -> String {
         },
         ParsedEventMessage::WeatherProsperity { home_income: _, away_income: _ } => "".to_string(),
         ParsedEventMessage::PhotoContest { winning_team: _, winning_tokens: _, winning_player: _, winning_score: _, losing_team: _, losing_tokens: _, losing_player: _, losing_score: _ } => "".to_string(),
+        ParsedEventMessage::Party { pitcher_name: _, pitcher_amount_gained: _, pitcher_attribute: _, batter_name: _, batter_amount_gained: _, batter_attribute: _ } => "".to_string(),
     };
 
     format!("{discriminant_name} ({unique})")

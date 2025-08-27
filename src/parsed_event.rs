@@ -5,6 +5,7 @@ use strum::{EnumDiscriminants, EnumString, Display, IntoStaticStr};
 use thiserror::Error;
 
 use crate::{enums::{Base, BaseNameVariant, BatterStat, Distance, EventType, FairBallDestination, FairBallType, FieldingErrorType, FoulType, GameOverMessage, HomeAway, ItemPrefix, ItemSuffix, ItemName, MoundVisitType, NowBattingStats, Place, StrikeType, TopBottom}, time::Breakpoints, Game, NotRecognized};
+use crate::enums::Attribute;
 
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Error)]
 pub enum GameEventParseError {
@@ -109,7 +110,7 @@ pub enum ParsedEventMessage<S> {
     BatterToBase { batter: S, distance: Distance, fair_ball_type: FairBallType, fielder: PlacedPlayer<S>, scores: Vec<S>, advances: Vec<RunnerAdvance<S>>, ejection: Option<Ejection<S>> },
     HomeRun { batter: S, fair_ball_type: FairBallType, destination: FairBallDestination, scores: Vec<S>, grand_slam: bool, ejection: Option<Ejection<S>> },
     CaughtOut { batter: S, fair_ball_type: FairBallType, caught_by: PlacedPlayer<S>, scores: Vec<S>, advances: Vec<RunnerAdvance<S>>, sacrifice: bool, perfect: bool, ejection: Option<Ejection<S>>},
-    GroundedOut { batter: S, fielders: Vec<PlacedPlayer<S>>, scores: Vec<S>, advances: Vec<RunnerAdvance<S>>, perfect: bool, ejection: Option<Ejection<S>> },
+    GroundedOut { batter: S, fielders: Vec<PlacedPlayer<S>>, scores: Vec<S>, advances: Vec<RunnerAdvance<S>>, amazing: bool, ejection: Option<Ejection<S>> },
     ForceOut { batter: S, fielders: Vec<PlacedPlayer<S>>, fair_ball_type: FairBallType, out:RunnerOut<S>, scores: Vec<S>, advances: Vec<RunnerAdvance<S>>, ejection: Option<Ejection<S>> },
     ReachOnFieldersChoice { batter: S, fielders: Vec<PlacedPlayer<S>>, result:FieldingAttempt<S>, scores: Vec<S>, advances: Vec<RunnerAdvance<S>>, ejection: Option<Ejection<S>> },
     DoublePlayGrounded { batter: S, fielders: Vec<PlacedPlayer<S>>, out_one:RunnerOut<S>, out_two:RunnerOut<S>, scores: Vec<S>, advances: Vec<RunnerAdvance<S>>, sacrifice: bool, ejection: Option<Ejection<S>> },
@@ -150,6 +151,16 @@ pub enum ParsedEventMessage<S> {
         losing_tokens: u8,
         losing_player: S,
         losing_score: u16,
+    },
+
+    // Season 5
+    Party {
+        pitcher_name: S,
+        pitcher_amount_gained: u8,
+        pitcher_attribute: Attribute,
+        batter_name: S,
+        batter_amount_gained: u8,
+        batter_attribute: Attribute,
     },
 }
 impl<S: Display> ParsedEventMessage<S> {
@@ -346,10 +357,12 @@ impl<S: Display> ParsedEventMessage<S> {
 
                 format!("{batter} {fair_ball_type} out {sacrifice}to {catcher}.{perfect}{scores_and_advances}{ejection}")
             }
-            Self::GroundedOut { batter, fielders, scores, advances, perfect, ejection } => {
+            Self::GroundedOut { batter, fielders, scores, advances, amazing, ejection } => {
                 let scores_and_advances = unparse_scores_and_advances(scores, advances);
                 let fielders = unparse_fielders(fielders);
-                let perfect = if *perfect {" <strong>Perfect catch!</strong>"} else {""};
+                let perfect = if *amazing {
+                    if game.season < 5 {" <strong>Perfect catch!</strong>"} else {" <strong>Amazing throw!</strong>"}
+                } else {""};
                 let ejection = if let Some(ej) = ejection { ej.unparse() } else { String::new() };
                 format!("{batter} grounds out{fielders}.{scores_and_advances}{perfect}{ejection}")
             }
@@ -448,6 +461,9 @@ impl<S: Display> ParsedEventMessage<S> {
                 let losing_emoji = &losing_team.emoji;
                 format!("{winning_team} earned {winning_tokens} 🪙. {losing_team} earned {losing_tokens} 🪙.<br>Top scoring Photos:<br>{winning_emoji} {winning_player} - {winning_score} {losing_emoji} {losing_player} - {losing_score}")
             },
+            Self::Party { pitcher_name, pitcher_amount_gained, pitcher_attribute, batter_name, batter_amount_gained, batter_attribute } => {
+                format!("<strong>🥳 {pitcher_name} and {batter_name} are Partying!</strong> {pitcher_name} gained +{pitcher_amount_gained} {pitcher_attribute}. {batter_name} gained +{batter_amount_gained} {batter_attribute}. Both players lose 3 Durability.")
+            }
         }
     }
 }
