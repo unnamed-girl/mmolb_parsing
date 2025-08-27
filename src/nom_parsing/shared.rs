@@ -3,7 +3,7 @@ use std::{fmt::Debug, str::FromStr};
 use nom::{branch::alt, bytes::complete::{tag, take, take_till, take_until, take_until1, take_while}, character::complete::{one_of, space0, u8, u16}, combinator::{all_consuming, fail, opt, recognize, rest, value, verify}, error::{ErrorKind, ParseError}, multi::{count, many0, many1, separated_list1}, sequence::{delimited, preceded, separated_pair, terminated}, AsChar, Input, Parser};
 use nom_language::error::VerboseError;
 
-use crate::{enums::{Base, BatterStat, Day, FairBallDestination, FairBallType, HomeAway, NowBattingStats}, feed_event::{EmojilessItem, FeedDelivery, FeedEvent}, game::Event, parsed_event::{BaseSteal, Cheer, Delivery, DoorPrize, Ejection, EjectionReason, EmojiTeam, Item, ItemAffixes, PlacedPlayer, Prize, RunnerAdvance, RunnerOut, SnappedPhotos, ViolationType}, time::{Breakpoints, Time}, Game};
+use crate::{enums::{Base, BatterStat, Day, FairBallDestination, FairBallType, HomeAway, NowBattingStats, Place}, feed_event::{EmojilessItem, FeedDelivery, FeedEvent}, game::Event, parsed_event::{BaseSteal, Cheer, Delivery, DoorPrize, Ejection, EjectionReason, EmojiTeam, Item, ItemAffixes, PlacedPlayer, Prize, RunnerAdvance, RunnerOut, SnappedPhotos, ViolationType}, time::{Breakpoints, Time}, Game};
 use crate::parsed_event::EjectionReplacement;
 
 pub(super) type Error<'a> = VerboseError<&'a str>;
@@ -319,7 +319,10 @@ pub(super) fn name_eof(input: &str) -> IResult<&str, &str> {
         // name.chars().any(|c| c == ' ') && // From the API, we know players have first/last name, so there should always be a space
         !name.chars().any(|c| [',', '(', ')', '<', '>', '\\', '\u{FE0F}'].contains(&c)) && // These characters should not be in names
         !['.', ' '].contains(&name.chars().nth(0).unwrap()) && // Names shouldn't start with these, and this catches some common logic errors (e.g. forgetting to parse the space before the name)
-        ![' '].contains(&name.chars().last().unwrap()) // Names shouldn't end with these, and this catches some common logic errors (e.g. forgetting to parse the space after the name)
+        ![' '].contains(&name.chars().last().unwrap()) && // Names shouldn't end with these, and this catches some common logic errors (e.g. forgetting to parse the space after the name)
+        // Cleanest fix for https://mmolb.com/watch/68aab8a3318f19d301830b7c?event=316
+        // "to 2B" etc. are exceedingly unlikely as a prefix to name
+        name.strip_prefix("to ").map(|rest| try_from_word::<Place>(rest).is_err()).unwrap_or(true) 
     )
     .parse(input)
 }

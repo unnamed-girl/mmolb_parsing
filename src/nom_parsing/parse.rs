@@ -561,3 +561,29 @@ fn live_now<'parse, 'output: 'parse>(parsing_context: &'parse ParsingContext<'pa
         time_options
     ))
 }
+
+#[cfg(test)]
+mod test {
+    use nom::Parser;
+
+    use crate::{enums::{BaseNameVariant, Place}, nom_parsing::ParsingContext, parsed_event::{EmojiTeam, PlacedPlayer, RunnerOut}, ParsedEventMessage};
+
+    #[test]
+    fn jr_test() {
+        let text = "Traci Rivers grounded into a double play, SS Ellen Updog to 2B Chalia Jr. to 1B Elena Karapetyan. Lance Green out at second base. Traci Rivers out at first base.";
+        let parsing_context = ParsingContext {
+            game_id: "68aab8a3318f19d301830b7c",
+            event_log: &[],
+            event_index: None,
+            home_emoji_team: EmojiTeam { emoji: "", name: "" },
+            away_emoji_team: EmojiTeam { emoji: "", name: "" },
+            season: 5,
+            day: None
+        };
+
+        assert_eq!(
+            super::field(&parsing_context).parse(text),
+            Ok(("", ParsedEventMessage::DoublePlayGrounded { batter: "Traci Rivers", fielders: vec![PlacedPlayer { place: Place::ShortStop, name: "Ellen Updog"}, PlacedPlayer { place: Place::SecondBaseman, name: "Chalia Jr."}, PlacedPlayer {place: Place::FirstBaseman, name: "Elena Karapetyan"}], out_one: RunnerOut { runner: "Lance Green", base: BaseNameVariant::SecondBase }, out_two: RunnerOut { runner: "Traci Rivers", base: BaseNameVariant::FirstBase }, scores: Vec::new(), advances: Vec::new(), sacrifice: false, ejection: None }))
+        );
+    }
+}
