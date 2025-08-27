@@ -1,7 +1,7 @@
 use std::collections::HashMap;
 
-use serde::{Serialize, Deserialize, Serializer, Deserializer};
-use serde_with::{serde_as, DeserializeAs, SerializeAs};
+use serde::{Serialize, Deserialize};
+use serde_with::serde_as;
 
 use crate::{enums::{BallparkSuffix, GameStat, Position, PositionType, RecordType, Slot}, feed_event::FeedEvent, player::PlayerEquipment, utils::{extra_fields_deserialize, AddedLaterResult, ExpectNone, MaybeRecognizedResult, NotRecognized}, RemovedLaterResult};
 use crate::utils::{maybe_recognized_from_str, MaybeRecognizedHelper, SometimesMissingHelper};
@@ -9,36 +9,17 @@ use super::raw_team::{RawTeamPlayer};
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
 #[serde(untagged)]
-enum TeamPlayerCollectionHelper {
+pub enum TeamPlayerCollection {
     Vec(Vec<TeamPlayer>),
     // Using this third-party map type instead of HashMap to preserve key order
     Map(indexmap::IndexMap<String, TeamPlayer>),
 }
 
-impl SerializeAs<Vec<TeamPlayer>> for TeamPlayerCollectionHelper {
-    fn serialize_as<S>(source: &Vec<TeamPlayer>, serializer: S) -> Result<S::Ok, S::Error>
-    where
-        S: Serializer
-    {
-        source.serialize(serializer)
-    }
-}
-
-impl<'de> DeserializeAs<'de, Vec<TeamPlayer>> for TeamPlayerCollectionHelper {
-    fn deserialize_as<D>(deserializer: D) -> Result<Vec<TeamPlayer>, D::Error>
-    where
-        D: Deserializer<'de>
-    {
-        let this = TeamPlayerCollectionHelper::deserialize(deserializer).map_err(serde::de::Error::custom)?;
-        Ok(this.into())
-    }
-}
-
-impl Into<Vec<TeamPlayer>> for TeamPlayerCollectionHelper {
+impl Into<Vec<TeamPlayer>> for TeamPlayerCollection {
     fn into(self) -> Vec<TeamPlayer> {
         match self {
-            TeamPlayerCollectionHelper::Vec(v) => v,
-            TeamPlayerCollectionHelper::Map(m) => {
+            TeamPlayerCollection::Vec(v) => v,
+            TeamPlayerCollection::Map(m) => {
                 m.into_iter()
                     .map(|(k, mut v)| {
                         v.slot = Ok(maybe_recognized_from_str(&k));
@@ -50,9 +31,9 @@ impl Into<Vec<TeamPlayer>> for TeamPlayerCollectionHelper {
     }
 }
 
-impl From<Vec<TeamPlayer>> for TeamPlayerCollectionHelper {
+impl From<Vec<TeamPlayer>> for TeamPlayerCollection {
     fn from(value: Vec<TeamPlayer>) -> Self {
-        TeamPlayerCollectionHelper::Vec(value)
+        TeamPlayerCollection::Vec(value)
     }
 }
 
@@ -123,8 +104,8 @@ pub struct Team {
     #[serde_as(as = "SometimesMissingHelper<_>")]
     pub owner_id: RemovedLaterResult<Option<String>>,
 
-    #[serde_as(as = "TeamPlayerCollectionHelper")]
-    pub players: Vec<TeamPlayer>,
+    /// For all current teams this is a Vec. For some historical team versions this was a map.
+    pub players: TeamPlayerCollection,
     #[serde_as(as = "HashMap<MaybeRecognizedHelper<_>, _>")]
     pub record: HashMap<Result<RecordType, NotRecognized>, TeamRecord>,
     pub season_records: HashMap<String, String>,
@@ -158,13 +139,13 @@ pub struct TeamPlayer {
     pub number: u8,
     pub player_id: String,
 
-    /// Undrafted player's positions are just their slot.
+    /// Undrafted player's positions are deeply unreliable.
     pub position: Option<MaybeRecognizedResult<Position>>,
+    pub(crate) actual_position: String,
 
     pub slot: AddedLaterResult<MaybeRecognizedResult<Slot>>,
 
-    pub(crate) position_type_overridden: bool,
-    pub position_type: MaybeRecognizedResult<PositionType>,
+    pub position_type: AddedLaterResult<MaybeRecognizedResult<PositionType>>,
 
 
     pub stats: AddedLaterResult<HashMap<MaybeRecognizedResult<GameStat>, i32>>,
