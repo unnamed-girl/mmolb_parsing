@@ -366,7 +366,7 @@ fn check<S>(event: &ParsedEventMessage<S>) -> String {
         ParsedEventMessage::GameOver { message } => format!("Message: {message}"),
         ParsedEventMessage::Recordkeeping { winning_team: _, losing_team: _, winning_score: _, losing_score: _ } => "".to_string(),
         ParsedEventMessage::InningStart { number, side, batting_team: _, automatic_runner, pitcher_status } => {
-            format!("number: {number}, side: {side}, automatic_runner: {}, pitcher_status: {}", automatic_runner.is_some(), pitcher_status.discriminant())
+            format!("number: {number}, side: {side}, automatic_runner: {}, pitcher_status: {:?}", automatic_runner.is_some(), pitcher_status.as_ref().map(|status| status.discriminant()))
         },
         ParsedEventMessage::NowBatting { batter: _, stats } => {
             format!("stats: {}", stats.discriminant())

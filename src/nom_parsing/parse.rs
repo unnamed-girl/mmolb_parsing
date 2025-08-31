@@ -1,4 +1,4 @@
-use crate::nom_parsing::shared::{door_prizes, ejection_tail};
+use crate::{enums::Day, nom_parsing::shared::{door_prizes, ejection_tail}, time::is_superstar_game};
 use std::str::FromStr;
 
 use nom::{branch::alt, bytes::complete::{tag, take_until}, character::complete::{digit1, u8, u16}, combinator::{all_consuming, cut, fail, opt, rest, value, verify}, error::context, multi::{many0, many1, separated_list1}, sequence::{delimited, preceded, separated_pair, terminated}, Finish, Parser};
@@ -500,39 +500,54 @@ fn lineup<'output>(side: HomeAway) -> impl MyParser<'output, ParsedEventMessage<
 }
 
 fn inning_start<'parse, 'output: 'parse>(event: &'output Event, parsing_context: &'parse ParsingContext<'parse>) -> impl MyParser<'output, ParsedEventMessage<&'output str>> + 'parse {
-    let pitching_team_emoji = |input| match event.inning.pitching_team() {
-        Some(side) => team_emoji(side, parsing_context).parse(input),
-        None => fail().parse(input)
+
+    let parser = |input: &'output str| {
+        let pitching_team_emoji = |input| match event.inning.pitching_team() {
+            Some(side) => team_emoji(side, parsing_context).parse(input),
+            None => fail().parse(input)
+        };
+
+        let keep_pitcher = sentence(separated_pair(pitching_team_emoji, tag(" "), parse_terminated(" pitching")))
+        .map(|(emoji, name)| StartOfInningPitcher::Same { emoji, name });
+
+        let swap_pitcher = (
+            sentence((opt(terminated(pitching_team_emoji, tag(" "))), parse_terminated(" is leaving the game").and_then(placed_player_eof))),
+            sentence((opt(terminated(pitching_team_emoji, tag(" "))), parse_terminated(" takes the mound").and_then(placed_player_eof)))
+        ).map(|((leaving_emoji, leaving_pitcher), (arriving_emoji, arriving_pitcher))| StartOfInningPitcher::Different { leaving_emoji, leaving_pitcher, arriving_emoji, arriving_pitcher });
+
+        let mut start_inning = (
+            sentence((
+                preceded(tag("Start of the "), try_from_word),
+                delimited(tag(" of the "), u8, ordinal_suffix))),
+            sentence(parse_terminated(" batting").and_then(emoji_team_eof))
+        );
+
+        let automatic_runner = sentence(
+            parse_terminated(" starts the inning on second base")
+        );
+
+        let mut pitcher_status = alt((
+            keep_pitcher,
+            swap_pitcher
+        ));
+
+        if is_superstar_game(parsing_context.day) {
+            let (input, ((side, number), batting_team)) = start_inning.parse(input)?;
+            let (input, automatic_runner) = opt(automatic_runner).parse(input)?;
+            let (input, pitcher_status) = opt(pitcher_status).parse(input)?;
+
+            Ok((input, ParsedEventMessage::InningStart { number, side, batting_team, automatic_runner, pitcher_status }))
+        } else {
+            let (input, ((side, number), batting_team)) = start_inning.parse(input)?;
+            let (input, automatic_runner) = opt(automatic_runner).parse(input)?;
+            let (input, pitcher_status) = pitcher_status.parse(input)?;
+
+            Ok((input, ParsedEventMessage::InningStart { number, side, batting_team, automatic_runner, pitcher_status: Some(pitcher_status) }))
+        }
     };
 
-    let keep_pitcher = sentence(separated_pair(pitching_team_emoji, tag(" "), parse_terminated(" pitching")))
-    .map(|(emoji, name)| StartOfInningPitcher::Same { emoji, name });
-
-    let swap_pitcher = (
-        sentence((opt(terminated(pitching_team_emoji, tag(" "))), parse_terminated(" is leaving the game").and_then(placed_player_eof))),
-        sentence((opt(terminated(pitching_team_emoji, tag(" "))), parse_terminated(" takes the mound").and_then(placed_player_eof)))
-    ).map(|((leaving_emoji, leaving_pitcher), (arriving_emoji, arriving_pitcher))| StartOfInningPitcher::Different { leaving_emoji, leaving_pitcher, arriving_emoji, arriving_pitcher });
-
-    let start_inning = (
-        sentence((
-            preceded(tag("Start of the "), try_from_word),
-            delimited(tag(" of the "), u8, ordinal_suffix))),
-        sentence(parse_terminated(" batting").and_then(emoji_team_eof))
-    );
-
-    let automatic_runner = sentence(
-        parse_terminated(" starts the inning on second base")
-    );
-
-    let pitcher_status = alt ((
-        keep_pitcher,
-        swap_pitcher
-    ));
     context("Inning Start",
-        all_consuming((start_inning, opt(automatic_runner), pitcher_status))
-        .map(|(((side, number), batting_team), automatic_runner, pitcher_status)|
-            ParsedEventMessage::InningStart { number, side, batting_team, automatic_runner, pitcher_status }
-        )
+        all_consuming(parser)
     )
 }
 

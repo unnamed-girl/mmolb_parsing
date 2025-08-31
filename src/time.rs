@@ -180,6 +180,11 @@ impl Breakpoints {
 }
 
 
+pub fn is_superstar_game(day: Option<Day>) -> bool {
+    matches!(day, Some(Day::SuperstarDay(2)))
+}
+
+
 #[cfg(test)]
 mod test {
     use super::*;

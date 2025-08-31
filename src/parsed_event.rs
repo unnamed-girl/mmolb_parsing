@@ -63,7 +63,8 @@ pub enum ParsedEventMessage<S> {
         batting_team: EmojiTeam<S>,
         /// This message was only added halfway through season 0. This field does not currently track unannounced automatic runners.
         automatic_runner: Option<S>,
-        pitcher_status: StartOfInningPitcher<S>,
+        /// This message doesn't display properly for the superstar game.
+        pitcher_status: Option<StartOfInningPitcher<S>>,
     },
     NowBatting {
         batter: S,
@@ -195,18 +196,19 @@ impl<S: Display> ParsedEventMessage<S> {
                     4.. => format!("{number}th")
                 };
                 let pitcher_message = match pitcher_status {
-                    StartOfInningPitcher::Same { emoji, name } => format!("{emoji} {name} pitching."),
-                    StartOfInningPitcher::Different { leaving_emoji, leaving_pitcher, arriving_emoji, arriving_pitcher } => {
+                    Some(StartOfInningPitcher::Same { emoji, name }) => format!(" {emoji} {name} pitching."),
+                    Some(StartOfInningPitcher::Different { leaving_emoji, leaving_pitcher, arriving_emoji, arriving_pitcher }) => {
                         let leaving_emoji = leaving_emoji.as_ref().map(|e| format!("{e} ")).unwrap_or_default();
                         let arriving_emoji = arriving_emoji.as_ref().map(|e| format!("{e} ")).unwrap_or_default();
-                        format!("{leaving_emoji}{leaving_pitcher} is leaving the game. {arriving_emoji}{arriving_pitcher} takes the mound.")
-                    }
+                        format!(" {leaving_emoji}{leaving_pitcher} is leaving the game. {arriving_emoji}{arriving_pitcher} takes the mound.")
+                    },
+                    None => String::new()
                 };
                 let automatic_runner = match automatic_runner {
                     Some(runner) => format!(" {runner} starts the inning on second base."),
                     None => String::new()
                 };
-                format!("Start of the {side} of the {ordinal}. {batting_team} batting.{automatic_runner} {pitcher_message}")
+                format!("Start of the {side} of the {ordinal}. {batting_team} batting.{automatic_runner}{pitcher_message}")
             },
             Self::NowBatting {batter, stats} => {
                 let stats = match stats {
