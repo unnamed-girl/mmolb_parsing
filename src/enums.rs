@@ -1005,6 +1005,7 @@ pub enum Day {
     Event,
     #[serde(rename = "Special Event")]
     SpecialEvent,
+    Offseason,
     #[serde(untagged)]
     Day(u16),
     #[serde(untagged, deserialize_with = "superstar_day_de", serialize_with = "superstar_day_ser")]
@@ -1050,6 +1051,7 @@ impl Display for Day {
             Self::SpecialEvent => write!(f, "Special Event"),
             Self::Event => write!(f, "Event"),
             Self::SuperstarGame => write!(f, "Superstar Game"),
+            Self::Offseason => write!(f, "Offseason"),
         }
     }
 }
