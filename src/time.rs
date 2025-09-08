@@ -77,6 +77,7 @@ impl DayEquivalent {
             Day::Event => DayEquivalent { day: 255, offset: 2 },
             Day::SpecialEvent => DayEquivalent { day: 255, offset: 2 },
             Day::SuperstarGame => DayEquivalent { day: 120, offset: 1 },
+            Day::Offseason => DayEquivalent { day: 255, offset: 2 },
         }
     }
 }
