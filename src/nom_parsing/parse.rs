@@ -1,4 +1,4 @@
-use crate::{enums::Day, nom_parsing::shared::{door_prizes, ejection_tail}, time::is_superstar_game};
+use crate::{nom_parsing::shared::{door_prizes, ejection_tail}, time::is_superstar_game};
 use std::str::FromStr;
 
 use nom::{branch::alt, bytes::complete::{tag, take_until}, character::complete::{digit1, u8, u16}, combinator::{all_consuming, cut, fail, opt, rest, value, verify}, error::context, multi::{many0, many1, separated_list1}, sequence::{delimited, preceded, separated_pair, terminated}, Finish, Parser};

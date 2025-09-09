@@ -1,7 +1,7 @@
 use std::{collections::HashSet, fs::File, io::{Read, Write}, path::Path, pin::pin};
 use clap::{Parser, ValueEnum};
 use futures::{Stream, StreamExt};
-use mmolb_parsing::{enums::{FeedEventSource, FoulType}, feed_event::parse_feed_event, player::Player, player_feed::{parse_player_feed_event, PlayerFeed}, process_event, team::Team, Game, ParsedEventMessage};
+use mmolb_parsing::{enums::{FeedEventSource, FoulType}, feed_event::parse_feed_event, player::Player, player_feed::{parse_player_feed_event, PlayerFeed}, process_event, team::Team, team_feed::TeamFeed, Game, ParsedEventMessage};
 use serde::{Deserialize, Serialize, de::IntoDeserializer};
 
 use reqwest::Client;
@@ -85,7 +85,7 @@ enum Kind {
     Team,
     Player,
     PlayerFeed,
-    GameFeed
+    TeamFeed
 }
 
 fn cashews_fetch_json<'a>(client: &'a Client, endpoint: &'a str, kind: Kind, extra: String, start_page: Option<String>) -> impl Stream<Item = Vec<EntityResponse<Box<serde_json::value::RawValue>>>> + 'a {
@@ -94,7 +94,7 @@ fn cashews_fetch_json<'a>(client: &'a Client, endpoint: &'a str, kind: Kind, ext
         Kind::Team => "team",
         Kind::Player => "player",
         Kind::PlayerFeed => "player_feed",
-        Kind::GameFeed => "game_feed",
+        Kind::TeamFeed => "team_feed",
     };
     async_stream::stream! {
         let (mut url, mut page) = match start_page {
@@ -149,7 +149,7 @@ async fn main() {
         Kind::Team=>ingest(response, &args,progress_report, team_inner),
         Kind::Player=>ingest(response, &args,progress_report, player_inner),
         Kind::PlayerFeed => ingest(response, &args, progress_report, player_feed_inner),
-        Kind::GameFeed => todo!(),
+        Kind::TeamFeed => ingest(response, &args, progress_report, team_feed_inner),
     };
 
     if let Some(id) = &args.id {
@@ -158,7 +158,7 @@ async fn main() {
             Kind::Team=>"team",
             Kind::Player=>"player",
             Kind::PlayerFeed => "player_feed",
-            Kind::GameFeed => "team_feed",
+            Kind::TeamFeed => "team_feed",
         };
 
         let client = Client::new();
@@ -325,13 +325,41 @@ fn player_feed_inner(feed: PlayerFeed, response: EntityResponse<Box<serde_json::
     let mut output = args.output_folder.as_ref().map(|folder| File::create(format!("{folder}/{}.ron", response.entity_id)).unwrap());
     
     for event in feed.feed {
-        let _event_span_guard = tracing::span!(Level::INFO, "Feed Event", season = event.season, day = format!("{:?}", event.day), timestamp = event.timestamp.to_string(), r#type = format!("{:?}", event.event_type), message = event.text).entered();
+        let _event_span_guard = tracing::span!(Level::INFO, "Player Feed Event", season = event.season, day = format!("{:?}", event.day), timestamp = event.timestamp.to_string(), r#type = format!("{:?}", event.event_type), message = event.text).entered();
 
         let parsed_text = parse_player_feed_event(&event);
         if tracing::enabled!(Level::ERROR) {
             let unparsed = parsed_text.unparse(&event);
             if event.text != unparsed {
-                error!("Feed event round trip failure expected:\n'{}'\nGot:\n'{}'", event.text, unparsed);
+                error!("Player Feed event round trip failure expected:\n'{}'\nGot:\n'{}'", event.text, unparsed);
+            }
+        }
+
+        if args.verbose {
+            info!("{:?} ({})", parsed_text, event.text);
+        }
+
+        if let Some(f) = &mut output {
+            writeln!(f, "{}", ron::to_string(&parsed_text).unwrap()).unwrap();
+        }
+
+        drop(_event_span_guard);
+    }
+    _player_feed_span_guard
+}
+
+fn team_feed_inner(feed: TeamFeed, response: EntityResponse<Box<serde_json::value::RawValue>>,  args: &Args) -> EnteredSpan {
+    let _player_feed_span_guard = tracing::span!(Level::INFO, "Team Feed").entered();
+    let mut output = args.output_folder.as_ref().map(|folder| File::create(format!("{folder}/{}.ron", response.entity_id)).unwrap());
+    
+    for event in feed.feed {
+        let _event_span_guard = tracing::span!(Level::INFO, "Team Feed Event", season = event.season, day = format!("{:?}", event.day), timestamp = event.timestamp.to_string(), r#type = format!("{:?}", event.event_type), message = event.text).entered();
+
+        let parsed_text = parse_player_feed_event(&event);
+        if tracing::enabled!(Level::ERROR) {
+            let unparsed = parsed_text.unparse(&event);
+            if event.text != unparsed {
+                error!("Team Feed event round trip failure expected:\n'{}'\nGot:\n'{}'", event.text, unparsed);
             }
         }
 

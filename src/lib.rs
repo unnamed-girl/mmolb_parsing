@@ -10,6 +10,7 @@ pub mod feed_event;
 pub mod team;
 pub mod player;
 pub mod player_feed;
+pub mod team_feed;
 
 pub use game::Game;
 pub use parsing::{process_event, process_game};
