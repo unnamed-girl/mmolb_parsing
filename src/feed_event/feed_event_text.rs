@@ -115,14 +115,14 @@ impl<S: Display> ParsedFeedEventText<S> {
                         format!("{} vs. {} - FINAL {}-{}", away_team, home_team, away_score, home_score)
                     }
             ParsedFeedEventText::Delivery { delivery } => {
-                        delivery.unparse("Delivery")
-                    }
+                delivery.unparse("Delivery")
+            }
             ParsedFeedEventText::SpecialDelivery { delivery } => {
-                        delivery.unparse("Special Delivery")
-                    }
+                delivery.unparse("Special Delivery")
+            }
             ParsedFeedEventText::Shipment { delivery } => {
-                        delivery.unparse("Shipment")
-                    }
+                delivery.unparse("Shipment")
+            }
             ParsedFeedEventText::AttributeChanges { changes } => {
                         changes.iter()
                             .map(|change|  format!("{} gained +{} {}.", change.player_name, change.amount, change.attribute))

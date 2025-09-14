@@ -1,7 +1,7 @@
 use std::{collections::HashSet, fs::File, io::{Read, Write}, path::Path, pin::pin};
 use clap::{Parser, ValueEnum};
 use futures::{Stream, StreamExt};
-use mmolb_parsing::{enums::{FeedEventSource, FoulType}, feed_event::parse_feed_event, player::Player, player_feed::{parse_player_feed_event, PlayerFeed}, process_event, team::Team, team_feed::TeamFeed, Game, ParsedEventMessage};
+use mmolb_parsing::{enums::{FeedEventSource, FoulType}, feed_event::parse_feed_event, player::Player, player_feed::{parse_player_feed_event, PlayerFeed}, process_event, team::{parse_team_feed_event, Team}, team_feed::TeamFeed, Game, ParsedEventMessage};
 use serde::{Deserialize, Serialize, de::IntoDeserializer};
 
 use reqwest::Client;
@@ -355,7 +355,7 @@ fn team_feed_inner(feed: TeamFeed, response: EntityResponse<Box<serde_json::valu
     for event in feed.feed {
         let _event_span_guard = tracing::span!(Level::INFO, "Team Feed Event", season = event.season, day = format!("{:?}", event.day), timestamp = event.timestamp.to_string(), r#type = format!("{:?}", event.event_type), message = event.text).entered();
 
-        let parsed_text = parse_player_feed_event(&event);
+        let parsed_text = parse_team_feed_event(&event);
         if tracing::enabled!(Level::ERROR) {
             let unparsed = parsed_text.unparse(&event);
             if event.text != unparsed {
