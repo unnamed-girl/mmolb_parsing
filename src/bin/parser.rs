@@ -67,6 +67,10 @@ struct Args {
     #[clap(long, action)]
     versions: bool,
 
+    /// Use https://cheapcashews.beiju.me instead of real cashews
+    #[clap(long, action)]
+    beiju: bool,
+
     /// When a new combination of fields for an event is seen, save it to the given file. Also loads
     /// the current list from that file. 
     ///
@@ -98,8 +102,8 @@ fn cashews_fetch_json<'a>(client: &'a Client, endpoint: &'a str, kind: Kind, ext
     };
     async_stream::stream! {
         let (mut url, mut page) = match start_page {
-            Some(page) => (format!("https://freecashe.ws/api/chron/v0/{endpoint}?kind={kind}&count=1000{extra}&page={page}"), Some(page)),
-            None => (format!("https://freecashe.ws/api/chron/v0/{endpoint}?kind={kind}&count=1000{extra}"), None)
+            Some(page) => (format!("{endpoint}?kind={kind}&count=1000{extra}&page={page}"), Some(page)),
+            None => (format!("{endpoint}?kind={kind}&count=1000{extra}"), None)
         };
         loop {
             info!("Fetching {kind}s from cashews page {page:?}");
@@ -109,7 +113,7 @@ fn cashews_fetch_json<'a>(client: &'a Client, endpoint: &'a str, kind: Kind, ext
             yield response.items;
 
             if let Some(page) = &page {
-                url = format!("https://freecashe.ws/api/chron/v0/{endpoint}?kind={kind}&count=1000&page={page}{extra}");
+                url = format!("{endpoint}?kind={kind}&count=1000&page={page}{extra}");
             } else {
                 break
             }
@@ -130,7 +134,8 @@ async fn main() {
     let guard = tracing::subscriber::set_default(subscriber);
 
     let args = Args::parse();
-    let endpoint = if args.versions {"versions"} else {"entities"};
+    let endpoint = if args.beiju { "https://cheapcashews.beiju.me/chron/v0" } else {"https://freecashe.ws/api/chron/v0"};
+    let endpoint = if args.versions {format!("{endpoint}/versions")} else {format!("{endpoint}/entities")};
 
     if let Some(f) = &args.export_event_variants {
         if Path::new(f).exists() {
@@ -178,7 +183,7 @@ async fn main() {
     let client = Client::new();
 
 
-    let mut fetch = pin!(cashews_fetch_json(&client, endpoint, args.kind, extra, args.start_page.clone()));
+    let mut fetch = pin!(cashews_fetch_json(&client, &endpoint, args.kind, extra, args.start_page.clone()));
 
     while let Some(games) = fetch.next().await {
         let last = games.len().max(1) - 1;
