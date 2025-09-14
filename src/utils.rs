@@ -30,8 +30,6 @@ pub struct RemovedLater;
 
 pub type RemovedLaterResult<T> = Result<T, RemovedLater>;
 
-
-
 pub(crate) struct SometimesMissingHelper<T>(PhantomData<T>);
 
 impl<T> SometimesMissingHelper<T> {
@@ -280,6 +278,28 @@ impl SerializeAs<DateTime<Utc>> for TimestampHelper {
             S: Serializer {
         let s = format!("{}", date.format(FORMAT));
         serializer.serialize_str(&s)
+    }
+}
+
+pub(crate) struct ZeroSerializeHelper;
+
+impl<'de> DeserializeAs<'de, f64> for ZeroSerializeHelper {
+    fn deserialize_as<D>(deserializer: D) -> Result<f64, D::Error>
+        where
+            D: Deserializer<'de> {
+        f64::deserialize(deserializer)
+    }
+}
+
+impl SerializeAs<f64> for ZeroSerializeHelper {
+    fn serialize_as<S>(source: &f64, serializer: S) -> Result<S::Ok, S::Error>
+        where
+            S: Serializer {
+        if *source < 0.00001 {
+            0.serialize(serializer)
+        } else {
+            source.serialize(serializer)
+        }
     }
 }
 
