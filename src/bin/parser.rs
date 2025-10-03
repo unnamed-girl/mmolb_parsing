@@ -129,6 +129,7 @@ async fn main() {
     let writer = std::io::stderr.with_max_level(Level::WARN).and(std::io::stdout);
 
     let subscriber = tracing_subscriber::fmt()
+        .with_max_level(Level::ERROR)
         .with_writer(writer)
         .finish();
     let guard = tracing::subscriber::set_default(subscriber);

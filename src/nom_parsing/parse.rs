@@ -1,4 +1,4 @@
-use crate::{enums::Day, nom_parsing::shared::{door_prizes, ejection_tail}, time::is_superstar_game};
+use crate::{enums::Day, nom_parsing::shared::{door_prizes, ejection_tail, hit_by_pitch_text, strike_out_text}, time::is_superstar_game};
 use std::str::FromStr;
 
 use nom::{branch::alt, bytes::complete::{tag, take_until}, character::complete::{digit1, u8, u16}, combinator::{all_consuming, cut, fail, opt, rest, value, verify}, error::context, multi::{many0, many1, separated_list1}, sequence::{delimited, preceded, separated_pair, terminated}, Finish, Parser};
@@ -413,7 +413,7 @@ fn pitch<'parse, 'output: 'parse>(parsing_context: &'parse ParsingContext<'parse
     let struck_out = (
         opt(sentence(preceded(tag("Foul "), try_from_word))),
         sentence((
-            parse_terminated(" struck out "),
+            parse_terminated(strike_out_text(parsing_context.season, parsing_context.day, parsing_context.event_index)),
             try_from_word)
     ))
     .and(many0(base_steal_sentence))
@@ -424,7 +424,7 @@ fn pitch<'parse, 'output: 'parse>(parsing_context: &'parse ParsingContext<'parse
         ParsedEventMessage::StrikeOut { foul, batter, strike, steals, cheer, aurora_photos, ejection }
     );
 
-    let hit_by_pitch = sentence(parse_terminated(" was hit by the pitch and advances to first base"))
+    let hit_by_pitch = sentence(parse_terminated(hit_by_pitch_text(parsing_context.season, parsing_context.day, parsing_context.event_index)))
     .and(scores_and_advances)
     .and(opt(preceded(tag(" "), aurora(parsing_context))))
     .and(opt(preceded(tag(" "), cheer(parsing_context))))
