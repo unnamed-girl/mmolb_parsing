@@ -52,9 +52,8 @@ pub struct Team {
     #[serde(default = "SometimesMissingHelper::default_result", skip_serializing_if = "Result::is_err")]
     #[serde_as(as = "SometimesMissingHelper<_>")]
     pub augments: RemovedLaterResult<u16>,
-    #[serde(default = "SometimesMissingHelper::default_result", skip_serializing_if = "Result::is_err")]
-    #[serde_as(as = "SometimesMissingHelper<_>")]
-    pub championships: RemovedLaterResult<u8>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub championships: Option<u8>,
     pub color: String,
     pub emoji: String,
 
