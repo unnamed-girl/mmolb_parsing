@@ -15,4 +15,4 @@ pub use game::Game;
 pub use parsing::{process_event, process_game};
 pub use parsed_event::ParsedEventMessage;
 
-pub use utils::{NotRecognized, AddedLater, RemovedLater, AddedLaterResult, RemovedLaterResult, MaybeRecognizedResult};
+pub use utils::{NotRecognized, AddedLater, RemovedLater, AddedLaterResult, RemovedLaterResult, MaybeRecognizedResult, EmptyArrayOr};

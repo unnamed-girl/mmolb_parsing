@@ -1,9 +1,8 @@
 use std::collections::HashMap;
-
 pub use serde::{Serialize, Deserialize};
 use serde_with::serde_as;
 
-use crate::{enums::{Attribute, Day, EquipmentEffectType, EquipmentRarity, EquipmentSlot, GameStat, Handedness, ItemPrefix, ItemSuffix, ItemName, SpecialItemType, Position, PositionType, SeasonStatus}, feed_event::FeedEvent, utils::{AddedLaterResult, ExpectNone, MaybeRecognizedResult, RemovedLaterResult, StarHelper}};
+use crate::{enums::{Attribute, Day, EquipmentEffectType, EquipmentRarity, EquipmentSlot, GameStat, Handedness, ItemName, ItemPrefix, ItemSuffix, Position, PositionType, SeasonStatus, SpecialItemType}, feed_event::FeedEvent, utils::{AddedLaterResult, ExpectNone, MaybeRecognizedResult, RemovedLaterResult, StarHelper}, EmptyArrayOr};
 use crate::utils::{MaybeRecognizedHelper, SometimesMissingHelper, extra_fields_deserialize};
 
 #[serde_as]
@@ -51,8 +50,9 @@ pub struct Player {
     pub position: MaybeRecognizedResult<Position>,
     #[serde_as(as = "MaybeRecognizedHelper<_>")]
     pub position_type: MaybeRecognizedResult<PositionType>,
-    #[serde_as(as = "HashMap<_, HashMap<MaybeRecognizedHelper<_>, _>>")]
-    pub season_stats: HashMap<String, HashMap<MaybeRecognizedResult<SeasonStatus>, String>>,
+
+    #[serde_as(as = "EmptyArrayOr<HashMap<_, HashMap<MaybeRecognizedHelper<_>, _>>>")]
+    pub season_stats: EmptyArrayOr<HashMap<String, HashMap<MaybeRecognizedResult<SeasonStatus>, String>>>,
     #[serde_as(as = "HashMap<_, HashMap<MaybeRecognizedHelper<_>, _>>")]
     pub stats: HashMap<String, HashMap<MaybeRecognizedResult<GameStat>, i32>>,
 
