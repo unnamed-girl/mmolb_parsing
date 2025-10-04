@@ -1409,7 +1409,8 @@ pub enum Handedness {
 
 #[derive(Debug, Serialize, Deserialize, Clone, Copy, EnumIter, PartialEq, Eq, Hash, EnumString, IntoStaticStr, Display)]
 pub enum EquipmentEffectType {
-    FlatBonus
+    FlatBonus,
+    Multiplier
 }
 
 #[derive(Debug, Serialize, Deserialize, Clone, Copy, EnumIter, PartialEq, Eq, Hash, EnumString, IntoStaticStr, Display)]
