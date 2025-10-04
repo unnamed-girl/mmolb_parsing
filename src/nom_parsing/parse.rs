@@ -590,7 +590,7 @@ fn live_now<'parse, 'output: 'parse>(parsing_context: &'parse ParsingContext<'pa
             (
                 parse_terminated(" vs ").and_then(emoji_team_eof),
                 parse_terminated(" @ ").and_then(emoji_team_eof),
-                name_eof
+                rest
             )
             .map(|(away_team, home_team, stadium)| ParsedEventMessage::LiveNow { away_team, home_team, stadium: Some(stadium) } )
             .parse(input)
@@ -661,6 +661,25 @@ mod test {
         assert_eq!(
             super::field(&parsing_context).parse(text),
             Ok(("", ParsedEventMessage::BatterToBase { batter: "Victor Rodriguez", distance: Distance::Single, fair_ball_type: FairBallType::LineDrive, fielder: PlacedPlayer { name: "Bob E. Quiros", place: Place::RightField }, scores: vec![], advances: vec![RunnerAdvance { runner: "Myra Roussel", base: Base::Third}], ejection: None }))
+        );
+    }
+
+    #[test]
+    fn a_big_pile_of_dirt() {
+        let text = "🔨 Springfield Just Just Justice vs 🪱 Cabo Verde Caecilians @ A Big Pile of Dirt";
+        let parsing_context = ParsingContext {
+            game_id: "68d62be1a4ec9a9adffeebaf",
+            event_log: &[],
+            event_index: None,
+            home_emoji_team: EmojiTeam { emoji: "🪱", name: "Cabo Verde Caecilians" },
+            away_emoji_team: EmojiTeam { emoji: "🔨", name: "Springfield Just Just Justice" },
+            season: 5,
+            day: None
+        };
+
+        assert_eq!(
+            super::live_now(&parsing_context).parse(text),
+            Ok(("", ParsedEventMessage::LiveNow { away_team: parsing_context.away_emoji_team, home_team: parsing_context.home_emoji_team, stadium: Some("A Big Pile of Dirt") }))
         );
     }
 }
