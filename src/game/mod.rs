@@ -47,12 +47,30 @@ pub enum EventPitcherVersions<S> {
     Old(MaybePlayer<S>)
 }
 
+impl<S> EventPitcherVersions<S> {
+    pub fn name(self) -> MaybePlayer<S> {
+        match self {
+            EventPitcherVersions::Old(p) => p,
+            EventPitcherVersions::New(p) => p.name,
+        }
+    }
+}
+
 
 #[derive(Debug, Clone, PartialEq, Deserialize, Serialize)]
 #[serde(untagged, bound(deserialize = "S: Deserialize<'de> + PartialEq<&'static str>"))]
 pub enum EventBatterVersions<S> {
     New(EventBatter<S>),
     Old(MaybePlayer<S>)
+}
+
+impl<S> EventBatterVersions<S> {
+    pub fn name(self) -> MaybePlayer<S> {
+        match self {
+            EventBatterVersions::Old(p) => p,
+            EventBatterVersions::New(p) => p.name,
+        }
+    }
 }
 
 /// mmolb currently has three possible values for the batter and on_deck fields:
