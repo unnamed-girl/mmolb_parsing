@@ -36,6 +36,10 @@ pub struct Game {
     pub weather: Weather,
     #[serde(rename = "Realm")]
     pub realm_id: String,
+
+    #[serde(default = "SometimesMissingHelper::default_result", skip_serializing_if = "Result::is_err")]
+    #[serde_as(as = "SometimesMissingHelper<_>")]
+    pub ballpark_name: AddedLaterResult<String>,
     
     /// TeamID -> PlayerID -> Stat -> Value
     #[serde_as(as = "HashMap<_, HashMap<_, HashMap<MaybeRecognizedHelper<_>, _>>>")]
@@ -47,6 +51,11 @@ pub struct Game {
     #[serde(rename = "PitcherEntry", default = "SometimesMissingHelper::default_result", skip_serializing_if = "AddedLaterResult::is_err")]
     #[serde_as(as = "SometimesMissingHelper<_>")]
     pub pitcher_entries: AddedLaterResult<HashMap<String, PitcherEntry>>,
+
+    #[serde(default = "SometimesMissingHelper::default_result", skip_serializing_if = "Result::is_err")]
+    #[serde_as(as = "SometimesMissingHelper<_>")]
+    /// TODO
+    pub(crate) current_pitcher_state: AddedLaterResult<serde_json::Value>,
     
     /// PitchersUsed was not retroactively added to old games
     /// 
@@ -96,6 +105,15 @@ pub struct Game {
     #[serde_as(as = "SometimesMissingHelper<_>")]
     /// Team id => slot => player id
     pub original_rosters: AddedLaterResult<HashMap<String, HashMap<Slot, String>>>,
+
+    #[serde(default = "SometimesMissingHelper::default_result", skip_serializing_if = "Result::is_err")]
+    #[serde_as(as = "SometimesMissingHelper<_>")]
+    /// TODO
+    pub(super) pending_save: AddedLaterResult<HashMap<String, serde_json::Value>>,
+    #[serde(default = "SometimesMissingHelper::default_result", skip_serializing_if = "Result::is_err")]
+    #[serde_as(as = "SometimesMissingHelper<_>")]
+    /// TODO
+    pub(super) hold_candidates: AddedLaterResult<HashMap<String, Vec<serde_json::Value>>>,
 
     pub event_log: Vec<Event>,
 

@@ -2,7 +2,7 @@ use serde::{Deserialize, Deserializer, Serialize};
 use serde_with::serde_as;
 
 use crate::enums::{Handedness, PitchType};
-use crate::utils::{maybe_recognized_from_str, maybe_recognized_to_string, MaybeRecognizedHelper, MaybeRecognizedResult, extra_fields_deserialize};
+use crate::utils::{extra_fields_deserialize, maybe_recognized_from_str, maybe_recognized_to_string, MaybeRecognizedHelper, MaybeRecognizedResult, ZeroOrF64};
 
 pub(crate) mod game;
 pub(crate) mod event;
@@ -18,7 +18,7 @@ pub use weather::Weather;
 pub struct EventBatter<S> {
     pub id: S,
     pub pa: S,
-    pub avg: f64,
+    pub avg: ZeroOrF64,
     pub bats: Handedness,
     pub name: MaybePlayer<S>,
 
@@ -32,7 +32,7 @@ pub struct EventBatter<S> {
 pub struct EventPitcher<S> {
     pub id: S,
     pub pitches: u8,
-    pub era: f64,
+    pub era: ZeroOrF64,
     pub throws: Handedness,
     pub name: MaybePlayer<S>,
 
@@ -55,7 +55,7 @@ pub enum EventBatterVersions<S> {
     Old(MaybePlayer<S>)
 }
 
-/// mmmolb currently has three possible values for the batter and on_deck fields:
+/// mmolb currently has three possible values for the batter and on_deck fields:
 /// - The name of a batter (used when there is a batter)
 /// - An empty string (used when there is no batter during the game)
 /// - null (used before the game)

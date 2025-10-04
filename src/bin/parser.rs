@@ -126,10 +126,11 @@ static mut EVENT_VARIANTS: Option<HashSet<String>> = None;
 
 #[tokio::main]
 async fn main() {
-    let writer = std::io::stderr.with_max_level(Level::WARN).and(std::io::stdout);
+    let writer = std::io::stderr
+        .with_max_level(Level::WARN)
+        .or_else(std::io::stdout);
 
     let subscriber = tracing_subscriber::fmt()
-        .with_max_level(Level::ERROR)
         .with_writer(writer)
         .finish();
     let guard = tracing::subscriber::set_default(subscriber);
@@ -168,7 +169,7 @@ async fn main() {
         };
 
         let client = Client::new();
-        let url = format!("https://freecashe.ws/api/chron/v0/{endpoint}?kind={kind}&id={id}");
+        let url = format!("{endpoint}?kind={kind}&id={id}");
         let entities = client.get(&url).send().await.unwrap().json::<FreeCashewResponse<EntityResponse<Box<serde_json::value::RawValue>>>>().await.unwrap().items;
         for game in entities.into_iter() {
             func(game, true);

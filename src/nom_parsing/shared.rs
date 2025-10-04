@@ -605,11 +605,11 @@ where F: Parser<&'output str, Output = O, Error = Error<'output>>,
 }
 
 pub fn strike_out_text(season: u32, day: Option<Day>, event_index: Option<u16>) -> &'static str {
-    Breakpoints::Season5.after(season, day, event_index).then_some(" strikes out ").unwrap_or(" struck out ")
+    Breakpoints::Season5TenseChange.after(season, day, event_index).then_some(" strikes out ").unwrap_or(" struck out ")
 }
 
 pub fn hit_by_pitch_text(season: u32, day: Option<Day>, event_index: Option<u16>) -> &'static str {
-    Breakpoints::Season5.after(season, day, event_index).then_some(" is hit by the pitch and advances to first base").unwrap_or(" was hit by the pitch and advances to first base")
+    Breakpoints::Season5TenseChange.after(season, day, event_index).then_some(" is hit by the pitch and advances to first base").unwrap_or(" was hit by the pitch and advances to first base")
 }
 
 #[cfg(test)]

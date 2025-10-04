@@ -106,7 +106,7 @@ pub enum Breakpoints {
     CheersGetEmoji,
     Season3PreSuperstarBreakUpdate,
     EternalBattle,
-    Season5
+    Season5TenseChange
 }
 impl From<Breakpoints> for Time {
     fn from(value: Breakpoints) -> Self {
@@ -169,10 +169,10 @@ impl Breakpoints {
                     (DayEquivalent { day: 255, offset: 0 }, 0)
                 ]
             },
-            Breakpoints::Season5 => Time {
+            Breakpoints::Season5TenseChange => Time {
                 season: 5,
                 ascending_days: vec![
-                    (DayEquivalent { day: 0, offset: 0 }, 0)
+                    (DayEquivalent { day: 863, offset: 0 }, 0)
                 ]
             }
         }
