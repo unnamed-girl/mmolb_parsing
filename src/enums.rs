@@ -880,7 +880,10 @@ pub enum GameStat {
     HomeRunChallengeHomeRuns,
 
     // Season 4
-    Ejected
+    Ejected,
+
+    // Season 5
+    Holds
 }
 
 #[derive(Clone, Copy, EnumString, IntoStaticStr, Display, Debug, Serialize, Deserialize, PartialEq, Eq, Hash, EnumIter)]
@@ -949,7 +952,8 @@ pub enum SeasonStatus {
     Event,
     Election,
     Preseason,
-    PostseasonPreview
+    PostseasonPreview,
+    Offseason
 }
 impl FromStr for SeasonStatus {
     type Err = &'static str;
@@ -964,6 +968,7 @@ impl FromStr for SeasonStatus {
             "Event" => Ok(SeasonStatus::Event),
             "Election" => Ok(SeasonStatus::Election),
             "Preseason" => Ok(SeasonStatus::Preseason),
+            "Offseason" => Ok(SeasonStatus::Offseason),
             "Postseason Preview" => Ok(SeasonStatus::PostseasonPreview),
             s => s.strip_prefix("Postseason Round ")
                         .and_then(|s| s.parse().ok())
@@ -986,7 +991,8 @@ impl Display for SeasonStatus {
             SeasonStatus::Event => write!(f, "Event"),
             SeasonStatus::Election => write!(f, "Election"),
             SeasonStatus::Preseason => write!(f, "Preseason"),
-            SeasonStatus::PostseasonPreview => write!(f, "Postseason Preview")
+            SeasonStatus::PostseasonPreview => write!(f, "Postseason Preview"),
+            SeasonStatus::Offseason => write!(f, "Offseason"),
         }
     }
 }
@@ -1391,7 +1397,8 @@ pub enum MoundVisitType {
 pub enum LeagueScale {
     Lesser,
     Greater,
-    Special
+    Special,
+    Exhibition
 }
 
 #[derive(Debug, Serialize, Deserialize, Clone, Copy, EnumIter, PartialEq, Eq, Hash, EnumString, IntoStaticStr, Display)]

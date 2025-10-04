@@ -1,8 +1,8 @@
 use serde::{Deserialize, Deserializer, Serialize};
 use serde_with::serde_as;
 
-use crate::enums::{PitchType};
-use crate::utils::{maybe_recognized_from_str, maybe_recognized_to_string, MaybeRecognizedHelper, MaybeRecognizedResult};
+use crate::enums::{Handedness, PitchType};
+use crate::utils::{extra_fields_deserialize, maybe_recognized_from_str, maybe_recognized_to_string, MaybeRecognizedHelper, MaybeRecognizedResult, ZeroOrF64};
 
 pub(crate) mod game;
 pub(crate) mod event;
@@ -12,11 +12,54 @@ pub use event::Event;
 pub use game::Game;
 pub use weather::Weather;
 
-/// mmmolb currently has three possible values for the batter and on_deck fields:
+#[serde_as]
+#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[serde(bound(deserialize = "S: Deserialize<'de> + PartialEq<&'static str>"))]
+pub struct EventBatter<S> {
+    pub id: S,
+    pub pa: S,
+    pub avg: ZeroOrF64,
+    pub bats: Handedness,
+    pub name: MaybePlayer<S>,
+
+    #[serde(flatten, deserialize_with = "extra_fields_deserialize")]
+    pub extra_fields: serde_json::Map<String, serde_json::Value>,
+}
+
+#[serde_as]
+#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[serde(bound(deserialize = "S: Deserialize<'de> + PartialEq<&'static str>"))]
+pub struct EventPitcher<S> {
+    pub id: S,
+    pub pitches: u8,
+    pub era: ZeroOrF64,
+    pub throws: Handedness,
+    pub name: MaybePlayer<S>,
+
+    #[serde(flatten, deserialize_with = "extra_fields_deserialize")]
+    pub extra_fields: serde_json::Map<String, serde_json::Value>,
+}
+
+#[derive(Debug, Clone, PartialEq, Deserialize, Serialize)]
+#[serde(untagged, bound(deserialize = "S: Deserialize<'de> + PartialEq<&'static str>"))]
+pub enum EventPitcherVersions<S> {
+    New(EventPitcher<S>),
+    Old(MaybePlayer<S>)
+}
+
+
+#[derive(Debug, Clone, PartialEq, Deserialize, Serialize)]
+#[serde(untagged, bound(deserialize = "S: Deserialize<'de> + PartialEq<&'static str>"))]
+pub enum EventBatterVersions<S> {
+    New(EventBatter<S>),
+    Old(MaybePlayer<S>)
+}
+
+/// mmolb currently has three possible values for the batter and on_deck fields:
 /// - The name of a batter (used when there is a batter)
 /// - An empty string (used when there is no batter during the game)
 /// - null (used before the game)
-#[derive(Debug, Clone, PartialEq)]
+#[derive(Debug, Clone, Copy, PartialEq)]
 pub enum MaybePlayer<S> {
     Player(S),
     EmptyString,

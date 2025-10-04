@@ -35,9 +35,13 @@ impl<'parse> ParsingContext<'parse> {
             day: game.day.as_ref().copied().ok()
         }
     }
+
+    /// Whether this event is before the given time
     pub(crate) fn before(&self, time: impl Into<Time>) -> bool {
         time.into().before(self.season, self.day, self.event_index)
     }
+
+    /// Whether this event is after the given time
     pub(crate) fn after(&self, time: impl Into<Time>) -> bool {
         time.into().after(self.season, self.day, self.event_index)
     }
@@ -598,6 +602,14 @@ where F: Parser<&'output str, Output = O, Error = Error<'output>>,
             fail().parse(input)
         }
     }
+}
+
+pub fn strike_out_text(season: u32, day: Option<Day>, event_index: Option<u16>) -> &'static str {
+    Breakpoints::Season5TenseChange.after(season, day, event_index).then_some(" strikes out ").unwrap_or(" struck out ")
+}
+
+pub fn hit_by_pitch_text(season: u32, day: Option<Day>, event_index: Option<u16>) -> &'static str {
+    Breakpoints::Season5TenseChange.after(season, day, event_index).then_some(" is hit by the pitch and advances to first base").unwrap_or(" was hit by the pitch and advances to first base")
 }
 
 #[cfg(test)]

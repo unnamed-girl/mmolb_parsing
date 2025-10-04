@@ -30,8 +30,6 @@ pub struct RemovedLater;
 
 pub type RemovedLaterResult<T> = Result<T, RemovedLater>;
 
-
-
 pub(crate) struct SometimesMissingHelper<T>(PhantomData<T>);
 
 impl<T> SometimesMissingHelper<T> {
@@ -280,6 +278,63 @@ impl SerializeAs<DateTime<Utc>> for TimestampHelper {
             S: Serializer {
         let s = format!("{}", date.format(FORMAT));
         serializer.serialize_str(&s)
+    }
+}
+
+/// For certain values, mmolb will use both 0 and 0.0. This type exists so those values round trip
+#[derive(Debug, Clone, Copy)]
+pub enum ZeroOrF64 {
+    Zero,
+    F64(f64)
+}
+
+impl PartialEq for ZeroOrF64 {
+    fn eq(&self, other: &Self) -> bool {
+        Into::<f64>::into(*self) == Into::<f64>::into(*other)
+    }
+}
+
+impl<'de> Deserialize<'de> for ZeroOrF64 {
+    fn deserialize<D>(deserializer: D) -> Result<Self, D::Error>
+        where
+            D: Deserializer<'de> {
+        #[derive(Serialize, Deserialize)]
+        #[serde(untagged)]
+        enum Helper {
+            Int(u8),
+            F64(f64)
+        }
+        
+        match Helper::deserialize(deserializer)? {
+            Helper::Int(0) => {
+                Ok(ZeroOrF64::Zero)
+            },
+            Helper::Int(i) => {
+                tracing::error!("INTEGER");
+                Err(D::Error::custom(format!("Expected int to be 0 not {}", i)))
+            },
+            Helper::F64(f) => Ok(ZeroOrF64::F64(f))
+        }
+    }
+}
+
+impl Serialize for ZeroOrF64 {
+    fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error>
+        where
+            S: Serializer {
+        match self {
+            ZeroOrF64::Zero => serializer.serialize_u8(0),
+            ZeroOrF64::F64(f64) => serializer.serialize_f64(*f64),
+        }
+    }
+}
+
+impl Into<f64> for ZeroOrF64 {
+    fn into(self) -> f64 {
+        match self {
+            ZeroOrF64::Zero => 0.0,
+            ZeroOrF64::F64(f64) => f64
+        }
     }
 }
 

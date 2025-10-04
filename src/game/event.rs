@@ -1,7 +1,7 @@
 use serde::{Serialize, Deserialize};
 use serde_with::serde_as;
 
-use crate::{enums::{EventType, Inning}, game::{MaybePlayer, Pitch}, utils::{extra_fields_deserialize, MaybeRecognizedResult, NonStringOrEmptyString}};
+use crate::{enums::{EventType, Inning}, game::{EventBatterVersions, EventPitcherVersions, Pitch}, utils::{extra_fields_deserialize, MaybeRecognizedResult, NonStringOrEmptyString}};
 use crate::utils::MaybeRecognizedHelper;
 
 #[serde_as]
@@ -25,11 +25,11 @@ pub(crate) struct RawEvent {
     pub on_3b: bool,
     
     /// Empty string between innings, null before game
-    pub on_deck: MaybePlayer<String>,
+    pub on_deck: EventBatterVersions<String>,
     /// Empty string between innings, null before game
-    pub batter: MaybePlayer<String>,
+    pub batter: EventBatterVersions<String>,
     /// Empty string between innings, null before game
-    pub pitcher: MaybePlayer<String>,
+    pub pitcher: EventPitcherVersions<String>,
 
     /// Empty if none
     pub pitch_info: String,
@@ -65,9 +65,9 @@ pub struct Event {
     pub on_2b: bool,
     pub on_3b: bool,
     
-    pub on_deck: MaybePlayer<String>,
-    pub batter: MaybePlayer<String>,
-    pub pitcher: MaybePlayer<String>,
+    pub on_deck: EventBatterVersions<String>,
+    pub batter: EventBatterVersions<String>,
+    pub pitcher: EventPitcherVersions<String>,
 
     pub pitch: Option<Pitch>,
 

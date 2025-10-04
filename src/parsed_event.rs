@@ -4,7 +4,7 @@ use serde::{Serialize, Deserialize};
 use strum::{EnumDiscriminants, EnumString, Display, IntoStaticStr};
 use thiserror::Error;
 
-use crate::{enums::{Base, BaseNameVariant, BatterStat, Distance, EventType, FairBallDestination, FairBallType, FieldingErrorType, FoulType, GameOverMessage, HomeAway, ItemPrefix, ItemSuffix, ItemName, MoundVisitType, NowBattingStats, Place, StrikeType, TopBottom}, time::Breakpoints, Game, NotRecognized};
+use crate::{enums::{Base, BaseNameVariant, BatterStat, Distance, EventType, FairBallDestination, FairBallType, FieldingErrorType, FoulType, GameOverMessage, HomeAway, ItemName, ItemPrefix, ItemSuffix, MoundVisitType, NowBattingStats, Place, StrikeType, TopBottom}, nom_parsing::shared::{hit_by_pitch_text, strike_out_text}, time::Breakpoints, Game, NotRecognized};
 use crate::enums::Attribute;
 
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Error)]
@@ -304,8 +304,8 @@ impl<S: Display> ParsedEventMessage<S> {
                 let aurora_photos = aurora_photos.as_ref().map(|p| p.unparse()).unwrap_or_default();
                 let ejection = ejection.as_ref().map(|e| e.unparse()).unwrap_or_default();
                 let door_prizes = once(String::new()).chain(door_prizes.iter().map(|d| d.unparse())).collect::<Vec<_>>().join("<br>");
-
-                format!("{space}{batter} was hit by the pitch and advances to first base.{scores_and_advances}{aurora_photos}{cheer}{ejection}{door_prizes}")
+                let hbp_text = hit_by_pitch_text(game.season, game.day.as_ref().copied().ok(), event_index);
+                format!("{space}{batter}{hbp_text}.{scores_and_advances}{aurora_photos}{cheer}{ejection}{door_prizes}")
             }
             Self::FairBall { batter, fair_ball_type, destination, cheer, aurora_photos, door_prizes } => {
                 let space = old_space(game, event_index);
@@ -331,7 +331,8 @@ impl<S: Display> ParsedEventMessage<S> {
 
                 // I do have proof that cheer is before ejection at least on this event
                 // (game 6887e4f9f142e23550fc1134 event 265)
-                format!("{space}{foul}{batter} struck out {strike}.{steals}{aurora_photos}{cheer}{ejection}")
+                let strike_out_text = strike_out_text(game.season, game.day.as_ref().copied().ok(), event_index);
+                format!("{space}{foul}{batter}{strike_out_text}{strike}.{steals}{aurora_photos}{cheer}{ejection}")
             }
             Self::BatterToBase { batter, distance, fair_ball_type, fielder, scores, advances, ejection } => {
                 let scores_and_advances = unparse_scores_and_advances(scores, advances);
