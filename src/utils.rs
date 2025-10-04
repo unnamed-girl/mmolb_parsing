@@ -2,7 +2,7 @@ use std::{any::type_name, fmt::Debug, marker::PhantomData, str::FromStr};
 
 use chrono::{DateTime, NaiveDateTime, Utc};
 use serde::{de::{Error, Visitor}, Deserialize, Deserializer, Serialize, Serializer};
-use serde_with::{de::DeserializeAsWrap, ser::SerializeAsWrap, DeserializeAs, PickFirst, Same, SerializeAs};
+use serde_with::{de::DeserializeAsWrap, ser::SerializeAsWrap, serde_as, DeserializeAs, PickFirst, Same, SerializeAs};
 use thiserror::Error;
 
 #[cfg(test)]
@@ -280,6 +280,48 @@ impl SerializeAs<DateTime<Utc>> for TimestampHelper {
             S: Serializer {
         let s = format!("{}", date.format(FORMAT));
         serializer.serialize_str(&s)
+    }
+}
+
+#[derive(Debug, Clone, PartialEq, Eq, Hash, Serialize, Deserialize)]
+pub enum EmptyArrayOr<T> {
+    EmptyArray,
+    Value(T)
+}
+
+impl<'de, T, U> DeserializeAs<'de, EmptyArrayOr<T>> for EmptyArrayOr<U>
+where
+    U: DeserializeAs<'de, T>,
+{
+    fn deserialize_as<D>(deserializer: D) -> Result<EmptyArrayOr<T>, D::Error>
+    where
+        D: Deserializer<'de>,
+    {
+        #[serde_as]
+        #[derive(Serialize, Deserialize)]
+        #[serde(bound(serialize = "U: SerializeAs<T>", deserialize = "U: DeserializeAs<'de, T>"))]
+        #[serde(untagged)]
+        enum EmptyArrayOrHelper<T, U> {
+            EmptyArray([U; 0]), // PhantomData (de)serializes as null, so leaving it here.
+            Value(#[serde_as(as = "U")] T),
+        }
+        
+        match EmptyArrayOrHelper::<T, U>::deserialize(deserializer)? {
+            EmptyArrayOrHelper::EmptyArray(_) => Ok(EmptyArrayOr::EmptyArray),
+            EmptyArrayOrHelper::Value(v) => Ok(EmptyArrayOr::Value(v))
+        }
+    }
+}
+
+impl<T, U> SerializeAs<EmptyArrayOr<T>> for EmptyArrayOr<U> 
+    where U: SerializeAs<T> {
+    fn serialize_as<S>(source: &EmptyArrayOr<T>, serializer: S) -> Result<S::Ok, S::Error>
+        where
+            S: Serializer {
+        match source {
+            EmptyArrayOr::EmptyArray => Vec::<()>::new().serialize(serializer),
+            EmptyArrayOr::Value(v) => SerializeAsWrap::<T, U>::new(v).serialize(serializer)
+        }
     }
 }
 
