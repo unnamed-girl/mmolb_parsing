@@ -624,7 +624,7 @@ fn weather_reflection<'parse, 'output: 'parse>(_parsing_context: &'parse Parsing
 mod test {
     use nom::Parser;
 
-    use crate::{enums::{BaseNameVariant, Place}, nom_parsing::ParsingContext, parsed_event::{EmojiTeam, PlacedPlayer, RunnerOut}, ParsedEventMessage};
+    use crate::{enums::{Base, BaseNameVariant, Distance, FairBallType, Place}, nom_parsing::ParsingContext, parsed_event::{EmojiTeam, PlacedPlayer, RunnerAdvance, RunnerOut}, ParsedEventMessage};
 
     #[test]
     fn jr_test() {
@@ -642,6 +642,25 @@ mod test {
         assert_eq!(
             super::field(&parsing_context).parse(text),
             Ok(("", ParsedEventMessage::DoublePlayGrounded { batter: "Traci Rivers", fielders: vec![PlacedPlayer { place: Place::ShortStop, name: "Ellen Updog"}, PlacedPlayer { place: Place::SecondBaseman, name: "Chalia Jr."}, PlacedPlayer {place: Place::FirstBaseman, name: "Elena Karapetyan"}], out_one: RunnerOut { runner: "Lance Green", base: BaseNameVariant::SecondBase }, out_two: RunnerOut { runner: "Traci Rivers", base: BaseNameVariant::FirstBase }, scores: Vec::new(), advances: Vec::new(), sacrifice: false, ejection: None }))
+        );
+    }
+
+    #[test]
+    fn bob_e_quiros() {
+        let text = "Victor Rodriguez singles on a line drive to RF Bob E. Quiros. Myra Roussel to third base.";
+        let parsing_context = ParsingContext {
+            game_id: "68d5f3a3a4ec9a9adffeea83",
+            event_log: &[],
+            event_index: None,
+            home_emoji_team: EmojiTeam { emoji: "", name: "" },
+            away_emoji_team: EmojiTeam { emoji: "", name: "" },
+            season: 5,
+            day: None
+        };
+
+        assert_eq!(
+            super::field(&parsing_context).parse(text),
+            Ok(("", ParsedEventMessage::BatterToBase { batter: "Victor Rodriguez", distance: Distance::Single, fair_ball_type: FairBallType::LineDrive, fielder: PlacedPlayer { name: "Bob E. Quiros", place: Place::RightField }, scores: vec![], advances: vec![RunnerAdvance { runner: "Myra Roussel", base: Base::Third}], ejection: None }))
         );
     }
 }
