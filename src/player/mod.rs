@@ -1,8 +1,6 @@
 use std::collections::HashMap;
 pub use serde::{Serialize, Deserialize};
-use serde::{Serializer};
-use serde::de::{SeqAccess, Visitor};
-use serde_with::{serde_as, SerializeAs};
+use serde_with::serde_as;
 use crate::{enums::{Attribute, Day, EquipmentEffectType, EquipmentRarity, EquipmentSlot, GameStat, Handedness, ItemPrefix, ItemSuffix, ItemName, SpecialItemType, Position, PositionType, SeasonStatus}, feed_event::FeedEvent, utils::{AddedLaterResult, ExpectNone, MaybeRecognizedResult, RemovedLaterResult, StarHelper}, NotRecognized};
 use crate::utils::{MaybeRecognizedHelper, SometimesMissingHelper, extra_fields_deserialize};
 
