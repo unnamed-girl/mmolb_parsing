@@ -62,6 +62,7 @@ pub fn parse_event<'parse, 'output: 'parse>(event: &'output Event, parsing_conte
         EventType::Balk => balk().parse(&event.message),
         EventType::PhotoContest => photo_contest(parsing_context).parse(event.message.as_str()),
         EventType::Party => party(parsing_context).parse(event.message.as_str()),
+        EventType::WeatherReflection => weather_reflection(parsing_context).parse(&event.message)
     }.finish().map(|(_, o)| o)
     .unwrap_or_else(move |_| {
             let error = GameEventParseError::FailedParsingMessage { event_type: *event_type, message: event.message.clone() };
@@ -602,6 +603,20 @@ fn live_now<'parse, 'output: 'parse>(parsing_context: &'parse ParsingContext<'pa
 
     context("Live now", all_consuming(
         time_options
+    ))
+}
+
+fn weather_reflection<'parse, 'output: 'parse>(_parsing_context: &'parse ParsingContext<'parse>) -> impl MyParser<'output, ParsedEventMessage<&'output str>> + 'parse {
+    let weather_reflection = |input| {
+        let (input, _) = tag("🪞 The reflection shatters. ").parse(input)?;
+        let (input, team) = parse_terminated(" received a Fragment of Reflection.").parse(input)?;
+        let (_, team) = emoji_team_eof(team)?;
+        Ok((input, ParsedEventMessage::WeatherReflection {
+            team
+        }))
+    };
+    context("Weather Reflection", all_consuming(
+        weather_reflection,
     ))
 }
 

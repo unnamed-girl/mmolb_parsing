@@ -163,6 +163,9 @@ pub enum ParsedEventMessage<S> {
         batter_amount_gained: u8,
         batter_attribute: Attribute,
     },
+    WeatherReflection {
+        team: EmojiTeam<S>
+    }
 }
 impl<S: Display> ParsedEventMessage<S> {
     /// Recreate the event message this ParsedEvent was built out of.
@@ -466,6 +469,9 @@ impl<S: Display> ParsedEventMessage<S> {
             },
             Self::Party { pitcher_name, pitcher_amount_gained, pitcher_attribute, batter_name, batter_amount_gained, batter_attribute } => {
                 format!("<strong>🥳 {pitcher_name} and {batter_name} are Partying!</strong> {pitcher_name} gained +{pitcher_amount_gained} {pitcher_attribute}. {batter_name} gained +{batter_amount_gained} {batter_attribute}. Both players lose 3 Durability.")
+            },
+            Self::WeatherReflection { team } => {
+                format!("🪞 The reflection shatters. {team} received a Fragment of Reflection.")
             }
         }
     }

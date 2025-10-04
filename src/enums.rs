@@ -64,6 +64,9 @@ pub enum EventType {
 
     // Season 5
     Party,
+    #[strum(to_string = "Weather_Reflection")]
+    #[serde(rename = "Weather_Reflection")]
+    WeatherReflection
 }
 
 /// Top or bottom of an inning.
