@@ -1,4 +1,4 @@
-use crate::{enums::Day, nom_parsing::shared::{door_prizes, ejection_tail, hit_by_pitch_text, strike_out_text}, time::is_superstar_game};
+use crate::{nom_parsing::shared::{door_prizes, ejection_tail, hit_by_pitch_text, strike_out_text}, time::is_superstar_game};
 use std::str::FromStr;
 
 use nom::{branch::alt, bytes::complete::{tag, take_until}, character::complete::{digit1, u8, u16}, combinator::{all_consuming, cut, fail, opt, rest, value, verify}, error::context, multi::{many0, many1, separated_list1}, sequence::{delimited, preceded, separated_pair, terminated}, Finish, Parser};
@@ -96,7 +96,7 @@ fn photo_contest<'parse, 'output: 'parse>(parsing_context: &'parse ParsingContex
         ParsedEventMessage::PhotoContest { winning_team, winning_tokens, winning_player, winning_score, losing_team, losing_tokens, losing_player, losing_score }
     )
 }
-fn party<'parse, 'output: 'parse>(parsing_context: &'parse ParsingContext<'parse>) -> impl MyParser<'output, ParsedEventMessage<&'output str>> + 'parse {
+fn party<'parse, 'output: 'parse>(_parsing_context: &'parse ParsingContext<'parse>) -> impl MyParser<'output, ParsedEventMessage<&'output str>> + 'parse {
     context("Party", all_consuming(verify(
         preceded(
             tag("<strong>🥳 "),
@@ -625,7 +625,7 @@ fn weather_reflection<'parse, 'output: 'parse>(_parsing_context: &'parse Parsing
 mod test {
     use nom::Parser;
 
-    use crate::{enums::{Base, BaseNameVariant, Distance, FairBallType, Place}, nom_parsing::ParsingContext, parsed_event::{EmojiTeam, PlacedPlayer, RunnerAdvance, RunnerOut}, ParsedEventMessage};
+    use crate::{enums::{Base, BaseNameVariant, Day, Distance, FairBallDestination, FairBallType, Place}, nom_parsing::{shared::name_eof, ParsingContext}, parsed_event::{EmojiTeam, PlacedPlayer, RunnerAdvance, RunnerOut}, ParsedEventMessage};
 
     #[test]
     fn jr_test() {
@@ -682,5 +682,13 @@ mod test {
             super::live_now(&parsing_context).parse(text),
             Ok(("", ParsedEventMessage::LiveNow { away_team: parsing_context.away_emoji_team, home_team: parsing_context.home_emoji_team, stadium: Some("A Big Pile of Dirt") }))
         );
+    }
+
+    #[test]
+    fn stanley_demir_i() {
+        assert_eq!(
+            name_eof("Stanley Demir I"),
+            Ok(("", "Stanley Demir I"))
+        )
     }
 }
