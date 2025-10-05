@@ -402,7 +402,13 @@ impl<S: Display> ParsedEventMessage<S> {
 
                 let ejection = if let Some(ej) = ejection { ej.unparse() } else { String::new() };
 
-                format!("{batter} grounded into a {sacrifice}double play{fielders}. {out_one} {out_two}{scores_and_advances}{ejection}")
+                let verb = if Breakpoints::Season5TenseChange.before(game.season, game.day.as_ref().ok().copied(), event_index) {
+                    "grounded"
+                } else {
+                    "grounds"
+                };
+
+                format!("{batter} {verb} into a {sacrifice}double play{fielders}. {out_one} {out_two}{scores_and_advances}{ejection}")
             }
             Self::DoublePlayCaught { batter, fair_ball_type, fielders, out_two, scores, advances, ejection } => {
                 let fair_ball_type = fair_ball_type.verb_name();

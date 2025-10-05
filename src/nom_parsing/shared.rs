@@ -318,8 +318,8 @@ pub(super) fn placed_player_eof(input: &str) -> IResult<&str, PlacedPlayer<&str>
 pub(super) fn name_eof(input: &str) -> IResult<&str, &str> {
     verify(rest,  |name: &str|
         name.input_len() >= 2 &&
-        // ignoring 0-length words, all words are 2 characters long and contain an ascii character
-        name.split_whitespace().all(|word| word.len() == 0 || (word.len() >= 2 && word.chars().any(|i| i.is_ascii()))) &&
+        // ignoring 0-length words, all words are 2 characters long and contain an ascii character, except Stanley Demir I
+        (name == "Stanley Demir I" || name.split_whitespace().all(|word| word.len() == 0 || (word.len() >= 2 && word.chars().any(|i| i.is_ascii())))) &&
         // Removed for now because of early season 1 bug where feed names didn't print their spaces
         // name.chars().any(|c| c == ' ') && // From the API, we know players have first/last name, so there should always be a space
         !name.chars().any(|c| [',', '(', ')', '<', '>', '\\', '\u{FE0F}'].contains(&c)) && // These characters should not be in names

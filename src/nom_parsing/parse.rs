@@ -358,7 +358,8 @@ fn field<'parse, 'output: 'parse>(parsing_context: &'parse ParsingContext<'parse
 
     let double_play_grounded = all_consuming_sentence_and(
         (
-            parse_terminated(" grounded into a ").and_then(name_eof),
+            // This will eat all instances of double_play_caught on a ground ball. Which is currently fine, because there has never been one. Ground ball double plays are always fielded.
+            alt((parse_terminated(" grounds into a "), parse_terminated(" grounded into a "))).and_then(name_eof),
             terminated(opt(tag("sacrifice ")).map(|s| s.is_some()), tag("double play, ")),
             fielders_eof
         ),
