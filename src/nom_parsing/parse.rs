@@ -625,7 +625,7 @@ fn weather_reflection<'parse, 'output: 'parse>(_parsing_context: &'parse Parsing
 mod test {
     use nom::Parser;
 
-    use crate::{enums::{Base, BaseNameVariant, Day, Distance, FairBallDestination, FairBallType, Place}, nom_parsing::{shared::name_eof, ParsingContext}, parsed_event::{EmojiTeam, PlacedPlayer, RunnerAdvance, RunnerOut}, ParsedEventMessage};
+    use crate::{enums::{Base, BaseNameVariant, Distance, FairBallType, Place}, nom_parsing::{shared::name_eof, ParsingContext}, parsed_event::{EmojiTeam, PlacedPlayer, RunnerAdvance, RunnerOut}, ParsedEventMessage};
 
     #[test]
     fn jr_test() {
@@ -690,5 +690,11 @@ mod test {
             name_eof("Stanley Demir I"),
             Ok(("", "Stanley Demir I"))
         )
+    }
+
+    #[test]
+    fn dr_connor() {
+        assert!(name_eof("Dr").is_err());
+        assert!(name_eof("Dr. Connor").is_ok());
     }
 }
