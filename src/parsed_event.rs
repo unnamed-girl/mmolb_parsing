@@ -1347,6 +1347,15 @@ impl<S: Display> Display for WitherStruggle<S> {
     }
 }
 
+impl<S: AsRef<str>> WitherStruggle<S> {
+    pub fn to_ref(&self) -> WitherStruggle<&str> {
+        WitherStruggle {
+            team_emoji: self.team_emoji.as_ref(),
+            player: self.player.as_ref(),
+        }
+    }
+}
+
 
 #[cfg(test)]
 mod test {
