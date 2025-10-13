@@ -225,25 +225,6 @@ impl<T, U> SerializeAs<MaybeRecognizedResult<T>> for MaybeRecognizedHelper<U>
     }
 }
 
-#[serde_as]
-#[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
-pub struct TalkStarsComplex {
-    #[serde_as(as = "StarHelper")]
-    display: u8,
-    regular: u8,
-    shiny: u8,
-    stars: u8,
-    total: f64,
-}
-
-#[serde_as]
-#[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
-#[serde(untagged)]
-pub enum TalkStars {
-    Simple(#[serde_as(as = "StarHelper")] u8),
-    Complex(TalkStarsComplex)
-}
-
 pub struct StarHelper;
 
 struct StarVisitor;

@@ -3,7 +3,7 @@ pub use serde::{Serialize, Deserialize};
 use serde_with::serde_as;
 
 use crate::{enums::{Attribute, Day, EquipmentEffectType, EquipmentRarity, EquipmentSlot, GameStat, Handedness, ItemName, ItemPrefix, ItemSuffix, Position, PositionType, SeasonStatus, SpecialItemType}, feed_event::FeedEvent, utils::{AddedLaterResult, ExpectNone, MaybeRecognizedResult, RemovedLaterResult, StarHelper}, EmptyArrayOr};
-use crate::utils::{MaybeRecognizedHelper, SometimesMissingHelper, extra_fields_deserialize, TalkStars};
+use crate::utils::{MaybeRecognizedHelper, SometimesMissingHelper, extra_fields_deserialize};
 
 #[serde_as]
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
@@ -262,6 +262,20 @@ pub struct TalkCategory {
     pub extra_fields: serde_json::Map<String, serde_json::Value>,
 }
 
+#[serde_as]
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
+#[serde(untagged)]
+pub enum TalkStars {
+    Simple(#[serde_as(as = "StarHelper")] u8),
+    Complex {
+        #[serde_as(as = "StarHelper")]
+        display: u8,
+        regular: u8,
+        shiny: u8,
+        stars: u8,
+        total: f64,
+    }
+}
 #[cfg(test)]
 mod test {
     use std::path::Path;
