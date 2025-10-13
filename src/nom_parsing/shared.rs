@@ -3,8 +3,8 @@ use std::{fmt::Debug, str::FromStr};
 use nom::{branch::alt, bytes::complete::{tag, take, take_till, take_until, take_until1, take_while}, character::complete::{one_of, space0, u8, u16}, combinator::{all_consuming, fail, opt, recognize, rest, value, verify}, error::{ErrorKind, ParseError}, multi::{count, many0, many1, separated_list1}, sequence::{delimited, preceded, separated_pair, terminated}, AsChar, Input, Parser};
 use nom_language::error::VerboseError;
 
-use crate::{enums::{Base, BatterStat, Day, FairBallDestination, FairBallType, HomeAway, NowBattingStats, Place}, feed_event::{EmojilessItem, FeedDelivery, FeedEvent}, game::Event, parsed_event::{BaseSteal, Cheer, Delivery, DoorPrize, Ejection, EjectionReason, EmojiTeam, Item, ItemAffixes, PlacedPlayer, Prize, RunnerAdvance, RunnerOut, SnappedPhotos, ViolationType}, time::{Breakpoints, Time}, Game};
-use crate::parsed_event::EjectionReplacement;
+use crate::{enums::{Base, BatterStat, Day, FairBallDestination, FairBallType, HomeAway, NowBattingStats, Place}, feed_event::{EmojilessItem, FeedDelivery, FeedEvent}, game::Event, parsed_event::{BaseSteal, Cheer, Delivery, DoorPrize, Ejection, EjectionReason, EmojiTeam, Item, ItemAffixes, PlacedPlayer, Prize, RunnerAdvance, RunnerOut, SnappedPhotos, ViolationType}, player, time::{Breakpoints, Time}, Game};
+use crate::parsed_event::{EjectionReplacement, WitherStruggle};
 
 pub(super) type Error<'a> = VerboseError<&'a str>;
 pub(super) type IResult<'a, I, O> = nom::IResult<I, O, Error<'a>>;
@@ -563,6 +563,20 @@ pub(super) fn door_prizes(input: &str) -> IResult<&str, Vec<DoorPrize<&str>>> {
     many0(preceded(tag("<br>"), door_prize)).parse(input)
 }
 
+pub(super) fn wither<'parse>(parsing_context: &'parse ParsingContext<'parse>) -> impl Fn(&str) -> IResult<&str, WitherStruggle<&str>> + use<'parse> {
+    move |input| {
+        // Wither is a suffix so always has a space separating it from the main event body
+        let (input, _) = tag(" ").parse(input)?;
+        let (input, team_emoji) = either_team_emoji(parsing_context).parse(input)?;
+        let (input, _) = tag(" ").parse(input)?;
+        let (input, placed_player_str) = parse_terminated(" struggles against the 🥀 Wither.").parse(input)?;
+
+        let (_, player) = placed_player_eof(placed_player_str)?;
+
+        Ok((input, WitherStruggle { team_emoji, player }))
+    }
+}
+
 pub(super) fn door_prize<'output>(input: &'output str) -> IResult<'output, &'output str, DoorPrize<&'output str>> {
     let not_win = |input: &'output str| {
         let (input, player) = parse_terminated(" didn't win a Door Prize.").parse(input)?;
@@ -592,6 +606,15 @@ pub(super) fn team_emoji<'parse, 'output, 'a>(side: HomeAway, parsing_context: &
         HomeAway::Home => tag(home_team_emoji).parse(input),
         HomeAway::Away => tag(away_team_emoji).parse(input),
     }
+}
+
+pub(super) fn either_team_emoji<'parse, 'output, 'a>(parsing_context: &'a ParsingContext<'parse>) -> impl MyParser<'output, &'output str> + 'parse {
+    // Most of the time when a team's emoji appears on its own we can't
+    // know what team it is in case they have the same emoji
+    alt((
+        team_emoji(HomeAway::Away, parsing_context),
+        team_emoji(HomeAway::Home, parsing_context),
+    ))
 }
 
 pub(super) fn fail_once<'output, F, O>(

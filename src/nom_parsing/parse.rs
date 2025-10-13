@@ -6,7 +6,7 @@ use nom::sequence::pair;
 use phf::phf_map;
 
 use crate::{enums::{EventType, GameOverMessage, HomeAway, MoundVisitType, NowBattingStats}, game::Event, nom_parsing::shared::{aurora, cheer, ejection, delivery, team_emoji, try_from_word, try_from_words_m_n, MyParser}, parsed_event::{EmojiTeam, FallingStarOutcome, FieldingAttempt, GameEventParseError, KnownBug, StartOfInningPitcher}, time::Breakpoints, ParsedEventMessage};
-
+use crate::nom_parsing::shared::{either_team_emoji, wither};
 use super::{shared::{all_consuming_sentence_and, base_steal_sentence, bold, destination, emoji_team_eof, exclamation, fair_ball_type_verb_name, fielders_eof, fly_ball_type_verb_name, name_eof, now_batting_stats, ordinal_suffix, out, parse_and, parse_terminated, placed_player_eof, score_update, scores_and_advances, scores_sentence, sentence, sentence_eof}, ParsingContext};
 
 const OVERRIDES: phf::Map<&'static str, phf::Map<u16, ParsedEventMessage<&'static str>>> = phf_map!();
@@ -450,7 +450,8 @@ fn pitch<'parse, 'output: 'parse>(parsing_context: &'parse ParsingContext<'parse
     .and(opt(preceded(tag(" "), cheer(parsing_context))))
     .and(opt(ejection(parsing_context)))
     .and(door_prizes)
-    .map(|(((((count, steals), aurora_photos), cheer), ejection), door_prizes)| ParsedEventMessage::Ball { steals, count, cheer, aurora_photos, ejection, door_prizes });
+    .and(opt(wither(parsing_context)))
+    .map(|((((((count, steals), aurora_photos), cheer), ejection), door_prizes), wither)| ParsedEventMessage::Ball { steals, count, cheer, aurora_photos, ejection, door_prizes, wither });
 
     let strike = sentence(preceded(tag("Strike, "), try_from_word))
     .and(cut((sentence(score_update), many0(base_steal_sentence))))
@@ -458,7 +459,8 @@ fn pitch<'parse, 'output: 'parse>(parsing_context: &'parse ParsingContext<'parse
     .and(opt(preceded(tag(" "), cheer(parsing_context))))
     .and(opt(ejection(parsing_context)))
     .and(door_prizes)
-    .map(|(((((strike, (count, steals)), aurora_photos), cheer), ejection), door_prizes)| ParsedEventMessage::Strike { strike, steals, count, cheer, aurora_photos, ejection, door_prizes});
+    .and(opt(wither(parsing_context)))
+    .map(|((((((strike, (count, steals)), aurora_photos), cheer), ejection), door_prizes), wither)| ParsedEventMessage::Strike { strike, steals, count, cheer, aurora_photos, ejection, door_prizes, wither });
 
     let foul = sentence(preceded(tag("Foul "), try_from_word))
     .and(sentence(score_update))
@@ -466,7 +468,8 @@ fn pitch<'parse, 'output: 'parse>(parsing_context: &'parse ParsingContext<'parse
     .and(opt(preceded(tag(" "), aurora(parsing_context))))
     .and(opt(preceded(tag(" "), cheer(parsing_context))))
     .and(door_prizes)
-    .map(|(((((foul, count), steals), aurora_photos), cheer), door_prizes)| ParsedEventMessage::Foul { foul, steals, count, cheer, aurora_photos, door_prizes });
+    .and(opt(wither(parsing_context)))
+    .map(|((((((foul, count), steals), aurora_photos), cheer), door_prizes), wither)| ParsedEventMessage::Foul { foul, steals, count, cheer, aurora_photos, door_prizes, wither });
 
     let pitch_options = alt((
         struck_out,
@@ -624,11 +627,7 @@ fn weather_reflection<'parse, 'output: 'parse>(_parsing_context: &'parse Parsing
 
 fn weather_wither<'parse, 'output: 'parse>(parsing_context: &'parse ParsingContext<'parse>) -> impl MyParser<'output, ParsedEventMessage<&'output str>> + 'parse {
     let weather_reflection = |input| {
-        // We can't know what team it is in case they have the same emoji
-        let (input, team_emoji) = alt((
-            team_emoji(HomeAway::Away, parsing_context),
-            team_emoji(HomeAway::Home, parsing_context)),
-        ).parse(input)?;
+        let (input, team_emoji) = either_team_emoji(parsing_context).parse(input)?;
 
         let (input, _) = tag(" ").parse(input)?;
         let (input, (placed_player_str, corrupted)) = alt((

@@ -93,9 +93,9 @@ pub enum ParsedEventMessage<S> {
     },
 
     // Pitch
-    Ball { steals: Vec<BaseSteal<S>>, count:(u8, u8), cheer: Option<Cheer>, aurora_photos: Option<SnappedPhotos<S>>, ejection: Option<Ejection<S>>, door_prizes: Vec<DoorPrize<S>> },
-    Strike { strike: StrikeType, steals: Vec<BaseSteal<S>>, count:(u8, u8), cheer: Option<Cheer>, aurora_photos: Option<SnappedPhotos<S>>, ejection: Option<Ejection<S>>, door_prizes: Vec<DoorPrize<S>> },
-    Foul { foul: FoulType, steals: Vec<BaseSteal<S>>, count:(u8, u8), cheer: Option<Cheer>, aurora_photos: Option<SnappedPhotos<S>>, door_prizes: Vec<DoorPrize<S>> },
+    Ball { steals: Vec<BaseSteal<S>>, count:(u8, u8), cheer: Option<Cheer>, aurora_photos: Option<SnappedPhotos<S>>, ejection: Option<Ejection<S>>, door_prizes: Vec<DoorPrize<S>>, wither: Option<WitherStruggle<S>> },
+    Strike { strike: StrikeType, steals: Vec<BaseSteal<S>>, count:(u8, u8), cheer: Option<Cheer>, aurora_photos: Option<SnappedPhotos<S>>, ejection: Option<Ejection<S>>, door_prizes: Vec<DoorPrize<S>>, wither: Option<WitherStruggle<S>> },
+    Foul { foul: FoulType, steals: Vec<BaseSteal<S>>, count:(u8, u8), cheer: Option<Cheer>, aurora_photos: Option<SnappedPhotos<S>>, door_prizes: Vec<DoorPrize<S>>, wither: Option<WitherStruggle<S>> },
     Walk { batter: S, scores: Vec<S>, advances: Vec<RunnerAdvance<S>>, cheer: Option<Cheer>, aurora_photos: Option<SnappedPhotos<S>>, ejection: Option<Ejection<S>> },
     HitByPitch { batter: S, scores: Vec<S>, advances: Vec<RunnerAdvance<S>>, cheer: Option<Cheer>, aurora_photos: Option<SnappedPhotos<S>>, ejection: Option<Ejection<S>>, door_prizes: Vec<DoorPrize<S>> },
     FairBall {
@@ -258,7 +258,7 @@ impl<S: Display> ParsedEventMessage<S> {
                 format!("{leaving_pitcher_emoji}{leaving_pitcher} is leaving the game. {arriving_pitcher_emoji}{arriving_pitcher_place}{arriving_pitcher_name} takes the mound.")
             },
 
-            Self::Ball { steals, count, cheer, aurora_photos, ejection, door_prizes } => {
+            Self::Ball { steals, count, cheer, aurora_photos, ejection, door_prizes, wither } => {
                 let steals = once(String::new()).chain(steals.iter().map(BaseSteal::to_string))
                     .collect::<Vec<String>>()
                     .join(" ");
@@ -268,10 +268,11 @@ impl<S: Display> ParsedEventMessage<S> {
                 let aurora_photos = aurora_photos.as_ref().map(|p| p.unparse()).unwrap_or_default();
                 let ejection = ejection.as_ref().map(|e| e.unparse()).unwrap_or_default();
                 let door_prizes = once(String::new()).chain(door_prizes.iter().map(|d| d.unparse())).collect::<Vec<_>>().join("<br>");
+                let wither = wither.as_ref().map_or_else(String::new, |wither| format!(" {}", wither));
 
-                format!("{space}Ball. {}-{}.{steals}{aurora_photos}{ejection}{cheer}{door_prizes}", count.0, count.1,)
+                format!("{space}Ball. {}-{}.{steals}{aurora_photos}{ejection}{cheer}{door_prizes}{wither}", count.0, count.1)
             },
-            Self::Strike { strike, steals, count, cheer, aurora_photos, ejection, door_prizes } => {
+            Self::Strike { strike, steals, count, cheer, aurora_photos, ejection, door_prizes, wither } => {
                 let steals: Vec<String> = once(String::new()).chain(steals.into_iter().map(|steal| steal.to_string())).collect();
                 let steals = steals.join(" ");
                 let space = old_space(game, event_index);
@@ -280,10 +281,11 @@ impl<S: Display> ParsedEventMessage<S> {
                 let aurora_photos = aurora_photos.as_ref().map(|p| p.unparse()).unwrap_or_default();
                 let ejection = ejection.as_ref().map(|e| e.unparse()).unwrap_or_default();
                 let door_prizes = once(String::new()).chain(door_prizes.iter().map(|d| d.unparse())).collect::<Vec<_>>().join("<br>");
+                let wither = wither.as_ref().map_or_else(String::new, |wither| format!(" {}", wither));
 
-                format!("{space}Strike, {strike}. {}-{}.{steals}{aurora_photos}{ejection}{cheer}{door_prizes}", count.0, count.1)
+                format!("{space}Strike, {strike}. {}-{}.{steals}{aurora_photos}{ejection}{cheer}{door_prizes}{wither}", count.0, count.1)
             }
-            Self::Foul { foul, steals, count, cheer, aurora_photos, door_prizes } => {
+            Self::Foul { foul, steals, count, cheer, aurora_photos, door_prizes, wither } => {
                 let steals: Vec<String> = once(String::new()).chain(steals.into_iter().map(|steal| steal.to_string())).collect();
                 let steals = steals.join(" ");
                 let space = old_space(game, event_index);
@@ -291,8 +293,9 @@ impl<S: Display> ParsedEventMessage<S> {
                 let cheer = cheer.as_ref().map(|c| c.unparse(game, event_index)).unwrap_or_default();
                 let aurora_photos = aurora_photos.as_ref().map(|p| p.unparse()).unwrap_or_default();
                 let door_prizes = once(String::new()).chain(door_prizes.iter().map(|d| d.unparse())).collect::<Vec<_>>().join("<br>");
+                let wither = wither.as_ref().map_or_else(String::new, |wither| format!(" {}", wither));
 
-                format!("{space}Foul {foul}. {}-{}.{steals}{aurora_photos}{cheer}{door_prizes}", count.0, count.1)
+                format!("{space}Foul {foul}. {}-{}.{steals}{aurora_photos}{cheer}{door_prizes}{wither}", count.0, count.1)
             }
             Self::Walk { batter, scores, advances, cheer, aurora_photos, ejection } => {
                 let scores_and_advances = unparse_scores_and_advances(scores, advances);
@@ -1331,6 +1334,19 @@ impl<S: AsRef<str>> DoorPrize<S> {
         }
     }
 }
+
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
+pub struct WitherStruggle<S> {
+    pub team_emoji: S,
+    pub player: PlacedPlayer<S>,
+}
+
+impl<S: Display> Display for WitherStruggle<S> {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        write!(f, "{} {} struggles against the 🥀 Wither.", self.team_emoji, self.player)
+    }
+}
+
 
 #[cfg(test)]
 mod test {

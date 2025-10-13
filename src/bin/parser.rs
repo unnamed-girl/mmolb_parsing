@@ -390,14 +390,14 @@ fn check<S>(event: &ParsedEventMessage<S>) -> String {
         ParsedEventMessage::PitcherSwap { leaving_pitcher_emoji, leaving_pitcher: _, arriving_pitcher_emoji, arriving_pitcher_place, arriving_pitcher_name: _ } => {
             format!("leaving_pitcher_emoji: {}, arriving_pitcher_emoji: {}, arriving_pitcher_place: {}", leaving_pitcher_emoji.is_some(), arriving_pitcher_emoji.is_some(), arriving_pitcher_place.is_some())  
         },
-        ParsedEventMessage::Ball { steals, count: _, cheer, aurora_photos, ejection, door_prizes } => {
-            format!("steals: {}, cheer: {}, aurora_photos: {}, ejection: {}, door_prizes: {}", steals.len(), cheer.is_some(), aurora_photos.is_some(), ejection.is_some(), door_prizes.len())
+        ParsedEventMessage::Ball { steals, count: _, cheer, aurora_photos, ejection, door_prizes, wither } => {
+            format!("steals: {}, cheer: {}, aurora_photos: {}, ejection: {}, door_prizes: {}, wither: {}", steals.len(), cheer.is_some(), aurora_photos.is_some(), ejection.is_some(), door_prizes.len(), wither.is_some())
         },
-        ParsedEventMessage::Strike { strike, steals, count: _, cheer, aurora_photos, ejection, door_prizes } => {
-            format!("strike: {strike}, steals: {}, cheer: {}, aurora_photos: {}, ejection: {}, door_prizes: {}", steals.len(), cheer.is_some(), aurora_photos.is_some(), ejection.is_some(), door_prizes.len())
+        ParsedEventMessage::Strike { strike, steals, count: _, cheer, aurora_photos, ejection, door_prizes, wither } => {
+            format!("strike: {strike}, steals: {}, cheer: {}, aurora_photos: {}, ejection: {}, door_prizes: {}, wither: {}", steals.len(), cheer.is_some(), aurora_photos.is_some(), ejection.is_some(), door_prizes.len(), wither.is_some())
         },
-        ParsedEventMessage::Foul { foul, steals, count: _, cheer, aurora_photos, door_prizes } => {
-            format!("foul: {foul}, steals: {}, cheer: {}, aurora_photos: {}, door_prizes: {}", steals.len(), cheer.is_some(), aurora_photos.is_some(), door_prizes.len())
+        ParsedEventMessage::Foul { foul, steals, count: _, cheer, aurora_photos, door_prizes, wither } => {
+            format!("foul: {foul}, steals: {}, cheer: {}, aurora_photos: {}, door_prizes: {}, wither: {}", steals.len(), cheer.is_some(), aurora_photos.is_some(), door_prizes.len(), wither.is_some())
         },
         ParsedEventMessage::Walk { batter: _, scores, advances: _, cheer, aurora_photos, ejection } => {
             format!("scores: {}, cheer: {}, aurora_photos: {}, ejection: {}", scores.len(), cheer.is_some(), aurora_photos.is_some(), ejection.is_some())
