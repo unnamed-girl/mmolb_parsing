@@ -2,6 +2,7 @@ use std::{any::type_name, fmt::Debug, marker::PhantomData, str::FromStr};
 
 use chrono::{DateTime, NaiveDateTime, Utc};
 use serde::{de::{Error, Visitor}, Deserialize, Deserializer, Serialize, Serializer};
+use serde::de::MapAccess;
 use serde_with::{de::DeserializeAsWrap, ser::SerializeAsWrap, serde_as, DeserializeAs, PickFirst, Same, SerializeAs};
 use thiserror::Error;
 
@@ -222,6 +223,25 @@ impl<T, U> SerializeAs<MaybeRecognizedResult<T>> for MaybeRecognizedHelper<U>
             Err(s) => s.serialize(serializer)
         }
     }
+}
+
+#[serde_as]
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
+pub struct TalkStarsComplex {
+    #[serde_as(as = "StarHelper")]
+    display: u8,
+    regular: u8,
+    shiny: u8,
+    stars: u8,
+    total: f64,
+}
+
+#[serde_as]
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
+#[serde(untagged)]
+pub enum TalkStars {
+    Simple(#[serde_as(as = "StarHelper")] u8),
+    Complex(TalkStarsComplex)
 }
 
 pub struct StarHelper;

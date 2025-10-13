@@ -3,7 +3,7 @@ pub use serde::{Serialize, Deserialize};
 use serde_with::serde_as;
 
 use crate::{enums::{Attribute, Day, EquipmentEffectType, EquipmentRarity, EquipmentSlot, GameStat, Handedness, ItemName, ItemPrefix, ItemSuffix, Position, PositionType, SeasonStatus, SpecialItemType}, feed_event::FeedEvent, utils::{AddedLaterResult, ExpectNone, MaybeRecognizedResult, RemovedLaterResult, StarHelper}, EmptyArrayOr};
-use crate::utils::{MaybeRecognizedHelper, SometimesMissingHelper, extra_fields_deserialize};
+use crate::utils::{MaybeRecognizedHelper, SometimesMissingHelper, extra_fields_deserialize, TalkStars};
 
 #[serde_as]
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
@@ -34,9 +34,7 @@ pub struct Player {
     pub home: String,
 
 
-    /// We have yet to see a greater boon.
     /// Word of god that lesser boons are a subcategory of modifications https://discord.com/channels/1136709081319604324/1148829574524850197/1365237630043820093
-    #[serde_as(as = "ExpectNone<_>")]
     pub greater_boon: Option<Modification>,
     /// Word of god that lesser boons are a subcategory of modifications https://discord.com/channels/1136709081319604324/1148829574524850197/1365237630043820093
     pub lesser_boon: Option<Modification>,
@@ -258,8 +256,7 @@ pub struct TalkCategory {
     #[serde(default = "SometimesMissingHelper::default_result", skip_serializing_if = "AddedLaterResult::is_err")]
     #[serde_as(as = "SometimesMissingHelper<_>")]
     pub season: AddedLaterResult<u8>,
-    #[serde_as(as = "HashMap<_, StarHelper>")]
-    pub stars: HashMap<Attribute, u8>,
+    pub stars: HashMap<Attribute, TalkStars>,
 
     #[serde(flatten, deserialize_with = "extra_fields_deserialize")]
     pub extra_fields: serde_json::Map<String, serde_json::Value>,
