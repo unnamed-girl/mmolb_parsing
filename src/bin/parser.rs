@@ -454,6 +454,9 @@ fn check<S>(event: &ParsedEventMessage<S>) -> String {
         ParsedEventMessage::WeatherReflection { team } => {
             format!("()")
         }
+        ParsedEventMessage::WeatherWither { team_emoji: _, player: _, corrupted } => {
+            format!("corrupted: {}", corrupted)
+        }
     };
 
     format!("{discriminant_name} ({unique})")

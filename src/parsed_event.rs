@@ -166,7 +166,12 @@ pub enum ParsedEventMessage<S> {
     },
     WeatherReflection {
         team: EmojiTeam<S>
-    }
+    },
+    WeatherWither {
+        team_emoji: S,
+        player: PlacedPlayer<S>,
+        corrupted: bool,
+    },
 }
 impl<S: Display> ParsedEventMessage<S> {
     /// Recreate the event message this ParsedEvent was built out of.
@@ -479,6 +484,13 @@ impl<S: Display> ParsedEventMessage<S> {
             },
             Self::WeatherReflection { team } => {
                 format!("🪞 The reflection shatters. {team} received a Fragment of Reflection.")
+            },
+            Self::WeatherWither { team_emoji, player, corrupted } => {
+                if *corrupted {
+                    format!("{team_emoji} {player} was Corrupted by the 🥀 Wither.")
+                } else {
+                    format!("{team_emoji} {player} resists the effects of the 🥀 Wither.")
+                }
             }
         }
     }

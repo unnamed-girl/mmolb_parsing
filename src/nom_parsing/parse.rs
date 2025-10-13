@@ -1,6 +1,6 @@
 use crate::{nom_parsing::shared::{door_prizes, ejection_tail, hit_by_pitch_text, strike_out_text}, time::is_superstar_game};
 use std::str::FromStr;
-
+use clap::builder::TypedValueParser;
 use nom::{branch::alt, bytes::complete::{tag, take_until}, character::complete::{digit1, u8, u16}, combinator::{all_consuming, cut, fail, opt, rest, value, verify}, error::context, multi::{many0, many1, separated_list1}, sequence::{delimited, preceded, separated_pair, terminated}, Finish, Parser};
 use nom::sequence::pair;
 use phf::phf_map;
@@ -62,7 +62,8 @@ pub fn parse_event<'parse, 'output: 'parse>(event: &'output Event, parsing_conte
         EventType::Balk => balk().parse(&event.message),
         EventType::PhotoContest => photo_contest(parsing_context).parse(event.message.as_str()),
         EventType::Party => party(parsing_context).parse(event.message.as_str()),
-        EventType::WeatherReflection => weather_reflection(parsing_context).parse(&event.message)
+        EventType::WeatherReflection => weather_reflection(parsing_context).parse(&event.message),
+        EventType::WeatherWither => weather_wither(parsing_context).parse(&event.message),
     }.finish().map(|(_, o)| o)
     .unwrap_or_else(move |_| {
             let error = GameEventParseError::FailedParsingMessage { event_type: *event_type, message: event.message.clone() };
@@ -617,6 +618,29 @@ fn weather_reflection<'parse, 'output: 'parse>(_parsing_context: &'parse Parsing
         }))
     };
     context("Weather Reflection", all_consuming(
+        weather_reflection,
+    ))
+}
+
+fn weather_wither<'parse, 'output: 'parse>(parsing_context: &'parse ParsingContext<'parse>) -> impl MyParser<'output, ParsedEventMessage<&'output str>> + 'parse {
+    let weather_reflection = |input| {
+        // We can't know what team it is in case they have the same emoji
+        let (input, team_emoji) = alt((
+            team_emoji(HomeAway::Away, parsing_context),
+            team_emoji(HomeAway::Home, parsing_context)),
+        ).parse(input)?;
+
+        let (input, _) = tag(" ").parse(input)?;
+        let (input, (placed_player_str, corrupted)) = alt((
+              parse_terminated(" resists the effects of the 🥀 Wither.").map(|n| (n, false)),
+              parse_terminated(" was Corrupted by the 🥀 Wither.").map(|n| (n, true)),
+        )).parse(input)?;
+
+        let (_, player) = placed_player_eof(placed_player_str)?;
+
+        Ok((input, ParsedEventMessage::WeatherWither { team_emoji, player, corrupted }))
+    };
+    context("Weather Wither", all_consuming(
         weather_reflection,
     ))
 }
