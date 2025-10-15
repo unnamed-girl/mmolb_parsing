@@ -150,7 +150,7 @@ fn weather_delivery<'parse, 'output: 'parse>(parsing_context: &'parse ParsingCon
 }
 
 fn weather_prosperity<'parse, 'output: 'parse>(parsing_context: &'parse ParsingContext<'parse>) -> impl MyParser<'output, ParsedEventMessage<&'output str>> + 'parse {
-    let prosperous = |t: EmojiTeam<&'parse str>| move |input: &'output str| delimited((t.parser(), tag(" are Prosperous! They earned ")), u8, tag(" 🪙.")).parse(input);
+    let prosperous = |t: EmojiTeam<&'parse str>| move |input: &'output str| delimited((t.parser(), alt((tag(" are Prosperous! They earned "), tag(" are Prosperous! They earn ")))), u8, tag(" 🪙.")).parse(input);
 
     let variations = alt((
         separated_pair(prosperous(parsing_context.home_emoji_team), tag(" "), prosperous(parsing_context.away_emoji_team)).map(|(home, away)| (Some(home), Some(away))),

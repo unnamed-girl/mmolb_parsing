@@ -465,8 +465,14 @@ impl<S: Display> ParsedEventMessage<S> {
             },
             Self::KnownBug { bug } => format!("{bug}"),
             Self::WeatherProsperity { home_income, away_income } => {
-                let home = (*home_income > 0).then_some(format!("{} {} are Prosperous! They earned {home_income} 🪙.", game.home_team_emoji, game.home_team_name)).unwrap_or_default();
-                let away = (*away_income > 0).then_some(format!("{} {} are Prosperous! They earned {away_income} 🪙.", game.away_team_emoji, game.away_team_name)).unwrap_or_default();
+                let earn = if Breakpoints::Season5TenseChange.before(game.season, game.day.as_ref().ok().copied(), event_index) {
+                    "earned"
+                } else {
+                    "earn"
+                };
+                
+                let home = (*home_income > 0).then_some(format!("{} {} are Prosperous! They {earn} {home_income} 🪙.", game.home_team_emoji, game.home_team_name)).unwrap_or_default();
+                let away = (*away_income > 0).then_some(format!("{} {} are Prosperous! They {earn} {away_income} 🪙.", game.away_team_emoji, game.away_team_name)).unwrap_or_default();
                 let gap = (*home_income > 0 && *away_income > 0).then_some(" ").unwrap_or_default();
 
                 if Breakpoints::Season3PreSuperstarBreakUpdate.before(game.season, game.day.as_ref().ok().copied(), event_index) {
