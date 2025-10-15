@@ -482,7 +482,14 @@ impl<S: Display> ParsedEventMessage<S> {
             Self::PhotoContest { winning_team, winning_tokens, winning_score, winning_player, losing_team, losing_tokens, losing_score, losing_player } => {
                 let winning_emoji = &winning_team.emoji;
                 let losing_emoji = &losing_team.emoji;
-                format!("{winning_team} earned {winning_tokens} 🪙. {losing_team} earned {losing_tokens} 🪙.<br>Top scoring Photos:<br>{winning_emoji} {winning_player} - {winning_score} {losing_emoji} {losing_player} - {losing_score}")
+
+                let earn = if Breakpoints::Season5TenseChange.before(game.season, game.day.as_ref().ok().copied(), event_index) {
+                    "earned"
+                } else {
+                    "earn"
+                };
+
+                format!("{winning_team} {earn} {winning_tokens} 🪙. {losing_team} {earn} {losing_tokens} 🪙.<br>Top scoring Photos:<br>{winning_emoji} {winning_player} - {winning_score} {losing_emoji} {losing_player} - {losing_score}")
             },
             Self::Party { pitcher_name, pitcher_amount_gained, pitcher_attribute, batter_name, batter_amount_gained, batter_attribute } => {
                 format!("<strong>🥳 {pitcher_name} and {batter_name} are Partying!</strong> {pitcher_name} gained +{pitcher_amount_gained} {pitcher_attribute}. {batter_name} gained +{batter_amount_gained} {batter_attribute}. Both players lose 3 Durability.")

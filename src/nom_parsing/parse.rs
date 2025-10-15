@@ -72,7 +72,7 @@ pub fn parse_event<'parse, 'output: 'parse>(event: &'output Event, parsing_conte
     )
 }
 fn photo_contest<'parse, 'output: 'parse>(parsing_context: &'parse ParsingContext<'parse>) -> impl MyParser<'output, ParsedEventMessage<&'output str>> + 'parse {
-    let team = |team: EmojiTeam<&'parse str>| (terminated(team.parser(), tag(" earned ")), terminated(u8, tag(" 🪙.")));
+    let team = |team: EmojiTeam<&'parse str>| (terminated(team.parser(), alt((tag(" earned "), tag(" earn ")))), terminated(u8, tag(" 🪙.")));
     let player = |emoji: &'parse str| (terminated(tag(emoji), tag(" ")), parse_terminated(" - "), u16);
 
     context("Photo Contest", all_consuming(verify((
