@@ -107,7 +107,9 @@ fn cashews_fetch_json<'a>(client: &'a Client, endpoint: &'a str, kind: Kind, ext
         };
         loop {
             info!("Fetching {kind}s from cashews page {page:?}");
-            let response = client.get(&url).send().await.unwrap().json::<FreeCashewResponse<EntityResponse<Box<serde_json::value::RawValue>>>>().await.unwrap();
+            let response = client.get(&url).send().await.unwrap();
+            info!("{response:?}");
+            let response = response.json::<FreeCashewResponse<EntityResponse<Box<serde_json::value::RawValue>>>>().await.unwrap();
             info!("{} {kind}s fetched from cashews page {page:?}", response.items.len());
             page = response.next_page;
             yield response.items;

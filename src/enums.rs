@@ -916,7 +916,39 @@ pub enum ItemName {
     ProgressOrb,
     #[strum(to_string = "Ambition Orb")]
     #[serde(rename = "Ambition Orb")]
-    AmbitionOrb
+    AmbitionOrb,
+
+    #[strum(to_string = "Slugger's Helm")]
+    #[serde(rename = "Slugger's Helm")]
+    SluggersHelm,
+    #[strum(to_string = "Slugger's Charm")]
+    #[serde(rename = "Slugger's Charm")]
+    SluggersCharm,
+    #[strum(to_string = "Slugger's Jersey")]
+    #[serde(rename = "Slugger's Jersey")]
+    SluggersJersey,
+    #[strum(to_string = "Slugger's Cleats")]
+    #[serde(rename = "Slugger's Cleats")]
+    SluggersCleats,
+    #[strum(to_string = "Slugger's Mitts")]
+    #[serde(rename = "Slugger's Mitts")]
+    SluggersMitts,
+
+    #[strum(to_string = "Pitcher's Sun Hat")]
+    #[serde(rename = "Pitcher's Sun Hat")]
+    PitchersSunHat,
+    #[strum(to_string = "Pitcher's Pendant")]
+    #[serde(rename = "Pitcher's Pendant")]
+    PitchersPendant,
+    #[strum(to_string = "Pitcher's Jacket")]
+    #[serde(rename = "Pitcher's Jacket")]
+    PitchersJacket,
+    #[strum(to_string = "Pitcher's Sleeve")]
+    #[serde(rename = "Pitcher's Sleeve")]
+    PitchersSleeve,
+    #[strum(to_string = "Pitcher's Socks")]
+    #[serde(rename = "Pitcher's Socks")]
+    PitchersSocks,
 }
 
 #[derive(Clone, Copy, EnumString, IntoStaticStr, Display, Debug, Serialize, Deserialize, PartialEq, Eq, Hash, EnumIter)]

@@ -391,17 +391,17 @@ pub(super) fn item(input: &str) -> IResult<&str, Item<&str>> {
         verify((
             emoji,
             opt(preceded(tag(" "), try_from_word)),
-            preceded(tag(" "), try_from_word),
+            preceded(tag(" "), try_from_words_m_n(1,3)),
             opt(preceded(tag(" "), try_from_words_m_n(2,3)))),
             |(_, prefix, _, suffix)| prefix.is_some() || suffix.is_some()
         ).map(|(item_emoji, prefix, item, suffix)| Item { item_emoji, item, affixes: ItemAffixes::PrefixSuffix(prefix, suffix)}),
         (
             emoji,
-            preceded(tag(" "), try_from_word),
+            preceded(tag(" "), try_from_words_m_n(1,3)),
         ).map(|(item_emoji, item, )| Item { item_emoji, item, affixes: ItemAffixes::None}),
         (
             emoji,
-            preceded(tag(" "), parse_and(fail_once(try_from_word), " ")) // fail_once janky fix for rarenames being two words.
+            preceded(tag(" "), parse_and(fail_once(try_from_words_m_n(1,3)), " ")) // fail_once janky fix for rarenames being two words.
         ).map(|(item_emoji, (rare_name, item))| Item { item_emoji, item, affixes: ItemAffixes::RareName(rare_name)})
     ))
     .parse(input)
@@ -417,18 +417,21 @@ pub(super) fn emojiless_item(input: &str) -> IResult<&str, EmojilessItem> {
 }
 
 pub(super) fn delivery<'parse, 'output: 'parse>(parsing_context: &'parse ParsingContext<'parse>, label: &'parse str) -> impl MyParser<'output, Delivery<&'output str>> + 'parse {
+    let receive_text = received_text(parsing_context.season, parsing_context.day, parsing_context.event_index);
+    let discard_text = discarded_text(parsing_context.season, parsing_context.day, parsing_context.event_index);
     let success = (
         alt(( // Alt needs the later context to distinguish "Buffalo Buffalo" and "Buffalo Buffalo Buffalo"
-            terminated(parsing_context.away_emoji_team.parser(), tag(" received a ")).map(|team| (team, None)),
-            (parsing_context.away_emoji_team.parser(), preceded(tag(" "), parse_terminated(" received a ").map(Some))),
-            terminated(parsing_context.home_emoji_team.parser(), tag(" received a ")).map(|team| (team, None)),
-            (parsing_context.home_emoji_team.parser(), preceded(tag(" "), parse_terminated(" received a ").map(Some))),
+            terminated(parsing_context.away_emoji_team.parser(), tag(receive_text)).map(|team| (team, None)),
+            (parsing_context.away_emoji_team.parser(), preceded(tag(" "), parse_terminated(receive_text).map(Some))),
+            terminated(parsing_context.home_emoji_team.parser(), tag(receive_text)).map(|team| (team, None)),
+            (parsing_context.home_emoji_team.parser(), preceded(tag(" "), parse_terminated(receive_text).map(Some))),
         )),
         terminated(item, (tag(" "), tag(label), tag("."))),
-        opt(delimited(tag(" They discarded their "), item, tag(".")))
+        opt(delimited(tag(discard_text), item, tag(".")))
     ).map(|((team, player), item, discarded)| Delivery::Successful {team, player, item, discarded} );
 
-    let fail = terminated(item, tag(" was discarded as no player had space.")).map(|item| Delivery::NoSpace { item });
+    let discard_text = parsing_context.after(Breakpoints::Season5TenseChange).then_some(" is discarded as no player had space.").unwrap_or(" was discarded as no player had space.");
+    let fail = terminated(item, tag(discard_text)).map(|item| Delivery::NoSpace { item });
 
     alt((
         success,
@@ -613,6 +616,18 @@ pub fn strike_out_text(season: u32, day: Option<Day>, event_index: Option<u16>) 
 
 pub fn hit_by_pitch_text(season: u32, day: Option<Day>, event_index: Option<u16>) -> &'static str {
     Breakpoints::Season5TenseChange.after(season, day, event_index).then_some(" is hit by the pitch and advances to first base").unwrap_or(" was hit by the pitch and advances to first base")
+}
+
+pub fn received_text(season: u32, day: Option<Day>, event_index: Option<u16>) -> &'static str {
+    Breakpoints::Season5TenseChange.after(season, day, event_index).then_some(" receives a ").unwrap_or(" received a ")
+}
+
+pub fn discarded_text(season: u32, day: Option<Day>, event_index: Option<u16>) -> &'static str {
+    Breakpoints::Season5TenseChange.after(season, day, event_index).then_some(" They discard their ").unwrap_or(" They discarded their ")
+}
+
+pub fn was_is_text(season: u32, day: Option<Day>, event_index: Option<u16>) -> &'static str {
+    Breakpoints::Season5TenseChange.after(season, day, event_index).then_some("was").unwrap_or("is")
 }
 
 #[cfg(test)]

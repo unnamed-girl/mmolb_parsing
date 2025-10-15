@@ -6,6 +6,7 @@ use thiserror::Error;
 
 use crate::{enums::{Base, BaseNameVariant, BatterStat, Distance, EventType, FairBallDestination, FairBallType, FieldingErrorType, FoulType, GameOverMessage, HomeAway, ItemName, ItemPrefix, ItemSuffix, MoundVisitType, NowBattingStats, Place, StrikeType, TopBottom}, nom_parsing::shared::{hit_by_pitch_text, strike_out_text}, time::Breakpoints, Game, NotRecognized};
 use crate::enums::Attribute;
+use crate::nom_parsing::shared::{received_text, discarded_text};
 
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Error)]
 pub enum GameEventParseError {
@@ -426,7 +427,7 @@ impl<S: Display> ParsedEventMessage<S> {
                 format!("{batter} reaches on a {error} error by {fielder}.{scores_and_advances}{ejection}")
             }
             Self::WeatherDelivery {delivery } => {
-                delivery.unparse("Delivery")
+                delivery.unparse(game, event_index, "Delivery")
             },
             Self::FallingStar { player_name } => {
                 format!("<strong>🌠 {player_name} is hit by a Falling Star!</strong>")
@@ -443,10 +444,10 @@ impl<S: Display> ParsedEventMessage<S> {
                 format!(" <strong>{deflection_msg}{outcome_msg}</strong>")
             },
             Self::WeatherShipment { deliveries } => {
-                deliveries.iter().map(|d| d.unparse("Shipment")).collect::<Vec<String>>().join(" ")
+                deliveries.iter().map(|d| d.unparse(game, event_index, "Shipment")).collect::<Vec<String>>().join(" ")
             }
             Self::WeatherSpecialDelivery { delivery } => {
-                delivery.unparse("Special Delivery")
+                delivery.unparse(game, event_index, "Special Delivery")
             },
             Self::Balk { pitcher, scores, advances } => {
                 let scores_and_advances = unparse_scores_and_advances(scores, advances);
@@ -739,20 +740,24 @@ pub enum Delivery<S> {
 }
 
 impl<S: Display> Delivery<S> {
-    pub fn unparse(&self, delivery_label: &str) -> String {
+    pub fn unparse(&self, game: &Game, event_index: Option<u16>, delivery_label: &str) -> String {
         match self {
             Self::Successful { team, player, item, discarded } => {
+                let received_text = received_text(game.season, game.day.as_ref().copied().ok(), event_index);
+                let discarded_text = discarded_text(game.season, game.day.as_ref().copied().ok(), event_index);
+
                 let discarded = match discarded {
-                    Some(discarded) => format!(" They discarded their {discarded}."),
+                    Some(discarded) => format!("{discarded_text}{discarded}."),
                     None => String::new(),
                 };
 
                 let player = player.as_ref().map(|player| format!(" {player}")).unwrap_or_default();
 
-                format!("{team}{player} received a {item} {delivery_label}.{discarded}")
+                format!("{team}{player}{received_text}{item} {delivery_label}.{discarded}")
             }
             Self::NoSpace { item } => {
-                format!("{item} was discarded as no player had space.")
+                let discard_text = Breakpoints::Season5TenseChange.after(game.season, game.day.as_ref().ok().copied(), event_index).then_some(" is discarded as no player had space.").unwrap_or(" was discarded as no player had space.");
+                format!("{item}{discard_text}")
             }
         }
     }
