@@ -402,8 +402,8 @@ fn check<S>(event: &ParsedEventMessage<S>) -> String {
         ParsedEventMessage::Walk { batter: _, scores, advances: _, cheer, aurora_photos, ejection, wither } => {
             format!("scores: {}, cheer: {}, aurora_photos: {}, ejection: {}, wither: {}", scores.len(), cheer.is_some(), aurora_photos.is_some(), ejection.is_some(), wither.is_some())
         },
-        ParsedEventMessage::HitByPitch { batter: _, scores, advances: _, cheer, aurora_photos, ejection, door_prizes } => {
-            format!("scores: {}, cheer: {}, aurora_photos: {}, ejection: {}, door_prizes: {}", scores.len(), cheer.is_some(), aurora_photos.is_some(), ejection.is_some(), door_prizes.len())
+        ParsedEventMessage::HitByPitch { batter: _, scores, advances: _, cheer, aurora_photos, ejection, door_prizes, wither } => {
+            format!("scores: {}, cheer: {}, aurora_photos: {}, ejection: {}, door_prizes: {}, wither: {}", scores.len(), cheer.is_some(), aurora_photos.is_some(), ejection.is_some(), door_prizes.len(), wither.is_some())
         },
         ParsedEventMessage::FairBall { batter: _, fair_ball_type, destination, cheer, aurora_photos, door_prizes } => {
             format!("fair_ball_type: {fair_ball_type}, destination: {destination}, cheer: {}, aurora_photos: {}, door_prizes: {}", cheer.is_some(), aurora_photos.is_some(), door_prizes.len())

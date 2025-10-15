@@ -97,7 +97,7 @@ pub enum ParsedEventMessage<S> {
     Strike { strike: StrikeType, steals: Vec<BaseSteal<S>>, count:(u8, u8), cheer: Option<Cheer>, aurora_photos: Option<SnappedPhotos<S>>, ejection: Option<Ejection<S>>, door_prizes: Vec<DoorPrize<S>>, wither: Option<WitherStruggle<S>> },
     Foul { foul: FoulType, steals: Vec<BaseSteal<S>>, count:(u8, u8), cheer: Option<Cheer>, aurora_photos: Option<SnappedPhotos<S>>, door_prizes: Vec<DoorPrize<S>>, wither: Option<WitherStruggle<S>> },
     Walk { batter: S, scores: Vec<S>, advances: Vec<RunnerAdvance<S>>, cheer: Option<Cheer>, aurora_photos: Option<SnappedPhotos<S>>, ejection: Option<Ejection<S>>, wither: Option<WitherStruggle<S>> },
-    HitByPitch { batter: S, scores: Vec<S>, advances: Vec<RunnerAdvance<S>>, cheer: Option<Cheer>, aurora_photos: Option<SnappedPhotos<S>>, ejection: Option<Ejection<S>>, door_prizes: Vec<DoorPrize<S>> },
+    HitByPitch { batter: S, scores: Vec<S>, advances: Vec<RunnerAdvance<S>>, cheer: Option<Cheer>, aurora_photos: Option<SnappedPhotos<S>>, ejection: Option<Ejection<S>>, door_prizes: Vec<DoorPrize<S>>, wither: Option<WitherStruggle<S>> },
     FairBall {
         batter: S,
         fair_ball_type: FairBallType,
@@ -309,7 +309,7 @@ impl<S: Display> ParsedEventMessage<S> {
                 // Proof cheer is before ejection: https://mmolb.com/watch/6887e503f142e23550fc1254?event=369
                 format!("{space}Ball 4. {batter} walks.{scores_and_advances}{aurora_photos}{cheer}{ejection}{wither}")
             }
-            Self::HitByPitch { batter, scores, advances, cheer, aurora_photos, ejection, door_prizes } => {
+            Self::HitByPitch { batter, scores, advances, cheer, aurora_photos, ejection, door_prizes, wither } => {
                 let scores_and_advances = unparse_scores_and_advances(scores, advances);
                 let space = old_space(game, event_index);
 
@@ -318,7 +318,8 @@ impl<S: Display> ParsedEventMessage<S> {
                 let ejection = ejection.as_ref().map(|e| e.unparse()).unwrap_or_default();
                 let door_prizes = once(String::new()).chain(door_prizes.iter().map(|d| d.unparse())).collect::<Vec<_>>().join("<br>");
                 let hbp_text = hit_by_pitch_text(game.season, game.day.as_ref().copied().ok(), event_index);
-                format!("{space}{batter}{hbp_text}.{scores_and_advances}{aurora_photos}{cheer}{ejection}{door_prizes}")
+                let wither = wither.as_ref().map_or_else(String::new, |wither| format!(" {}", wither));
+                format!("{space}{batter}{hbp_text}.{scores_and_advances}{aurora_photos}{cheer}{ejection}{door_prizes}{wither}")
             }
             Self::FairBall { batter, fair_ball_type, destination, cheer, aurora_photos, door_prizes } => {
                 let space = old_space(game, event_index);
@@ -470,7 +471,7 @@ impl<S: Display> ParsedEventMessage<S> {
                 } else {
                     "earn"
                 };
-                
+
                 let home = (*home_income > 0).then_some(format!("{} {} are Prosperous! They {earn} {home_income} 🪙.", game.home_team_emoji, game.home_team_name)).unwrap_or_default();
                 let away = (*away_income > 0).then_some(format!("{} {} are Prosperous! They {earn} {away_income} 🪙.", game.away_team_emoji, game.away_team_name)).unwrap_or_default();
                 let gap = (*home_income > 0 && *away_income > 0).then_some(" ").unwrap_or_default();

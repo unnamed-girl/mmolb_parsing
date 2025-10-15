@@ -433,7 +433,8 @@ fn pitch<'parse, 'output: 'parse>(parsing_context: &'parse ParsingContext<'parse
     .and(opt(preceded(tag(" "), cheer(parsing_context))))
     .and(opt(ejection(parsing_context)))
     .and(door_prizes)
-    .map(|(((((batter, (scores, advances)), aurora_photos), cheer), ejection), door_prizes)| ParsedEventMessage::HitByPitch { batter, scores, advances, cheer, aurora_photos, ejection, door_prizes });
+    .and(opt(wither(parsing_context)))
+    .map(|((((((batter, (scores, advances)), aurora_photos), cheer), ejection), door_prizes), wither)| ParsedEventMessage::HitByPitch { batter, scores, advances, cheer, aurora_photos, ejection, door_prizes, wither });
 
     let walks = preceded(
         sentence(tag("Ball 4")),
