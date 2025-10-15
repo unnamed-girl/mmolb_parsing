@@ -2,7 +2,7 @@ use std::collections::HashMap;
 pub use serde::{Serialize, Deserialize};
 use serde_with::serde_as;
 
-use crate::{enums::{Attribute, Day, EquipmentEffectType, EquipmentRarity, EquipmentSlot, GameStat, Handedness, ItemName, ItemPrefix, ItemSuffix, Position, PositionType, SeasonStatus, SpecialItemType}, feed_event::FeedEvent, utils::{AddedLaterResult, ExpectNone, MaybeRecognizedResult, RemovedLaterResult, StarHelper}, EmptyArrayOr};
+use crate::{enums::{Attribute, Day, EquipmentEffectType, EquipmentRarity, EquipmentSlot, GameStat, Handedness, ItemName, ItemPrefix, ItemSuffix, Position, PositionType, SeasonStatus, SpecialItemType}, feed_event::FeedEvent, utils::{AddedLaterResult, MaybeRecognizedResult, RemovedLaterResult, StarHelper}, EmptyArrayOr};
 use crate::utils::{MaybeRecognizedHelper, SometimesMissingHelper, extra_fields_deserialize};
 
 #[serde_as]
@@ -266,15 +266,26 @@ pub struct TalkCategory {
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
 #[serde(untagged)]
 pub enum TalkStars {
-    Simple(#[serde_as(as = "StarHelper")] u8),
     Complex {
-        #[serde_as(as = "StarHelper")]
-        display: u8,
+        display: String,
         regular: u8,
         shiny: u8,
         stars: u8,
         total: f64,
-    }
+        base_display: String,
+        base_regular: u8,
+        base_shiny: u8,
+        base_stars: u8,
+        base_total: f64,
+    },
+    Intermediate {
+        display: String,
+        regular: u8,
+        shiny: u8,
+        stars: u8,
+        total: f64,
+    },
+    Simple(#[serde_as(as = "StarHelper")] u8),
 }
 #[cfg(test)]
 mod test {
