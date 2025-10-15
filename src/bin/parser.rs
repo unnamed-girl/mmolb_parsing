@@ -399,8 +399,8 @@ fn check<S>(event: &ParsedEventMessage<S>) -> String {
         ParsedEventMessage::Foul { foul, steals, count: _, cheer, aurora_photos, door_prizes, wither } => {
             format!("foul: {foul}, steals: {}, cheer: {}, aurora_photos: {}, door_prizes: {}, wither: {}", steals.len(), cheer.is_some(), aurora_photos.is_some(), door_prizes.len(), wither.is_some())
         },
-        ParsedEventMessage::Walk { batter: _, scores, advances: _, cheer, aurora_photos, ejection } => {
-            format!("scores: {}, cheer: {}, aurora_photos: {}, ejection: {}", scores.len(), cheer.is_some(), aurora_photos.is_some(), ejection.is_some())
+        ParsedEventMessage::Walk { batter: _, scores, advances: _, cheer, aurora_photos, ejection, wither } => {
+            format!("scores: {}, cheer: {}, aurora_photos: {}, ejection: {}, wither: {}", scores.len(), cheer.is_some(), aurora_photos.is_some(), ejection.is_some(), wither.is_some())
         },
         ParsedEventMessage::HitByPitch { batter: _, scores, advances: _, cheer, aurora_photos, ejection, door_prizes } => {
             format!("scores: {}, cheer: {}, aurora_photos: {}, ejection: {}, door_prizes: {}", scores.len(), cheer.is_some(), aurora_photos.is_some(), ejection.is_some(), door_prizes.len())
@@ -451,7 +451,7 @@ fn check<S>(event: &ParsedEventMessage<S>) -> String {
         ParsedEventMessage::WeatherProsperity { home_income: _, away_income: _ } => "".to_string(),
         ParsedEventMessage::PhotoContest { winning_team: _, winning_tokens: _, winning_player: _, winning_score: _, losing_team: _, losing_tokens: _, losing_player: _, losing_score: _ } => "".to_string(),
         ParsedEventMessage::Party { pitcher_name: _, pitcher_amount_gained: _, pitcher_attribute: _, batter_name: _, batter_amount_gained: _, batter_attribute: _ } => "".to_string(),
-        ParsedEventMessage::WeatherReflection { team } => {
+        ParsedEventMessage::WeatherReflection { team: _ } => {
             format!("()")
         }
         ParsedEventMessage::WeatherWither { team_emoji: _, player: _, corrupted } => {
