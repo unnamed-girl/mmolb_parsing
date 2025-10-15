@@ -422,8 +422,9 @@ fn pitch<'parse, 'output: 'parse>(parsing_context: &'parse ParsingContext<'parse
     .and(opt(preceded(tag(" "), aurora(parsing_context))))
     .and(opt(preceded(tag(" "), cheer(parsing_context))))
     .and(opt(ejection(parsing_context)))
-    .map(|(((((foul, (batter, strike)), steals), aurora_photos), cheer), ejection)|
-        ParsedEventMessage::StrikeOut { foul, batter, strike, steals, cheer, aurora_photos, ejection }
+    .and(opt(wither(parsing_context)))
+    .map(|((((((foul, (batter, strike)), steals), aurora_photos), cheer), ejection), wither)|
+        ParsedEventMessage::StrikeOut { foul, batter, strike, steals, cheer, aurora_photos, ejection, wither }
     );
 
     let hit_by_pitch = sentence(parse_terminated(hit_by_pitch_text(parsing_context.season, parsing_context.day, parsing_context.event_index)))
@@ -441,7 +442,7 @@ fn pitch<'parse, 'output: 'parse>(parsing_context: &'parse ParsingContext<'parse
     .and(opt(preceded(tag(" "), aurora(parsing_context))))
     .and(opt(preceded(tag(" "), cheer(parsing_context))))
     .and(opt(ejection(parsing_context)))
-        .and(opt(wither(parsing_context)))
+    .and(opt(wither(parsing_context)))
     .map(|(((((batter, (scores, advances)), aurora_photos), cheer), ejection), wither)| ParsedEventMessage::Walk { batter, scores, advances, cheer, aurora_photos, ejection, wither });
 
     let ball = (preceded(sentence(tag("Ball")), sentence(score_update)))

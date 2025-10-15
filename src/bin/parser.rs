@@ -408,8 +408,8 @@ fn check<S>(event: &ParsedEventMessage<S>) -> String {
         ParsedEventMessage::FairBall { batter: _, fair_ball_type, destination, cheer, aurora_photos, door_prizes } => {
             format!("fair_ball_type: {fair_ball_type}, destination: {destination}, cheer: {}, aurora_photos: {}, door_prizes: {}", cheer.is_some(), aurora_photos.is_some(), door_prizes.len())
         },
-        ParsedEventMessage::StrikeOut { foul, batter: _, strike, steals, cheer, aurora_photos, ejection } => {
-            format!("foul: {}, strike: {strike}, steals: {}, cheer: {}, aurora_photos: {}, ejection: {}", foul.as_ref().map(FoulType::to_string).unwrap_or_else(|| "False".to_string()), steals.len(), cheer.is_some(), aurora_photos.is_some(), ejection.is_some())
+        ParsedEventMessage::StrikeOut { foul, batter: _, strike, steals, cheer, aurora_photos, ejection, wither } => {
+            format!("foul: {}, strike: {strike}, steals: {}, cheer: {}, aurora_photos: {}, ejection: {}, wither: {}", foul.as_ref().map(FoulType::to_string).unwrap_or_else(|| "False".to_string()), steals.len(), cheer.is_some(), aurora_photos.is_some(), ejection.is_some(), wither.is_some())
         },
         ParsedEventMessage::BatterToBase { batter: _, distance, fair_ball_type, fielder: _, scores, advances, ejection } => {
             format!("distance: {distance}, fair_ball_type: {fair_ball_type}, scores: {}, advances: {}, ejection: {}", scores.len(), advances.len(), ejection.is_some())
