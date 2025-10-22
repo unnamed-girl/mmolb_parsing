@@ -1,7 +1,7 @@
 use nom::{branch::alt, bytes::complete::tag, character::complete::{i16, u8, u32}, combinator::{cond, fail, opt}, error::context, sequence::{delimited, preceded, separated_pair, terminated}, Finish, Parser};
 use crate::{enums::{CelestialEnergyTier, FeedEventType, ModificationType}, feed_event::{FeedEvent, FeedEventParseError, FeedFallingStarOutcome}, nom_parsing::shared::{emojiless_item, feed_delivery, name_eof, parse_terminated, sentence_eof, try_from_word}, team_feed::ParsedTeamFeedEventText, time::{Breakpoints, Timestamp}};
 use crate::parsed_event::EmojiPlayer;
-use super::shared::{emoji, emoji_team_eof, feed_event_door_prize, feed_event_party, Error};
+use super::shared::{emoji, emoji_team_eof, emoji_team_eof_maybe_no_space, feed_event_door_prize, feed_event_party, Error};
 
 
 trait TeamFeedEventParser<'output>: Parser<&'output str, Output = ParsedTeamFeedEventText<&'output str>, Error = Error<'output>> {}
@@ -75,13 +75,20 @@ fn augment<'output>(event: &'output FeedEvent) -> impl TeamFeedEventParser<'outp
 }
 
 fn game_result<'output>() -> impl TeamFeedEventParser<'output> {
-    (
-        parse_terminated(" vs. ").and_then(emoji_team_eof),
-        parse_terminated(" - ").and_then(emoji_team_eof),
-        preceded(tag("FINAL "), separated_pair(u8, tag("-"), u8))
-    ).map(|(away_team, home_team, (away_score, home_score))|
-        ParsedTeamFeedEventText::GameResult { home_team, away_team, home_score, away_score }
-    )
+    |input| {
+        let (input, away_team) = parse_terminated(" vs. ").and_then(emoji_team_eof_maybe_no_space).parse(input)?;
+        let (input, home_team) = parse_terminated(" - FINAL ").and_then(emoji_team_eof).parse(input)?;
+        let (input, away_score) = u8.parse(input)?;
+        let (input, _) = tag("-").parse(input)?;
+        let (input, home_score) = u8.parse(input)?;
+
+        Ok((input, ParsedTeamFeedEventText::GameResult {
+            home_team,
+            away_team,
+            home_score,
+            away_score,
+        }))
+    }
 }
 
 fn photo_contest<'output>() -> impl TeamFeedEventParser<'output> {

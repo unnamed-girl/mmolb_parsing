@@ -1303,6 +1303,11 @@ pub enum ItemPrefix {
     Sneaky,
     Scheming,
     Gyroscopic,
+    Imperious,
+    #[strum(to_string = "Oracle's")]
+    Oracles,
+    Skyborne,
+    Lightspeed,
 }
 
 #[derive(EnumString, IntoStaticStr, Display, Debug, SerializeDisplay, DeserializeFromStr, Clone, Copy, EnumIter, PartialEq, Eq, Hash)]
@@ -1329,6 +1334,10 @@ pub enum ItemSuffix {
     Artisan,
     #[strum(to_string = "of the Sentinel")]
     Sentinel,
+    #[strum(to_string = "of the Ballista")]
+    Ballista,
+    #[strum(to_string = "of the Sky")]
+    Sky,
 }
 
 /// The various places a player in a game has been said to be.

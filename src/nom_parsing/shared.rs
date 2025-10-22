@@ -336,6 +336,10 @@ pub(super) fn name_eof(input: &str) -> IResult<&str, &str> {
     .parse(input)
 }
 
+pub(super) fn conjoined_name_eof(input: &str) -> IResult<&str, &str> {
+    Ok(("", input))
+}
+
 pub(super) fn sentence_eof<'output, E: ParseError<&'output str> + Debug, F: Parser<&'output str, Output = O, Error = E>, O: Debug>(mut parser: F) -> impl Parser<&'output str, Output =  O, Error = E> {
     all_consuming(sentence(move |input: &'output str| {
         take(input.chars().count()-1).and_then(|i| parser.parse(i))
@@ -352,6 +356,12 @@ pub(super) fn emoji(input: &str) -> IResult<&str, &str> {
 
 pub(super) fn emoji_team_eof(input: &str) -> IResult<&str, EmojiTeam<&str>> {
     separated_pair(emoji, tag(" "), name_eof)
+    .map(|(emoji, name)| EmojiTeam { emoji, name })
+    .parse(input)
+}
+
+pub(super) fn emoji_team_eof_maybe_no_space(input: &str) -> IResult<&str, EmojiTeam<&str>> {
+    separated_pair(emoji, tag(" "), conjoined_name_eof)
     .map(|(emoji, name)| EmojiTeam { emoji, name })
     .parse(input)
 }
@@ -443,9 +453,6 @@ pub(super) fn delivery<'parse, 'output: 'parse>(parsing_context: &'parse Parsing
 
 pub(super) fn feed_delivery(label: &str) -> impl MyParser<FeedDelivery<&str>> {
     move |input| {
-        if input == "Maple Hampton receives a 👕 Swift T-Shirt of the Artisan Shipment. They discard their 👕 T-Shirt." {
-            println!("Debug me")
-        }
         let (input, player) = alt((parse_terminated(" received a "), parse_terminated(" receives a "))).parse(input)?;
         let (input, item) = item.parse(input)?;
         let (input, _) = tag(" ").parse(input)?;
