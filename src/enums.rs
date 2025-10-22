@@ -961,6 +961,8 @@ pub enum SpecialItemType {
     Material
 }
 
+// TODO (added by beiju): should this be separate for teams and players?
+//   Players don't have lottery, I don't know if there are other differences
 #[derive(Debug, Clone, Copy, Serialize, Deserialize, EnumString, IntoStaticStr, Display, PartialEq, Eq, Hash, EnumIter)]
 #[strum(serialize_all = "lowercase")]
 #[serde(rename_all = "lowercase")]
@@ -968,7 +970,8 @@ pub enum FeedEventType {
     Game,
     Augment,
     Release,
-    Season
+    Season,
+    Lottery,
 }
 
 #[derive(Debug, Clone, Copy, Serialize, Deserialize, EnumString, IntoStaticStr, Display, PartialEq, Eq, Hash, EnumIter)]
@@ -1298,6 +1301,8 @@ pub enum ItemPrefix {
     Dazzling,
     Swift,
     Sneaky,
+    Scheming,
+    Gyroscopic,
 }
 
 #[derive(EnumString, IntoStaticStr, Display, Debug, SerializeDisplay, DeserializeFromStr, Clone, Copy, EnumIter, PartialEq, Eq, Hash)]
@@ -1320,6 +1325,10 @@ pub enum ItemSuffix {
     Reflexes,
     #[strum(to_string = "of Fortune")]
     Fortune,
+    #[strum(to_string = "of the Artisan")]
+    Artisan,
+    #[strum(to_string = "of the Sentinel")]
+    Sentinel,
 }
 
 /// The various places a player in a game has been said to be.

@@ -115,13 +115,13 @@ impl<S: Display> ParsedFeedEventText<S> {
                         format!("{} vs. {} - FINAL {}-{}", away_team, home_team, away_score, home_score)
                     }
             ParsedFeedEventText::Delivery { delivery } => {
-                        delivery.unparse("Delivery")
+                        delivery.unparse(event, "Delivery")
                     }
             ParsedFeedEventText::SpecialDelivery { delivery } => {
-                        delivery.unparse("Special Delivery")
+                        delivery.unparse(event, "Special Delivery")
                     }
             ParsedFeedEventText::Shipment { delivery } => {
-                        delivery.unparse("Shipment")
+                        delivery.unparse(event, "Shipment")
                     }
             ParsedFeedEventText::AttributeChanges { changes } => {
                         changes.iter()
@@ -236,16 +236,29 @@ pub struct FeedDelivery<S> {
     pub discarded: Option<Item<S>>
 }
 impl<S: Display> FeedDelivery<S> {
-    pub fn unparse(&self, delivery_label: &str) -> String {
+    pub fn unparse(&self, event: &FeedEvent, delivery_label: &str) -> String {
         let FeedDelivery { player, item, discarded} = self;
 
         let discarded = match discarded {
-            Some(discarded) => format!(" They discarded their {discarded}."),
+            Some(discarded) => {
+                let verb = if Breakpoints::Season5TenseChange.before(event.season as u32, event.day.as_ref().ok().copied(), None) {
+                    "discarded"
+                } else {
+                    "discard"
+                };
+
+                format!(" They {verb} their {discarded}.")
+            },
             None => String::new(),
         };
 
+        let verb = if Breakpoints::Season5TenseChange.before(event.season as u32, event.day.as_ref().ok().copied(), None) {
+            "received"
+        } else {
+            "receives"
+        };
 
-        format!("{player} received a {item} {delivery_label}.{discarded}")
+        format!("{player} {verb} a {item} {delivery_label}.{discarded}")
     }
 }
 

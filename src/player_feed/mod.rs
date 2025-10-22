@@ -90,9 +90,9 @@ impl<S: Display> ParsedPlayerFeedEventText<S> {
     pub fn unparse(&self, event: &FeedEvent) -> String {
         match self {
             ParsedPlayerFeedEventText::ParseError { error: _, text } => text.to_string(),
-            ParsedPlayerFeedEventText::Delivery { delivery } => delivery.unparse("Delivery"),
-            ParsedPlayerFeedEventText::SpecialDelivery { delivery } => delivery.unparse("Special Delivery"),
-            ParsedPlayerFeedEventText::Shipment { delivery } => delivery.unparse("Shipment"),
+            ParsedPlayerFeedEventText::Delivery { delivery } => delivery.unparse(event, "Delivery"),
+            ParsedPlayerFeedEventText::SpecialDelivery { delivery } => delivery.unparse(event, "Special Delivery"),
+            ParsedPlayerFeedEventText::Shipment { delivery } => delivery.unparse(event, "Shipment"),
             ParsedPlayerFeedEventText::FallingStarOutcome { player_name, outcome } => {
                 match outcome {
                     FeedFallingStarOutcome::Injury => {

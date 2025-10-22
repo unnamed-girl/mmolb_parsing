@@ -7,44 +7,14 @@ use super::shared::Error;
 trait FeedEventParser<'output>: Parser<&'output str, Output = ParsedFeedEventText<&'output str>, Error = Error<'output>> {}
 impl<'output, T: Parser<&'output str, Output = ParsedFeedEventText<&'output str>, Error = Error<'output>>> FeedEventParser<'output> for T {}
 
-
-pub fn parse_feed_event<'output>(event: &'output FeedEvent) -> ParsedFeedEventText<&'output str> {
-    let event_type = match &event.event_type {
-        Ok(event_type) => event_type,
-        Err(e) => {
-            let error = FeedEventParseError::EventTypeNotRecognized(e.clone());
-            return ParsedFeedEventText::ParseError { error, text: &event.text };
-        }
-    };
-
-    let result = match event_type {
-        FeedEventType::Game => game(event).parse(&event.text),
-        FeedEventType::Augment => augment(event).parse(&event.text),
-        FeedEventType::Release => release().parse(&event.text),
-        FeedEventType::Season => fail().parse(event.text.as_str())
-    };
-    match result.finish() {
-        Ok(("", output)) => output,
-        Ok((leftover, _)) => {
-            error!("{event_type} feed event parsed had leftover: {leftover} from {}", &event.text);
-            let error = FeedEventParseError::FailedParsingText { event_type: *event_type, text: event.text.clone() };
-            ParsedFeedEventText::ParseError { error, text: &event.text }
-        }
-        Err(_) => {
-            let error = FeedEventParseError::FailedParsingText { event_type: *event_type, text: event.text.clone() };
-            tracing::error!("Parse error: {}", error);
-            ParsedFeedEventText::ParseError { error, text: &event.text }
-        }
-    }
-}
-
+// TODO Delete when done
 fn game<'output>(event: &'output FeedEvent) -> impl FeedEventParser<'output> {
     context("Game Feed Event", alt((
-        game_result(),
+        // game_result(),
         feed_delivery("Delivery").map(|delivery| ParsedFeedEventText::Delivery { delivery } ),
         feed_delivery("Shipment").map(|delivery| ParsedFeedEventText::Shipment { delivery } ),
         feed_delivery("Special Delivery").map(|delivery| ParsedFeedEventText::SpecialDelivery { delivery } ),
-        prosperous(),
+        // prosperous(),
         retirement(),
         injured_by_falling_star(event),
         infused_by_falling_star(),
@@ -98,28 +68,12 @@ fn infused_by_falling_star<'output>() -> impl FeedEventParser<'output> {
     .map(|(player, infusion_tier)| ParsedFeedEventText::InfusedByFallingStar { player, infusion_tier })
 }
 
-fn prosperous<'output>() -> impl FeedEventParser<'output> {
-    (
-        parse_terminated(" are Prosperous! They earned ").and_then(emoji_team_eof),
-        terminated(u8, tag(" 🪙."))
-    ).map(|(team, income)| ParsedFeedEventText::Prosperous { team, income })
-}
 
 fn retirement<'output>() -> impl FeedEventParser<'output> {
     (
         preceded(tag("😇 "), parse_terminated(" retired from MMOLB!").and_then(name_eof)),
         opt(preceded(tag(" "), parse_terminated(" was called up to take their place.").and_then(name_eof)))
     ).map(|(original, new)| ParsedFeedEventText::Retirement { previous: original, new })
-}
-
-fn game_result<'output>() -> impl FeedEventParser<'output> {
-    (
-        parse_terminated(" vs. ").and_then(emoji_team_eof),
-        parse_terminated(" - ").and_then(emoji_team_eof),
-        preceded(tag("FINAL "), separated_pair(u8, tag("-"), u8))
-    ).map(|(away_team, home_team, (away_score, home_score))| 
-        ParsedFeedEventText::GameResult { home_team, away_team, home_score, away_score }
-    )
 }
 
 fn recompose<'output>(event: &'output FeedEvent) -> impl FeedEventParser<'output> {

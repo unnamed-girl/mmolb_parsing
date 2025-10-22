@@ -6,7 +6,7 @@ pub(crate) mod shared;
 pub(crate) mod parse;
 pub(crate) mod parse_feed_event;
 pub(crate) mod parse_player_feed_event;
+pub(crate) mod parse_team_feed_event;
 
 pub use shared::ParsingContext;
 pub use parse::parse_event;
-pub use parse_feed_event::parse_feed_event;

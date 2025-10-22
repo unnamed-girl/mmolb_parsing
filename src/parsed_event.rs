@@ -595,6 +595,25 @@ impl<S: AsRef<str>> EmojiTeam<S> {
         }
     }
 }
+#[derive(Debug, Clone, Copy, Serialize, Deserialize, PartialEq)]
+pub struct EmojiPlayer<S> {
+    pub emoji: S,
+    pub name: S
+}
+impl<S: Display> Display for EmojiPlayer<S> {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        write!(f, "{} {}", self.emoji, self.name)
+    }
+}
+
+impl<S: AsRef<str>> EmojiPlayer<S> {
+    fn as_ref(&self) -> EmojiPlayer<&str> {
+        EmojiPlayer {
+            emoji: self.emoji.as_ref(),
+            name: self.name.as_ref(),
+        }
+    }
+}
 
 #[derive(Debug, Clone, Copy, Serialize, Deserialize, PartialEq)]
 pub struct PlacedPlayer<S> {

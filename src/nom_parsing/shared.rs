@@ -1,10 +1,13 @@
 use std::{fmt::Debug, str::FromStr};
-
+use std::fmt::{Display, Formatter};
+use clap::builder::TypedValueParser;
 use nom::{branch::alt, bytes::complete::{tag, take, take_till, take_until, take_until1, take_while}, character::complete::{one_of, space0, u8, u16}, combinator::{all_consuming, fail, opt, recognize, rest, value, verify}, error::{ErrorKind, ParseError}, multi::{count, many0, many1, separated_list1}, sequence::{delimited, preceded, separated_pair, terminated}, AsChar, Input, Parser};
 use nom_language::error::VerboseError;
 
 use crate::{enums::{Base, BatterStat, Day, FairBallDestination, FairBallType, HomeAway, NowBattingStats, Place}, feed_event::{EmojilessItem, FeedDelivery, FeedEvent}, game::Event, parsed_event::{BaseSteal, Cheer, Delivery, DoorPrize, Ejection, EjectionReason, EmojiTeam, Item, ItemAffixes, PlacedPlayer, Prize, RunnerAdvance, RunnerOut, SnappedPhotos, ViolationType}, player, time::{Breakpoints, Time}, Game};
+use crate::enums::Attribute;
 use crate::parsed_event::{EjectionReplacement, WitherStruggle};
+use crate::player::{Deserialize, Serialize};
 
 pub(super) type Error<'a> = VerboseError<&'a str>;
 pub(super) type IResult<'a, I, O> = nom::IResult<I, O, Error<'a>>;
@@ -439,12 +442,28 @@ pub(super) fn delivery<'parse, 'output: 'parse>(parsing_context: &'parse Parsing
     ))
 }
 
-pub(super) fn feed_delivery<'output>(label: &'output str) -> impl MyParser<'output, FeedDelivery<&'output str>> {
-        (
-            parse_terminated(" received a "),
-            terminated(item, (tag(" "), tag(label), tag("."))),
-            opt(delimited(tag(" They discarded their "), item, tag(".")))
-        ).map(|(player, item, discarded)| FeedDelivery {player, item, discarded} )
+pub(super) fn feed_delivery(label: &str) -> impl MyParser<FeedDelivery<&str>> {
+    move |input| {
+        if input == "Maple Hampton receives a 👕 Swift T-Shirt of the Artisan Shipment. They discard their 👕 T-Shirt." {
+            println!("Debug me")
+        }
+        let (input, player) = alt((parse_terminated(" received a "), parse_terminated(" receives a "))).parse(input)?;
+        let (input, item) = item.parse(input)?;
+        let (input, _) = tag(" ").parse(input)?;
+        let (input, _) = tag(label).parse(input)?;
+        let (input, discarded) = opt(discarded_item()).parse(input)?;
+        let (input, _) = tag(".").parse(input)?;
+
+        Ok((input, FeedDelivery {player, item, discarded}))
+    }
+}
+
+pub(super) fn discarded_item<'output>() -> impl MyParser<'output, Item<&'output str>> {
+    |input| {
+        let (input, _) = alt((tag(". They discarded their "), tag(". They discard their "))).parse(input)?;
+        let (input, item) = item.parse(input)?;
+        Ok((input, item))
+    }
 }
 
 pub(super) fn cheer<'parse, 'output: 'parse>(parsing_context: &'parse ParsingContext<'parse>) -> impl MyParser<'output, Cheer> + 'parse {
@@ -577,6 +596,13 @@ pub(super) fn wither<'parse>(parsing_context: &'parse ParsingContext<'parse>) ->
     }
 }
 
+pub(super) fn prize<'output>(input: &'output str) -> IResult<'output, &'output str, Prize<&'output str>> {
+    alt((
+        terminated(u16, tag(" 🪙")).map(Prize::Tokens),
+        separated_list1(tag(", "), item).map(Prize::Items)
+    )).parse(input)
+}
+
 pub(super) fn door_prize<'output>(input: &'output str) -> IResult<'output, &'output str, DoorPrize<&'output str>> {
     let not_win = |input: &'output str| {
         let (input, player) = parse_terminated(" didn't win a Door Prize.").parse(input)?;
@@ -584,10 +610,7 @@ pub(super) fn door_prize<'output>(input: &'output str) -> IResult<'output, &'out
     };
     let win = |input: &'output str| {
         let (input, player) = parse_terminated(" won a Door Prize: ").parse(input)?;
-        let (input, prize) = alt((
-            terminated(u16, tag(" 🪙")).map(Prize::Tokens),
-            separated_list1(tag(", "), item).map(Prize::Items)
-        )).parse(input)?;
+        let (input, prize) = prize.parse(input)?;
         let (input, _) = tag(".").parse(input)?;
         Ok((input, DoorPrize { player, prize: Some(prize) }))
     };
@@ -597,6 +620,70 @@ pub(super) fn door_prize<'output>(input: &'output str) -> IResult<'output, &'out
         not_win,
         win
     )).parse(input)
+}
+
+#[derive(Clone, Debug, Serialize, Deserialize, PartialEq)]
+pub struct FeedEventParty<S> {
+    pub player_name: S,
+    pub amount_gained: u8,
+    pub attribute: Attribute,
+    pub durability_lost: u8,
+}
+
+impl<S: Display> Display for FeedEventParty<S> {
+    fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
+        write!(
+            f,
+            "{} is Partying! {} gained +{} {} and lost {} Durability.",
+            self.player_name,
+            self.player_name,
+            self.amount_gained,
+            self.attribute,
+            self.durability_lost,
+        )
+    }
+}
+
+pub(super) fn feed_event_party(input: &str) -> IResult<&str, FeedEventParty<&str>> {
+    let (input, player_name) = parse_terminated(" is Partying! ").parse(input)?;
+    let (input, _) = tag(player_name).parse(input)?;
+    let (input, _) = tag(" gained +").parse(input)?;
+    let (input, amount_gained) = u8.parse(input)?;
+    let (input, _) = tag(" ").parse(input)?;
+    let (input, attribute) = try_from_word.parse(input)?;
+    let (input, _) = tag(" and lost ").parse(input)?;
+    let (input, durability_lost) = u8.parse(input)?;
+    let (input, _) = tag(" Durability.").parse(input)?;
+
+    Ok((input, FeedEventParty {
+        player_name,
+        amount_gained,
+        attribute,
+        durability_lost,
+    }))
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
+pub struct FeedEventDoorPrize<S> {
+    pub player_name: S,
+    pub prize: Prize<S>,
+}
+
+impl<S: Display> Display for FeedEventDoorPrize<S> {
+    fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
+        write!(f, "{} won a Door Prize: {}.", self.player_name, self.prize.unparse())
+    }
+}
+
+pub(super) fn feed_event_door_prize(input: &str) -> IResult<&str, FeedEventDoorPrize<&str>> {
+    let (input, player_name) = parse_terminated(" won a Door Prize: ").parse(input)?;
+    let (input, prize) = prize.parse(input)?;
+    let (input, _) = tag(".").parse(input)?;
+
+    Ok((input, FeedEventDoorPrize {
+        player_name,
+        prize,
+    }))
 }
 
 pub(super) fn team_emoji<'parse, 'output, 'a>(side: HomeAway, parsing_context: &'a ParsingContext<'parse>) -> impl MyParser<'output, &'output str> + 'parse {

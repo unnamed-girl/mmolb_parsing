@@ -21,7 +21,9 @@ pub fn parse_player_feed_event<'output>(event: &'output FeedEvent) -> ParsedPlay
         FeedEventType::Game => game(event).parse(&event.text),
         FeedEventType::Augment => augment(event).parse(&event.text),
         FeedEventType::Release => release(event).parse(&event.text),
-        FeedEventType::Season => season(event).parse(event.text.as_str())
+        FeedEventType::Season => season(event).parse(event.text.as_str()),
+        // TODO More descriptive error message
+        FeedEventType::Lottery => fail().parse(event.text.as_str()),
     };
     match result.finish() {
         Ok(("", output)) => output,
@@ -124,7 +126,7 @@ fn injured_by_falling_star<'output>(event: &'output FeedEvent) -> impl PlayerFee
             parse_terminated(" was hit by a Falling Star!")
                 .and_then(name_eof)
                 .map(|player_name| ParsedPlayerFeedEventText::FallingStarOutcome { player_name, outcome: FeedFallingStarOutcome::Injury })
-                .parse(input)   
+                .parse(input)
         }
 }
 

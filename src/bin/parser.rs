@@ -1,7 +1,7 @@
 use std::{collections::HashSet, fs::File, io::{Read, Write}, path::Path, pin::pin};
 use clap::{Parser, ValueEnum};
 use futures::{Stream, StreamExt};
-use mmolb_parsing::{enums::{FeedEventSource, FoulType}, feed_event::parse_feed_event, player::Player, player_feed::{parse_player_feed_event, PlayerFeed}, process_event, team::Team, Game, ParsedEventMessage};
+use mmolb_parsing::{enums::{FeedEventSource, FoulType}, player::Player, player_feed::{parse_player_feed_event, PlayerFeed}, team_feed::{parse_team_feed_event, TeamFeed}, process_event, team::Team, Game, ParsedEventMessage};
 use serde::{Deserialize, Serialize, de::IntoDeserializer};
 
 use reqwest::Client;
@@ -89,17 +89,25 @@ enum Kind {
     Team,
     Player,
     PlayerFeed,
+    TeamFeed,
     GameFeed
 }
 
+impl Kind {
+    fn as_chron_kind(&self) -> &'static str {
+        match self {
+            Kind::Game => "game",
+            Kind::Team => "team",
+            Kind::Player => "player",
+            Kind::PlayerFeed => "player_feed",
+            Kind::TeamFeed => "team_feed",
+            Kind::GameFeed => "game_feed",
+        }
+    }
+}
+
 fn cashews_fetch_json<'a>(client: &'a Client, endpoint: &'a str, kind: Kind, extra: String, start_page: Option<String>) -> impl Stream<Item = Vec<EntityResponse<Box<serde_json::value::RawValue>>>> + 'a {
-    let kind = match kind {
-        Kind::Game => "game",
-        Kind::Team => "team",
-        Kind::Player => "player",
-        Kind::PlayerFeed => "player_feed",
-        Kind::GameFeed => "game_feed",
-    };
+    let kind = kind.as_chron_kind();
     async_stream::stream! {
         let (mut url, mut page) = match start_page {
             Some(page) => (format!("{endpoint}?kind={kind}&count=1000{extra}&page={page}"), Some(page)),
@@ -154,22 +162,16 @@ async fn main() {
     } 
     
     let func = |response, progress_report| match args.kind {
-        Kind::Game=>ingest(response, &args,progress_report, game_inner),
-        Kind::Team=>ingest(response, &args,progress_report, team_inner),
-        Kind::Player=>ingest(response, &args,progress_report, player_inner),
+        Kind::Game => ingest(response, &args,progress_report, game_inner),
+        Kind::Team => ingest(response, &args,progress_report, team_inner),
+        Kind::Player => ingest(response, &args,progress_report, player_inner),
         Kind::PlayerFeed => ingest(response, &args, progress_report, player_feed_inner),
+        Kind::TeamFeed => ingest(response, &args, progress_report, team_feed_inner),
         Kind::GameFeed => todo!(),
     };
 
     if let Some(id) = &args.id {
-        let kind = match args.kind {
-            Kind::Game=>"game",
-            Kind::Team=>"team",
-            Kind::Player=>"player",
-            Kind::PlayerFeed => "player_feed",
-            Kind::GameFeed => "team_feed",
-        };
-
+        let kind = args.kind.as_chron_kind();
         let client = Client::new();
         let url = format!("{endpoint}?kind={kind}&id={id}");
         let entities = client.get(&url).send().await.unwrap().json::<FreeCashewResponse<EntityResponse<Box<serde_json::value::RawValue>>>>().await.unwrap().items;
@@ -259,9 +261,9 @@ fn team_inner(team: Team, response: EntityResponse<Box<serde_json::value::RawVal
     for event in team.feed.unwrap_or_default() {
         let _event_span_guard = tracing::span!(Level::INFO, "Feed Event", season = event.season, day = format!("{:?}", event.day), timestamp = event.timestamp.to_string(), r#type = format!("{:?}", event.event_type), message = format!("{:?}", event.text)).entered();
 
-        let parsed_text = parse_feed_event(&event);
+        let parsed_text = parse_team_feed_event(&event);
         if tracing::enabled!(Level::ERROR) {
-            let unparsed = parsed_text.unparse(&event, FeedEventSource::Team);
+            let unparsed = parsed_text.unparse(&event);
             if event.text != unparsed {
                 error!("Feed event round trip failure expected:\n'{}'\nGot:\n'{}'", event.text, unparsed);
             }
@@ -355,6 +357,34 @@ fn player_feed_inner(feed: PlayerFeed, response: EntityResponse<Box<serde_json::
         drop(_event_span_guard);
     }
     _player_feed_span_guard
+}
+
+fn team_feed_inner(feed: TeamFeed, response: EntityResponse<Box<serde_json::value::RawValue>>,  args: &Args) -> EnteredSpan {
+    let _team_feed_span_guard = tracing::span!(Level::INFO, "Team Feed").entered();
+    let mut output = args.output_folder.as_ref().map(|folder| File::create(format!("{folder}/{}.ron", response.entity_id)).unwrap());
+    
+    for event in feed.feed {
+        let _event_span_guard = tracing::span!(Level::INFO, "Feed Event", season = event.season, day = format!("{:?}", event.day), timestamp = event.timestamp.to_string(), r#type = format!("{:?}", event.event_type), message = event.text).entered();
+
+        let parsed_text = parse_team_feed_event(&event);
+        if tracing::enabled!(Level::ERROR) {
+            let unparsed = parsed_text.unparse(&event);
+            if event.text != unparsed {
+                error!("Feed event round trip failure expected:\n'{}'\nGot:\n'{}'", event.text, unparsed);
+            }
+        }
+
+        if args.verbose {
+            info!("{:?} ({})", parsed_text, event.text);
+        }
+
+        if let Some(f) = &mut output {
+            writeln!(f, "{}", ron::to_string(&parsed_text).unwrap()).unwrap();
+        }
+
+        drop(_event_span_guard);
+    }
+    _team_feed_span_guard
 }
 
 fn check<S>(event: &ParsedEventMessage<S>) -> String {
