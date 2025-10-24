@@ -56,7 +56,7 @@ fn game(event: &FeedEvent) -> impl TeamFeedEventParser {
         feed_event_party.map(|party| ParsedTeamFeedEventText::Party { party }),
         feed_event_door_prize.map(|prize| ParsedTeamFeedEventText::DoorPrize { prize }),
         prosperous(),
-        // retirement(true),
+        retirement(true),
         wither(),
         fail(),
     )))
