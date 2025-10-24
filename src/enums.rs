@@ -1311,6 +1311,11 @@ pub enum ItemPrefix {
     Altruistic,
     Unbowing,
     Resolute,
+    Titanic,
+    #[strum(to_string = "Siren's")]
+    Sirens,
+    #[strum(to_string = "Iron-Willed")]
+    IronWilled,
 }
 
 #[derive(EnumString, IntoStaticStr, Display, Debug, SerializeDisplay, DeserializeFromStr, Clone, Copy, EnumIter, PartialEq, Eq, Hash)]
@@ -1347,6 +1352,8 @@ pub enum ItemSuffix {
     Instinct,
     #[strum(to_string = "of Serendipity")]
     Serendipity,
+    #[strum(to_string = "of the Gale")]
+    Gale,
 }
 
 /// The various places a player in a game has been said to be.
@@ -1581,6 +1588,13 @@ pub enum ModificationType {
     Cowardly,
     Logical,
     Creative,
+    Introverted,
+    Intuitive,
+    Unrelenting,
+    #[strum(to_string = "Strong Starter")]
+    #[serde(rename = "Strong Starter")]
+    StrongStarter,
+    Outsider,
 
     #[strum(default)]
     #[serde(untagged)]

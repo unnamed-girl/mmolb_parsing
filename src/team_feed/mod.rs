@@ -79,6 +79,10 @@ pub enum ParsedTeamFeedEventText<S> {
         changing_attribute: Attribute,
         value_attribute: Attribute,
     },
+    TakeTheMound {
+        to_mound_team: S,
+        to_lineup_team: S,
+    },
     TakeThePlate {
         to_plate_team: S,
         from_lineup_team: S,
@@ -104,10 +108,6 @@ pub enum ParsedTeamFeedEventText<S> {
         payment: u32,
     },
     // TODO Delete any of these that are still unused when parsing is up to date
-    TakeTheMound {
-        to_mound_team: S,
-        to_lineup_team: S,
-    },
 
     FallingStarOutcome {
         team_name: S,

@@ -72,7 +72,7 @@ fn augment(event: &FeedEvent) -> impl TeamFeedEventParser {
         enchantment_compensatory(),
         multiple_attribute_equal(event),
         recompose(event),
-        // take_the_mound(),
+        take_the_mound(),
         take_the_plate(),
         swap_places(),
         purified(),
