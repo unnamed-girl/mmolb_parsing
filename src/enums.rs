@@ -1310,6 +1310,7 @@ pub enum ItemPrefix {
     Lightspeed,
     Altruistic,
     Unbowing,
+    Resolute,
 }
 
 #[derive(EnumString, IntoStaticStr, Display, Debug, SerializeDisplay, DeserializeFromStr, Clone, Copy, EnumIter, PartialEq, Eq, Hash)]
@@ -1578,6 +1579,8 @@ pub enum ModificationType {
     Mer,
     Clean,
     Cowardly,
+    Logical,
+    Creative,
 
     #[strum(default)]
     #[serde(untagged)]
