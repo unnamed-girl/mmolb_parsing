@@ -31,7 +31,6 @@ fn augment<'output>(event: &'output FeedEvent) -> impl FeedEventParser<'output> 
         modification(),
         take_the_mound(),
         take_the_plate(),
-        multiple_attribute_equal(event),
         single_attribute_equal(event),
         swap_places(),
         recompose(event)
@@ -128,50 +127,7 @@ fn single_attribute_equal<'output>(event: &'output FeedEvent) -> impl FeedEventP
     }
 }
 
-fn multiple_attribute_equal<'output>(event: &'output FeedEvent) -> impl FeedEventParser<'output> {
-    |input| if event.after(Breakpoints::Season3) {
-        (
-            delimited(tag("Batters' "), try_from_word, tag(" was set to their ")),
-            terminated(try_from_word, tag(". Lineup:")),
-            separated_list1(
-                tag(","),
-                (
-                    delimited(tag(" "), u8, tag(". ")),
-                    terminated(try_from_word, tag(" ")),
-                    take_while(|c| c != ',').and_then(name_eof)
-                ).map(|(_, slot, name)| (Some(slot), name))
-            )
-        ).map(|(changing_attribute, value_attribute, players)| ParsedFeedEventText::MassAttributeEquals { players, changing_attribute, value_attribute })
-        .parse(input)
-    } else {
-        let f = |input| {
-            if event.after(Breakpoints::S1AttributeEqualChange) {
-                (
-                    parse_terminated("'s "),
-                    try_from_word,
-                    delimited(tag(" became equal to their current base "), try_from_word, tag("."))
-                ).parse(input)
-            } else {
-                (
-                    parse_terminated("'s "),
-                    try_from_word,
-                    delimited(tag(" became equal to their base "), try_from_word, tag("."))
-                ).parse(input)
-            }
-        };
 
-        verify(
-            separated_list1(tag(" "), f).map(|players| {
-                let (_, changing_attribute, value_attribute) = players.first().expect("separated_list1 is never empty");
-                (*changing_attribute, *value_attribute, players)
-            }),
-            |(changing_attribute, value_attribute, players)| players.iter().all(|(_, changing, value)| changing == changing_attribute && value == value_attribute)
-        ).map(|(changing_attribute, value_attribute, players)| {
-            ParsedFeedEventText::MassAttributeEquals { players: players.into_iter().map(|(player, _, _)| (None, player)).collect(), changing_attribute, value_attribute }
-        })
-        .parse(input)
-    }
-}
 
 fn enchantment_s1a<'output>() -> impl FeedEventParser<'output> {
     (

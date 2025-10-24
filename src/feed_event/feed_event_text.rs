@@ -48,11 +48,6 @@ pub enum ParsedFeedEventText<S> {
         changing_attribute: Attribute,
         value_attribute: Attribute,
     },
-    MassAttributeEquals {
-        players: Vec<(Option<Slot>, S)>,
-        changing_attribute: Attribute,
-        value_attribute: Attribute,
-    },
     S1Enchantment {
         player_name: S,
         item: EmojilessItem,
@@ -140,31 +135,6 @@ impl<S: Display> ParsedFeedEventText<S> {
                             format!("{}'s {} became equal to their base {}.", player_name, changing_attribute, value_attribute)
                         }
                     },
-            ParsedFeedEventText::MassAttributeEquals { players, changing_attribute, value_attribute } => {
-                        if Breakpoints::Season3.after(event.season as u32, event.day.as_ref().copied().ok(), None) {
-                            let intro = format!("Batters' {changing_attribute} was set to their {value_attribute}. Lineup:");
-                            let lineup = players.into_iter()
-                                .enumerate()
-                                .map(|(i, (slot, p))| format!(" {}. {} {p}", i+1, slot.as_ref().map(Slot::to_string).unwrap_or_default()))
-                                .collect::<Vec<_>>()
-                                .join(",");
-                            format!("{intro}{lineup}")
-                        } else {
-                            let f = |player_name: &S, changing_attribute: &Attribute, value_attribute: &Attribute,| {
-                                if Breakpoints::S1AttributeEqualChange.after(event.season as u32, event.day.as_ref().copied().ok(), None) {
-                                    format!("{}'s {} became equal to their current base {}.", player_name, changing_attribute, value_attribute)
-                                } else if FeedEventSource::Player == source {
-                                    format!("{}'s {} was set to their {}.", player_name, changing_attribute, value_attribute)
-                                } else {
-                                    format!("{}'s {} became equal to their base {}.", player_name, changing_attribute, value_attribute)
-                                }
-                            };
-                            players.into_iter()
-                                .map(|(_, p)| f(p, changing_attribute, value_attribute))
-                                .collect::<Vec<_>>()
-                                .join(" ")
-                        }
-                    }
             ParsedFeedEventText::S1Enchantment { player_name, item, amount, attribute } => {
                         if Breakpoints::Season1EnchantmentChange.before(event.season as u32, event.day.as_ref().copied().ok(), None) {
                             format!("{player_name}'s {item} was enchanted with +{amount} to {attribute}.")

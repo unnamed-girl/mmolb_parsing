@@ -2,12 +2,14 @@ use std::fmt::Display;
 
 use serde::{Deserialize, Serialize};
 use serde_with::serde_as;
+use itertools::Itertools;
 
 use crate::{enums::{Attribute, FeedEventType, ModificationType}, feed_event::{EmojilessItem, FeedDelivery, FeedEvent, FeedEventParseError, FeedFallingStarOutcome}, time::{Breakpoints, Timestamp}, utils::extra_fields_deserialize};
+use crate::enums::{FeedEventSource, Slot};
+use crate::feed_event::AttributeChange;
 pub use crate::nom_parsing::parse_team_feed_event::parse_team_feed_event;
 use crate::nom_parsing::shared::{FeedEventDoorPrize, FeedEventParty};
 use crate::parsed_event::{EmojiPlayer, EmojiTeam};
-use crate::player::Player;
 
 #[serde_as]
 #[derive(Serialize, Deserialize, Debug, Clone)]
@@ -61,21 +63,21 @@ pub enum ParsedTeamFeedEventText<S> {
         amount: u32,
         league_name: S,
     },
-    // TODO Delete any of these that are still unused when parsing is up to date
-    AttributeChanges {
+    Enchantment {
         team_name: S,
-        amount: i16,
+        item: EmojilessItem,
+        amount: u8,
         attribute: Attribute,
+        enchant_two: Option<(u8, Attribute)>,
+        compensatory: bool
     },
-    AttributeEquals {
-        team_name: S,
+    AttributeChanges {
+        changes: Vec<AttributeChange<S>>
+    },
+    MassAttributeEquals {
+        players: Vec<(Option<Slot>, S)>,
         changing_attribute: Attribute,
         value_attribute: Attribute,
-    },
-
-    TakeTheMound {
-        to_mound_team: S,
-        to_lineup_team: S,
     },
     TakeThePlate {
         to_plate_team: S,
@@ -85,23 +87,31 @@ pub enum ParsedTeamFeedEventText<S> {
         team_one: S,
         team_two: S,
     },
-
-    Enchantment {
+    Recomposed {
+        previous: S,
+        new: S
+    },
+    Modification {
         team_name: S,
-        item: EmojilessItem,
-        amount: u8,
-        attribute: Attribute,
-        enchant_two: Option<(u8, Attribute)>,
-        compensatory: bool
+        lost_modification: Option<ModificationType>,
+        modification: ModificationType
+    },
+    CorruptedByWither {
+        player_name: S,
+    },
+    Purified {
+        player_name: S,
+        payment: u32,
+    },
+    // TODO Delete any of these that are still unused when parsing is up to date
+    TakeTheMound {
+        to_mound_team: S,
+        to_lineup_team: S,
     },
 
     FallingStarOutcome {
         team_name: S,
         outcome: FeedFallingStarOutcome
-    },
-    Recomposed {
-        previous: S,
-        new: S
     },
     Released {
         team: S
@@ -109,11 +119,6 @@ pub enum ParsedTeamFeedEventText<S> {
     Retirement {
         previous: S,
         new: Option<S>
-    },
-    Modification {
-        team_name: S,
-        lost_modification: Option<ModificationType>,
-        modification: ModificationType
     },
 }
 
@@ -166,15 +171,34 @@ impl<S: Display> ParsedTeamFeedEventText<S> {
                     FeedFallingStarOutcome::DeflectedHarmlessly => format!("It deflected off {team_name} harmlessly.")
                 }
             }
-            ParsedTeamFeedEventText::AttributeChanges { team_name, amount, attribute } => format!("{team_name} gained +{amount} {attribute}."),
-            ParsedTeamFeedEventText::AttributeEquals { team_name, changing_attribute, value_attribute } => {
-                        if Breakpoints::Season3.after(event.season as u32, event.day.as_ref().copied().ok(), None) {
-                            format!("{}'s {} was set to their {}.", team_name, changing_attribute, value_attribute)
-                        } else if Breakpoints::S1AttributeEqualChange.after(event.season as u32, event.day.as_ref().copied().ok(), None) {
-                            format!("{}'s {} became equal to their current base {}.", team_name, changing_attribute, value_attribute)
+            ParsedTeamFeedEventText::AttributeChanges { changes } => {
+                changes
+                    .iter()
+                    .map(|change| format!("{} gained +{} {}.", change.player_name, change.amount, change.attribute))
+                    .join(" ")
+            },
+            ParsedTeamFeedEventText::MassAttributeEquals { players, changing_attribute, value_attribute } => {
+                if Breakpoints::Season3.after(event.season as u32, event.day.as_ref().copied().ok(), None) {
+                    let intro = format!("Batters' {changing_attribute} was set to their {value_attribute}. Lineup:");
+                    let lineup = players.into_iter()
+                        .enumerate()
+                        .map(|(i, (slot, p))| format!(" {}. {} {p}", i+1, slot.as_ref().map(Slot::to_string).unwrap_or_default()))
+                        .collect::<Vec<_>>()
+                        .join(",");
+                    format!("{intro}{lineup}")
+                } else {
+                    let f = |player_name: &S, changing_attribute: &Attribute, value_attribute: &Attribute,| {
+                        if Breakpoints::S1AttributeEqualChange.after(event.season as u32, event.day.as_ref().copied().ok(), None) {
+                            format!("{}'s {} became equal to their current base {}.", player_name, changing_attribute, value_attribute)
                         } else {
-                            format!("{}'s {} was set to their {}.", team_name, changing_attribute, value_attribute)
+                            format!("{}'s {} became equal to their base {}.", player_name, changing_attribute, value_attribute)
                         }
+                    };
+                    players.into_iter()
+                        .map(|(_, p)| f(p, changing_attribute, value_attribute))
+                        .collect::<Vec<_>>()
+                        .join(" ")
+                }
                     },
             ParsedTeamFeedEventText::Recomposed { previous, new } => {
                         if event.timestamp > Timestamp::Season3RecomposeChange.timestamp() {
@@ -222,6 +246,12 @@ impl<S: Display> ParsedTeamFeedEventText<S> {
                 let new = new.as_ref().map(|new| format!(" {new} was called up to take their place.")).unwrap_or_default();
                 let emoji = (matches!(event.event_type, Ok(FeedEventType::Game))).then_some("😇 ").unwrap_or_default();
                 format!("{emoji}{previous} retired from MMOLB!{new}")
+            }
+            ParsedTeamFeedEventText::CorruptedByWither { player_name } => {
+                format!("{player_name} was Corrupted by the 🥀 Wither.")
+            }
+            ParsedTeamFeedEventText::Purified { player_name, payment } => {
+                format!("{player_name} was Purified of 🫀 Corruption and earned {payment} 🪙.")
             }
         }
     }

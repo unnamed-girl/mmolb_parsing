@@ -1308,6 +1308,8 @@ pub enum ItemPrefix {
     Oracles,
     Skyborne,
     Lightspeed,
+    Altruistic,
+    Unbowing,
 }
 
 #[derive(EnumString, IntoStaticStr, Display, Debug, SerializeDisplay, DeserializeFromStr, Clone, Copy, EnumIter, PartialEq, Eq, Hash)]
@@ -1338,6 +1340,12 @@ pub enum ItemSuffix {
     Ballista,
     #[strum(to_string = "of the Sky")]
     Sky,
+    #[strum(to_string = "of Equilibrium")]
+    Equilibrium,
+    #[strum(to_string = "of Instinct")]
+    Instinct,
+    #[strum(to_string = "of Serendipity")]
+    Serendipity,
 }
 
 /// The various places a player in a game has been said to be.
@@ -1568,7 +1576,8 @@ pub enum ModificationType {
     Scooter,
     Calculated,
     Mer,
-    Clean,    
+    Clean,
+    Cowardly,
 
     #[strum(default)]
     #[serde(untagged)]

@@ -1,5 +1,9 @@
 use nom::{branch::alt, bytes::complete::tag, character::complete::{i16, u8, u32}, combinator::{cond, fail, opt}, error::context, sequence::{delimited, preceded, separated_pair, terminated}, Finish, Parser};
+use nom::bytes::complete::take_while;
+use nom::combinator::verify;
+use nom::multi::{many1, separated_list1};
 use crate::{enums::{CelestialEnergyTier, FeedEventType, ModificationType}, feed_event::{FeedEvent, FeedEventParseError, FeedFallingStarOutcome}, nom_parsing::shared::{emojiless_item, feed_delivery, name_eof, parse_terminated, sentence_eof, try_from_word}, team_feed::ParsedTeamFeedEventText, time::{Breakpoints, Timestamp}};
+use crate::feed_event::{AttributeChange, ParsedFeedEventText};
 use crate::parsed_event::EmojiPlayer;
 use super::shared::{emoji, emoji_team_eof, emoji_team_eof_maybe_no_space, feed_event_door_prize, feed_event_party, Error};
 
@@ -53,23 +57,25 @@ fn game(event: &FeedEvent) -> impl TeamFeedEventParser {
         feed_event_door_prize.map(|prize| ParsedTeamFeedEventText::DoorPrize { prize }),
         prosperous(),
         // retirement(true),
+        wither(),
         fail(),
     )))
 }
 
-fn augment<'output>(event: &'output FeedEvent) -> impl TeamFeedEventParser<'output> {
+fn augment(event: &FeedEvent) -> impl TeamFeedEventParser {
     context("Augment Feed Event", alt((
-        // attribute_gain(),
-        // modification(),
-        // enchantment_s1a(),
+        attribute_gain(),
+        modification(),
+        enchantment_s1a(),
         // enchantment_s1b(),
         // enchantment_s2(),
-        // enchantment_compensatory(),
-        // attribute_equal(event),
-        // recompose(event),
+        enchantment_compensatory(),
+        multiple_attribute_equal(event),
+        recompose(event),
         // take_the_mound(),
-        // take_the_plate(),
-        // swap_places(),
+        take_the_plate(),
+        swap_places(),
+        purified(),
         fail(),
     )))
 }
@@ -123,6 +129,24 @@ fn photo_contest_with_name<'output>() -> impl TeamFeedEventParser<'output> {
 
 fn prosperous<'output>() -> impl TeamFeedEventParser<'output> {
     |input| {
+        let (input, player_name) = parse_terminated(" was Corrupted by the 🥀 Wither.").parse(input)?;
+
+        Ok((input, ParsedTeamFeedEventText::CorruptedByWither { player_name }))
+    }
+}
+
+fn purified<'output>() -> impl TeamFeedEventParser<'output> {
+    |input| {
+        let (input, player_name) = parse_terminated(" was Purified of 🫀 Corruption and earned ").parse(input)?;
+        let (input, payment) = u32.parse(input)?;
+        let (input, _) = tag(" 🪙.").parse(input)?;
+
+        Ok((input, ParsedTeamFeedEventText::Purified { player_name, payment }))
+    }
+}
+
+fn wither<'output>() -> impl TeamFeedEventParser<'output> {
+    |input| {
         let (input, team_emoji_str) = parse_terminated(" are Prosperous! They ").parse(input)?;
         let (input, _) = alt((tag("earned "), tag("earn "))).parse(input)?;
         let (_, team) = emoji_team_eof.parse(team_emoji_str)?;
@@ -164,35 +188,57 @@ fn lottery_event<'output>() -> impl TeamFeedEventParser<'output> {
 }
 
 fn attribute_gain<'output>() -> impl TeamFeedEventParser<'output> {
-    (
-        preceded(opt(tag(" ")), parse_terminated(" gained +")),
-        i16,
-        delimited(tag(" "), try_from_word, tag("."))
-    ).map(|(team_name, amount, attribute)| ParsedTeamFeedEventText::AttributeChanges { team_name, amount, attribute })
+    many1(
+        (
+            preceded(opt(tag(" ")), parse_terminated(" gained +")),
+            i16,
+            delimited(tag(" "), try_from_word, tag("."))
+        ).map(|(player_name, amount, attribute)| AttributeChange { player_name, amount, attribute })
+    ).map(|changes| ParsedTeamFeedEventText::AttributeChanges { changes })
 }
 
-fn attribute_equal<'output>(event: &'output FeedEvent) -> impl TeamFeedEventParser<'output> {
+fn multiple_attribute_equal(event: &FeedEvent) -> impl TeamFeedEventParser {
     |input| if event.after(Breakpoints::Season3) {
         (
-            parse_terminated("'s "),
-            try_from_word,
-            delimited(tag(" was set to their "), try_from_word, tag("."))
-        ).map(|(team_name, changing_attribute, value_attribute)| ParsedTeamFeedEventText::AttributeEquals { team_name, changing_attribute, value_attribute })
-        .parse(input)
-    } else if event.after(Breakpoints::S1AttributeEqualChange) {
-        (
-            parse_terminated("'s "),
-            try_from_word,
-            delimited(tag(" became equal to their current base "), try_from_word, tag("."))
-        ).map(|(team_name, changing_attribute, value_attribute)| ParsedTeamFeedEventText::AttributeEquals { team_name, changing_attribute, value_attribute })
-        .parse(input)
+            delimited(tag("Batters' "), try_from_word, tag(" was set to their ")),
+            terminated(try_from_word, tag(". Lineup:")),
+            separated_list1(
+                tag(","),
+                (
+                    delimited(tag(" "), u8, tag(". ")),
+                    terminated(try_from_word, tag(" ")),
+                    take_while(|c| c != ',').and_then(name_eof)
+                ).map(|(_, slot, name)| (Some(slot), name))
+            )
+        ).map(|(changing_attribute, value_attribute, players)| ParsedTeamFeedEventText::MassAttributeEquals { players, changing_attribute, value_attribute })
+            .parse(input)
     } else {
-        (
-            parse_terminated("'s "),
-            try_from_word,
-            delimited(tag(" was set to their "), try_from_word, tag("."))
-        ).map(|(team_name, changing_attribute, value_attribute)| ParsedTeamFeedEventText::AttributeEquals { team_name, changing_attribute, value_attribute })
-        .parse(input)
+        let f = |input| {
+            if event.after(Breakpoints::S1AttributeEqualChange) {
+                (
+                    parse_terminated("'s "),
+                    try_from_word,
+                    delimited(tag(" became equal to their current base "), try_from_word, tag("."))
+                ).parse(input)
+            } else {
+                (
+                    parse_terminated("'s "),
+                    try_from_word,
+                    delimited(tag(" became equal to their base "), try_from_word, tag("."))
+                ).parse(input)
+            }
+        };
+
+        verify(
+            separated_list1(tag(" "), f).map(|players| {
+                let (_, changing_attribute, value_attribute) = players.first().expect("separated_list1 is never empty");
+                (*changing_attribute, *value_attribute, players)
+            }),
+            |(changing_attribute, value_attribute, players)| players.iter().all(|(_, changing, value)| changing == changing_attribute && value == value_attribute)
+        ).map(|(changing_attribute, value_attribute, players)| {
+            ParsedTeamFeedEventText::MassAttributeEquals { players: players.into_iter().map(|(player, _, _)| (None, player)).collect(), changing_attribute, value_attribute }
+        })
+            .parse(input)
     }
 }
 
