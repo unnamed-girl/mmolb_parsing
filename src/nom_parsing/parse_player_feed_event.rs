@@ -24,6 +24,7 @@ pub fn parse_player_feed_event<'output>(event: &'output FeedEvent) -> ParsedPlay
         FeedEventType::Season => season(event).parse(event.text.as_str()),
         // TODO More descriptive error message
         FeedEventType::Lottery => fail().parse(event.text.as_str()),
+        FeedEventType::Maintenance => fail().parse(event.text.as_str()),
     };
     match result.finish() {
         Ok(("", output)) => output,

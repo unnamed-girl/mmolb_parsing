@@ -27,6 +27,7 @@ pub fn parse_team_feed_event(event: &FeedEvent) -> ParsedTeamFeedEventText<&str>
         FeedEventType::Release => release(event).parse(&event.text),
         FeedEventType::Season => season(event).parse(event.text.as_str()),
         FeedEventType::Lottery => lottery().parse(event.text.as_str()),
+        FeedEventType::Maintenance => maintenance().parse(event.text.as_str()),
     };
     match result.finish() {
         Ok(("", output)) => output,
@@ -171,11 +172,12 @@ fn season<'output>(_event: &'output FeedEvent) -> impl TeamFeedEventParser<'outp
 
 fn lottery<'output>() -> impl TeamFeedEventParser<'output> {
     context("Lottery Feed Event", alt((
-        lottery_event(),
+        donated_to_lottery(),
+        won_lottery(),
     )))
 }
 
-fn lottery_event<'output>() -> impl TeamFeedEventParser<'output> {
+fn donated_to_lottery<'output>() -> impl TeamFeedEventParser<'output> {
     |input| {
         let (input, _) = tag("The ")(input)?;
         let (input, team_name) = parse_terminated(" donated ")(input)?;
@@ -185,6 +187,23 @@ fn lottery_event<'output>() -> impl TeamFeedEventParser<'output> {
 
         Ok((input, ParsedTeamFeedEventText::DonatedToLottery { team_name, amount, league_name }))
     }
+}
+
+fn won_lottery<'output>() -> impl TeamFeedEventParser<'output> {
+    |input| {
+        let (input, _) = tag("Won ")(input)?;
+        let (input, amount) = u32.parse(input)?;
+        let (input, _) = tag(" 🪙 from the ")(input)?;
+        let (input, league_name) = parse_terminated(" Lottery!")(input)?;
+
+        Ok((input, ParsedTeamFeedEventText::WonLottery { amount, league_name }))
+    }
+}
+
+fn maintenance<'output>() -> impl TeamFeedEventParser<'output> {
+    context("Maintenance Feed Event", alt((
+        tag("The team's name was reset in accordance with site policy.").map(|_| ParsedTeamFeedEventText::NameChanged),
+    )))
 }
 
 fn attribute_gain<'output>() -> impl TeamFeedEventParser<'output> {

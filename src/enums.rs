@@ -972,6 +972,7 @@ pub enum FeedEventType {
     Release,
     Season,
     Lottery,
+    Maintenance,
 }
 
 #[derive(Debug, Clone, Copy, Serialize, Deserialize, EnumString, IntoStaticStr, Display, PartialEq, Eq, Hash, EnumIter)]
@@ -1316,6 +1317,20 @@ pub enum ItemPrefix {
     Sirens,
     #[strum(to_string = "Iron-Willed")]
     IronWilled,
+    Lightning,
+    Wicked,
+    Pinpoint,
+    Covetous,
+    #[strum(to_string = "Deadeye's")]
+    Deadeyes,
+    Phantasmal,
+    Showstopping,
+    Fearsome,
+    Clairvoyant,
+    Meticulous,
+    #[strum(to_string = "Laser-Guided")]
+    LaserGuided,
+    Dauntless,
 }
 
 #[derive(EnumString, IntoStaticStr, Display, Debug, SerializeDisplay, DeserializeFromStr, Clone, Copy, EnumIter, PartialEq, Eq, Hash)]
@@ -1595,6 +1610,13 @@ pub enum ModificationType {
     #[serde(rename = "Strong Starter")]
     StrongStarter,
     Outsider,
+    Analytical,
+    #[strum(to_string = "Iron Will")]
+    #[serde(rename = "Iron Will")]
+    IronWill,
+    Lucky,
+    Prolific,
+    Insider,
 
     #[strum(default)]
     #[serde(untagged)]

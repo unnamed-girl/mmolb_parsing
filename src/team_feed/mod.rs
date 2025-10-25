@@ -63,6 +63,10 @@ pub enum ParsedTeamFeedEventText<S> {
         amount: u32,
         league_name: S,
     },
+    WonLottery {
+        amount: u32,
+        league_name: S,
+    },
     Enchantment {
         team_name: S,
         item: EmojilessItem,
@@ -107,6 +111,7 @@ pub enum ParsedTeamFeedEventText<S> {
         player_name: S,
         payment: u32,
     },
+    NameChanged,
     // TODO Delete any of these that are still unused when parsing is up to date
 
     FallingStarOutcome {
@@ -156,8 +161,9 @@ impl<S: Display> ParsedTeamFeedEventText<S> {
             ParsedTeamFeedEventText::DonatedToLottery { team_name, amount, league_name } => {
                 format!("The {team_name} donated {amount} 🪙 to the {league_name} Lottery.")
             }
-
-
+            ParsedTeamFeedEventText::WonLottery { amount, league_name } => {
+                format!("Won {amount} 🪙 from the {league_name} Lottery!")
+            }
             ParsedTeamFeedEventText::FallingStarOutcome { team_name, outcome } => {
                 match outcome {
                     FeedFallingStarOutcome::Injury => {
@@ -252,6 +258,9 @@ impl<S: Display> ParsedTeamFeedEventText<S> {
             }
             ParsedTeamFeedEventText::Purified { player_name, payment } => {
                 format!("{player_name} was Purified of 🫀 Corruption and earned {payment} 🪙.")
+            }
+            ParsedTeamFeedEventText::NameChanged => {
+                "The team's name was reset in accordance with site policy.".to_string()
             }
         }
     }
