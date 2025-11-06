@@ -1,11 +1,13 @@
+use clap::builder::TypedValueParser;
 use nom::{branch::alt, bytes::complete::tag, character::complete::{i16, u8, u32}, combinator::{cond, fail, opt}, error::context, sequence::{delimited, preceded, separated_pair, terminated}, Finish, Parser};
 use nom::bytes::complete::take_while;
-use nom::combinator::verify;
+use nom::combinator::{eof, verify};
 use nom::multi::{many1, separated_list1};
 use crate::{enums::{CelestialEnergyTier, FeedEventType, ModificationType}, feed_event::{FeedEvent, FeedEventParseError, FeedFallingStarOutcome}, nom_parsing::shared::{emojiless_item, feed_delivery, name_eof, parse_terminated, sentence_eof, try_from_word}, team_feed::ParsedTeamFeedEventText, time::{Breakpoints, Timestamp}};
-use crate::feed_event::{AttributeChange, ParsedFeedEventText};
+use crate::enums::BenchSlot;
+use crate::feed_event::{AttributeChange};
 use crate::parsed_event::EmojiPlayer;
-use super::shared::{emoji, emoji_team_eof, emoji_team_eof_maybe_no_space, feed_event_door_prize, feed_event_party, Error};
+use super::shared::{emoji, emoji_team_eof, emoji_team_eof_maybe_no_space, feed_event_door_prize, feed_event_party, Error, IResult};
 
 
 trait TeamFeedEventParser<'output>: Parser<&'output str, Output = ParsedTeamFeedEventText<&'output str>, Error = Error<'output>> {}
@@ -28,6 +30,7 @@ pub fn parse_team_feed_event(event: &FeedEvent) -> ParsedTeamFeedEventText<&str>
         FeedEventType::Season => season(event).parse(event.text.as_str()),
         FeedEventType::Lottery => lottery().parse(event.text.as_str()),
         FeedEventType::Maintenance => maintenance().parse(event.text.as_str()),
+        FeedEventType::Roster => roster().parse(event.text.as_str()),
     };
     match result.finish() {
         Ok(("", output)) => output,
@@ -77,6 +80,7 @@ fn augment(event: &FeedEvent) -> impl TeamFeedEventParser {
         take_the_plate(),
         swap_places(),
         purified(),
+        player_positions_swapped(),
         fail(),
     )))
 }
@@ -204,6 +208,68 @@ fn maintenance<'output>() -> impl TeamFeedEventParser<'output> {
     context("Maintenance Feed Event", alt((
         tag("The team's name was reset in accordance with site policy.").map(|_| ParsedTeamFeedEventText::NameChanged),
     )))
+}
+
+fn roster<'output>() -> impl TeamFeedEventParser<'output> {
+    context("Maintenance Feed Event", alt((
+        player_moved(),
+        player_relegated(),
+    )))
+}
+
+fn player_moved<'output>() -> impl TeamFeedEventParser<'output> {
+    |input| {
+        // This might be team emoji, not sure
+        let (input, _) = tag("🐵 ").parse(input)?;
+        let (input, player_name) = parse_terminated(" was moved to the Bench.").parse(input)?;
+
+        Ok((input, ParsedTeamFeedEventText::PlayerMoved { player_name }))
+    }
+}
+
+fn player_relegated<'output>() -> impl TeamFeedEventParser<'output> {
+    |input| {
+        // This might be team emoji, not sure
+        let (input, _) = tag("🧳 ").parse(input)?;
+        let (input, player_name) = parse_terminated(" was relegated to the Even Lesser League.").parse(input)?;
+
+        Ok((input, ParsedTeamFeedEventText::PlayerRelegated { player_name }))
+    }
+}
+
+fn player_positions_swapped<'output>() -> impl TeamFeedEventParser<'output> {
+    |input| {
+        // I am not willing to bet on " and " being a reliable name separator, and we can
+        // parse names reliably later in the message. So we're going to parse the combination
+        // of names as a single unit here and then verify it after.
+        let (input, anded_names) = parse_terminated(" swapped positions: ").parse(input)?;
+        let (input, benched_player_name) = parse_terminated(" moved to ").parse(input)?;
+        let (input, bench_slot) = bench_slot.parse(input)?;
+        let (input, _) = tag(", ").parse(input)?;
+        let (input, promoted_player_name) = parse_terminated(" moved to ").parse(input)?;
+        let (input, roster_slot) = try_from_word.parse(input)?;
+        let (input, _) = tag(".").parse(input)?;
+
+        // Verify that anded_names matches what's expected
+        let (anded_names, _) = tag(benched_player_name).parse(anded_names)?;
+        let (anded_names, _) = tag(" and ").parse(anded_names)?;
+        let (anded_names, _) = tag(promoted_player_name).parse(anded_names)?;
+        let (_, _) = eof.parse(anded_names)?;
+
+        Ok((input, ParsedTeamFeedEventText::PlayerPositionsSwapped {
+            benched_player_name,
+            bench_slot,
+            promoted_player_name,
+            roster_slot,
+        }))
+    }
+}
+
+fn bench_slot(input: &str) -> IResult<&str, BenchSlot> {
+    alt((
+        preceded(tag("Bench Batter "), u8).map(|num| BenchSlot::Batter(num)),
+        preceded(tag("Bench Pitcher "), u8).map(|num| BenchSlot::Pitcher(num)),
+    )).parse(input)
 }
 
 fn attribute_gain<'output>() -> impl TeamFeedEventParser<'output> {

@@ -5,7 +5,7 @@ use serde_with::serde_as;
 use itertools::Itertools;
 
 use crate::{enums::{Attribute, FeedEventType, ModificationType}, feed_event::{EmojilessItem, FeedDelivery, FeedEvent, FeedEventParseError, FeedFallingStarOutcome}, time::{Breakpoints, Timestamp}, utils::extra_fields_deserialize};
-use crate::enums::{FeedEventSource, Slot};
+use crate::enums::{BenchSlot, FeedEventSource, Slot};
 use crate::feed_event::AttributeChange;
 pub use crate::nom_parsing::parse_team_feed_event::parse_team_feed_event;
 use crate::nom_parsing::shared::{FeedEventDoorPrize, FeedEventParty};
@@ -112,6 +112,19 @@ pub enum ParsedTeamFeedEventText<S> {
         payment: u32,
     },
     NameChanged,
+    PlayerMoved {
+        player_name: S,
+        // This may get a "location" field soon
+    },
+    PlayerRelegated {
+        player_name: S,
+    },
+    PlayerPositionsSwapped {
+        benched_player_name: S,
+        bench_slot: BenchSlot,
+        promoted_player_name: S,
+        roster_slot: Slot,
+    },
     // TODO Delete any of these that are still unused when parsing is up to date
 
     FallingStarOutcome {
@@ -261,7 +274,20 @@ impl<S: Display> ParsedTeamFeedEventText<S> {
             }
             ParsedTeamFeedEventText::NameChanged => {
                 "The team's name was reset in accordance with site policy.".to_string()
-            }
+            },
+            ParsedTeamFeedEventText::PlayerMoved { player_name } => {
+                format!("🐵 {player_name} was moved to the Bench.")
+            },
+            ParsedTeamFeedEventText::PlayerRelegated { player_name } => {
+                format!("🧳 {player_name} was relegated to the Even Lesser League.")
+            },
+            ParsedTeamFeedEventText::PlayerPositionsSwapped { benched_player_name, bench_slot, promoted_player_name, roster_slot } => {
+                format!(
+                    "{benched_player_name} and {promoted_player_name} swapped positions: \
+                    {benched_player_name} moved to {bench_slot}, {promoted_player_name} moved to \
+                    {roster_slot}."
+                )
+            },
         }
     }
 }

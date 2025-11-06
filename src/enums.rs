@@ -973,6 +973,7 @@ pub enum FeedEventType {
     Season,
     Lottery,
     Maintenance,
+    Roster,
 }
 
 #[derive(Debug, Clone, Copy, Serialize, Deserialize, EnumString, IntoStaticStr, Display, PartialEq, Eq, Hash, EnumIter)]
@@ -1212,6 +1213,38 @@ impl FromStr for Slot {
     }
 }
 
+#[derive(Debug, Clone, Copy, EnumIter, PartialEq, Eq, Hash, EnumDiscriminants, SerializeDisplay, DeserializeFromStr)]
+pub enum BenchSlot {
+    Batter(u8),
+    Pitcher(u8),
+}
+
+impl Display for BenchSlot {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        match self {
+            BenchSlot::Batter(num) => write!(f, "Bench Batter {}", num),
+            BenchSlot::Pitcher(num) => write!(f, "Bench Pitcher {}", num),
+        }
+    }
+}
+
+impl FromStr for BenchSlot {
+    type Err = &'static str;
+
+    fn from_str(s: &str) -> Result<Self, Self::Err> {
+        alt((
+            preceded(tag("Bench Batter "), u8::<&str, nom::error::Error<&str>>)
+                .map(|i| BenchSlot::Batter(i)),
+            preceded(tag("Bench Pitcher "), u8::<&str, nom::error::Error<&str>>)
+                .map(|i| BenchSlot::Pitcher(i)),
+        ))
+            .parse(s)
+            .map(|(_, o)| o)
+            .map_err(|_| "Player's bench slot didn't match known bench slots")
+    }
+}
+
+
 #[derive(EnumString, IntoStaticStr, Display, Debug, SerializeDisplay, DeserializeFromStr, Clone, Copy, EnumIter, PartialEq, Eq, Hash)]
 pub enum Attribute {
     Priority,
@@ -1331,6 +1364,9 @@ pub enum ItemPrefix {
     #[strum(to_string = "Laser-Guided")]
     LaserGuided,
     Dauntless,
+    Tireless,
+    #[strum(to_string = "Sage's")]
+    Sages,
 }
 
 #[derive(EnumString, IntoStaticStr, Display, Debug, SerializeDisplay, DeserializeFromStr, Clone, Copy, EnumIter, PartialEq, Eq, Hash)]
@@ -1369,6 +1405,8 @@ pub enum ItemSuffix {
     Serendipity,
     #[strum(to_string = "of the Gale")]
     Gale,
+    #[strum(to_string = "of the Watcher")]
+    Watcher,
 }
 
 /// The various places a player in a game has been said to be.
@@ -1617,6 +1655,8 @@ pub enum ModificationType {
     Lucky,
     Prolific,
     Insider,
+    Criminal,
+    Clutch,
 
     #[strum(default)]
     #[serde(untagged)]
