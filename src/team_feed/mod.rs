@@ -5,7 +5,7 @@ use serde_with::serde_as;
 use itertools::Itertools;
 
 use crate::{enums::{Attribute, FeedEventType, ModificationType}, feed_event::{EmojilessItem, FeedDelivery, FeedEvent, FeedEventParseError, FeedFallingStarOutcome}, time::{Breakpoints, Timestamp}, utils::extra_fields_deserialize};
-use crate::enums::{BenchSlot, FeedEventSource, Slot};
+use crate::enums::{BenchSlot, FeedEventSource, FullSlot, Slot};
 use crate::feed_event::AttributeChange;
 pub use crate::nom_parsing::parse_team_feed_event::parse_team_feed_event;
 use crate::nom_parsing::shared::{FeedEventDoorPrize, FeedEventParty};
@@ -120,10 +120,14 @@ pub enum ParsedTeamFeedEventText<S> {
         player_name: S,
     },
     PlayerPositionsSwapped {
-        benched_player_name: S,
-        bench_slot: BenchSlot,
-        promoted_player_name: S,
-        roster_slot: Slot,
+        first_player_name: S,
+        first_player_new_slot: FullSlot,
+        second_player_name: S,
+        second_player_new_slot: FullSlot,
+    },
+    PlayerContained {
+        contained_player_name: S,
+        container_player_name: S,
     },
     // TODO Delete any of these that are still unused when parsing is up to date
 
@@ -281,13 +285,19 @@ impl<S: Display> ParsedTeamFeedEventText<S> {
             ParsedTeamFeedEventText::PlayerRelegated { player_name } => {
                 format!("🧳 {player_name} was relegated to the Even Lesser League.")
             },
-            ParsedTeamFeedEventText::PlayerPositionsSwapped { benched_player_name, bench_slot, promoted_player_name, roster_slot } => {
+            ParsedTeamFeedEventText::PlayerPositionsSwapped { first_player_name, first_player_new_slot, second_player_name, second_player_new_slot } => {
                 format!(
-                    "{benched_player_name} and {promoted_player_name} swapped positions: \
-                    {benched_player_name} moved to {bench_slot}, {promoted_player_name} moved to \
-                    {roster_slot}."
+                    "{first_player_name} and {second_player_name} swapped positions: \
+                    {first_player_name} moved to {first_player_new_slot}, \
+                    {second_player_name} moved to {second_player_new_slot}."
                 )
             },
+            ParsedTeamFeedEventText::PlayerContained { contained_player_name, container_player_name } => {
+                format!(
+                    "{contained_player_name} was contained by {container_player_name} during the \
+                    🥀 Wither.",
+                )
+            }
         }
     }
 }

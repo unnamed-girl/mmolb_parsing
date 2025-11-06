@@ -1,5 +1,4 @@
 use std::{convert::Infallible, fmt::{Debug, Display}, str::FromStr};
-
 use nom::{branch::alt, bytes::complete::tag, character::complete::u8, combinator::{all_consuming, opt}, sequence::{preceded, separated_pair, terminated}, Parser};
 use serde::{Deserialize, Deserializer, Serialize, Serializer, de::Error};
 use strum::{Display, EnumDiscriminants, EnumIter, EnumString, IntoDiscriminant, IntoStaticStr};
@@ -1244,6 +1243,23 @@ impl FromStr for BenchSlot {
     }
 }
 
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, EnumDiscriminants, SerializeDisplay, Deserialize)]
+#[serde(untagged)]
+pub enum FullSlot {
+    Bench(BenchSlot),
+    Active(Slot),
+}
+
+// Default Display is just the discriminant names; I'm not sure if there's a shorter
+// way to say "completely delegate Display"
+impl Display for FullSlot {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        match self {
+            FullSlot::Bench(slot) => write!(f, "{}", slot),
+            FullSlot::Active(slot) => write!(f, "{}", slot),
+        }
+    }
+}
 
 #[derive(EnumString, IntoStaticStr, Display, Debug, SerializeDisplay, DeserializeFromStr, Clone, Copy, EnumIter, PartialEq, Eq, Hash)]
 pub enum Attribute {

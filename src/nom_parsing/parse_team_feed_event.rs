@@ -4,7 +4,7 @@ use nom::bytes::complete::take_while;
 use nom::combinator::{eof, verify};
 use nom::multi::{many1, separated_list1};
 use crate::{enums::{CelestialEnergyTier, FeedEventType, ModificationType}, feed_event::{FeedEvent, FeedEventParseError, FeedFallingStarOutcome}, nom_parsing::shared::{emojiless_item, feed_delivery, name_eof, parse_terminated, sentence_eof, try_from_word}, team_feed::ParsedTeamFeedEventText, time::{Breakpoints, Timestamp}};
-use crate::enums::BenchSlot;
+use crate::enums::{BenchSlot, FullSlot, Slot};
 use crate::feed_event::{AttributeChange};
 use crate::parsed_event::EmojiPlayer;
 use super::shared::{emoji, emoji_team_eof, emoji_team_eof_maybe_no_space, feed_event_door_prize, feed_event_party, Error, IResult};
@@ -62,6 +62,7 @@ fn game(event: &FeedEvent) -> impl TeamFeedEventParser {
         prosperous(),
         retirement(true),
         wither(),
+        contained(),
         fail(),
     )))
 }
@@ -132,7 +133,7 @@ fn photo_contest_with_name<'output>() -> impl TeamFeedEventParser<'output> {
     }
 }
 
-fn prosperous<'output>() -> impl TeamFeedEventParser<'output> {
+fn wither<'output>() -> impl TeamFeedEventParser<'output> {
     |input| {
         let (input, player_name) = parse_terminated(" was Corrupted by the 🥀 Wither.").parse(input)?;
 
@@ -150,7 +151,7 @@ fn purified<'output>() -> impl TeamFeedEventParser<'output> {
     }
 }
 
-fn wither<'output>() -> impl TeamFeedEventParser<'output> {
+fn prosperous<'output>() -> impl TeamFeedEventParser<'output> {
     |input| {
         let (input, team_emoji_str) = parse_terminated(" are Prosperous! They ").parse(input)?;
         let (input, _) = alt((tag("earned "), tag("earn "))).parse(input)?;
@@ -159,6 +160,15 @@ fn wither<'output>() -> impl TeamFeedEventParser<'output> {
         let (input, _) = tag(" 🪙.").parse(input)?;
 
         Ok((input, ParsedTeamFeedEventText::Prosperous { team, income }))
+    }
+}
+
+fn contained<'output>() -> impl TeamFeedEventParser<'output> {
+    |input| {
+        let (input, contained_player_name) = parse_terminated(" was contained by ").parse(input)?;
+        let (input, container_player_name) = parse_terminated(" during the 🥀 Wither.").parse(input)?;
+
+        Ok((input, ParsedTeamFeedEventText::PlayerContained { contained_player_name, container_player_name }))
     }
 }
 
@@ -243,24 +253,24 @@ fn player_positions_swapped<'output>() -> impl TeamFeedEventParser<'output> {
         // parse names reliably later in the message. So we're going to parse the combination
         // of names as a single unit here and then verify it after.
         let (input, anded_names) = parse_terminated(" swapped positions: ").parse(input)?;
-        let (input, benched_player_name) = parse_terminated(" moved to ").parse(input)?;
-        let (input, bench_slot) = bench_slot.parse(input)?;
+        let (input, first_player_name) = parse_terminated(" moved to ").parse(input)?;
+        let (input, first_player_new_slot) = full_slot.parse(input)?;
         let (input, _) = tag(", ").parse(input)?;
-        let (input, promoted_player_name) = parse_terminated(" moved to ").parse(input)?;
-        let (input, roster_slot) = try_from_word.parse(input)?;
+        let (input, second_player_name) = parse_terminated(" moved to ").parse(input)?;
+        let (input, second_player_new_slot) = full_slot.parse(input)?;
         let (input, _) = tag(".").parse(input)?;
 
         // Verify that anded_names matches what's expected
-        let (anded_names, _) = tag(benched_player_name).parse(anded_names)?;
+        let (anded_names, _) = tag(first_player_name).parse(anded_names)?;
         let (anded_names, _) = tag(" and ").parse(anded_names)?;
-        let (anded_names, _) = tag(promoted_player_name).parse(anded_names)?;
+        let (anded_names, _) = tag(second_player_name).parse(anded_names)?;
         let (_, _) = eof.parse(anded_names)?;
 
         Ok((input, ParsedTeamFeedEventText::PlayerPositionsSwapped {
-            benched_player_name,
-            bench_slot,
-            promoted_player_name,
-            roster_slot,
+            first_player_name,
+            first_player_new_slot,
+            second_player_name,
+            second_player_new_slot,
         }))
     }
 }
@@ -269,6 +279,32 @@ fn bench_slot(input: &str) -> IResult<&str, BenchSlot> {
     alt((
         preceded(tag("Bench Batter "), u8).map(|num| BenchSlot::Batter(num)),
         preceded(tag("Bench Pitcher "), u8).map(|num| BenchSlot::Pitcher(num)),
+    )).parse(input)
+}
+
+
+// TODO Dedup this
+fn active_slot(input: &str) -> IResult<&str, Slot> {
+    alt((
+        tag("C").map(|_| Slot::Catcher),
+        tag("1B").map(|_| Slot::FirstBaseman),
+        tag("2B").map(|_| Slot::SecondBaseman),
+        tag("3B").map(|_| Slot::ThirdBaseman),
+        tag("LF").map(|_| Slot::LeftField),
+        tag("CF").map(|_| Slot::CenterField),
+        tag("RF").map(|_| Slot::RightField),
+        tag("SS").map(|_| Slot::ShortStop),
+        tag("DH").map(|_| Slot::DesignatedHitter),
+        preceded(tag("SP"), u8).map(|i| Slot::StartingPitcher(i)),
+        preceded(tag("RP"), u8).map(|i| Slot::ReliefPitcher(i)),
+        tag("CL").map(|_| Slot::Closer),
+    )).parse(input)
+}
+
+fn full_slot(input: &str) -> IResult<&str, FullSlot> {
+    alt((
+        bench_slot.map(|s| FullSlot::Bench(s)),
+        active_slot.map(|s| FullSlot::Active(s)),
     )).parse(input)
 }
 
