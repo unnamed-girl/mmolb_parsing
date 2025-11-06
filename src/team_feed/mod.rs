@@ -6,7 +6,7 @@ use serde_with::serde_as;
 use itertools::Itertools;
 
 use crate::{enums::{Attribute, FeedEventType, ModificationType}, feed_event::{EmojilessItem, FeedDelivery, FeedEvent, FeedEventParseError, FeedFallingStarOutcome}, time::{Breakpoints, Timestamp}, utils::extra_fields_deserialize};
-use crate::enums::{BenchSlot, FeedEventSource, FullSlot, Slot};
+use crate::enums::{FullSlot, Slot};
 use crate::feed_event::{AttributeChange, GrowAttributeChange, BenchImmuneModGranted};
 pub use crate::nom_parsing::parse_team_feed_event::parse_team_feed_event;
 use crate::nom_parsing::shared::{FeedEventDoorPrize, FeedEventParty};
