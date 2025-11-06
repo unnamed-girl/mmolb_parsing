@@ -1,3 +1,4 @@
+use std::fmt::Write;
 use std::fmt::Display;
 
 use serde::{Deserialize, Serialize};
@@ -6,7 +7,7 @@ use itertools::Itertools;
 
 use crate::{enums::{Attribute, FeedEventType, ModificationType}, feed_event::{EmojilessItem, FeedDelivery, FeedEvent, FeedEventParseError, FeedFallingStarOutcome}, time::{Breakpoints, Timestamp}, utils::extra_fields_deserialize};
 use crate::enums::{BenchSlot, FeedEventSource, FullSlot, Slot};
-use crate::feed_event::AttributeChange;
+use crate::feed_event::{AttributeChange, GrowAttributeChange, BenchImmuneModGranted};
 pub use crate::nom_parsing::parse_team_feed_event::parse_team_feed_event;
 use crate::nom_parsing::shared::{FeedEventDoorPrize, FeedEventParty};
 use crate::parsed_event::{EmojiPlayer, EmojiTeam};
@@ -128,6 +129,11 @@ pub enum ParsedTeamFeedEventText<S> {
     PlayerContained {
         contained_player_name: S,
         container_player_name: S,
+    },
+    PlayerGrown {
+        player_name: S,
+        attribute_changes: [GrowAttributeChange; 3],
+        immovable_granted: BenchImmuneModGranted,
     },
     // TODO Delete any of these that are still unused when parsing is up to date
 
@@ -297,7 +303,20 @@ impl<S: Display> ParsedTeamFeedEventText<S> {
                     "{contained_player_name} was contained by {container_player_name} during the \
                     🥀 Wither.",
                 )
-            }
+            },
+            ParsedTeamFeedEventText::PlayerGrown { player_name, attribute_changes, immovable_granted } => {
+                let mut s = format!("{player_name}'s Corruption grew: ");
+                for change in attribute_changes {
+                    write!(s, "{:+.1} {}, ", change.amount, change.attribute).unwrap();
+                }
+                s.truncate(s.len() - 2);  // Take off the last comma-space
+                match immovable_granted {
+                    BenchImmuneModGranted::No => write!(s, "."),
+                    BenchImmuneModGranted::Yes => todo!(),
+                    BenchImmuneModGranted::BenchPlayerImmune => write!(s, ". {player_name} could not gain Immovable while on the Bench.")
+                }.unwrap();
+                s
+            },
         }
     }
 }

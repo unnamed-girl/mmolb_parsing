@@ -3,9 +3,11 @@ use nom::{branch::alt, bytes::complete::tag, character::complete::{i16, u8, u32}
 use nom::bytes::complete::take_while;
 use nom::combinator::{eof, verify};
 use nom::multi::{many1, separated_list1};
+use nom::number::double;
+use nom::sequence::pair;
 use crate::{enums::{CelestialEnergyTier, FeedEventType, ModificationType}, feed_event::{FeedEvent, FeedEventParseError, FeedFallingStarOutcome}, nom_parsing::shared::{emojiless_item, feed_delivery, name_eof, parse_terminated, sentence_eof, try_from_word}, team_feed::ParsedTeamFeedEventText, time::{Breakpoints, Timestamp}};
 use crate::enums::{BenchSlot, FullSlot, Slot};
-use crate::feed_event::{AttributeChange};
+use crate::feed_event::{AttributeChange, BenchImmuneModGranted, GrowAttributeChange};
 use crate::parsed_event::EmojiPlayer;
 use super::shared::{emoji, emoji_team_eof, emoji_team_eof_maybe_no_space, feed_event_door_prize, feed_event_party, Error, IResult};
 
@@ -82,6 +84,7 @@ fn augment(event: &FeedEvent) -> impl TeamFeedEventParser {
         swap_places(),
         purified(),
         player_positions_swapped(),
+        grow(),
         fail(),
     )))
 }
@@ -271,6 +274,43 @@ fn player_positions_swapped<'output>() -> impl TeamFeedEventParser<'output> {
             first_player_new_slot,
             second_player_name,
             second_player_new_slot,
+        }))
+    }
+}
+
+fn grow_attribute_change(input: &str) -> IResult<&str, GrowAttributeChange> {
+    let (input, amount) = double().parse(input)?;
+    let (input, _) = tag(" ")(input)?;
+    let (input, attribute) = try_from_word.parse(input)?;
+
+    Ok((input, GrowAttributeChange {
+        attribute,
+        amount,
+    }))
+}
+
+fn grow<'output>() -> impl TeamFeedEventParser<'output> {
+    |input| {
+        let (input, player_name) = parse_terminated("'s Corruption grew: ").parse(input)?;
+
+        // Decided to do this manually vs. with combinators because it's only 3 entries
+        let (input, change_1) = grow_attribute_change.parse(input)?;
+        let (input, _) = tag(", ")(input)?;
+        let (input, change_2) = grow_attribute_change.parse(input)?;
+        let (input, _) = tag(", ")(input)?;
+        let (input, change_3) = grow_attribute_change.parse(input)?;
+
+        let (input, immovable_granted) = alt((
+            (tag(". "), tag(player_name), tag(" could not gain Immovable while on the Bench."))
+                .map(|_| BenchImmuneModGranted::BenchPlayerImmune),
+            // TODO Add "Yes" case
+            tag(".").map(|_| BenchImmuneModGranted::No)
+        )).parse(input)?;
+
+        Ok((input, ParsedTeamFeedEventText::PlayerGrown {
+            player_name,
+            attribute_changes: [change_1, change_2, change_3],
+            immovable_granted,
         }))
     }
 }

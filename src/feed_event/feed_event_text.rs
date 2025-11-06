@@ -200,6 +200,20 @@ pub struct AttributeChange<S> {
 }
 
 #[derive(Clone, Debug, Serialize, Deserialize, PartialEq)]
+pub struct GrowAttributeChange {
+    pub attribute: Attribute,
+    pub amount: f64,
+}
+
+// TODO Is this the right file for this?
+#[derive(Clone, Debug, Serialize, Deserialize, PartialEq)]
+pub enum BenchImmuneModGranted {
+    No,
+    Yes,
+    BenchPlayerImmune,
+}
+
+#[derive(Clone, Debug, Serialize, Deserialize, PartialEq)]
 pub struct FeedDelivery<S> {
     pub player: S,
     pub item: Item<S>,
