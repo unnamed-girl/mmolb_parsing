@@ -1695,11 +1695,8 @@ impl ModificationType {
 
 #[derive(Debug, Serialize, Deserialize, Clone, Copy, EnumIter, PartialEq, Eq, Hash, EnumString, IntoStaticStr, Display)]
 pub enum CelestialEnergyTier {
-    #[strum(to_string = "began to glow brightly with celestial energy!")]
     BeganToGlow,
-    #[strum(to_string = "was infused with a glimmer of celestial energy!")]
     Infused,
-    #[strum(to_string = "was fully charged with an abundance of celestial energy!")]
     FullyCharged,
 }
 

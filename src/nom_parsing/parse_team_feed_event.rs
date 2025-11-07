@@ -491,6 +491,7 @@ fn infused_by_falling_star<'output>() -> impl TeamFeedEventParser<'output> {
     alt((
         parse_terminated(" began to glow brightly with celestial energy!").and_then(name_eof).map(|team| (team, CelestialEnergyTier::BeganToGlow)),
         parse_terminated(" was infused with a glimmer of celestial energy!").and_then(name_eof).map(|team| (team, CelestialEnergyTier::Infused)),
+        parse_terminated(" is infused with a glimmer of celestial energy!").and_then(name_eof).map(|team| (team, CelestialEnergyTier::Infused)),
         parse_terminated(" was fully charged with an abundance of celestial energy!").and_then(name_eof).map(|team| (team, CelestialEnergyTier::FullyCharged))
     ))
     .map(|(team_name, infusion_tier)| ParsedTeamFeedEventText::FallingStarOutcome { team_name, outcome: FeedFallingStarOutcome::Infusion(infusion_tier) })

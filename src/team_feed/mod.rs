@@ -6,7 +6,7 @@ use serde_with::serde_as;
 use itertools::Itertools;
 
 use crate::{enums::{Attribute, FeedEventType, ModificationType}, feed_event::{EmojilessItem, FeedDelivery, FeedEvent, FeedEventParseError, FeedFallingStarOutcome}, time::{Breakpoints, Timestamp}, utils::extra_fields_deserialize};
-use crate::enums::{FullSlot, Slot};
+use crate::enums::{CelestialEnergyTier, FullSlot, Slot};
 use crate::feed_event::{AttributeChange, GrowAttributeChange, BenchImmuneModGranted};
 pub use crate::nom_parsing::parse_team_feed_event::parse_team_feed_event;
 use crate::nom_parsing::shared::{FeedEventDoorPrize, FeedEventParty};
@@ -203,17 +203,27 @@ impl<S: Display> ParsedTeamFeedEventText<S> {
                 format!("Won {amount} 🪙 from the {league_name} Lottery!")
             }
             ParsedTeamFeedEventText::FallingStarOutcome { team_name, outcome } => {
+                let was_is = if event.before(Breakpoints::Season5TenseChange) {
+                    "was"
+                } else {
+                    "is"
+                };
+                
                 match outcome {
                     FeedFallingStarOutcome::Injury => {
-                        if event.after(Breakpoints::Season5TenseChange) {
-                            format!("{team_name} is injured by the extreme force of the impact!")
-                        } else if event.after(Breakpoints::EternalBattle) {
-                            format!("{team_name} was injured by the extreme force of the impact!")
+                        if event.after(Breakpoints::EternalBattle) {
+                            format!("{team_name} {was_is} injured by the extreme force of the impact!")
                         } else {
-                            format!("{team_name} was hit by a Falling Star!")
+                            format!("{team_name} {was_is} hit by a Falling Star!")
                         }
                     },
-                    FeedFallingStarOutcome::Infusion(infusion_tier) => format!("{team_name} {infusion_tier}"),
+                    FeedFallingStarOutcome::Infusion(infusion_tier) => {
+                        match infusion_tier {
+                            CelestialEnergyTier::BeganToGlow => format!("{team_name} began to glow brightly with celestial energy!"),
+                            CelestialEnergyTier::Infused => format!("{team_name} {was_is} infused with a glimmer of celestial energy!"),
+                            CelestialEnergyTier::FullyCharged => format!("{team_name} {was_is} fully charged with an abundance of celestial energy!"),
+                        }
+                    },
                     FeedFallingStarOutcome::DeflectedHarmlessly => format!("It deflected off {team_name} harmlessly.")
                 }
             }
