@@ -22,6 +22,13 @@ pub struct TeamFeed {
 }
 
 #[derive(Clone, Debug, Serialize, Deserialize, PartialEq)]
+pub enum PurifiedOutcome {
+    Payment(u32),
+    NoCorruption,
+    None,
+}
+
+#[derive(Clone, Debug, Serialize, Deserialize, PartialEq)]
 pub enum ParsedTeamFeedEventText<S> {
     ParseError {
         error: FeedEventParseError,
@@ -110,7 +117,7 @@ pub enum ParsedTeamFeedEventText<S> {
     },
     Purified {
         player_name: S,
-        payment: u32,
+        outcome: PurifiedOutcome,
     },
     NameChanged,
     PlayerMoved {
@@ -279,8 +286,12 @@ impl<S: Display> ParsedTeamFeedEventText<S> {
             ParsedTeamFeedEventText::CorruptedByWither { player_name } => {
                 format!("{player_name} was Corrupted by the 🥀 Wither.")
             }
-            ParsedTeamFeedEventText::Purified { player_name, payment } => {
-                format!("{player_name} was Purified of 🫀 Corruption and earned {payment} 🪙.")
+            ParsedTeamFeedEventText::Purified { player_name, outcome } => {
+                match outcome {
+                    PurifiedOutcome::Payment(payment) => format!("{player_name} was Purified of 🫀 Corruption and earned {payment} 🪙."),
+                    PurifiedOutcome::NoCorruption => format!("{player_name} was Purified of 🫀 Corruption. {player_name} had no Corruption to remove."),
+                    PurifiedOutcome::None => format!("{player_name} was Purified of 🫀 Corruption."),
+                }
             }
             ParsedTeamFeedEventText::NameChanged => {
                 "The team's name was reset in accordance with site policy.".to_string()

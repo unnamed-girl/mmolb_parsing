@@ -45,7 +45,9 @@ pub struct Team {
     // Cashews id
     #[serde(rename = "_id", skip_serializing_if = "Option::is_none")]
     pub(super) _id: Option<String>,
-    pub abbreviation: String,
+    #[serde(default = "SometimesMissingHelper::default_result", skip_serializing_if = "Result::is_err")]
+    #[serde_as(as = "SometimesMissingHelper<_>")]
+    pub abbreviation: RemovedLaterResult<String>,
     #[serde(default = "SometimesMissingHelper::default_result", skip_serializing_if = "Result::is_err")]
     #[serde_as(as = "SometimesMissingHelper<_>")]
     pub active: RemovedLaterResult<bool>,
@@ -68,7 +70,9 @@ pub struct Team {
     pub motes_used: AddedLaterResult<u8>,
 
     pub location: String,
-    pub full_location: String,
+    #[serde(default = "SometimesMissingHelper::default_result", skip_serializing_if = "Result::is_err")]
+    #[serde_as(as = "SometimesMissingHelper<_>")]
+    pub full_location: RemovedLaterResult<String>,
     pub league: Option<String>,
 
     #[serde(default = "SometimesMissingHelper::default_result", skip_serializing_if = "Result::is_err")]

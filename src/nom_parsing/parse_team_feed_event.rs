@@ -7,6 +7,7 @@ use crate::{enums::{CelestialEnergyTier, FeedEventType, ModificationType}, feed_
 use crate::enums::{BenchSlot, FullSlot, Slot};
 use crate::feed_event::{AttributeChange, BenchImmuneModGranted, GrowAttributeChange};
 use crate::parsed_event::EmojiPlayer;
+use crate::team_feed::PurifiedOutcome;
 use super::shared::{emoji, emoji_team_eof, emoji_team_eof_maybe_no_space, feed_event_door_prize, feed_event_party, Error, IResult};
 
 
@@ -143,12 +144,26 @@ fn wither<'output>() -> impl TeamFeedEventParser<'output> {
 }
 
 fn purified<'output>() -> impl TeamFeedEventParser<'output> {
+    alt((purified_with_payout(), purified_without_payout()))
+}
+
+fn purified_with_payout<'output>() -> impl TeamFeedEventParser<'output> {
     |input| {
         let (input, player_name) = parse_terminated(" was Purified of 🫀 Corruption and earned ").parse(input)?;
         let (input, payment) = u32.parse(input)?;
         let (input, _) = tag(" 🪙.").parse(input)?;
 
-        Ok((input, ParsedTeamFeedEventText::Purified { player_name, payment }))
+        Ok((input, ParsedTeamFeedEventText::Purified { player_name, outcome: PurifiedOutcome::Payment(payment) }))
+    }
+}
+
+fn purified_without_payout<'output>() -> impl TeamFeedEventParser<'output> {
+    |input| {
+        let (input, player_name) = parse_terminated(" was Purified of 🫀 Corruption.").parse(input)?;
+
+        let (input, no_corruption) = opt((tag(" "), tag(player_name), tag(" had no Corruption to remove."))).parse(input)?;
+
+        Ok((input, ParsedTeamFeedEventText::Purified { player_name, outcome: if no_corruption.is_some() { PurifiedOutcome::NoCorruption } else { PurifiedOutcome::None } }))
     }
 }
 

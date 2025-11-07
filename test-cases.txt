@@ -2,3 +2,10 @@ This is a super informal file of some select entity ids to test. TODO make this,
 
 Teams:
 - 680afe271d2800e67a866dce
+
+
+Games:
+- 68e741a732bd78c53550ce8d
+
+Team feeds:
+- 680830e55859fc1c88efd232
