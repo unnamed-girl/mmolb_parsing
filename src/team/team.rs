@@ -113,7 +113,9 @@ pub struct Team {
     pub players: TeamPlayerCollection,
     #[serde_as(as = "HashMap<MaybeRecognizedHelper<_>, _>")]
     pub record: HashMap<Result<RecordType, NotRecognized>, TeamRecord>,
-    pub season_records: HashMap<String, String>,
+
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub season_records: Option<HashMap<String, String>>,
 
     
     #[serde(default = "SometimesMissingHelper::default_result", skip_serializing_if = "AddedLaterResult::is_err")]
