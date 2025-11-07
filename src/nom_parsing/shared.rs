@@ -619,12 +619,13 @@ pub(super) fn wither<'parse>(parsing_context: &'parse ParsingContext<'parse>) ->
     }
 }
 
-pub(super) fn equipped_item(input: &str) -> IResult<&str, (Item<&str>, Option<&str>)> {
+pub(super) fn equipped_item(input: &str) -> IResult<&str, (Item<&str>, Option<(&str, Option<Item<&str>>)>)> {
     let (input, equipper_name) = parse_terminated(" equips ").parse(input)?;
     let (input, item) = item.parse(input)?;
     let (input, _) = tag(" from the Door Prize").parse(input)?;
+    let (input, discarded) = opt(discarded_item()).parse(input)?;
 
-    Ok((input, (item, Some(equipper_name))))
+    Ok((input, (item, Some((equipper_name, discarded)))))
 }
 
 pub(super) fn equipped_prize<'output>(input: &'output str) -> IResult<'output, &'output str, Prize<&'output str>> {

@@ -52,6 +52,8 @@ pub fn parse_team_feed_event(event: &FeedEvent) -> ParsedTeamFeedEventText<&str>
 fn game(event: &FeedEvent) -> impl TeamFeedEventParser {
     context("Game Feed Event", alt((
         game_result(),
+        feed_event_door_prize.map(|prize| ParsedTeamFeedEventText::DoorPrize { prize }),
+        feed_event_equipped_door_prize.map(|prize| ParsedTeamFeedEventText::DoorPrize { prize }),
         feed_delivery("Delivery").map(|delivery| ParsedTeamFeedEventText::Delivery { delivery } ),
         feed_delivery("Shipment").map(|delivery| ParsedTeamFeedEventText::Shipment { delivery } ),
         feed_delivery("Special Delivery").map(|delivery| ParsedTeamFeedEventText::SpecialDelivery { delivery } ),
@@ -60,8 +62,6 @@ fn game(event: &FeedEvent) -> impl TeamFeedEventParser {
         infused_by_falling_star(),
         deflected_falling_star_harmlessly(),
         feed_event_party.map(|party| ParsedTeamFeedEventText::Party { party }),
-        feed_event_door_prize.map(|prize| ParsedTeamFeedEventText::DoorPrize { prize }),
-        feed_event_equipped_door_prize.map(|prize| ParsedTeamFeedEventText::DoorPrize { prize }),
         prosperous(),
         retirement(true),
         wither(),

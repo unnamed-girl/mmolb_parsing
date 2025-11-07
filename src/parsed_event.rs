@@ -1,5 +1,5 @@
 use std::{convert::Infallible, fmt::{Display, Write}, iter::once, str::FromStr};
-
+use std::fmt::format;
 use serde::{Serialize, Deserialize};
 use strum::{EnumDiscriminants, EnumString, Display, IntoStaticStr};
 use thiserror::Error;
@@ -1339,7 +1339,7 @@ impl<S: AsRef<str>> Ejection<S> {
 pub enum Prize<S> {
     Tokens(u16),
     // TODO Make this a more descriptive type once the format is known
-    Items(Vec<(Item<S>, Option<S>)>)
+    Items(Vec<(Item<S>, Option<(/* equipper */ S, /* discarded item */ Option<Item<S>>)>)>)
 }
 
 impl<S: Display> Prize<S> {
@@ -1350,8 +1350,12 @@ impl<S: Display> Prize<S> {
                 let equips = items.iter().any(|(_, equipper)| equipper.is_some());
 
                 items.iter()
-                    .map(|(item, equipper)| if let Some(equipper_name) = equipper {
-                        format!("{equipper_name} equips {item} from the Door Prize")
+                    .map(|(item, equipper)| if let Some((equipper_name, discarded_item)) = equipper {
+                        let discard = match discarded_item {
+                            None => String::new(),
+                            Some(discarded_item) => format!(". They discard their {discarded_item}"),
+                        };
+                        format!("{equipper_name} equips {item} from the Door Prize{discard}")
                     } else {
                         item.to_string()
                     })
@@ -1365,7 +1369,14 @@ impl<S: Display> Prize<S> {
 impl<S: AsRef<str>> Prize<S> {
     pub fn to_ref(&self) -> Prize<&str> {
         match self {
-            Prize::Items(items) => Prize::Items(items.iter().map(|(item, equipper)| (item.to_ref(), equipper.as_ref().map(AsRef::as_ref))).collect()),
+            Prize::Items(items) => Prize::Items(items
+                    .iter()
+                    .map(|(item, equipper)| (item.to_ref(), equipper
+                        .as_ref()
+                        .map(|(name, discarded)| (name.as_ref(), discarded
+                            .as_ref()
+                            .map(Item::to_ref)))))
+                    .collect()),
             Prize::Tokens(t) => Prize::Tokens(*t)
         }
     }
