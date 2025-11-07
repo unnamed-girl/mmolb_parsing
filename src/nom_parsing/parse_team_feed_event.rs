@@ -490,6 +490,7 @@ fn injured_by_falling_star<'output>(event: &'output FeedEvent) -> impl TeamFeedE
 fn infused_by_falling_star<'output>() -> impl TeamFeedEventParser<'output> {
     alt((
         parse_terminated(" began to glow brightly with celestial energy!").and_then(name_eof).map(|team| (team, CelestialEnergyTier::BeganToGlow)),
+        parse_terminated(" begins to glow brightly with celestial energy!").and_then(name_eof).map(|team| (team, CelestialEnergyTier::BeganToGlow)),
         parse_terminated(" was infused with a glimmer of celestial energy!").and_then(name_eof).map(|team| (team, CelestialEnergyTier::Infused)),
         parse_terminated(" is infused with a glimmer of celestial energy!").and_then(name_eof).map(|team| (team, CelestialEnergyTier::Infused)),
         parse_terminated(" was fully charged with an abundance of celestial energy!").and_then(name_eof).map(|team| (team, CelestialEnergyTier::FullyCharged))

@@ -208,7 +208,7 @@ impl<S: Display> ParsedTeamFeedEventText<S> {
                 } else {
                     "is"
                 };
-                
+
                 match outcome {
                     FeedFallingStarOutcome::Injury => {
                         if event.after(Breakpoints::EternalBattle) {
@@ -218,8 +218,14 @@ impl<S: Display> ParsedTeamFeedEventText<S> {
                         }
                     },
                     FeedFallingStarOutcome::Infusion(infusion_tier) => {
+                        let began_begins = if event.before(Breakpoints::Season5TenseChange) {
+                            "began"
+                        } else {
+                            "begins"
+                        };
+
                         match infusion_tier {
-                            CelestialEnergyTier::BeganToGlow => format!("{team_name} began to glow brightly with celestial energy!"),
+                            CelestialEnergyTier::BeganToGlow => format!("{team_name} {began_begins} to glow brightly with celestial energy!"),
                             CelestialEnergyTier::Infused => format!("{team_name} {was_is} infused with a glimmer of celestial energy!"),
                             CelestialEnergyTier::FullyCharged => format!("{team_name} {was_is} fully charged with an abundance of celestial energy!"),
                         }

@@ -719,7 +719,15 @@ impl<S: Display> FallingStarOutcome<S> {
                 format!("😇 {player_name} retired from MMOLB! {replacement_player_name} {was_is} called up to take their place.")
             },
             FallingStarOutcome::InfusionI => format!("{player_name} {was_is} infused with a glimmer of celestial energy!"),
-            FallingStarOutcome::InfusionII => format!("{player_name} began to glow brightly with celestial energy!"),
+            FallingStarOutcome::InfusionII => {
+                let began_begins = if Breakpoints::Season5TenseChange.after(game.season, game.day.as_ref().ok().copied(), event_index) {
+                    "begins"
+                } else {
+                    "began"
+                };
+
+                format!("{player_name} {began_begins} to glow brightly with celestial energy!")
+            },
             FallingStarOutcome::InfusionIII => format!("{player_name} {was_is} fully charged with an abundance of celestial energy!"),
             FallingStarOutcome::DeflectedHarmlessly => format!("It deflected off {player_name} harmlessly.")
         }
