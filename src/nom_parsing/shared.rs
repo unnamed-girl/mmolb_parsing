@@ -466,14 +466,18 @@ pub(super) fn delivery<'parse, 'output: 'parse>(parsing_context: &'parse Parsing
 
 pub(super) fn feed_delivery(label: &str) -> impl MyParser<FeedDelivery<&str>> {
     move |input| {
-        let (input, player) = alt((parse_terminated(" received a "), parse_terminated(" receives a "))).parse(input)?;
+        let (input, (player, equipped)) = alt((
+            parse_terminated(" received a ").map(|n| (n, false)),
+            parse_terminated(" receives a ").map(|n| (n, false)),
+            parse_terminated(" equips ").map(|n| (n, true)),
+        )).parse(input)?;
         let (input, item) = item.parse(input)?;
-        let (input, _) = tag(" ").parse(input)?;
+        let (input, _) = tag(if equipped { " from " } else { " " }).parse(input)?;
         let (input, _) = tag(label).parse(input)?;
         let (input, discarded) = opt(discarded_item()).parse(input)?;
         let (input, _) = tag(".").parse(input)?;
 
-        Ok((input, FeedDelivery {player, item, discarded}))
+        Ok((input, FeedDelivery { player, item, discarded, equipped }))
     }
 }
 

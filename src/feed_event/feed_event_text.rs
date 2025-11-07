@@ -217,11 +217,12 @@ pub enum BenchImmuneModGranted {
 pub struct FeedDelivery<S> {
     pub player: S,
     pub item: Item<S>,
-    pub discarded: Option<Item<S>>
+    pub discarded: Option<Item<S>>,
+    pub equipped: bool,
 }
 impl<S: Display> FeedDelivery<S> {
     pub fn unparse(&self, event: &FeedEvent, delivery_label: &str) -> String {
-        let FeedDelivery { player, item, discarded} = self;
+        let FeedDelivery { player, item, discarded, equipped} = self;
 
         let discarded = match discarded {
             Some(discarded) => {
@@ -236,13 +237,17 @@ impl<S: Display> FeedDelivery<S> {
             None => String::new(),
         };
 
-        let verb = if Breakpoints::Season5TenseChange.before(event.season as u32, event.day.as_ref().ok().copied(), None) {
-            "received"
+        let verb = if *equipped {
+            "equips"
+        } else if Breakpoints::Season5TenseChange.before(event.season as u32, event.day.as_ref().ok().copied(), None) {
+            "received a"
         } else {
-            "receives"
+            "receives a"
         };
 
-        format!("{player} {verb} a {item} {delivery_label}.{discarded}")
+        let from = if *equipped { "from "} else { "" };
+
+        format!("{player} {verb} {item} {from}{delivery_label}.{discarded}")
     }
 }
 
