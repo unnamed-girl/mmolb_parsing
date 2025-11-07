@@ -207,9 +207,10 @@ pub struct GrowAttributeChange {
 
 // TODO Is this the right file for this?
 #[derive(Clone, Debug, Serialize, Deserialize, PartialEq)]
-pub enum BenchImmuneModGranted {
+pub enum GainedImmovable {
     No,
     Yes,
+    YesReplacing(ModificationType),
     BenchPlayerImmune,
 }
 

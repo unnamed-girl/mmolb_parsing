@@ -5,7 +5,7 @@ use nom::multi::{many1, separated_list1};
 use nom::number::double;
 use crate::{enums::{CelestialEnergyTier, FeedEventType, ModificationType}, feed_event::{FeedEvent, FeedEventParseError, FeedFallingStarOutcome}, nom_parsing::shared::{emojiless_item, feed_delivery, name_eof, parse_terminated, sentence_eof, try_from_word}, team_feed::ParsedTeamFeedEventText, time::{Breakpoints, Timestamp}};
 use crate::enums::{BenchSlot, FullSlot, Slot};
-use crate::feed_event::{AttributeChange, BenchImmuneModGranted, GrowAttributeChange};
+use crate::feed_event::{AttributeChange, GainedImmovable, GrowAttributeChange};
 use crate::parsed_event::{EmojiPlayer, EmojiTeam};
 use crate::team_feed::PurifiedOutcome;
 use super::shared::{emoji, emoji_team_eof, emoji_team_eof_maybe_no_space, feed_event_door_prize, feed_event_equipped_door_prize, feed_event_party, parse_until_period_eof, team_emoji, Error, IResult};
@@ -368,9 +368,12 @@ fn grow<'output>() -> impl TeamFeedEventParser<'output> {
 
         let (input, immovable_granted) = alt((
             (tag(". "), tag(player_name), tag(" could not gain Immovable while on the Bench."))
-                .map(|_| BenchImmuneModGranted::BenchPlayerImmune),
-            // TODO Add "Yes" case
-            tag(".").map(|_| BenchImmuneModGranted::No)
+                .map(|_| GainedImmovable::BenchPlayerImmune),
+            (tag(". "), tag(player_name), tag(" gained the Immovable Greater Boon."))
+                .map(|_| GainedImmovable::Yes),
+            preceded((tag(". "), tag(player_name), tag(" gained the Immovable Greater Boon, replacing ")), parse_until_period_eof)
+                .map(|mod_str| GainedImmovable::YesReplacing(ModificationType::new(mod_str))),
+            tag(".").map(|_| GainedImmovable::No)
         )).parse(input)?;
 
         Ok((input, ParsedTeamFeedEventText::PlayerGrown {

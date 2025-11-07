@@ -7,7 +7,7 @@ use itertools::Itertools;
 
 use crate::{enums::{Attribute, FeedEventType, ModificationType}, feed_event::{EmojilessItem, FeedDelivery, FeedEvent, FeedEventParseError, FeedFallingStarOutcome}, time::{Breakpoints, Timestamp}, utils::extra_fields_deserialize};
 use crate::enums::{CelestialEnergyTier, FullSlot, Slot};
-use crate::feed_event::{AttributeChange, GrowAttributeChange, BenchImmuneModGranted};
+use crate::feed_event::{AttributeChange, GrowAttributeChange, GainedImmovable};
 pub use crate::nom_parsing::parse_team_feed_event::parse_team_feed_event;
 use crate::nom_parsing::shared::{FeedEventDoorPrize, FeedEventParty};
 use crate::parsed_event::{EmojiPlayer, EmojiTeam};
@@ -145,7 +145,7 @@ pub enum ParsedTeamFeedEventText<S> {
     PlayerGrown {
         player_name: S,
         attribute_changes: [GrowAttributeChange; 3],
-        immovable_granted: BenchImmuneModGranted,
+        immovable_granted: GainedImmovable,
     },
     Callup {
         lesser_league_team: EmojiTeam<S>,
@@ -350,9 +350,10 @@ impl<S: Display> ParsedTeamFeedEventText<S> {
                 }
                 s.truncate(s.len() - 2);  // Take off the last comma-space
                 match immovable_granted {
-                    BenchImmuneModGranted::No => write!(s, "."),
-                    BenchImmuneModGranted::Yes => todo!(),
-                    BenchImmuneModGranted::BenchPlayerImmune => write!(s, ". {player_name} could not gain Immovable while on the Bench.")
+                    GainedImmovable::No => write!(s, "."),
+                    GainedImmovable::Yes => write!(s, ". {player_name} gained the Immovable Greater Boon."),
+                    GainedImmovable::YesReplacing(replaced) => write!(s, ". {player_name} gained the Immovable Greater Boon, replacing {replaced}."),
+                    GainedImmovable::BenchPlayerImmune => write!(s, ". {player_name} could not gain Immovable while on the Bench.")
                 }.unwrap();
                 s
             },

@@ -1677,6 +1677,7 @@ pub enum ModificationType {
     #[strum(to_string = "First Strike")]
     #[serde(rename = "First Strike")]
     FirstStrike,
+    Unwavering,
 
     #[strum(default)]
     #[serde(untagged)]
