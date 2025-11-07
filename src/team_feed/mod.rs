@@ -218,19 +218,21 @@ impl<S: Display> ParsedTeamFeedEventText<S> {
                         }
                     },
                     FeedFallingStarOutcome::Infusion(infusion_tier) => {
-                        let began_begins = if event.before(Breakpoints::Season5TenseChange) {
-                            "began"
-                        } else {
-                            "begins"
-                        };
-
                         match infusion_tier {
-                            CelestialEnergyTier::BeganToGlow => format!("{team_name} {began_begins} to glow brightly with celestial energy!"),
+                            CelestialEnergyTier::BeganToGlow => if event.before(Breakpoints::Season5TenseChange) {
+                                format!("{team_name} began to glow brightly with celestial energy!")
+                            } else {
+                                format!("{team_name} begins to glow brightly with celestial energy!")
+                            },
                             CelestialEnergyTier::Infused => format!("{team_name} {was_is} infused with a glimmer of celestial energy!"),
                             CelestialEnergyTier::FullyCharged => format!("{team_name} {was_is} fully charged with an abundance of celestial energy!"),
                         }
                     },
-                    FeedFallingStarOutcome::DeflectedHarmlessly => format!("It deflected off {team_name} harmlessly.")
+                    FeedFallingStarOutcome::DeflectedHarmlessly => if event.before(Breakpoints::Season5TenseChange) {
+                        format!("It deflected off {team_name} harmlessly.")
+                    } else {
+                        format!("It deflects off {team_name} harmlessly.")
+                    }
                 }
             }
             ParsedTeamFeedEventText::AttributeChanges { changes } => {

@@ -493,14 +493,15 @@ fn infused_by_falling_star<'output>() -> impl TeamFeedEventParser<'output> {
         parse_terminated(" begins to glow brightly with celestial energy!").and_then(name_eof).map(|team| (team, CelestialEnergyTier::BeganToGlow)),
         parse_terminated(" was infused with a glimmer of celestial energy!").and_then(name_eof).map(|team| (team, CelestialEnergyTier::Infused)),
         parse_terminated(" is infused with a glimmer of celestial energy!").and_then(name_eof).map(|team| (team, CelestialEnergyTier::Infused)),
-        parse_terminated(" was fully charged with an abundance of celestial energy!").and_then(name_eof).map(|team| (team, CelestialEnergyTier::FullyCharged))
+        parse_terminated(" was fully charged with an abundance of celestial energy!").and_then(name_eof).map(|team| (team, CelestialEnergyTier::FullyCharged)),
+        parse_terminated(" is fully charged with an abundance of celestial energy!").and_then(name_eof).map(|team| (team, CelestialEnergyTier::FullyCharged)),
     ))
     .map(|(team_name, infusion_tier)| ParsedTeamFeedEventText::FallingStarOutcome { team_name, outcome: FeedFallingStarOutcome::Infusion(infusion_tier) })
 }
 
 fn deflected_falling_star_harmlessly<'output>() -> impl TeamFeedEventParser<'output> {
     preceded(
-        tag("It deflected off "),
+        alt((tag("It deflected off "), tag("It deflects off "))),
         parse_terminated(" harmlessly.").and_then(name_eof)
     )
     .map(|team_name| ParsedTeamFeedEventText::FallingStarOutcome { team_name, outcome: FeedFallingStarOutcome::DeflectedHarmlessly })
