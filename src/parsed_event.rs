@@ -1338,14 +1338,18 @@ impl<S: Display> Prize<S> {
     pub fn unparse(&self) -> String {
         match self {
             Prize::Tokens(tokens) => format!("{tokens} 🪙"),
-            Prize::Items(items) => items.iter()
-                .map(|(item, equipper)| if let Some(equipper_name) = equipper {
-                    format!("{equipper_name} equips {item} from the Door Prize")
-                } else {
-                    item.to_string()
-                })
-                .collect::<Vec<_>>()
-                .join(", ")
+            Prize::Items(items) => {
+                let equips = items.iter().any(|(_, equipper)| equipper.is_some());
+
+                items.iter()
+                    .map(|(item, equipper)| if let Some(equipper_name) = equipper {
+                        format!("{equipper_name} equips {item} from the Door Prize")
+                    } else {
+                        item.to_string()
+                    })
+                    .collect::<Vec<_>>()
+                    .join(if equips { ". " } else { ", " })
+            }
         }
     }
 }

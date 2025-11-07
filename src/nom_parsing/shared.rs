@@ -630,7 +630,7 @@ pub(super) fn equipped_item(input: &str) -> IResult<&str, (Item<&str>, Option<&s
 pub(super) fn equipped_prize<'output>(input: &'output str) -> IResult<'output, &'output str, Prize<&'output str>> {
     alt((
         terminated(u16, tag(" 🪙")).map(Prize::Tokens),
-        separated_list1(tag(", "), equipped_item).map(Prize::Items)
+        separated_list1(tag(". "), equipped_item).map(Prize::Items)
     )).parse(input)
 }
 
