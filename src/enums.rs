@@ -1674,6 +1674,9 @@ pub enum ModificationType {
     Insider,
     Criminal,
     Clutch,
+    #[strum(to_string = "First Strike")]
+    #[serde(rename = "First Strike")]
+    FirstStrike,
 
     #[strum(default)]
     #[serde(untagged)]

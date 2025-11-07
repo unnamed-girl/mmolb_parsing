@@ -392,7 +392,6 @@ fn bench_slot(input: &str) -> IResult<&str, BenchSlot> {
 // TODO Dedup this
 fn active_slot(input: &str) -> IResult<&str, Slot> {
     alt((
-        tag("C").map(|_| Slot::Catcher),
         tag("1B").map(|_| Slot::FirstBaseman),
         tag("2B").map(|_| Slot::SecondBaseman),
         tag("3B").map(|_| Slot::ThirdBaseman),
@@ -404,6 +403,8 @@ fn active_slot(input: &str) -> IResult<&str, Slot> {
         preceded(tag("SP"), u8).map(|i| Slot::StartingPitcher(i)),
         preceded(tag("RP"), u8).map(|i| Slot::ReliefPitcher(i)),
         tag("CL").map(|_| Slot::Closer),
+        // Has to be after CF and CL or it will match erroneously
+        tag("C").map(|_| Slot::Catcher),
     )).parse(input)
 }
 
