@@ -6,9 +6,9 @@ use nom::number::double;
 use crate::{enums::{CelestialEnergyTier, FeedEventType, ModificationType}, feed_event::{FeedEvent, FeedEventParseError, FeedFallingStarOutcome}, nom_parsing::shared::{emojiless_item, feed_delivery, name_eof, parse_terminated, sentence_eof, try_from_word}, team_feed::ParsedTeamFeedEventText, time::{Breakpoints, Timestamp}};
 use crate::enums::{BenchSlot, FullSlot, Slot};
 use crate::feed_event::{AttributeChange, BenchImmuneModGranted, GrowAttributeChange};
-use crate::parsed_event::EmojiPlayer;
+use crate::parsed_event::{EmojiPlayer, EmojiTeam};
 use crate::team_feed::PurifiedOutcome;
-use super::shared::{emoji, emoji_team_eof, emoji_team_eof_maybe_no_space, feed_event_door_prize, feed_event_party, Error, IResult};
+use super::shared::{emoji, emoji_team_eof, emoji_team_eof_maybe_no_space, feed_event_door_prize, feed_event_party, parse_until_period_eof, team_emoji, Error, IResult};
 
 
 trait TeamFeedEventParser<'output>: Parser<&'output str, Output = ParsedTeamFeedEventText<&'output str>, Error = Error<'output>> {}
@@ -32,7 +32,7 @@ pub fn parse_team_feed_event(event: &FeedEvent) -> ParsedTeamFeedEventText<&str>
         FeedEventType::Lottery => lottery().parse(event.text.as_str()),
         FeedEventType::Maintenance => maintenance().parse(event.text.as_str()),
         FeedEventType::Roster => roster().parse(event.text.as_str()),
-        FeedEventType::Election => fail().parse(event.text.as_str()),
+        FeedEventType::Election => election().parse(event.text.as_str()),
     };
     match result.finish() {
         Ok(("", output)) => output,
@@ -238,7 +238,7 @@ fn maintenance<'output>() -> impl TeamFeedEventParser<'output> {
 }
 
 fn roster<'output>() -> impl TeamFeedEventParser<'output> {
-    context("Maintenance Feed Event", alt((
+    context("Roster Feed Event", alt((
         player_moved(),
         player_relegated(),
     )))
@@ -290,6 +290,57 @@ fn player_positions_swapped<'output>() -> impl TeamFeedEventParser<'output> {
             second_player_new_slot,
         }))
     }
+}
+
+fn election<'output>() -> impl TeamFeedEventParser<'output> {
+    context("Election Feed Event", alt((
+        callup,
+    )))
+}
+
+fn callup(input: &str) -> IResult<&str, ParsedTeamFeedEventText<&str>> {
+    // First, look ahead for an easier-to-parse version of the team name
+    // `input` is intentionally second here, and yes that is weird
+    // Oh and to add to the weird, I'm including the leading space so it can
+    // be more conveniently used as a tag in the next step
+    let (rest, input) = parse_terminated(" joined the").parse(input)?;
+    let (rest, lesser_team_name_with_space) = parse_until_period_eof.parse(rest)?;
+    let lesser_team_name = &lesser_team_name_with_space[1..];
+
+    let (input, lesser_team_emoji) = parse_terminated(lesser_team_name_with_space).parse(input)?;
+    let (input, _) = tag(" ").parse(input)?;
+    let (input, slot) = active_slot.parse(input)?;
+    let (input, _) = tag(" ").parse(input)?;
+    let (input, promoted_player_name) = parse_terminated(" was called up to replace ").parse(input)?;
+    let (input, greater_team_emoji_name) = parse_terminated(&format!(" {slot} ")).parse(input)?;
+    let (_, greater_league_team) = emoji_team_eof.parse(greater_team_emoji_name)?;
+
+    // At this point, `input` should only contain "{player_name}. {player_name}".
+    // That's hard to parse, but luckily we can just do character counting math
+    // (and then verify the result)
+    // It's safe to treat the string as a byte sequence here, since the name
+    // should be the same number of bytes in both instances
+    let name_length = input.len() / 2 - 1;
+    let demoted_player_name = &input[..name_length];
+
+    // Now that we (think we) know the name, actually parse it to make sure
+    // everything is as we expect
+    let (input, _) = tag(demoted_player_name).parse(input)?;
+    let (input, _) = tag(". ").parse(input)?;
+    let (input, _) = tag(demoted_player_name).parse(input)?;
+    let (_, _) = eof.parse(input)?;
+
+    // The weird way we did parsing means that `rest` is the right thing to return here
+    Ok((rest, ParsedTeamFeedEventText::Callup {
+        lesser_league_team: EmojiTeam {
+            emoji: lesser_team_emoji,
+            name: lesser_team_name,
+        },
+        greater_league_team,
+        slot,
+        promoted_player_name,
+        demoted_player_name,
+    }))
 }
 
 fn grow_attribute_change(input: &str) -> IResult<&str, GrowAttributeChange> {

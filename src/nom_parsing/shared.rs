@@ -1,6 +1,7 @@
 use std::{fmt::Debug, str::FromStr};
 use std::fmt::{Display, Formatter};
 use nom::{branch::alt, bytes::complete::{tag, take, take_till, take_until, take_until1, take_while}, character::complete::{one_of, space0, u8, u16}, combinator::{all_consuming, fail, opt, recognize, rest, value, verify}, error::{ErrorKind, ParseError}, multi::{count, many0, many1, separated_list1}, sequence::{delimited, preceded, separated_pair, terminated}, AsChar, Input, Parser};
+use nom::bytes::complete::is_not;
 use nom_language::error::VerboseError;
 
 use crate::{enums::{Base, BatterStat, Day, FairBallDestination, FairBallType, HomeAway, NowBattingStats, Place}, feed_event::{EmojilessItem, FeedDelivery, FeedEvent}, game::Event, parsed_event::{BaseSteal, Cheer, Delivery, DoorPrize, Ejection, EjectionReason, EmojiTeam, Item, ItemAffixes, PlacedPlayer, Prize, RunnerAdvance, RunnerOut, SnappedPhotos, ViolationType}, player, time::{Breakpoints, Time}, Game};
@@ -310,6 +311,18 @@ pub(super) fn parse_terminated(tag_content: &str) -> impl Fn(&str) -> IResult<&s
         Ok((input, parsed_value))
     }
 }
+
+// This is for use in place of parse_terminated when the only remaining text in the string is ".",
+// and so you can't use parse_terminated because that would improperly cut off names with periods
+// like "Kaj Statter Jr."
+pub(super) fn parse_until_period_eof(input: &str) -> IResult<&str, &str> {
+    let (input, replacement_name_with_dot) = is_not("\n").parse(input)?;
+    let replacement_name = replacement_name_with_dot.strip_suffix(".")
+        .ok_or_else(|| fail::<&str, &str, _>().parse(input).unwrap_err())?;
+
+    Ok((input, replacement_name))
+}
+
 
 pub(super) fn placed_player_eof(input: &str) -> IResult<&str, PlacedPlayer<&str>> {
     separated_pair(try_from_word, tag(" "), name_eof)

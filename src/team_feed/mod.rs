@@ -147,6 +147,13 @@ pub enum ParsedTeamFeedEventText<S> {
         attribute_changes: [GrowAttributeChange; 3],
         immovable_granted: BenchImmuneModGranted,
     },
+    Callup {
+        lesser_league_team: EmojiTeam<S>,
+        greater_league_team: EmojiTeam<S>,
+        slot: Slot,
+        promoted_player_name: S,
+        demoted_player_name: S,
+    },
     // TODO Delete any of these that are still unused when parsing is up to date
 
     Released {
@@ -331,6 +338,13 @@ impl<S: Display> ParsedTeamFeedEventText<S> {
                 }.unwrap();
                 s
             },
+            ParsedTeamFeedEventText::Callup { lesser_league_team, greater_league_team, slot, promoted_player_name, demoted_player_name } => {
+                format!(
+                    "{lesser_league_team} {slot} {promoted_player_name} was called up to replace \
+                    {greater_league_team} {slot} {demoted_player_name}. {demoted_player_name} \
+                    joined the {}.", lesser_league_team.name
+                )
+            }
         }
     }
 }
