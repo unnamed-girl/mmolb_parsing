@@ -170,9 +170,9 @@ fn purified_without_payout<'output>() -> impl TeamFeedEventParser<'output> {
 fn prosperous<'output>() -> impl TeamFeedEventParser<'output> {
     |input| {
         let (input, team_emoji_str) = parse_terminated(" are Prosperous! They ").parse(input)?;
-        let (input, _) = alt((tag("earned "), tag("earn "))).parse(input)?;
         let (_, team) = emoji_team_eof.parse(team_emoji_str)?;
-        let (input, income) = u8.parse(input)?;
+        let (input, _) = alt((tag("earned "), tag("earn "))).parse(input)?;
+        let (input, income) = u32.parse(input)?;
         let (input, _) = tag(" 🪙.").parse(input)?;
 
         Ok((input, ParsedTeamFeedEventText::Prosperous { team, income }))

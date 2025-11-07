@@ -64,7 +64,7 @@ pub enum ParsedTeamFeedEventText<S> {
     },
     Prosperous {
         team: EmojiTeam<S>,
-        income: u8
+        income: u32
     },
     DonatedToLottery {
         team_name: S,
