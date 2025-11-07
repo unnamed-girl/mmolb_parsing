@@ -335,7 +335,8 @@ pub(super) fn name_eof(input: &str) -> IResult<&str, &str> {
         name.input_len() >= 2 &&
         !["Dr"].contains(&name) &&
         // ignoring 0-length words, all words are 2 characters long and contain an ascii character, except Stanley Demir I
-        (name == "Stanley Demir I" || name.split_whitespace().all(|word| word.len() == 0 || (word.len() >= 2 && word.chars().any(|i| i.is_ascii())))) &&
+        // and the 7 in the team name "Organiz. Nazionale Combattenti 7 Zombie Deer Revolution"
+        (name == "Stanley Demir I" || name.split_whitespace().all(|word| word.len() == 0 || (word.len() >= 2 && word.chars().any(|i| i.is_ascii())) || word.parse::<usize>().is_ok())) &&
         name.chars().any(|c| c == ' ') &&
         // Removed for now because of early season 1 bug where feed names didn't print their spaces
         // name.chars().any(|c| c == ' ') && // From the API, we know players have first/last name, so there should always be a space
