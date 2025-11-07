@@ -112,6 +112,10 @@ pub enum ParsedTeamFeedEventText<S> {
         lost_modification: Option<ModificationType>,
         modification: ModificationType
     },
+    FallingStarOutcome {
+        team_name: S,
+        outcome: FeedFallingStarOutcome
+    },
     CorruptedByWither {
         player_name: S,
     },
@@ -145,10 +149,6 @@ pub enum ParsedTeamFeedEventText<S> {
     },
     // TODO Delete any of these that are still unused when parsing is up to date
 
-    FallingStarOutcome {
-        team_name: S,
-        outcome: FeedFallingStarOutcome
-    },
     Released {
         team: S
     },
@@ -198,7 +198,9 @@ impl<S: Display> ParsedTeamFeedEventText<S> {
             ParsedTeamFeedEventText::FallingStarOutcome { team_name, outcome } => {
                 match outcome {
                     FeedFallingStarOutcome::Injury => {
-                        if event.after(Breakpoints::EternalBattle) {
+                        if event.after(Breakpoints::Season5TenseChange) {
+                            format!("{team_name} is injured by the extreme force of the impact!")
+                        } else if event.after(Breakpoints::EternalBattle) {
                             format!("{team_name} was injured by the extreme force of the impact!")
                         } else {
                             format!("{team_name} was hit by a Falling Star!")

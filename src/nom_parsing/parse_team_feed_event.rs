@@ -32,6 +32,7 @@ pub fn parse_team_feed_event(event: &FeedEvent) -> ParsedTeamFeedEventText<&str>
         FeedEventType::Lottery => lottery().parse(event.text.as_str()),
         FeedEventType::Maintenance => maintenance().parse(event.text.as_str()),
         FeedEventType::Roster => roster().parse(event.text.as_str()),
+        FeedEventType::Election => fail().parse(event.text.as_str()),
     };
     match result.finish() {
         Ok(("", output)) => output,
@@ -418,18 +419,20 @@ fn multiple_attribute_equal(event: &FeedEvent) -> impl TeamFeedEventParser {
 
 // TODO Dedup all falling star functions between team and player
 fn injured_by_falling_star<'output>(event: &'output FeedEvent) -> impl TeamFeedEventParser<'output> {
-    |input|
-        if event.after(Breakpoints::EternalBattle) {
-            parse_terminated(" was injured by the extreme force of the impact!")
-                .and_then(name_eof)
-                .map(|team_name| ParsedTeamFeedEventText::FallingStarOutcome { team_name, outcome: FeedFallingStarOutcome::Injury })
-                .parse(input)
+    |input| {
+        let text = if event.after(Breakpoints::Season5TenseChange) {
+            " is injured by the extreme force of the impact!"
+        } else if event.after(Breakpoints::EternalBattle) {
+            " was injured by the extreme force of the impact!"
         } else {
-            parse_terminated(" was hit by a Falling Star!")
-                .and_then(name_eof)
-                .map(|team_name| ParsedTeamFeedEventText::FallingStarOutcome { team_name, outcome: FeedFallingStarOutcome::Injury })
-                .parse(input)
-        }
+            " was hit by a Falling Star!"
+        };
+
+        parse_terminated(text)
+            .and_then(name_eof)
+            .map(|team_name| ParsedTeamFeedEventText::FallingStarOutcome { team_name, outcome: FeedFallingStarOutcome::Injury })
+            .parse(input)
+    }
 }
 
 fn infused_by_falling_star<'output>() -> impl TeamFeedEventParser<'output> {

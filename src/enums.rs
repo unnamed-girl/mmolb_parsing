@@ -973,6 +973,7 @@ pub enum FeedEventType {
     Lottery,
     Maintenance,
     Roster,
+    Election,
 }
 
 #[derive(Debug, Clone, Copy, Serialize, Deserialize, EnumString, IntoStaticStr, Display, PartialEq, Eq, Hash, EnumIter)]

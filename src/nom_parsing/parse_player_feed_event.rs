@@ -26,6 +26,7 @@ pub fn parse_player_feed_event<'output>(event: &'output FeedEvent) -> ParsedPlay
         FeedEventType::Lottery => fail().parse(event.text.as_str()),
         FeedEventType::Maintenance => fail().parse(event.text.as_str()),
         FeedEventType::Roster => fail().parse(event.text.as_str()),
+        FeedEventType::Election => fail().parse(event.text.as_str()),
     };
     match result.finish() {
         Ok(("", output)) => output,
