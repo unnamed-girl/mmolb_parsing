@@ -1678,6 +1678,11 @@ pub enum ModificationType {
     #[serde(rename = "First Strike")]
     FirstStrike,
     Unwavering,
+    Partier,
+    #[strum(to_string = "All Knowing")]
+    #[serde(rename = "All Knowing")]
+    AllKnowing,
+    Underdog,
 
     #[strum(default)]
     #[serde(untagged)]

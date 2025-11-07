@@ -676,20 +676,25 @@ pub struct FeedEventParty<S> {
     pub player_name: S,
     pub amount_gained: u8,
     pub attribute: Attribute,
-    pub durability_lost: u8,
+    // As of this writing, the Prolific boon is the only way to not lose durability
+    pub durability_lost: Option<u8>,
 }
 
 impl<S: Display> Display for FeedEventParty<S> {
     fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
         write!(
             f,
-            "{} is Partying! {} gained +{} {} and lost {} Durability.",
+            "{} is Partying! {} gained +{} {} and ",
             self.player_name,
             self.player_name,
             self.amount_gained,
             self.attribute,
-            self.durability_lost,
-        )
+        )?;
+
+        match self.durability_lost {
+            None => write!(f, "their Prolific Greater Boon resisted Durability loss."),
+            Some(durability_lost) => write!(f, "lost {durability_lost} Durability."),
+        }
     }
 }
 
@@ -700,9 +705,19 @@ pub(super) fn feed_event_party(input: &str) -> IResult<&str, FeedEventParty<&str
     let (input, amount_gained) = u8.parse(input)?;
     let (input, _) = tag(" ").parse(input)?;
     let (input, attribute) = try_from_word.parse(input)?;
-    let (input, _) = tag(" and lost ").parse(input)?;
-    let (input, durability_lost) = u8.parse(input)?;
-    let (input, _) = tag(" Durability.").parse(input)?;
+
+    let lost_durability = |input| {
+        let (input, _) = tag(" and lost ").parse(input)?;
+        let (input, durability_lost) = u8.parse(input)?;
+        let (input, _) = tag(" Durability.").parse(input)?;
+
+        Ok((input, durability_lost))
+    };
+
+    let (input, durability_lost) = alt((
+        lost_durability.map(Some),
+        tag(" and their Prolific Greater Boon resisted Durability loss.").map(|_| None),
+    )).parse(input)?;
 
     Ok((input, FeedEventParty {
         player_name,
