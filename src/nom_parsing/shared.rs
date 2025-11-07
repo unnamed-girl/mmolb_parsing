@@ -615,10 +615,28 @@ pub(super) fn wither<'parse>(parsing_context: &'parse ParsingContext<'parse>) ->
     }
 }
 
+pub(super) fn equipped_item(input: &str) -> IResult<&str, (Item<&str>, Option<&str>)> {
+    let (input, equipper_name) = parse_terminated(" equips ").parse(input)?;
+    let (input, item) = item.parse(input)?;
+    let (input, _) = tag(" from the Door Prize").parse(input)?;
+
+    Ok((input, (item, Some(equipper_name))))
+}
+
+pub(super) fn equipped_prize<'output>(input: &'output str) -> IResult<'output, &'output str, Prize<&'output str>> {
+    alt((
+        terminated(u16, tag(" 🪙")).map(Prize::Tokens),
+        separated_list1(tag(", "), equipped_item).map(Prize::Items)
+    )).parse(input)
+}
+
+
 pub(super) fn prize<'output>(input: &'output str) -> IResult<'output, &'output str, Prize<&'output str>> {
     alt((
         terminated(u16, tag(" 🪙")).map(Prize::Tokens),
-        separated_list1(tag(", "), item).map(Prize::Items)
+        separated_list1(tag(", "), item).map(|items| {
+            Prize::Items(items.into_iter().map(|i| (i, None)).collect())
+        })
     )).parse(input)
 }
 
@@ -633,11 +651,18 @@ pub(super) fn door_prize<'output>(input: &'output str) -> IResult<'output, &'out
         let (input, _) = tag(".").parse(input)?;
         Ok((input, DoorPrize { player, prize: Some(prize) }))
     };
+    let win_and_equip = |input: &'output str| {
+        let (input, player) = parse_terminated(" won a Door Prize! ").parse(input)?;
+        let (input, prize) = equipped_prize.parse(input)?;
+        let (input, _) = tag(".").parse(input)?;
+        Ok((input, DoorPrize { player, prize: Some(prize) }))
+    };
     let (input, _) = tag("🥳 ").parse(input)?;
 
     alt((
         not_win,
-        win
+        win,
+        win_and_equip,
     )).parse(input)
 }
 
@@ -690,13 +715,28 @@ pub struct FeedEventDoorPrize<S> {
 
 impl<S: Display> Display for FeedEventDoorPrize<S> {
     fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
-        write!(f, "{} won a Door Prize: {}.", self.player_name, self.prize.unparse())
+        let punct = match &self.prize {
+            Prize::Items(i) if i.iter().any(|(_, equipped)| equipped.is_some()) => "!",
+            _ => ":",
+        };
+        write!(f, "{} won a Door Prize{punct} {}.", self.player_name, self.prize.unparse())
     }
 }
 
 pub(super) fn feed_event_door_prize(input: &str) -> IResult<&str, FeedEventDoorPrize<&str>> {
     let (input, player_name) = parse_terminated(" won a Door Prize: ").parse(input)?;
     let (input, prize) = prize.parse(input)?;
+    let (input, _) = tag(".").parse(input)?;
+
+    Ok((input, FeedEventDoorPrize {
+        player_name,
+        prize,
+    }))
+}
+
+pub(super) fn feed_event_equipped_door_prize(input: &str) -> IResult<&str, FeedEventDoorPrize<&str>> {
+    let (input, player_name) = parse_terminated(" won a Door Prize! ").parse(input)?;
+    let (input, prize) = equipped_prize.parse(input)?;
     let (input, _) = tag(".").parse(input)?;
 
     Ok((input, FeedEventDoorPrize {

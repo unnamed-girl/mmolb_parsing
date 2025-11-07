@@ -1324,14 +1324,22 @@ impl<S: AsRef<str>> Ejection<S> {
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
 pub enum Prize<S> {
     Tokens(u16),
-    Items(Vec<Item<S>>)
+    // TODO Make this a more descriptive type once the format is known
+    Items(Vec<(Item<S>, Option<S>)>)
 }
 
 impl<S: Display> Prize<S> {
     pub fn unparse(&self) -> String {
         match self {
             Prize::Tokens(tokens) => format!("{tokens} 🪙"),
-            Prize::Items(items) => items.iter().map(Item::to_string).collect::<Vec<_>>().join(", ")
+            Prize::Items(items) => items.iter()
+                .map(|(item, equipper)| if let Some(equipper_name) = equipper {
+                    format!("{equipper_name} equips {item} from the Door Prize")
+                } else {
+                    item.to_string()
+                })
+                .collect::<Vec<_>>()
+                .join(", ")
         }
     }
 }
@@ -1339,7 +1347,7 @@ impl<S: Display> Prize<S> {
 impl<S: AsRef<str>> Prize<S> {
     pub fn to_ref(&self) -> Prize<&str> {
         match self {
-            Prize::Items(items) => Prize::Items(items.iter().map(Item::to_ref).collect()),
+            Prize::Items(items) => Prize::Items(items.iter().map(|(item, equipper)| (item.to_ref(), equipper.as_ref().map(AsRef::as_ref))).collect()),
             Prize::Tokens(t) => Prize::Tokens(*t)
         }
     }

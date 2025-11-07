@@ -6,6 +6,7 @@ use serde_with::serde_as;
 use crate::{enums::{Attribute, FeedEventType, ModificationType}, feed_event::{EmojilessItem, FeedDelivery, FeedEvent, FeedEventParseError, FeedFallingStarOutcome}, time::{Breakpoints, Timestamp}, utils::extra_fields_deserialize};
 
 pub use crate::nom_parsing::parse_player_feed_event::parse_player_feed_event;
+use crate::nom_parsing::shared::FeedEventDoorPrize;
 
 #[serde_as]
 #[derive(Serialize, Deserialize, Debug, Clone)]
@@ -30,6 +31,9 @@ pub enum ParsedPlayerFeedEventText<S> {
     },
     SpecialDelivery {
         delivery: FeedDelivery<S>
+    },
+    DoorPrize {
+        prize: FeedEventDoorPrize<S>,
     },
     AttributeChanges {
         player_name: S,
@@ -93,6 +97,7 @@ impl<S: Display> ParsedPlayerFeedEventText<S> {
             ParsedPlayerFeedEventText::Delivery { delivery } => delivery.unparse(event, "Delivery"),
             ParsedPlayerFeedEventText::SpecialDelivery { delivery } => delivery.unparse(event, "Special Delivery"),
             ParsedPlayerFeedEventText::Shipment { delivery } => delivery.unparse(event, "Shipment"),
+            ParsedPlayerFeedEventText::DoorPrize { prize } => prize.to_string(),
             ParsedPlayerFeedEventText::FallingStarOutcome { player_name, outcome } => {
                 match outcome {
                     FeedFallingStarOutcome::Injury => {

@@ -8,7 +8,7 @@ use crate::enums::{BenchSlot, FullSlot, Slot};
 use crate::feed_event::{AttributeChange, BenchImmuneModGranted, GrowAttributeChange};
 use crate::parsed_event::{EmojiPlayer, EmojiTeam};
 use crate::team_feed::PurifiedOutcome;
-use super::shared::{emoji, emoji_team_eof, emoji_team_eof_maybe_no_space, feed_event_door_prize, feed_event_party, parse_until_period_eof, team_emoji, Error, IResult};
+use super::shared::{emoji, emoji_team_eof, emoji_team_eof_maybe_no_space, feed_event_door_prize, feed_event_equipped_door_prize, feed_event_party, parse_until_period_eof, team_emoji, Error, IResult};
 
 
 trait TeamFeedEventParser<'output>: Parser<&'output str, Output = ParsedTeamFeedEventText<&'output str>, Error = Error<'output>> {}
@@ -61,6 +61,7 @@ fn game(event: &FeedEvent) -> impl TeamFeedEventParser {
         deflected_falling_star_harmlessly(),
         feed_event_party.map(|party| ParsedTeamFeedEventText::Party { party }),
         feed_event_door_prize.map(|prize| ParsedTeamFeedEventText::DoorPrize { prize }),
+        feed_event_equipped_door_prize.map(|prize| ParsedTeamFeedEventText::DoorPrize { prize }),
         prosperous(),
         retirement(true),
         wither(),
