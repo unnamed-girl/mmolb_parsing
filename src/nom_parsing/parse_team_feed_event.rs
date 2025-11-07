@@ -245,11 +245,11 @@ fn roster<'output>() -> impl TeamFeedEventParser<'output> {
 
 fn player_moved<'output>() -> impl TeamFeedEventParser<'output> {
     |input| {
-        // This might be team emoji, not sure
-        let (input, _) = tag("🐵 ").parse(input)?;
+        let (input, team_emoji) = emoji.parse(input)?;
+        let (input, _) = tag(" ").parse(input)?;
         let (input, player_name) = parse_terminated(" was moved to the Bench.").parse(input)?;
 
-        Ok((input, ParsedTeamFeedEventText::PlayerMoved { player_name }))
+        Ok((input, ParsedTeamFeedEventText::PlayerMoved { team_emoji, player_name }))
     }
 }
 

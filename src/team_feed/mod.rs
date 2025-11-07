@@ -121,6 +121,7 @@ pub enum ParsedTeamFeedEventText<S> {
     },
     NameChanged,
     PlayerMoved {
+        team_emoji: S,
         player_name: S,
         // This may get a "location" field soon
     },
@@ -296,8 +297,8 @@ impl<S: Display> ParsedTeamFeedEventText<S> {
             ParsedTeamFeedEventText::NameChanged => {
                 "The team's name was reset in accordance with site policy.".to_string()
             },
-            ParsedTeamFeedEventText::PlayerMoved { player_name } => {
-                format!("🐵 {player_name} was moved to the Bench.")
+            ParsedTeamFeedEventText::PlayerMoved { team_emoji, player_name } => {
+                format!("{team_emoji} {player_name} was moved to the Bench.")
             },
             ParsedTeamFeedEventText::PlayerRelegated { player_name } => {
                 format!("🧳 {player_name} was relegated to the Even Lesser League.")
