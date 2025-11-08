@@ -139,8 +139,8 @@ pub enum ParsedEventMessage<S> {
 
     // Season 3,
     WeatherProsperity {
-        home_income: u8,
-        away_income: u8
+        home_income: u32,
+        away_income: u32
     },
 
     // Season 4

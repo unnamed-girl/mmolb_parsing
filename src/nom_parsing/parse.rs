@@ -1,6 +1,7 @@
 use crate::{nom_parsing::shared::{door_prizes, ejection_tail, hit_by_pitch_text, strike_out_text}, time::is_superstar_game};
 use std::str::FromStr;
 use nom::{branch::alt, bytes::complete::{tag, take_until}, character::complete::{digit1, u8, u16}, combinator::{all_consuming, cut, fail, opt, rest, value, verify}, error::context, multi::{many0, many1, separated_list1}, sequence::{delimited, preceded, separated_pair, terminated}, Finish, Parser};
+use nom::character::complete::u32;
 use nom::sequence::pair;
 use phf::phf_map;
 
@@ -150,7 +151,7 @@ fn weather_delivery<'parse, 'output: 'parse>(parsing_context: &'parse ParsingCon
 }
 
 fn weather_prosperity<'parse, 'output: 'parse>(parsing_context: &'parse ParsingContext<'parse>) -> impl MyParser<'output, ParsedEventMessage<&'output str>> + 'parse {
-    let prosperous = |t: EmojiTeam<&'parse str>| move |input: &'output str| delimited((t.parser(), alt((tag(" are Prosperous! They earned "), tag(" are Prosperous! They earn ")))), u8, tag(" 🪙.")).parse(input);
+    let prosperous = |t: EmojiTeam<&'parse str>| move |input: &'output str| delimited((t.parser(), alt((tag(" are Prosperous! They earned "), tag(" are Prosperous! They earn ")))), u32, tag(" 🪙.")).parse(input);
 
     let variations = alt((
         separated_pair(prosperous(parsing_context.home_emoji_team), tag(" "), prosperous(parsing_context.away_emoji_team)).map(|(home, away)| (Some(home), Some(away))),
