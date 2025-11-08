@@ -73,6 +73,7 @@ pub struct Team {
     #[serde(default = "SometimesMissingHelper::default_result", skip_serializing_if = "Result::is_err")]
     #[serde_as(as = "SometimesMissingHelper<_>")]
     pub full_location: RemovedLaterResult<String>,
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub league: Option<String>,
 
     #[serde(default = "SometimesMissingHelper::default_result", skip_serializing_if = "Result::is_err")]
@@ -96,8 +97,10 @@ pub struct Team {
     pub eligible: AddedLaterResult<bool>,
 
     /// no team modifications have been seen, so left as raw json
-    #[serde_as(as = "Vec<ExpectNone<_>>")]
-    pub modifications: Vec<Option<serde_json::Value>>,
+    ///    TODO: The above is now incorrect. Add team modifications support.
+    #[serde(skip_serializing_if = "Option::is_none")]
+    #[serde_as(as = "Option<Vec<ExpectNone<_>>>")]
+    pub modifications: Option<Vec<Option<serde_json::Value>>>,
     pub name: String,
 
     #[serde(default = "SometimesMissingHelper::default_result", skip_serializing_if = "Result::is_err")]

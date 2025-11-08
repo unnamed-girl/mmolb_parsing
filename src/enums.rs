@@ -1683,6 +1683,7 @@ pub enum ModificationType {
     #[serde(rename = "All Knowing")]
     AllKnowing,
     Underdog,
+    Immovable,
 
     #[strum(default)]
     #[serde(untagged)]
