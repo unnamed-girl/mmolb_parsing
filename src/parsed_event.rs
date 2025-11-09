@@ -171,7 +171,7 @@ pub enum ParsedEventMessage<S> {
         team_emoji: S,
         player: PlacedPlayer<S>,
         corrupted: bool,
-        contained: Option<Containment<S>>,
+        contained: ContainResult<S>,
     },
 
     // Season 6
@@ -858,14 +858,29 @@ impl<S: Display> Delivery<S> {
 }
 
 #[derive(Debug, Clone, Copy, Serialize, Deserialize, PartialEq)]
-pub struct Containment<S> {
-    pub contained_player_name: S,
-    pub replacement_player_name: S,
+pub enum ContainResult<S> {
+    NoContain,
+    SuccessfulContain {
+        contained_player_name: S,
+        replacement_player_name: S,
+    },
+    FailedContain {
+        target_player_name: S,
+    },
 }
 
-impl<S: Display> Display for Containment<S> {
+impl<S: Display> Display for ContainResult<S> {
     fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
-        write!(f, ", and Contained {}. They were replaced by {}.", self.contained_player_name, self.replacement_player_name)
+        match self {
+            ContainResult::NoContain => Ok(()),
+            ContainResult::SuccessfulContain { replacement_player_name, contained_player_name } => {
+                write!(f, ", and Contained {contained_player_name}. They were replaced by {replacement_player_name}.")
+            }
+            ContainResult::FailedContain { target_player_name } => {
+                write!(f, ", and tried to Contain {target_player_name}, but they wouldn't budge.")
+            }
+        }
+
     }
 }
 
