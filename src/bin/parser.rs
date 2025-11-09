@@ -485,8 +485,8 @@ fn check<S>(event: &ParsedEventMessage<S>) -> String {
         ParsedEventMessage::WeatherReflection { team: _ } => {
             format!("()")
         }
-        ParsedEventMessage::WeatherWither { team_emoji: _, player: _, corrupted } => {
-            format!("corrupted: {}", corrupted)
+        ParsedEventMessage::WeatherWither { team_emoji: _, player: _, corrupted, contained } => {
+            format!("corrupted: {}, contained: {}", corrupted, contained.is_some())
         }
         ParsedEventMessage::LinealBeltTransfer { claimed_by: _, claimed_from: _ } => {
             format!("()")

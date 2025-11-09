@@ -6,7 +6,8 @@ use nom::sequence::pair;
 use phf::phf_map;
 
 use crate::{enums::{EventType, GameOverMessage, HomeAway, MoundVisitType, NowBattingStats}, game::Event, nom_parsing::shared::{aurora, cheer, ejection, delivery, team_emoji, try_from_word, try_from_words_m_n, MyParser}, parsed_event::{EmojiTeam, FallingStarOutcome, FieldingAttempt, GameEventParseError, KnownBug, StartOfInningPitcher}, time::Breakpoints, ParsedEventMessage};
-use crate::nom_parsing::shared::{either_team_emoji, parse_until_exclamation_point_eof, wither};
+use crate::nom_parsing::shared::{either_team_emoji, parse_until_exclamation_point_eof, parse_until_period_eof, wither};
+use crate::parsed_event::Containment;
 use super::{shared::{all_consuming_sentence_and, base_steal_sentence, bold, destination, emoji_team_eof, exclamation, fair_ball_type_verb_name, fielders_eof, fly_ball_type_verb_name, name_eof, now_batting_stats, ordinal_suffix, out, parse_and, parse_terminated, placed_player_eof, score_update, scores_and_advances, scores_sentence, sentence, sentence_eof}, ParsingContext};
 
 const OVERRIDES: phf::Map<&'static str, phf::Map<u16, ParsedEventMessage<&'static str>>> = phf_map!();
@@ -651,14 +652,27 @@ fn weather_wither<'parse, 'output: 'parse>(parsing_context: &'parse ParsingConte
               parse_terminated(" is Corrupted by the 🥀 Wither.").map(|n| (n, true)),
         )).parse(input)?;
 
+        let (input, contained) = opt(wither_contain()).parse(input)?;
+
         let (_, player) = placed_player_eof(placed_player_str)?;
 
-        Ok((input, ParsedEventMessage::WeatherWither { team_emoji, player, corrupted }))
+        Ok((input, ParsedEventMessage::WeatherWither { team_emoji, player, corrupted, contained }))
     };
     context("Weather Wither", all_consuming(
         weather_reflection,
     ))
 }
+
+fn wither_contain<'parse, 'output: 'parse>() -> impl MyParser<'output, Containment<&'output str>> + 'parse {
+    |input| {
+        let (input, _) = tag(", and Contained ").parse(input)?;
+        let (input, contained_player_name) = parse_terminated(". They were replaced by ").parse(input)?;
+        let (input, replacement_player_name) = parse_until_period_eof.parse(input)?;
+
+        Ok((input, Containment { contained_player_name, replacement_player_name }))
+    }
+}
+
 
 fn lineal_belt<'parse, 'output: 'parse>() -> impl MyParser<'output, ParsedEventMessage<&'output str>> + 'parse {
     |input| {

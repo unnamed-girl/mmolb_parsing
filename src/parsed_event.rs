@@ -1,5 +1,5 @@
 use std::{convert::Infallible, fmt::{Display, Write}, iter::once, str::FromStr};
-use std::fmt::format;
+use std::fmt::{format, Formatter};
 use serde::{Serialize, Deserialize};
 use strum::{EnumDiscriminants, EnumString, Display, IntoStaticStr};
 use thiserror::Error;
@@ -171,6 +171,7 @@ pub enum ParsedEventMessage<S> {
         team_emoji: S,
         player: PlacedPlayer<S>,
         corrupted: bool,
+        contained: Option<Containment<S>>,
     },
 
     // Season 6
@@ -510,19 +511,21 @@ impl<S: Display> ParsedEventMessage<S> {
             Self::WeatherReflection { team } => {
                 format!("🪞 The reflection shatters. {team} received a Fragment of Reflection.")
             },
-            Self::WeatherWither { team_emoji, player, corrupted } => {
+            Self::WeatherWither { team_emoji, player, corrupted, contained } => {
+                let contained = contained.as_ref().map(|c| c.to_string()).unwrap_or_default();
+
                 if Breakpoints::Season5TenseChange.before(game.season, game.day.as_ref().ok().copied(), event_index) {
                     if *corrupted {
-                        format!("{team_emoji} {player} was Corrupted by the 🥀 Wither.")
+                        format!("{team_emoji} {player} was Corrupted by the 🥀 Wither.{contained}")
                     } else {
-                        format!("{team_emoji} {player} resists the effects of the 🥀 Wither.")
+                        format!("{team_emoji} {player} resists the effects of the 🥀 Wither.{contained}")
                     }
                 } else {
                     if *corrupted {
-                        format!("{team_emoji} {player} was Corrupted by the 🥀 Wither.")
+                        format!("{team_emoji} {player} was Corrupted by the 🥀 Wither.{contained}")
                     } else {
                         // This one went from present to past after the tense change??
-                        format!("{team_emoji} {player} resisted the effects of the 🥀 Wither.")
+                        format!("{team_emoji} {player} resisted the effects of the 🥀 Wither.{contained}")
                     }
                 }
             },
@@ -851,6 +854,18 @@ impl<S: Display> Delivery<S> {
                 format!("{item}{discard_text}")
             }
         }
+    }
+}
+
+#[derive(Debug, Clone, Copy, Serialize, Deserialize, PartialEq)]
+pub struct Containment<S> {
+    pub contained_player_name: S,
+    pub replacement_player_name: S,
+}
+
+impl<S: Display> Display for Containment<S> {
+    fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
+        write!(f, ", and Contained {}. They were replaced by {}.", self.contained_player_name, self.replacement_player_name)
     }
 }
 
