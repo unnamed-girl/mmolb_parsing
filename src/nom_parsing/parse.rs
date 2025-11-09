@@ -6,7 +6,7 @@ use nom::sequence::pair;
 use phf::phf_map;
 
 use crate::{enums::{EventType, GameOverMessage, HomeAway, MoundVisitType, NowBattingStats}, game::Event, nom_parsing::shared::{aurora, cheer, ejection, delivery, team_emoji, try_from_word, try_from_words_m_n, MyParser}, parsed_event::{EmojiTeam, FallingStarOutcome, FieldingAttempt, GameEventParseError, KnownBug, StartOfInningPitcher}, time::Breakpoints, ParsedEventMessage};
-use crate::nom_parsing::shared::{either_team_emoji, wither};
+use crate::nom_parsing::shared::{either_team_emoji, parse_until_exclamation_point_eof, wither};
 use super::{shared::{all_consuming_sentence_and, base_steal_sentence, bold, destination, emoji_team_eof, exclamation, fair_ball_type_verb_name, fielders_eof, fly_ball_type_verb_name, name_eof, now_batting_stats, ordinal_suffix, out, parse_and, parse_terminated, placed_player_eof, score_update, scores_and_advances, scores_sentence, sentence, sentence_eof}, ParsingContext};
 
 const OVERRIDES: phf::Map<&'static str, phf::Map<u16, ParsedEventMessage<&'static str>>> = phf_map!();
@@ -64,6 +64,7 @@ pub fn parse_event<'parse, 'output: 'parse>(event: &'output Event, parsing_conte
         EventType::Party => party(parsing_context).parse(event.message.as_str()),
         EventType::WeatherReflection => weather_reflection(parsing_context).parse(&event.message),
         EventType::WeatherWither => weather_wither(parsing_context).parse(&event.message),
+        EventType::LinealBeltTransfer => lineal_belt().parse(event.message.as_str()),
     }.finish().map(|(_, o)| o)
     .unwrap_or_else(move |_| {
             let error = GameEventParseError::FailedParsingMessage { event_type: *event_type, message: event.message.clone() };
@@ -645,6 +646,20 @@ fn weather_wither<'parse, 'output: 'parse>(parsing_context: &'parse ParsingConte
     context("Weather Wither", all_consuming(
         weather_reflection,
     ))
+}
+
+fn lineal_belt<'parse, 'output: 'parse>() -> impl MyParser<'output, ParsedEventMessage<&'output str>> + 'parse {
+    |input| {
+        let (input, _) = tag("➰ ").parse(input)?;
+        let (input, claimed_by_str) = parse_terminated(" claimed the Lineal Belt from ").parse(input)?;
+        let (_, claimed_by) = emoji_team_eof.parse(claimed_by_str)?;
+        
+        // I don't trust that team name locations won't have an exclamation point in them
+        let (input, claimed_from_str) = parse_until_exclamation_point_eof.parse(input)?;
+        let (_, claimed_from) = emoji_team_eof.parse(claimed_from_str)?;
+
+        Ok((input, ParsedEventMessage::LinealBeltTransfer { claimed_by, claimed_from }))
+    }
 }
 
 #[cfg(test)]

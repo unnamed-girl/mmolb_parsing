@@ -323,6 +323,15 @@ pub(super) fn parse_until_period_eof(input: &str) -> IResult<&str, &str> {
     Ok((input, replacement_name))
 }
 
+// Same idea as parse_until_period_eof
+pub(super) fn parse_until_exclamation_point_eof(input: &str) -> IResult<&str, &str> {
+    let (input, replacement_name_with_dot) = is_not("\n").parse(input)?;
+    let replacement_name = replacement_name_with_dot.strip_suffix("!")
+        .ok_or_else(|| fail::<&str, &str, _>().parse(input).unwrap_err())?;
+
+    Ok((input, replacement_name))
+}
+
 
 pub(super) fn placed_player_eof(input: &str) -> IResult<&str, PlacedPlayer<&str>> {
     separated_pair(try_from_word, tag(" "), name_eof)

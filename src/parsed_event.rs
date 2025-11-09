@@ -172,6 +172,12 @@ pub enum ParsedEventMessage<S> {
         player: PlacedPlayer<S>,
         corrupted: bool,
     },
+
+    // Season 6
+    LinealBeltTransfer {
+        claimed_by: EmojiTeam<S>,
+        claimed_from: EmojiTeam<S>,
+    }
 }
 impl<S: Display> ParsedEventMessage<S> {
     /// Recreate the event message this ParsedEvent was built out of.
@@ -510,6 +516,9 @@ impl<S: Display> ParsedEventMessage<S> {
                 } else {
                     format!("{team_emoji} {player} resists the effects of the 🥀 Wither.")
                 }
+            },
+            Self::LinealBeltTransfer { claimed_by, claimed_from } => {
+                format!("➰ {claimed_by} claimed the Lineal Belt from {claimed_from}!")
             }
         }
     }

@@ -1,4 +1,5 @@
 use std::{collections::HashSet, fs::File, io::{Read, Write}, path::Path, pin::pin};
+use std::fmt::format;
 use clap::{Parser, ValueEnum};
 use futures::{Stream, StreamExt};
 use mmolb_parsing::{enums::{FeedEventSource, FoulType}, player::Player, player_feed::{parse_player_feed_event, PlayerFeed}, team_feed::{parse_team_feed_event, TeamFeed}, process_event, team::Team, Game, ParsedEventMessage};
@@ -486,6 +487,9 @@ fn check<S>(event: &ParsedEventMessage<S>) -> String {
         }
         ParsedEventMessage::WeatherWither { team_emoji: _, player: _, corrupted } => {
             format!("corrupted: {}", corrupted)
+        }
+        ParsedEventMessage::LinealBeltTransfer { claimed_by: _, claimed_from: _ } => {
+            format!("()")
         }
     };
 

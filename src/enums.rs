@@ -71,6 +71,7 @@ pub enum EventType {
     #[strum(to_string = "Weather_Wither")]
     #[serde(rename = "Weather_Wither")]
     WeatherWither,
+    LinealBeltTransfer,
 }
 
 /// Top or bottom of an inning.
