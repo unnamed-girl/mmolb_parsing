@@ -297,6 +297,17 @@ pub fn parse_and<'output, F, O>(
 /// Parse until tag is found, then discard that tag.
 pub(super) fn parse_terminated(tag_content: &str) -> impl Fn(&str) -> IResult<&str, &str> + '_ {
     move |input| {
+        // There's an "and Friends" name now
+        if tag_content == " and " {
+            let (new_input, prefix) = opt(parse_terminated(" and Friends and ")).parse(input)?;
+            if let Some(prefix) = prefix {
+                // Extend val by the length of " and Friends"
+                let name_len = prefix.len() + " and Friends".len();
+                let full_match = &input[..name_len];
+                return Ok((new_input, full_match));
+            }
+        }
+
         let (input, parsed_value) = if tag_content == "." {
             alt((
                 // The Kaj Statter Jr. rule
