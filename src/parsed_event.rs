@@ -146,11 +146,11 @@ pub enum ParsedEventMessage<S> {
     // Season 4
     PhotoContest {
         winning_team: EmojiTeam<S>,
-        winning_tokens: u8,
+        winning_tokens: u32,
         winning_player: S,
         winning_score: u16,
         losing_team: EmojiTeam<S>,
-        losing_tokens: u8,
+        losing_tokens: u32,
         losing_player: S,
         losing_score: u16,
     },

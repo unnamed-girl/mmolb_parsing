@@ -74,7 +74,7 @@ pub fn parse_event<'parse, 'output: 'parse>(event: &'output Event, parsing_conte
     )
 }
 fn photo_contest<'parse, 'output: 'parse>(parsing_context: &'parse ParsingContext<'parse>) -> impl MyParser<'output, ParsedEventMessage<&'output str>> + 'parse {
-    let team = |team: EmojiTeam<&'parse str>| (terminated(team.parser(), alt((tag(" earned "), tag(" earn ")))), terminated(u8, tag(" 🪙.")));
+    let team = |team: EmojiTeam<&'parse str>| (terminated(team.parser(), alt((tag(" earned "), tag(" earn ")))), terminated(u32, tag(" 🪙.")));
     let player = |emoji: &'parse str| (terminated(tag(emoji), tag(" ")), parse_terminated(" - "), u16);
 
     context("Photo Contest", all_consuming(verify((
@@ -653,7 +653,7 @@ fn lineal_belt<'parse, 'output: 'parse>() -> impl MyParser<'output, ParsedEventM
         let (input, _) = tag("➰ ").parse(input)?;
         let (input, claimed_by_str) = parse_terminated(" claimed the Lineal Belt from ").parse(input)?;
         let (_, claimed_by) = emoji_team_eof.parse(claimed_by_str)?;
-        
+
         // I don't trust that team name locations won't have an exclamation point in them
         let (input, claimed_from_str) = parse_until_exclamation_point_eof.parse(input)?;
         let (_, claimed_from) = emoji_team_eof.parse(claimed_from_str)?;
