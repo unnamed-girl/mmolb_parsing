@@ -512,8 +512,6 @@ impl<S: Display> ParsedEventMessage<S> {
                 format!("🪞 The reflection shatters. {team} received a Fragment of Reflection.")
             },
             Self::WeatherWither { team_emoji, player, corrupted, contained } => {
-                let contained = contained.as_ref().map(|c| c.to_string()).unwrap_or_default();
-
                 if Breakpoints::Season5TenseChange.before(game.season, game.day.as_ref().ok().copied(), event_index) {
                     if *corrupted {
                         format!("{team_emoji} {player} was Corrupted by the 🥀 Wither.{contained}")

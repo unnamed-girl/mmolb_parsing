@@ -9,6 +9,7 @@ use reqwest::Client;
 use tracing::{error, info, span::EnteredSpan, Level};
 use tracing_subscriber::fmt::writer::MakeWriterExt;
 use strum::{IntoDiscriminant};
+use mmolb_parsing::parsed_event::ContainResult;
 
 #[derive(Serialize, Deserialize)]
 pub struct FreeCashewResponse<T> {
@@ -486,7 +487,11 @@ fn check<S>(event: &ParsedEventMessage<S>) -> String {
             format!("()")
         }
         ParsedEventMessage::WeatherWither { team_emoji: _, player: _, corrupted, contained } => {
-            format!("corrupted: {}, contained: {}", corrupted, contained.is_some())
+            format!("corrupted: {}, contained: {}", corrupted, match contained {
+                ContainResult::NoContain => "none",
+                ContainResult::SuccessfulContain { .. } => "success",
+                ContainResult::FailedContain { .. } => "failure",
+            })
         }
         ParsedEventMessage::LinealBeltTransfer { claimed_by: _, claimed_from: _ } => {
             format!("()")
