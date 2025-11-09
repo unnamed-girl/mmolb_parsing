@@ -738,7 +738,16 @@ impl<S: Display> FallingStarOutcome<S> {
                 format!("{player_name} {began_begins} to glow brightly with celestial energy!")
             },
             FallingStarOutcome::InfusionIII => format!("{player_name} {was_is} fully charged with an abundance of celestial energy!"),
-            FallingStarOutcome::DeflectedHarmlessly => format!("It deflected off {player_name} harmlessly.")
+            FallingStarOutcome::DeflectedHarmlessly => {
+                let deflected_deflects = if Breakpoints::Season5TenseChange.after(game.season, game.day.as_ref().ok().copied(), event_index) {
+                    "deflects"
+                } else {
+                    "deflected"
+                };
+
+
+                format!("It {deflected_deflects} off {player_name} harmlessly.")
+            }
         }
     }
 }

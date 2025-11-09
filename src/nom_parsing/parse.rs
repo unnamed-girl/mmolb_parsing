@@ -192,14 +192,24 @@ fn weather<'output>() -> impl MyParser<'output, ParsedEventMessage<&'output str>
         alt((
             parse_terminated(" was injured by the extreme force of the impact!")
                 .map(|name| (name, FallingStarOutcome::Injury)),
+            parse_terminated(" is injured by the extreme force of the impact!")
+                .map(|name| (name, FallingStarOutcome::Injury)),
             retirement.map(|(retired_player_name, replacement_player_name)| (retired_player_name, FallingStarOutcome::Retired(replacement_player_name))),
             parse_terminated(" was infused with a glimmer of celestial energy!")
                 .map(|name| (name, FallingStarOutcome::InfusionI)),
+            parse_terminated(" is infused with a glimmer of celestial energy!")
+                .map(|name| (name, FallingStarOutcome::InfusionI)),
             parse_terminated(" began to glow brightly with celestial energy!")
+                .map(|name| (name, FallingStarOutcome::InfusionII)),
+            parse_terminated(" begins to glow brightly with celestial energy!")
                 .map(|name| (name, FallingStarOutcome::InfusionII)),
             parse_terminated(" was fully charged with an abundance of celestial energy!")
                 .map(|name| (name, FallingStarOutcome::InfusionIII)),
+            parse_terminated(" is fully charged with an abundance of celestial energy!")
+                .map(|name| (name, FallingStarOutcome::InfusionIII)),
             preceded(tag("It deflected off "), parse_terminated(" harmlessly.")).and_then(name_eof)
+                .map(|name| (name, FallingStarOutcome::DeflectedHarmlessly)),
+            preceded(tag("It deflects off "), parse_terminated(" harmlessly.")).and_then(name_eof)
                 .map(|name| (name, FallingStarOutcome::DeflectedHarmlessly)),
         )),
         tag("</strong>")
