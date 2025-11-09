@@ -626,18 +626,38 @@ pub(super) fn door_prizes(input: &str) -> IResult<&str, Vec<DoorPrize<&str>>> {
     many0(preceded(tag("<br>"), door_prize)).parse(input)
 }
 
-pub(super) fn wither<'parse>(parsing_context: &'parse ParsingContext<'parse>) -> impl Fn(&str) -> IResult<&str, WitherStruggle<&str>> + use<'parse> {
+pub(super) fn wither_s6<'parse>(parsing_context: &'parse ParsingContext<'parse>) -> impl Fn(&str) -> IResult<&str, WitherStruggle<&str>> + use<'parse> {
     move |input| {
         // Wither is a suffix so always has a space separating it from the main event body
         let (input, _) = tag(" ").parse(input)?;
         let (input, team_emoji) = either_team_emoji(parsing_context).parse(input)?;
         let (input, _) = tag(" ").parse(input)?;
-        let (input, placed_player_str) = parse_terminated(" struggles against the 🥀 Wither.").parse(input)?;
+        let (input, target_str) = parse_terminated(" struggles against the 🥀 Wither.").parse(input)?;
 
-        let (_, player) = placed_player_eof(placed_player_str)?;
+        let (_, target) = placed_player_eof(target_str)?;
 
-        Ok((input, WitherStruggle { team_emoji, player }))
+        Ok((input, WitherStruggle { team_emoji, target, source_name: None }))
     }
+}
+
+pub(super) fn wither_s7<'parse>(parsing_context: &'parse ParsingContext<'parse>) -> impl Fn(&str) -> IResult<&str, WitherStruggle<&str>> + use<'parse> {
+    move |input| {
+        // Wither is a suffix so always has a space separating it from the main event body
+        let (input, _) = tag(" ").parse(input)?;
+        let (input, source_name) = parse_terminated(" is trying to spread the 🥀 Wither to ").parse(input)?;
+        let (input, team_emoji) = either_team_emoji(parsing_context).parse(input)?;
+        let (input, _) = tag(" ").parse(input)?;
+        // Please danny don't let player names include exclamation points
+        let (input, target_str) = parse_terminated("!").parse(input)?;
+
+        let (_, target) = placed_player_eof(target_str)?;
+
+        Ok((input, WitherStruggle { team_emoji, target, source_name: Some(source_name) }))
+    }
+}
+
+pub(super) fn wither<'parse>(parsing_context: &'parse ParsingContext<'parse>) -> impl Fn(&str) -> IResult<&str, WitherStruggle<&str>> + use<'parse> {
+    |input| alt((wither_s6(parsing_context), wither_s7(parsing_context))).parse(input)
 }
 
 pub(super) fn equipped_item(input: &str) -> IResult<&str, (Item<&str>, Option<(&str, Option<Item<&str>>)>)> {

@@ -646,7 +646,9 @@ fn weather_wither<'parse, 'output: 'parse>(parsing_context: &'parse ParsingConte
         let (input, _) = tag(" ").parse(input)?;
         let (input, (placed_player_str, corrupted)) = alt((
               parse_terminated(" resists the effects of the 🥀 Wither.").map(|n| (n, false)),
+              parse_terminated(" resisted the effects of the 🥀 Wither.").map(|n| (n, false)),
               parse_terminated(" was Corrupted by the 🥀 Wither.").map(|n| (n, true)),
+              parse_terminated(" is Corrupted by the 🥀 Wither.").map(|n| (n, true)),
         )).parse(input)?;
 
         let (_, player) = placed_player_eof(placed_player_str)?;

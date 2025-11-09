@@ -511,10 +511,19 @@ impl<S: Display> ParsedEventMessage<S> {
                 format!("🪞 The reflection shatters. {team} received a Fragment of Reflection.")
             },
             Self::WeatherWither { team_emoji, player, corrupted } => {
-                if *corrupted {
-                    format!("{team_emoji} {player} was Corrupted by the 🥀 Wither.")
+                if Breakpoints::Season5TenseChange.before(game.season, game.day.as_ref().ok().copied(), event_index) {
+                    if *corrupted {
+                        format!("{team_emoji} {player} was Corrupted by the 🥀 Wither.")
+                    } else {
+                        format!("{team_emoji} {player} resists the effects of the 🥀 Wither.")
+                    }
                 } else {
-                    format!("{team_emoji} {player} resists the effects of the 🥀 Wither.")
+                    if *corrupted {
+                        format!("{team_emoji} {player} was Corrupted by the 🥀 Wither.")
+                    } else {
+                        // This one went from present to past after the tense change??
+                        format!("{team_emoji} {player} resisted the effects of the 🥀 Wither.")
+                    }
                 }
             },
             Self::LinealBeltTransfer { claimed_by, claimed_from } => {
@@ -1428,12 +1437,17 @@ impl<S: AsRef<str>> DoorPrize<S> {
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
 pub struct WitherStruggle<S> {
     pub team_emoji: S,
-    pub player: PlacedPlayer<S>,
+    pub target: PlacedPlayer<S>,
+    // Source was not named in s6
+    pub source_name: Option<S>,
 }
 
 impl<S: Display> Display for WitherStruggle<S> {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        write!(f, "{} {} struggles against the 🥀 Wither.", self.team_emoji, self.player)
+        match &self.source_name {
+            None => write!(f, "{} {} struggles against the 🥀 Wither.", self.team_emoji, self.target),
+            Some(source_name) => write!(f, "{source_name} is trying to spread the 🥀 Wither to {} {}!", self.team_emoji, self.target),
+        }
     }
 }
 
@@ -1441,7 +1455,8 @@ impl<S: AsRef<str>> WitherStruggle<S> {
     pub fn to_ref(&self) -> WitherStruggle<&str> {
         WitherStruggle {
             team_emoji: self.team_emoji.as_ref(),
-            player: self.player.as_ref(),
+            source_name: self.source_name.as_ref().map(AsRef::as_ref),
+            target: self.target.as_ref(),
         }
     }
 }
