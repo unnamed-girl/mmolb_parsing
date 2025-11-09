@@ -829,7 +829,7 @@ impl<S: Display> Delivery<S> {
                 format!("{team}{player}{received_text}{item} {delivery_label}.{discarded}")
             }
             Self::NoSpace { item } => {
-                let discard_text = Breakpoints::Season5TenseChange.after(game.season, game.day.as_ref().ok().copied(), event_index).then_some(" is discarded as no player had space.").unwrap_or(" was discarded as no player had space.");
+                let discard_text = Breakpoints::Season5TenseChange.after(game.season, game.day.as_ref().ok().copied(), event_index).then_some(" is discarded as no player has space.").unwrap_or(" was discarded as no player had space.");
                 format!("{item}{discard_text}")
             }
         }

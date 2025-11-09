@@ -465,7 +465,7 @@ pub(super) fn delivery<'parse, 'output: 'parse>(parsing_context: &'parse Parsing
         opt(delimited(tag(discard_text), item, tag(".")))
     ).map(|((team, player), item, discarded)| Delivery::Successful {team, player, item, discarded} );
 
-    let discard_text = parsing_context.after(Breakpoints::Season5TenseChange).then_some(" is discarded as no player had space.").unwrap_or(" was discarded as no player had space.");
+    let discard_text = parsing_context.after(Breakpoints::Season5TenseChange).then_some(" is discarded as no player has space.").unwrap_or(" was discarded as no player had space.");
     let fail = terminated(item, tag(discard_text)).map(|item| Delivery::NoSpace { item });
 
     alt((
