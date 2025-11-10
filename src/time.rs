@@ -179,7 +179,7 @@ impl Breakpoints {
             Breakpoints::Season7SuccessfulContainPeriodFix => Time {
                 season: 7,
                 ascending_days: vec![
-                    (DayEquivalent { day: 46, offset: 0 }, 123)
+                    (DayEquivalent { day: 46, offset: 0 }, 24)
                 ]
             },
         }
