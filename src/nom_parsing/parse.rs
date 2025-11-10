@@ -646,19 +646,19 @@ fn weather_wither<'parse, 'output: 'parse>(parsing_context: &'parse ParsingConte
 
         let (input, _) = tag(" ").parse(input)?;
         let (input, (placed_player_str, corrupted)) = alt((
-              parse_terminated(" resists the effects of the 🥀 Wither.").map(|n| (n, false)),
-              parse_terminated(" resisted the effects of the 🥀 Wither.").map(|n| (n, false)),
-              parse_terminated(" was Corrupted by the 🥀 Wither.").map(|n| (n, true)),
-              parse_terminated(" is Corrupted by the 🥀 Wither.").map(|n| (n, true)),
+              parse_terminated(" resists the effects of the 🥀 Wither").map(|n| (n, false)),
+              parse_terminated(" resisted the effects of the 🥀 Wither").map(|n| (n, false)),
+              parse_terminated(" was Corrupted by the 🥀 Wither").map(|n| (n, true)),
+              parse_terminated(" is Corrupted by the 🥀 Wither").map(|n| (n, true)),
         )).parse(input)?;
 
-        let (input, contained) = 
-            opt(alt((
-                wither_contain(),
-                wither_contain_failed(),
-            )))
-                .map(|opt| opt.unwrap_or(ContainResult::NoContain))
-                .parse(input)?;
+        let (input, contained) = alt((
+                wither_contain(parsing_context),
+                wither_contain_failed(parsing_context),
+                // This must be after all other combinators, because for the first 45 days of s7
+                // the delimiter was ".," instead of ",". We don't want to match ".," here.
+                tag(".").map(|_| ContainResult::NoContain)
+            )).parse(input)?;
 
         let (_, player) = placed_player_eof(placed_player_str)?;
 
@@ -669,8 +669,14 @@ fn weather_wither<'parse, 'output: 'parse>(parsing_context: &'parse ParsingConte
     ))
 }
 
-fn wither_contain<'parse, 'output: 'parse>() -> impl MyParser<'output, ContainResult<&'output str>> + 'parse {
+fn wither_contain<'parse, 'output: 'parse>(parsing_context: &'parse ParsingContext<'parse>) -> impl MyParser<'output, ContainResult<&'output str>> + 'parse {
     |input| {
+        let (input, _) = if parsing_context.before(Breakpoints::Season7WitherPeriodFix) {
+            tag(".").parse(input)?
+        } else {
+            (input, "")
+        };
+
         let (input, _) = tag(", and Contained ").parse(input)?;
         let (input, contained_player_name) = parse_terminated(". They were replaced by ").parse(input)?;
         let (input, replacement_player_name) = parse_until_period_eof.parse(input)?;
@@ -679,8 +685,14 @@ fn wither_contain<'parse, 'output: 'parse>() -> impl MyParser<'output, ContainRe
     }
 }
 
-fn wither_contain_failed<'parse, 'output: 'parse>() -> impl MyParser<'output, ContainResult<&'output str>> + 'parse {
+fn wither_contain_failed<'parse, 'output: 'parse>(parsing_context: &'parse ParsingContext<'parse>) -> impl MyParser<'output, ContainResult<&'output str>> + 'parse {
     |input| {
+        let (input, _) = if parsing_context.before(Breakpoints::Season7WitherPeriodFix) {
+            tag(".").parse(input)?
+        } else {
+            (input, "")
+        };
+
         let (input, _) = tag(", and tried to Contain ").parse(input)?;
         let (input, target_player_name) = parse_terminated(", but they wouldn't budge.").parse(input)?;
 

@@ -512,18 +512,26 @@ impl<S: Display> ParsedEventMessage<S> {
                 format!("🪞 The reflection shatters. {team} received a Fragment of Reflection.")
             },
             Self::WeatherWither { team_emoji, player, corrupted, contained } => {
+                let delim = if let ContainResult::NoContain = contained {
+                    "."
+                } else if Breakpoints::Season7WitherPeriodFix.before(game.season, game.day.as_ref().ok().copied(), event_index) {
+                    "."
+                }  else {
+                    ""
+                };
+
                 if Breakpoints::Season5TenseChange.before(game.season, game.day.as_ref().ok().copied(), event_index) {
                     if *corrupted {
-                        format!("{team_emoji} {player} was Corrupted by the 🥀 Wither.{contained}")
+                        format!("{team_emoji} {player} was Corrupted by the 🥀 Wither{delim}{contained}")
                     } else {
-                        format!("{team_emoji} {player} resists the effects of the 🥀 Wither.{contained}")
+                        format!("{team_emoji} {player} resists the effects of the 🥀 Wither{delim}{contained}")
                     }
                 } else {
                     if *corrupted {
-                        format!("{team_emoji} {player} was Corrupted by the 🥀 Wither.{contained}")
+                        format!("{team_emoji} {player} was Corrupted by the 🥀 Wither{delim}{contained}")
                     } else {
                         // This one went from present to past after the tense change??
-                        format!("{team_emoji} {player} resisted the effects of the 🥀 Wither.{contained}")
+                        format!("{team_emoji} {player} resisted the effects of the 🥀 Wither{delim}{contained}")
                     }
                 }
             },
