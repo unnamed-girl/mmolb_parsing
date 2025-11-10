@@ -9,7 +9,7 @@ use reqwest::Client;
 use tracing::{error, info, span::EnteredSpan, Level};
 use tracing_subscriber::fmt::writer::MakeWriterExt;
 use strum::{IntoDiscriminant};
-use mmolb_parsing::parsed_event::ContainResult;
+use mmolb_parsing::parsed_event::{ContainResult, PartyDurabilityLoss};
 
 #[derive(Serialize, Deserialize)]
 pub struct FreeCashewResponse<T> {
@@ -482,7 +482,12 @@ fn check<S>(event: &ParsedEventMessage<S>) -> String {
         },
         ParsedEventMessage::WeatherProsperity { home_income: _, away_income: _ } => "".to_string(),
         ParsedEventMessage::PhotoContest { winning_team: _, winning_tokens: _, winning_player: _, winning_score: _, losing_team: _, losing_tokens: _, losing_player: _, losing_score: _ } => "".to_string(),
-        ParsedEventMessage::Party { pitcher_name: _, pitcher_amount_gained: _, pitcher_attribute: _, batter_name: _, batter_amount_gained: _, batter_attribute: _ } => "".to_string(),
+        ParsedEventMessage::Party { pitcher_name: _, pitcher_amount_gained: _, pitcher_attribute: _, batter_name: _, batter_amount_gained: _, batter_attribute: _, durability_loss } => {
+            format!("durability loss: {}", match durability_loss {
+                PartyDurabilityLoss::Both(_) => "both",
+                PartyDurabilityLoss::OneProtected { .. } => "one",
+            })
+        },
         ParsedEventMessage::WeatherReflection { team: _ } => {
             format!("()")
         }

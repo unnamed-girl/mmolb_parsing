@@ -163,6 +163,7 @@ pub enum ParsedEventMessage<S> {
         batter_name: S,
         batter_amount_gained: u8,
         batter_attribute: Attribute,
+        durability_loss: PartyDurabilityLoss<S>,
     },
     WeatherReflection {
         team: EmojiTeam<S>
@@ -505,8 +506,13 @@ impl<S: Display> ParsedEventMessage<S> {
 
                 format!("{winning_team} {earn} {winning_tokens} 🪙. {losing_team} {earn} {losing_tokens} 🪙.<br>Top scoring Photos:<br>{winning_emoji} {winning_player} - {winning_score} {losing_emoji} {losing_player} - {losing_score}")
             },
-            Self::Party { pitcher_name, pitcher_amount_gained, pitcher_attribute, batter_name, batter_amount_gained, batter_attribute } => {
-                format!("<strong>🥳 {pitcher_name} and {batter_name} are Partying!</strong> {pitcher_name} gained +{pitcher_amount_gained} {pitcher_attribute}. {batter_name} gained +{batter_amount_gained} {batter_attribute}. Both players lose 3 Durability.")
+            Self::Party { pitcher_name, pitcher_amount_gained, pitcher_attribute, batter_name, batter_amount_gained, batter_attribute, durability_loss } => {
+                format!(
+                    "<strong>🥳 {pitcher_name} and {batter_name} are Partying!</strong> \
+                    {pitcher_name} gained +{pitcher_amount_gained} {pitcher_attribute}. \
+                    {batter_name} gained +{batter_amount_gained} {batter_attribute}. \
+                    {durability_loss}"
+                )
             },
             Self::WeatherReflection { team } => {
                 format!("🪞 The reflection shatters. {team} received a Fragment of Reflection.")
@@ -871,6 +877,33 @@ pub enum ContainResult<S> {
     FailedContain {
         target_player_name: S,
     },
+}
+
+#[derive(Debug, Clone, Copy, Serialize, Deserialize, PartialEq)]
+pub enum PartyDurabilityLoss<S> {
+    Both(u8),
+    OneProtected {
+        protected_player_name: S,
+        unprotected_player_name: S,
+        durability_loss: u8,
+    }
+}
+
+impl<S: Display> Display for PartyDurabilityLoss<S> {
+    fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
+        match self {
+            PartyDurabilityLoss::Both(durability_loss) => {
+                write!(f, "Both players lose {durability_loss} Durability.")
+            }
+            PartyDurabilityLoss::OneProtected { protected_player_name, unprotected_player_name, durability_loss } => {
+                write!(
+                    f,
+                    "{unprotected_player_name} loses {durability_loss} Durability, but \
+                    {protected_player_name}'s Prolific Greater Boon protects them from harm."
+                )
+            }
+        }
+    }
 }
 
 impl<S: Display> Display for ContainResult<S> {

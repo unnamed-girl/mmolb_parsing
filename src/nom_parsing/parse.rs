@@ -7,7 +7,7 @@ use phf::phf_map;
 
 use crate::{enums::{EventType, GameOverMessage, HomeAway, MoundVisitType, NowBattingStats}, game::Event, nom_parsing::shared::{aurora, cheer, ejection, delivery, team_emoji, try_from_word, try_from_words_m_n, MyParser}, parsed_event::{EmojiTeam, FallingStarOutcome, FieldingAttempt, GameEventParseError, KnownBug, StartOfInningPitcher}, time::Breakpoints, ParsedEventMessage};
 use crate::nom_parsing::shared::{either_team_emoji, parse_until_exclamation_point_eof, parse_until_period_eof, wither};
-use crate::parsed_event::ContainResult;
+use crate::parsed_event::{ContainResult, PartyDurabilityLoss};
 use super::{shared::{all_consuming_sentence_and, base_steal_sentence, bold, destination, emoji_team_eof, exclamation, fair_ball_type_verb_name, fielders_eof, fly_ball_type_verb_name, name_eof, now_batting_stats, ordinal_suffix, out, parse_and, parse_terminated, placed_player_eof, score_update, scores_and_advances, scores_sentence, sentence, sentence_eof}, ParsingContext};
 
 const OVERRIDES: phf::Map<&'static str, phf::Map<u16, ParsedEventMessage<&'static str>>> = phf_map!();
@@ -99,6 +99,42 @@ fn photo_contest<'parse, 'output: 'parse>(parsing_context: &'parse ParsingContex
         ParsedEventMessage::PhotoContest { winning_team, winning_tokens, winning_player, winning_score, losing_team, losing_tokens, losing_player, losing_score }
     )
 }
+
+fn party_full_durability_loss<'parse, 'output: 'parse>() -> impl MyParser<'output, PartyDurabilityLoss<&'output str>> + 'parse {
+    |input| {
+        let (input, _) = tag(". Both players lose ").parse(input)?;
+        let (input, loss) = u8.parse(input)?;
+        let (input, _) = tag(" Durability.").parse(input)?;
+
+        Ok((input, PartyDurabilityLoss::Both(loss)))
+    }
+}
+
+fn party_one_protected_durability_loss<'parse, 'output: 'parse>() -> impl MyParser<'output, PartyDurabilityLoss<&'output str>> + 'parse {
+    |input| {
+        let (input, _) = tag(". ").parse(input)?;
+        let (input, unprotected_player_name) = parse_terminated(" loses ").parse(input)?;
+        let (input, durability_loss) = u8.parse(input)?;
+        let (input, _) = tag(" Durability, but ").parse(input)?;
+        let (input, protected_player_name) = parse_terminated("'s Prolific Greater Boon protects them from harm.").parse(input)?;
+
+        Ok((input, PartyDurabilityLoss::OneProtected {
+            protected_player_name,
+            unprotected_player_name,
+            durability_loss,
+        }))
+    }
+}
+
+fn party_durability_loss<'parse, 'output: 'parse>() -> impl MyParser<'output, PartyDurabilityLoss<&'output str>> + 'parse {
+    |input| {
+        alt((
+            party_full_durability_loss(),
+            party_one_protected_durability_loss(),
+        )).parse(input)
+    }
+}
+
 fn party<'parse, 'output: 'parse>(_parsing_context: &'parse ParsingContext<'parse>) -> impl MyParser<'output, ParsedEventMessage<&'output str>> + 'parse {
     context("Party", all_consuming(verify(
         preceded(
@@ -111,14 +147,15 @@ fn party<'parse, 'output: 'parse>(_parsing_context: &'parse ParsingContext<'pars
                 terminated(try_from_word, tag(". ")), // attribute
                 parse_terminated(" gained +"),
                 terminated(u8, tag(" ")),
-                terminated(try_from_word, tag(". Both players lose 3 Durability.")), // attribute
+                try_from_word, // attribute
+                party_durability_loss(),
             ),
         ),
-    |(pitcher_name_1, batter_name_1, pitcher_name_2, _, _, batter_name_2, _, _)|
+    |(pitcher_name_1, batter_name_1, pitcher_name_2, _, _, batter_name_2, _, _, _)|
         pitcher_name_1 == pitcher_name_2 && batter_name_1 == batter_name_2
     )))
-    .map(|(_, _, pitcher_name, pitcher_amount_gained, pitcher_attribute, batter_name, batter_amount_gained, batter_attribute)|
-        ParsedEventMessage::Party { pitcher_name, pitcher_amount_gained, pitcher_attribute, batter_name, batter_amount_gained, batter_attribute }
+    .map(|(_, _, pitcher_name, pitcher_amount_gained, pitcher_attribute, batter_name, batter_amount_gained, batter_attribute, durability_loss)|
+        ParsedEventMessage::Party { pitcher_name, pitcher_amount_gained, pitcher_attribute, batter_name, batter_amount_gained, batter_attribute, durability_loss }
     )
 }
 
