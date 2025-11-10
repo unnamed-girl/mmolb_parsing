@@ -653,11 +653,11 @@ fn weather_wither<'parse, 'output: 'parse>(parsing_context: &'parse ParsingConte
         )).parse(input)?;
 
         let (input, contained) = alt((
-                wither_contain(parsing_context),
-                wither_contain_failed(parsing_context),
-                // This must be after all other combinators, because for the first 45 days of s7
-                // the delimiter was ".," instead of ",". We don't want to match ".," here.
-                tag(".").map(|_| ContainResult::NoContain)
+            wither_contain(parsing_context),
+            wither_contain_failed(),
+            // This must be after all other combinators, because for the first 45 days of s7
+            // the delimiter was ".," instead of ",". We don't want to match ".," here.
+            tag(".").map(|_| ContainResult::NoContain)
             )).parse(input)?;
 
         let (_, player) = placed_player_eof(placed_player_str)?;
@@ -671,7 +671,7 @@ fn weather_wither<'parse, 'output: 'parse>(parsing_context: &'parse ParsingConte
 
 fn wither_contain<'parse, 'output: 'parse>(parsing_context: &'parse ParsingContext<'parse>) -> impl MyParser<'output, ContainResult<&'output str>> + 'parse {
     |input| {
-        let (input, _) = if parsing_context.before(Breakpoints::Season7WitherPeriodFix) {
+        let (input, _) = if parsing_context.before(Breakpoints::Season7SuccessfulContainPeriodFix) {
             tag(".").parse(input)?
         } else {
             (input, "")
@@ -685,13 +685,14 @@ fn wither_contain<'parse, 'output: 'parse>(parsing_context: &'parse ParsingConte
     }
 }
 
-fn wither_contain_failed<'parse, 'output: 'parse>(parsing_context: &'parse ParsingContext<'parse>) -> impl MyParser<'output, ContainResult<&'output str>> + 'parse {
+fn wither_contain_failed<'parse, 'output: 'parse>() -> impl MyParser<'output, ContainResult<&'output str>> + 'parse {
     |input| {
-        let (input, _) = if parsing_context.before(Breakpoints::Season7WitherPeriodFix) {
-            tag(".").parse(input)?
-        } else {
-            (input, "")
-        };
+        let (input, _) = tag(".").parse(input)?;
+        // let (input, _) = if parsing_context.before(Breakpoints::Season7SuccessfulContainPeriodFix) {
+        //     tag(".").parse(input)?
+        // } else {
+        //     (input, "")
+        // };
 
         let (input, _) = tag(", and tried to Contain ").parse(input)?;
         let (input, target_player_name) = parse_terminated(", but they wouldn't budge.").parse(input)?;

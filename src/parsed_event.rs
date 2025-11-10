@@ -512,12 +512,10 @@ impl<S: Display> ParsedEventMessage<S> {
                 format!("🪞 The reflection shatters. {team} received a Fragment of Reflection.")
             },
             Self::WeatherWither { team_emoji, player, corrupted, contained } => {
-                let delim = if let ContainResult::NoContain = contained {
-                    "."
-                } else if Breakpoints::Season7WitherPeriodFix.before(game.season, game.day.as_ref().ok().copied(), event_index) {
-                    "."
-                }  else {
-                    ""
+                let delim = match contained {
+                    ContainResult::NoContain => ".",
+                    ContainResult::SuccessfulContain { .. } => if Breakpoints::Season7SuccessfulContainPeriodFix.before(game.season, game.day.as_ref().ok().copied(), event_index) { "." } else { "" },
+                    ContainResult::FailedContain { .. } => ".",
                 };
 
                 if Breakpoints::Season5TenseChange.before(game.season, game.day.as_ref().ok().copied(), event_index) {

@@ -107,7 +107,7 @@ pub enum Breakpoints {
     Season3PreSuperstarBreakUpdate,
     EternalBattle,
     Season5TenseChange,
-    Season7WitherPeriodFix,
+    Season7SuccessfulContainPeriodFix,
 }
 impl From<Breakpoints> for Time {
     fn from(value: Breakpoints) -> Self {
@@ -176,7 +176,7 @@ impl Breakpoints {
                     (DayEquivalent { day: 863, offset: 0 }, 0)
                 ]
             },
-            Breakpoints::Season7WitherPeriodFix => Time {
+            Breakpoints::Season7SuccessfulContainPeriodFix => Time {
                 season: 7,
                 ascending_days: vec![
                     (DayEquivalent { day: 46, offset: 0 }, 231)
