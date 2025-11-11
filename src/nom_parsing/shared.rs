@@ -6,7 +6,7 @@ use nom_language::error::VerboseError;
 
 use crate::{enums::{Base, BatterStat, Day, FairBallDestination, FairBallType, HomeAway, NowBattingStats, Place}, feed_event::{EmojilessItem, FeedDelivery, FeedEvent}, game::Event, parsed_event::{BaseSteal, Cheer, Delivery, DoorPrize, Ejection, EjectionReason, EmojiTeam, Item, ItemAffixes, PlacedPlayer, Prize, RunnerAdvance, RunnerOut, SnappedPhotos, ViolationType}, player, time::{Breakpoints, Time}, Game};
 use crate::enums::Attribute;
-use crate::parsed_event::{EjectionReplacement, WitherStruggle};
+use crate::parsed_event::{EjectionReplacement, ItemEquip, ItemPrize, WitherStruggle};
 use crate::player::{Deserialize, Serialize};
 
 pub(super) type Error<'a> = VerboseError<&'a str>;
@@ -660,19 +660,37 @@ pub(super) fn wither<'parse>(parsing_context: &'parse ParsingContext<'parse>) ->
     |input| alt((wither_s6(parsing_context), wither_s7(parsing_context))).parse(input)
 }
 
-pub(super) fn equipped_item(input: &str) -> IResult<&str, (Item<&str>, Option<(&str, Option<Item<&str>>)>)> {
-    let (input, equipper_name) = parse_terminated(" equips ").parse(input)?;
+pub(super) fn equipped_item(input: &str) -> IResult<&str, ItemPrize<&str>> {
+    let (input, player_name) = parse_terminated(" equips ").parse(input)?;
     let (input, item) = item.parse(input)?;
     let (input, _) = tag(" from the Door Prize").parse(input)?;
-    let (input, discarded) = opt(discarded_item()).parse(input)?;
+    let (input, discarded_item) = opt(discarded_item()).parse(input)?;
 
-    Ok((input, (item, Some((equipper_name, discarded)))))
+    Ok((input, ItemPrize {
+        item,
+        equip: ItemEquip::Equipped {
+            player_name,
+            discarded_item,
+        }
+    }))
+}
+
+// This is when the item from the door prize was discarded, not for when the player's
+// previous item was discarded after they equipped that one
+pub(super) fn door_prize_item_discarded(input: &str) -> IResult<&str, ItemPrize<&str>> {
+    let (input, item) = item.parse(input)?;
+    let (input, _) = tag(" is discarded; nobody can use it").parse(input)?;
+
+    Ok((input, ItemPrize {
+        item,
+        equip: ItemEquip::Discarded
+    }))
 }
 
 pub(super) fn equipped_prize<'output>(input: &'output str) -> IResult<'output, &'output str, Prize<&'output str>> {
     alt((
         terminated(u16, tag(" 🪙")).map(Prize::Tokens),
-        separated_list1(tag(". "), equipped_item).map(Prize::Items)
+        separated_list1(tag(". "), alt((equipped_item, door_prize_item_discarded))).map(Prize::Items)
     )).parse(input)
 }
 
@@ -681,7 +699,12 @@ pub(super) fn prize<'output>(input: &'output str) -> IResult<'output, &'output s
     alt((
         terminated(u16, tag(" 🪙")).map(Prize::Tokens),
         separated_list1(tag(", "), item).map(|items| {
-            Prize::Items(items.into_iter().map(|i| (i, None)).collect())
+            Prize::Items(
+                items
+                    .into_iter()
+                    .map(|item| ItemPrize { item, equip: ItemEquip::None })
+                    .collect()
+            )
         })
     )).parse(input)
 }
@@ -777,7 +800,7 @@ pub struct FeedEventDoorPrize<S> {
 impl<S: Display> Display for FeedEventDoorPrize<S> {
     fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
         let punct = match &self.prize {
-            Prize::Items(i) if i.iter().any(|(_, equipped)| equipped.is_some()) => "!",
+            Prize::Items(i) if i.iter().any(|prize| !prize.equip.is_none()) => "!",
             _ => ":",
         };
         write!(f, "{} won a Door Prize{punct} {}.", self.player_name, self.prize.unparse())

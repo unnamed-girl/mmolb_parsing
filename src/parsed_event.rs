@@ -1430,10 +1430,49 @@ impl<S: AsRef<str>> Ejection<S> {
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
+pub enum ItemEquip<S> {
+    None,
+    Discarded,
+    Equipped {
+        player_name: S,
+        discarded_item: Option<Item<S>>,
+    },
+}
+
+impl<S> ItemEquip<S> {
+    pub fn is_none(&self) -> bool {
+        match self {
+            ItemEquip::None => true,
+            _ => false,
+        }
+    }
+}
+
+
+
+impl<S: AsRef<str>> ItemEquip<S> {
+    pub fn to_ref(&self) -> ItemEquip<&str> {
+        match self {
+            ItemEquip::None => ItemEquip::None,
+            ItemEquip::Discarded => ItemEquip::Discarded,
+            ItemEquip::Equipped { player_name, discarded_item } => ItemEquip::Equipped {
+                player_name: player_name.as_ref(),
+                discarded_item: discarded_item.as_ref().map(|i| i.to_ref()),
+            }
+        }
+    }
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
+pub struct ItemPrize<S> {
+    pub item: Item<S>,
+    pub equip: ItemEquip<S>,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
 pub enum Prize<S> {
     Tokens(u16),
-    // TODO Make this a more descriptive type once the format is known
-    Items(Vec<(Item<S>, Option<(/* equipper */ S, /* discarded item */ Option<Item<S>>)>)>)
+    Items(Vec<ItemPrize<S>>)
 }
 
 impl<S: Display> Prize<S> {
@@ -1441,20 +1480,24 @@ impl<S: Display> Prize<S> {
         match self {
             Prize::Tokens(tokens) => format!("{tokens} 🪙"),
             Prize::Items(items) => {
-                let equips = items.iter().any(|(_, equipper)| equipper.is_some());
+                let has_equip = items.iter().any(|i| !i.equip.is_none());
 
                 items.iter()
-                    .map(|(item, equipper)| if let Some((equipper_name, discarded_item)) = equipper {
-                        let discard = match discarded_item {
-                            None => String::new(),
-                            Some(discarded_item) => format!(". They discard their {discarded_item}"),
-                        };
-                        format!("{equipper_name} equips {item} from the Door Prize{discard}")
-                    } else {
-                        item.to_string()
+                    .map(|prize| match &prize.equip {
+                        ItemEquip::None => prize.item.to_string(),
+                        ItemEquip::Discarded => {
+                            format!("{} is discarded; nobody can use it", prize.item)
+                        }
+                        ItemEquip::Equipped { player_name, discarded_item } => {
+                            let discard = match discarded_item {
+                                None => String::new(),
+                                Some(discarded_item) => format!(". They discard their {discarded_item}"),
+                            };
+                            format!("{player_name} equips {} from the Door Prize{discard}", prize.item)
+                        }
                     })
                     .collect::<Vec<_>>()
-                    .join(if equips { ". " } else { ", " })
+                    .join(if has_equip { ". " } else { ", " })
             }
         }
     }
@@ -1465,11 +1508,10 @@ impl<S: AsRef<str>> Prize<S> {
         match self {
             Prize::Items(items) => Prize::Items(items
                     .iter()
-                    .map(|(item, equipper)| (item.to_ref(), equipper
-                        .as_ref()
-                        .map(|(name, discarded)| (name.as_ref(), discarded
-                            .as_ref()
-                            .map(Item::to_ref)))))
+                    .map(|prize| ItemPrize {
+                        item: prize.item.to_ref(),
+                        equip: prize.equip.to_ref(),
+                    })
                     .collect()),
             Prize::Tokens(t) => Prize::Tokens(*t)
         }
