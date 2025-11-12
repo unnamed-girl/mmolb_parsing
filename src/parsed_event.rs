@@ -1519,7 +1519,13 @@ pub struct DoorPrize<S> {
 impl<S: Display> DoorPrize<S> {
     pub fn unparse(&self) -> String {
         match &self.prize {
-            Some(prize) => format!("🥳 {} won a Door Prize: {}.", self.player, prize.unparse()),
+            Some(prize) => {
+                let punct = match prize {
+                    Prize::Items(items) if items.iter().any(|item| !item.equip.is_none()) => "!",
+                    _ => ":",
+                };
+                format!("🥳 {} won a Door Prize{punct} {}.", self.player, prize.unparse())
+            },
             None => format!("🥳 {} didn't win a Door Prize.", self.player)
         }
     }
