@@ -524,18 +524,10 @@ impl<S: Display> ParsedEventMessage<S> {
                     ContainResult::FailedContain { .. } => ".",
                 };
 
-                if Breakpoints::Season5TenseChange.before(game.season, game.day.as_ref().ok().copied(), event_index) {
-                    if *corrupted {
-                        format!("{team_emoji} {player} was Corrupted by the 🥀 Wither{delim}{contained}")
-                    } else {
-                        format!("{team_emoji} {player} resisted the effects of the 🥀 Wither{delim}{contained}")
-                    }
+                if *corrupted {
+                    format!("{team_emoji} {player} was Corrupted by the 🥀 Wither{delim}{contained}")
                 } else {
-                    if *corrupted {
-                        format!("{team_emoji} {player} was Corrupted by the 🥀 Wither{delim}{contained}")
-                    } else {
-                        format!("{team_emoji} {player} resists the effects of the 🥀 Wither{delim}{contained}")
-                    }
+                    format!("{team_emoji} {player} resisted the effects of the 🥀 Wither{delim}{contained}")
                 }
             },
             Self::LinealBeltTransfer { claimed_by, claimed_from } => {
