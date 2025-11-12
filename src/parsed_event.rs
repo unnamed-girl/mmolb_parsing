@@ -528,14 +528,13 @@ impl<S: Display> ParsedEventMessage<S> {
                     if *corrupted {
                         format!("{team_emoji} {player} was Corrupted by the 🥀 Wither{delim}{contained}")
                     } else {
-                        format!("{team_emoji} {player} resists the effects of the 🥀 Wither{delim}{contained}")
+                        format!("{team_emoji} {player} resisted the effects of the 🥀 Wither{delim}{contained}")
                     }
                 } else {
                     if *corrupted {
                         format!("{team_emoji} {player} was Corrupted by the 🥀 Wither{delim}{contained}")
                     } else {
-                        // This one went from present to past after the tense change??
-                        format!("{team_emoji} {player} resisted the effects of the 🥀 Wither{delim}{contained}")
+                        format!("{team_emoji} {player} resists the effects of the 🥀 Wither{delim}{contained}")
                     }
                 }
             },
