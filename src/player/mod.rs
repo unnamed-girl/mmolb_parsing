@@ -250,12 +250,16 @@ pub struct Talk {
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
 pub struct TalkCategory {
     pub quote: String,
+
+    // Reflection players' talk entries have a null day
     #[serde(default = "SometimesMissingHelper::default_result", skip_serializing_if = "AddedLaterResult::is_err")]
-    #[serde_as(as = "SometimesMissingHelper<MaybeRecognizedHelper<_>>")]
-    pub day: AddedLaterResult<MaybeRecognizedResult<Day>>,
+    #[serde_as(as = "SometimesMissingHelper<Option<MaybeRecognizedHelper<_>>>")]
+    pub day: AddedLaterResult<Option<MaybeRecognizedResult<Day>>>,
+
+    // Reflection players' talk entries have a null season
     #[serde(default = "SometimesMissingHelper::default_result", skip_serializing_if = "AddedLaterResult::is_err")]
     #[serde_as(as = "SometimesMissingHelper<_>")]
-    pub season: AddedLaterResult<u8>,
+    pub season: AddedLaterResult<Option<u8>>,
     pub stars: HashMap<Attribute, TalkStars>,
 
     #[serde(flatten, deserialize_with = "extra_fields_deserialize")]
