@@ -91,7 +91,8 @@ pub enum ParsedPlayerFeedEventText<S> {
     },
     SeasonalDurabilityLoss {
         player_name: S,
-        durability_lost: u32,
+        // None means that the Prolific boon resisted the durability loss
+        durability_lost: Option<u32>,
         season: u32,
     },
     CorruptedByWither {
@@ -196,7 +197,11 @@ impl<S: Display> ParsedPlayerFeedEventText<S> {
                 format!("{emoji}{previous} retired from MMOLB!{new}")
             }
             ParsedPlayerFeedEventText::SeasonalDurabilityLoss { player_name, durability_lost, season } => {
-                format!("{player_name} lost {durability_lost} durability for playing in Season {season}.")
+                if let Some(durability_lost) = durability_lost {
+                    format!("{player_name} lost {durability_lost} durability for playing in Season {season}.")
+                } else {
+                    format!("{player_name}'s Prolific Greater Boon resisted Durability loss for Season {season}.")
+                }
             }
             ParsedPlayerFeedEventText::CorruptedByWither { player_name } => {
                 format!("{player_name} was Corrupted by the 🥀 Wither.")

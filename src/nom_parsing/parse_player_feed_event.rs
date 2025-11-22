@@ -89,7 +89,7 @@ fn release<'output>(_event: &'output FeedEvent) -> impl PlayerFeedEventParser<'o
 fn season<'output>(_event: &'output FeedEvent) -> impl PlayerFeedEventParser<'output> {
     context("Season Feed Event", alt((
         retirement(false),
-        durability_loss,
+        seasonal_durability_loss,
     )))
 }
 
@@ -238,7 +238,15 @@ fn retirement<'output>(emoji: bool) -> impl PlayerFeedEventParser<'output> {
     ).map(|(original, new)| ParsedPlayerFeedEventText::Retirement { previous: original, new })
 }
 
-fn durability_loss(input: &str) -> IResult<&str, ParsedPlayerFeedEventText<&str>> {
+fn seasonal_durability_loss(input: &str) -> IResult<&str, ParsedPlayerFeedEventText<&str>> {
+    alt((
+        seasonal_durability_loss_happened,
+        seasonal_durability_loss_blocked,
+    ))
+        .parse(input)
+}
+
+fn seasonal_durability_loss_happened(input: &str) -> IResult<&str, ParsedPlayerFeedEventText<&str>> {
     // This may need more intelligent parsing if " lost " is ever a player name substring
     let (input, player_name) = parse_terminated(" lost ").parse(input)?;
     let (input, durability_lost) = u32.parse(input)?;
@@ -246,7 +254,15 @@ fn durability_loss(input: &str) -> IResult<&str, ParsedPlayerFeedEventText<&str>
     let (input, season) = u32.parse(input)?;
     let (input, _) = tag(".").parse(input)?;
 
-    Ok((input, ParsedPlayerFeedEventText::SeasonalDurabilityLoss { player_name, durability_lost, season }))
+    Ok((input, ParsedPlayerFeedEventText::SeasonalDurabilityLoss { player_name, durability_lost: Some(durability_lost), season }))
+}
+
+fn seasonal_durability_loss_blocked(input: &str) -> IResult<&str, ParsedPlayerFeedEventText<&str>> {
+    let (input, player_name) = parse_terminated("'s Prolific Greater Boon resisted Durability loss for Season ").parse(input)?;
+    let (input, season) = u32.parse(input)?;
+    let (input, _) = tag(".").parse(input)?;
+
+    Ok((input, ParsedPlayerFeedEventText::SeasonalDurabilityLoss { player_name, durability_lost: None, season }))
 }
 
 fn election<'output>(_event: &'output FeedEvent) -> impl PlayerFeedEventParser<'output> {
