@@ -1,6 +1,7 @@
 use nom::{branch::alt, bytes::complete::tag, character::complete::{i16, u8}, combinator::{cond, fail, opt}, error::context, sequence::{delimited, preceded, separated_pair, terminated}, Finish, Parser};
 use nom::character::complete::u32;
 use crate::{enums::{CelestialEnergyTier, FeedEventType, ModificationType}, feed_event::{FeedEvent, FeedEventParseError, FeedFallingStarOutcome}, nom_parsing::shared::{emojiless_item, feed_delivery, name_eof, parse_terminated, sentence_eof, try_from_word}, player_feed::ParsedPlayerFeedEventText, time::{Breakpoints, Timestamp}};
+use crate::feed_event::GreaterAugment;
 use super::shared::{door_prize, falling_star, feed_event_contained, feed_event_door_prize, feed_event_equipped_door_prize, feed_event_party, feed_event_wither, grow, player_positions_swapped, purified, Error, IResult};
 
 
@@ -22,11 +23,11 @@ pub fn parse_player_feed_event<'output>(event: &'output FeedEvent) -> ParsedPlay
         FeedEventType::Augment => augment(event).parse(&event.text),
         FeedEventType::Release => release(event).parse(&event.text),
         FeedEventType::Season => season(event).parse(event.text.as_str()),
+        FeedEventType::Election => election(event).parse(&event.text),
         // TODO More descriptive error message
         FeedEventType::Lottery => fail().parse(event.text.as_str()),
         FeedEventType::Maintenance => fail().parse(event.text.as_str()),
         FeedEventType::Roster => fail().parse(event.text.as_str()),
-        FeedEventType::Election => fail().parse(event.text.as_str()),
     };
     match result.finish() {
         Ok(("", output)) => output,
@@ -246,4 +247,16 @@ fn durability_loss(input: &str) -> IResult<&str, ParsedPlayerFeedEventText<&str>
     let (input, _) = tag(".").parse(input)?;
 
     Ok((input, ParsedPlayerFeedEventText::SeasonalDurabilityLoss { player_name, durability_lost, season }))
+}
+
+fn election<'output>(_event: &'output FeedEvent) -> impl PlayerFeedEventParser<'output> {
+    context("Election Feed Event", alt((
+        player_greater_augment_result,
+    )))
+}
+
+fn player_greater_augment_result(input: &str) -> IResult<&str, ParsedPlayerFeedEventText<&str>> {
+    let (input, player_name) = parse_terminated(" gained +10 to all Defense Attributes.").parse(input)?;
+
+    Ok((input, ParsedPlayerFeedEventText::GreaterAugment { player_name, greater_augment: GreaterAugment::Plating }))
 }

@@ -4,7 +4,7 @@ use serde::{Deserialize, Serialize};
 use serde_with::serde_as;
 
 use crate::{enums::{Attribute, FeedEventType, ModificationType}, feed_event::{EmojilessItem, FeedDelivery, FeedEvent, FeedEventParseError, FeedFallingStarOutcome}, time::{Breakpoints, Timestamp}, utils::extra_fields_deserialize};
-
+use crate::feed_event::GreaterAugment;
 pub use crate::nom_parsing::parse_player_feed_event::parse_player_feed_event;
 use crate::nom_parsing::shared::{FeedEventDoorPrize, FeedEventParty, Grow, PositionSwap};
 use crate::team_feed::{ParsedTeamFeedEventText, PurifiedOutcome};
@@ -114,6 +114,10 @@ pub enum ParsedPlayerFeedEventText<S> {
     PlayerGrow {
         grow: Grow<S>
     },
+    GreaterAugment {
+        player_name: S,
+        greater_augment: GreaterAugment,
+    }
 }
 
 impl<S: Display> ParsedPlayerFeedEventText<S> {
@@ -208,6 +212,14 @@ impl<S: Display> ParsedPlayerFeedEventText<S> {
             }
             ParsedPlayerFeedEventText::PlayerGrow { grow } => {
                 format!("{grow}")
+            }
+            ParsedPlayerFeedEventText::GreaterAugment { player_name, greater_augment } => {
+                format!("{player_name} {}.", match greater_augment {
+                    GreaterAugment::Headliners => "gained +10 to all Defense Attributes",
+                    GreaterAugment::StartSmall => "gained +10 to all Defense Attributes",
+                    GreaterAugment::Plating => "gained +10 to all Defense Attributes",
+                    GreaterAugment::LuckyDelivery => "gained +10 to all Defense Attributes",
+                })
             }
         }
     }
