@@ -38,3 +38,5 @@ Players:
 
 Player feeds:
 - 6841bf728d67c531e89fe525
+- 6805db0cac48194de3cd4045
+- 6805db0cac48194de3cd405a

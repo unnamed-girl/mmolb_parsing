@@ -3,10 +3,11 @@ use std::fmt::{Display, Formatter};
 use nom::{branch::alt, bytes::complete::{tag, take, take_till, take_until, take_until1, take_while}, character::complete::{one_of, space0, u8, u16}, combinator::{all_consuming, fail, opt, recognize, rest, value, verify}, error::{ErrorKind, ParseError}, multi::{count, many0, many1, separated_list1}, sequence::{delimited, preceded, separated_pair, terminated}, AsChar, Input, Parser};
 use nom::bytes::complete::is_not;
 use nom::character::complete::u32;
+use nom::combinator::eof;
 use nom_language::error::VerboseError;
 
 use crate::{enums::{Base, BatterStat, Day, FairBallDestination, FairBallType, HomeAway, NowBattingStats, Place}, feed_event::{EmojilessItem, FeedDelivery, FeedEvent}, game::Event, parsed_event::{BaseSteal, Cheer, Delivery, DoorPrize, Ejection, EjectionReason, EmojiTeam, Item, ItemAffixes, PlacedPlayer, Prize, RunnerAdvance, RunnerOut, SnappedPhotos, ViolationType}, player, time::{Breakpoints, Time}, Game};
-use crate::enums::Attribute;
+use crate::enums::{Attribute, BenchSlot, FullSlot, Slot};
 use crate::parsed_event::{EjectionReplacement, ItemEquip, ItemPrize, WitherStruggle};
 use crate::player::{Deserialize, Serialize};
 use crate::team_feed::{ParsedTeamFeedEventText, PurifiedOutcome};
@@ -856,6 +857,100 @@ fn purified_without_payout<'output>(input: &str) -> IResult<&str, (&str, Purifie
 
     Ok((input, (player_name, if no_corruption.is_some() { PurifiedOutcome::NoCorruption } else { PurifiedOutcome::None })))
 }
+
+pub(super) fn feed_event_contained(input: &str) -> IResult<&str, (&str, &str)> {
+    let (input, contained_player_name) = parse_terminated(" was contained by ").parse(input)?;
+    let (input, container_player_name) = parse_terminated(" during the 🥀 Wither.").parse(input)?;
+
+    Ok((input, (contained_player_name, container_player_name)))
+}
+
+fn bench_slot(input: &str) -> IResult<&str, BenchSlot> {
+    alt((
+        preceded(tag("Bench Batter "), u8).map(|num| BenchSlot::Batter(num)),
+        preceded(tag("Bench Pitcher "), u8).map(|num| BenchSlot::Pitcher(num)),
+    )).parse(input)
+}
+
+
+// TODO Dedup this
+pub(super) fn active_slot(input: &str) -> IResult<&str, Slot> {
+    alt((
+        tag("1B").map(|_| Slot::FirstBaseman),
+        tag("2B").map(|_| Slot::SecondBaseman),
+        tag("3B").map(|_| Slot::ThirdBaseman),
+        tag("LF").map(|_| Slot::LeftField),
+        tag("CF").map(|_| Slot::CenterField),
+        tag("RF").map(|_| Slot::RightField),
+        tag("SS").map(|_| Slot::ShortStop),
+        tag("DH").map(|_| Slot::DesignatedHitter),
+        preceded(tag("SP"), u8).map(|i| Slot::StartingPitcher(i)),
+        preceded(tag("RP"), u8).map(|i| Slot::ReliefPitcher(i)),
+        tag("CL").map(|_| Slot::Closer),
+        // Has to be after CF and CL or it will match erroneously
+        tag("C").map(|_| Slot::Catcher),
+    )).parse(input)
+}
+
+fn full_slot(input: &str) -> IResult<&str, FullSlot> {
+    alt((
+        bench_slot.map(|s| FullSlot::Bench(s)),
+        active_slot.map(|s| FullSlot::Active(s)),
+    )).parse(input)
+}
+
+#[derive(Clone, Debug, Serialize, Deserialize, PartialEq)]
+pub struct PositionSwap<S> {
+    first_player_name: S,
+    first_player_new_slot: FullSlot,
+    second_player_name: S,
+    second_player_new_slot: FullSlot,
+}
+
+impl<S: Display> Display for PositionSwap<S> {
+    fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
+        let PositionSwap {
+            first_player_name,
+            first_player_new_slot,
+            second_player_name,
+            second_player_new_slot,
+        } = self;
+
+        write!(f,
+            "{first_player_name} and {second_player_name} swapped positions: \
+            {first_player_name} moved to {first_player_new_slot}, \
+            {second_player_name} moved to {second_player_new_slot}."
+        )
+    }
+}
+
+pub(super) fn player_positions_swapped(input: &str) -> IResult<&str, PositionSwap<&str>> {
+    // I am not willing to bet on " and " being a reliable name separator, and we can
+    // parse names reliably later in the message. So we're going to parse the combination
+    // of names as a single unit here and then verify it after.
+    let (input, anded_names) = parse_terminated(" swapped positions: ").parse(input)?;
+    let (input, first_player_name) = parse_terminated(" moved to ").parse(input)?;
+    let (input, first_player_new_slot) = full_slot.parse(input)?;
+    let (input, _) = tag(", ").parse(input)?;
+    let (input, second_player_name) = parse_terminated(" moved to ").parse(input)?;
+    let (input, second_player_new_slot) = full_slot.parse(input)?;
+    let (input, _) = tag(".").parse(input)?;
+
+    // Verify that anded_names matches what's expected
+    let (anded_names, _) = tag(first_player_name).parse(anded_names)?;
+    let (anded_names, _) = tag(" and ").parse(anded_names)?;
+    let (anded_names, _) = tag(second_player_name).parse(anded_names)?;
+    let (_, _) = eof.parse(anded_names)?;
+
+    Ok((input, PositionSwap {
+        first_player_name,
+        first_player_new_slot,
+        second_player_name,
+        second_player_new_slot,
+    }))
+}
+
+
 
 pub(super) fn team_emoji<'parse, 'output, 'a>(side: HomeAway, parsing_context: &'a ParsingContext<'parse>) -> impl MyParser<'output, &'output str> + 'parse {
     let home_team_emoji = parsing_context.home_emoji_team.emoji;

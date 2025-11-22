@@ -6,8 +6,8 @@ use serde_with::serde_as;
 use crate::{enums::{Attribute, FeedEventType, ModificationType}, feed_event::{EmojilessItem, FeedDelivery, FeedEvent, FeedEventParseError, FeedFallingStarOutcome}, time::{Breakpoints, Timestamp}, utils::extra_fields_deserialize};
 
 pub use crate::nom_parsing::parse_player_feed_event::parse_player_feed_event;
-use crate::nom_parsing::shared::FeedEventDoorPrize;
-use crate::team_feed::PurifiedOutcome;
+use crate::nom_parsing::shared::{FeedEventDoorPrize, FeedEventParty, PositionSwap};
+use crate::team_feed::{ParsedTeamFeedEventText, PurifiedOutcome};
 
 #[serde_as]
 #[derive(Serialize, Deserialize, Debug, Clone)]
@@ -101,6 +101,16 @@ pub enum ParsedPlayerFeedEventText<S> {
         player_name: S,
         outcome: PurifiedOutcome,
     },
+    Party {
+        party: FeedEventParty<S>,
+    },
+    PlayerContained {
+        contained_player_name: S,
+        container_player_name: S,
+    },
+    PlayerPositionsSwapped {
+        swap: PositionSwap<S>,
+    },
 }
 
 impl<S: Display> ParsedPlayerFeedEventText<S> {
@@ -189,6 +199,19 @@ impl<S: Display> ParsedPlayerFeedEventText<S> {
             }
             ParsedPlayerFeedEventText::Purified { player_name, outcome } => {
                 outcome.unparse(player_name)
+            }
+            ParsedPlayerFeedEventText::Party { party } => {
+                format!("{party}")
+            }
+            ParsedPlayerFeedEventText::PlayerContained { contained_player_name, container_player_name } => {
+                // TODO Dedup with player feed
+                format!(
+                    "{contained_player_name} was contained by {container_player_name} during the \
+                    🥀 Wither.",
+                )
+            }
+            ParsedPlayerFeedEventText::PlayerPositionsSwapped { swap } => {
+                format!("{swap}")
             }
         }
     }

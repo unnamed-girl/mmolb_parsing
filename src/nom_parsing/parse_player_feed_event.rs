@@ -2,7 +2,7 @@ use nom::{branch::alt, bytes::complete::tag, character::complete::{i16, u8}, com
 use nom::character::complete::u32;
 use crate::{enums::{CelestialEnergyTier, FeedEventType, ModificationType}, feed_event::{FeedEvent, FeedEventParseError, FeedFallingStarOutcome}, nom_parsing::shared::{emojiless_item, feed_delivery, name_eof, parse_terminated, sentence_eof, try_from_word}, player_feed::ParsedPlayerFeedEventText, time::{Breakpoints, Timestamp}};
 use crate::team_feed::ParsedTeamFeedEventText;
-use super::shared::{door_prize, feed_event_door_prize, feed_event_wither, purified, Error, IResult};
+use super::shared::{door_prize, feed_event_contained, feed_event_door_prize, feed_event_party, feed_event_wither, player_positions_swapped, purified, Error, IResult};
 
 
 trait PlayerFeedEventParser<'output>: Parser<&'output str, Output = ParsedPlayerFeedEventText<&'output str>, Error = Error<'output>> {}
@@ -55,6 +55,8 @@ fn game<'output>(event: &'output FeedEvent) -> impl PlayerFeedEventParser<'outpu
         deflected_falling_star_harmlessly(),
         retirement(true),
         feed_event_wither.map(|player_name| ParsedPlayerFeedEventText::CorruptedByWither { player_name }),
+        feed_event_party.map(|party| ParsedPlayerFeedEventText::Party { party }),
+        feed_event_contained.map(|(contained_player_name, container_player_name)| ParsedPlayerFeedEventText::PlayerContained { contained_player_name, container_player_name }),
         fail(),
     )))
 }
@@ -73,6 +75,7 @@ fn augment<'output>(event: &'output FeedEvent) -> impl PlayerFeedEventParser<'ou
         take_the_plate(),
         swap_places(),
         purified.map(|(player_name, outcome)| ParsedPlayerFeedEventText::Purified { player_name, outcome }),
+        player_positions_swapped.map(|swap| ParsedPlayerFeedEventText::PlayerPositionsSwapped { swap }),
         fail(),
     )))
 }

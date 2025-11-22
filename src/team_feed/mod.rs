@@ -9,7 +9,7 @@ use crate::{enums::{Attribute, FeedEventType, ModificationType}, feed_event::{Em
 use crate::enums::{CelestialEnergyTier, FullSlot, Slot};
 use crate::feed_event::{AttributeChange, GrowAttributeChange, GainedImmovable, GreaterAugment};
 pub use crate::nom_parsing::parse_team_feed_event::parse_team_feed_event;
-use crate::nom_parsing::shared::{FeedEventDoorPrize, FeedEventParty};
+use crate::nom_parsing::shared::{FeedEventDoorPrize, FeedEventParty, PositionSwap};
 use crate::parsed_event::{EmojiPlayer, EmojiTeam};
 
 #[serde_as]
@@ -143,10 +143,7 @@ pub enum ParsedTeamFeedEventText<S> {
         player_name: S,
     },
     PlayerPositionsSwapped {
-        first_player_name: S,
-        first_player_new_slot: FullSlot,
-        second_player_name: S,
-        second_player_new_slot: FullSlot,
+        swap: PositionSwap<S>,
     },
     PlayerContained {
         contained_player_name: S,
@@ -340,12 +337,8 @@ impl<S: Display> ParsedTeamFeedEventText<S> {
             ParsedTeamFeedEventText::PlayerRelegated { player_name } => {
                 format!("🧳 {player_name} was relegated to the Even Lesser League.")
             },
-            ParsedTeamFeedEventText::PlayerPositionsSwapped { first_player_name, first_player_new_slot, second_player_name, second_player_new_slot } => {
-                format!(
-                    "{first_player_name} and {second_player_name} swapped positions: \
-                    {first_player_name} moved to {first_player_new_slot}, \
-                    {second_player_name} moved to {second_player_new_slot}."
-                )
+            ParsedTeamFeedEventText::PlayerPositionsSwapped { swap } => {
+                format!("{swap}")
             },
             ParsedTeamFeedEventText::PlayerContained { contained_player_name, container_player_name } => {
                 format!(
