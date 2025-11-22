@@ -200,21 +200,6 @@ pub struct AttributeChange<S> {
 }
 
 #[derive(Clone, Debug, Serialize, Deserialize, PartialEq)]
-pub struct GrowAttributeChange {
-    pub attribute: Attribute,
-    pub amount: f64,
-}
-
-// TODO Is this the right file for this?
-#[derive(Clone, Debug, Serialize, Deserialize, PartialEq)]
-pub enum GainedImmovable {
-    No,
-    Yes,
-    YesReplacing(ModificationType),
-    BenchPlayerImmune,
-}
-
-#[derive(Clone, Debug, Serialize, Deserialize, PartialEq)]
 pub enum GreaterAugment {
     Headliners,
     StartSmall,

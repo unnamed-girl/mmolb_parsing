@@ -7,9 +7,9 @@ use itertools::Itertools;
 
 use crate::{enums::{Attribute, FeedEventType, ModificationType}, feed_event::{EmojilessItem, FeedDelivery, FeedEvent, FeedEventParseError, FeedFallingStarOutcome}, time::{Breakpoints, Timestamp}, utils::extra_fields_deserialize};
 use crate::enums::{CelestialEnergyTier, FullSlot, Slot};
-use crate::feed_event::{AttributeChange, GrowAttributeChange, GainedImmovable, GreaterAugment};
+use crate::feed_event::{AttributeChange, GreaterAugment};
 pub use crate::nom_parsing::parse_team_feed_event::parse_team_feed_event;
-use crate::nom_parsing::shared::{FeedEventDoorPrize, FeedEventParty, PositionSwap};
+use crate::nom_parsing::shared::{FeedEventDoorPrize, FeedEventParty, Grow, PositionSwap};
 use crate::parsed_event::{EmojiPlayer, EmojiTeam};
 
 #[serde_as]
@@ -149,10 +149,8 @@ pub enum ParsedTeamFeedEventText<S> {
         contained_player_name: S,
         container_player_name: S,
     },
-    PlayerGrown {
-        player_name: S,
-        attribute_changes: [GrowAttributeChange; 3],
-        immovable_granted: GainedImmovable,
+    PlayerGrow {
+        grow: Grow<S>
     },
     Callup {
         lesser_league_team: EmojiTeam<S>,
@@ -346,19 +344,8 @@ impl<S: Display> ParsedTeamFeedEventText<S> {
                     🥀 Wither.",
                 )
             },
-            ParsedTeamFeedEventText::PlayerGrown { player_name, attribute_changes, immovable_granted } => {
-                let mut s = format!("{player_name}'s Corruption grew: ");
-                for change in attribute_changes {
-                    write!(s, "{:+.1} {}, ", change.amount, change.attribute).unwrap();
-                }
-                s.truncate(s.len() - 2);  // Take off the last comma-space
-                match immovable_granted {
-                    GainedImmovable::No => write!(s, "."),
-                    GainedImmovable::Yes => write!(s, ". {player_name} gained the Immovable Greater Boon."),
-                    GainedImmovable::YesReplacing(replaced) => write!(s, ". {player_name} gained the Immovable Greater Boon, replacing {replaced}."),
-                    GainedImmovable::BenchPlayerImmune => write!(s, ". {player_name} could not gain Immovable while on the Bench.")
-                }.unwrap();
-                s
+            ParsedTeamFeedEventText::PlayerGrow { grow } => {
+                format!("{grow}")
             },
             ParsedTeamFeedEventText::Callup { lesser_league_team, greater_league_team, slot, promoted_player_name, demoted_player_name } => {
                 format!(

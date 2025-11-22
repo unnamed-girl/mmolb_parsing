@@ -6,7 +6,7 @@ use serde_with::serde_as;
 use crate::{enums::{Attribute, FeedEventType, ModificationType}, feed_event::{EmojilessItem, FeedDelivery, FeedEvent, FeedEventParseError, FeedFallingStarOutcome}, time::{Breakpoints, Timestamp}, utils::extra_fields_deserialize};
 
 pub use crate::nom_parsing::parse_player_feed_event::parse_player_feed_event;
-use crate::nom_parsing::shared::{FeedEventDoorPrize, FeedEventParty, PositionSwap};
+use crate::nom_parsing::shared::{FeedEventDoorPrize, FeedEventParty, Grow, PositionSwap};
 use crate::team_feed::{ParsedTeamFeedEventText, PurifiedOutcome};
 
 #[serde_as]
@@ -111,6 +111,9 @@ pub enum ParsedPlayerFeedEventText<S> {
     PlayerPositionsSwapped {
         swap: PositionSwap<S>,
     },
+    PlayerGrow {
+        grow: Grow<S>
+    },
 }
 
 impl<S: Display> ParsedPlayerFeedEventText<S> {
@@ -212,6 +215,9 @@ impl<S: Display> ParsedPlayerFeedEventText<S> {
             }
             ParsedPlayerFeedEventText::PlayerPositionsSwapped { swap } => {
                 format!("{swap}")
+            }
+            ParsedPlayerFeedEventText::PlayerGrow { grow } => {
+                format!("{grow}")
             }
         }
     }

@@ -1,4 +1,5 @@
-use crate::nom_parsing::shared::active_slot;
+use clap::builder::TypedValueParser;
+use crate::nom_parsing::shared::{active_slot, grow};
 use nom::{branch::alt, bytes::complete::tag, character::complete::{i16, u8, u32}, combinator::{cond, fail, opt}, error::context, sequence::{delimited, preceded, separated_pair, terminated}, Finish, Parser};
 use nom::bytes::complete::take_while;
 use nom::combinator::{eof, verify};
@@ -6,7 +7,7 @@ use nom::multi::{many1, separated_list1};
 use nom::number::double;
 use crate::{enums::{CelestialEnergyTier, FeedEventType, ModificationType}, feed_event::{FeedEvent, FeedEventParseError, FeedFallingStarOutcome}, nom_parsing::shared::{emojiless_item, feed_delivery, name_eof, parse_terminated, sentence_eof, try_from_word}, team_feed::ParsedTeamFeedEventText, time::{Breakpoints, Timestamp}};
 use crate::enums::{BenchSlot, FullSlot, Slot};
-use crate::feed_event::{AttributeChange, GainedImmovable, GreaterAugment, GrowAttributeChange};
+use crate::feed_event::{AttributeChange, GreaterAugment};
 use crate::parsed_event::{EmojiPlayer, EmojiTeam};
 use crate::player_feed::ParsedPlayerFeedEventText;
 use super::shared::{emoji, emoji_team_eof, emoji_team_eof_maybe_no_space, feed_event_door_prize, feed_event_equipped_door_prize, feed_event_party, feed_event_wither, feed_event_contained, parse_until_period_eof, purified, team_emoji, Error, IResult, player_positions_swapped};
@@ -86,7 +87,7 @@ fn augment(event: &FeedEvent) -> impl TeamFeedEventParser {
         swap_places(),
         purified.map(|(player_name, outcome)| ParsedTeamFeedEventText::Purified { player_name, outcome }),
         player_positions_swapped.map(|swap| ParsedTeamFeedEventText::PlayerPositionsSwapped { swap }),
-        grow(),
+        grow.map(|grow| ParsedTeamFeedEventText::PlayerGrow { grow }),
         fail(),
     )))
 }
@@ -291,46 +292,6 @@ fn greater_augment(input: &str) -> IResult<&str, ParsedTeamFeedEventText<&str>> 
     )).parse(input)?;
 
     Ok((input, ParsedTeamFeedEventText::GreaterAugment { team, greater_augment }))
-}
-
-fn grow_attribute_change(input: &str) -> IResult<&str, GrowAttributeChange> {
-    let (input, amount) = double().parse(input)?;
-    let (input, _) = tag(" ")(input)?;
-    let (input, attribute) = try_from_word.parse(input)?;
-
-    Ok((input, GrowAttributeChange {
-        attribute,
-        amount,
-    }))
-}
-
-fn grow<'output>() -> impl TeamFeedEventParser<'output> {
-    |input| {
-        let (input, player_name) = parse_terminated("'s Corruption grew: ").parse(input)?;
-
-        // Decided to do this manually vs. with combinators because it's only 3 entries
-        let (input, change_1) = grow_attribute_change.parse(input)?;
-        let (input, _) = tag(", ")(input)?;
-        let (input, change_2) = grow_attribute_change.parse(input)?;
-        let (input, _) = tag(", ")(input)?;
-        let (input, change_3) = grow_attribute_change.parse(input)?;
-
-        let (input, immovable_granted) = alt((
-            (tag(". "), tag(player_name), tag(" could not gain Immovable while on the Bench."))
-                .map(|_| GainedImmovable::BenchPlayerImmune),
-            (tag(". "), tag(player_name), tag(" gained the Immovable Greater Boon."))
-                .map(|_| GainedImmovable::Yes),
-            preceded((tag(". "), tag(player_name), tag(" gained the Immovable Greater Boon, replacing ")), parse_until_period_eof)
-                .map(|mod_str| GainedImmovable::YesReplacing(ModificationType::new(mod_str))),
-            tag(".").map(|_| GainedImmovable::No)
-        )).parse(input)?;
-
-        Ok((input, ParsedTeamFeedEventText::PlayerGrown {
-            player_name,
-            attribute_changes: [change_1, change_2, change_3],
-            immovable_granted,
-        }))
-    }
 }
 
 fn attribute_gain<'output>() -> impl TeamFeedEventParser<'output> {

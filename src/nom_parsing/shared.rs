@@ -4,10 +4,11 @@ use nom::{branch::alt, bytes::complete::{tag, take, take_till, take_until, take_
 use nom::bytes::complete::is_not;
 use nom::character::complete::u32;
 use nom::combinator::eof;
+use nom::number::double;
 use nom_language::error::VerboseError;
 
 use crate::{enums::{Base, BatterStat, Day, FairBallDestination, FairBallType, HomeAway, NowBattingStats, Place}, feed_event::{EmojilessItem, FeedDelivery, FeedEvent}, game::Event, parsed_event::{BaseSteal, Cheer, Delivery, DoorPrize, Ejection, EjectionReason, EmojiTeam, Item, ItemAffixes, PlacedPlayer, Prize, RunnerAdvance, RunnerOut, SnappedPhotos, ViolationType}, player, time::{Breakpoints, Time}, Game};
-use crate::enums::{Attribute, BenchSlot, FullSlot, Slot};
+use crate::enums::{Attribute, BenchSlot, FullSlot, ModificationType, Slot};
 use crate::parsed_event::{EjectionReplacement, ItemEquip, ItemPrize, WitherStruggle};
 use crate::player::{Deserialize, Serialize};
 use crate::team_feed::{ParsedTeamFeedEventText, PurifiedOutcome};
@@ -951,6 +952,81 @@ pub(super) fn player_positions_swapped(input: &str) -> IResult<&str, PositionSwa
 }
 
 
+#[derive(Clone, Debug, Serialize, Deserialize, PartialEq)]
+pub struct GrowAttributeChange {
+    pub attribute: Attribute,
+    pub amount: f64,
+}
+
+#[derive(Clone, Debug, Serialize, Deserialize, PartialEq)]
+pub enum GainedImmovable {
+    No,
+    Yes,
+    YesReplacing(ModificationType),
+    BenchPlayerImmune,
+}
+
+#[derive(Clone, Debug, Serialize, Deserialize, PartialEq)]
+pub struct Grow<S> {
+    player_name: S,
+    attribute_changes: [GrowAttributeChange; 3],
+    immovable_granted: GainedImmovable,
+}
+
+impl<S: Display> Display for Grow<S> {
+    fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
+        write!(f, "{}'s Corruption grew: ", self.player_name)?;
+        for (i, change) in self.attribute_changes.iter().enumerate() {
+            let prefix = if i == 0 { "" } else { ", " };
+            write!(f, "{prefix}{:+.1} {}", change.amount, change.attribute)?;
+        }
+        match &self.immovable_granted {
+            GainedImmovable::No => write!(f, "."),
+            GainedImmovable::Yes => write!(f, ". {} gained the Immovable Greater Boon.", self.player_name),
+            GainedImmovable::YesReplacing(replaced) => write!(f, ". {} gained the Immovable Greater Boon, replacing {replaced}.", self.player_name),
+            GainedImmovable::BenchPlayerImmune => write!(f, ". {} could not gain Immovable while on the Bench.", self.player_name)
+        }
+
+    }
+}
+
+fn grow_attribute_change(input: &str) -> IResult<&str, GrowAttributeChange> {
+    let (input, amount) = double().parse(input)?;
+    let (input, _) = tag(" ")(input)?;
+    let (input, attribute) = try_from_word.parse(input)?;
+
+    Ok((input, GrowAttributeChange {
+        attribute,
+        amount,
+    }))
+}
+
+pub(super) fn grow<'output>(input: &str) -> IResult<&str, Grow<&str>>{
+    let (input, player_name) = parse_terminated("'s Corruption grew: ").parse(input)?;
+
+    // Decided to do this manually vs. with combinators because it's only 3 entries
+    let (input, change_1) = grow_attribute_change.parse(input)?;
+    let (input, _) = tag(", ")(input)?;
+    let (input, change_2) = grow_attribute_change.parse(input)?;
+    let (input, _) = tag(", ")(input)?;
+    let (input, change_3) = grow_attribute_change.parse(input)?;
+
+    let (input, immovable_granted) = alt((
+        (tag(". "), tag(player_name), tag(" could not gain Immovable while on the Bench."))
+            .map(|_| GainedImmovable::BenchPlayerImmune),
+        (tag(". "), tag(player_name), tag(" gained the Immovable Greater Boon."))
+            .map(|_| GainedImmovable::Yes),
+        preceded((tag(". "), tag(player_name), tag(" gained the Immovable Greater Boon, replacing ")), parse_until_period_eof)
+            .map(|mod_str| GainedImmovable::YesReplacing(ModificationType::new(mod_str))),
+        tag(".").map(|_| GainedImmovable::No)
+    )).parse(input)?;
+
+    Ok((input, Grow {
+        player_name,
+        attribute_changes: [change_1, change_2, change_3],
+        immovable_granted,
+    }))
+}
 
 pub(super) fn team_emoji<'parse, 'output, 'a>(side: HomeAway, parsing_context: &'a ParsingContext<'parse>) -> impl MyParser<'output, &'output str> + 'parse {
     let home_team_emoji = parsing_context.home_emoji_team.emoji;
