@@ -1,5 +1,5 @@
 use clap::builder::TypedValueParser;
-use crate::nom_parsing::shared::{active_slot, grow, falling_star};
+use crate::nom_parsing::shared::{active_slot, grow, falling_star, player_relegated};
 use nom::{branch::alt, bytes::complete::tag, character::complete::{i16, u8, u32}, combinator::{cond, fail, opt}, error::context, sequence::{delimited, preceded, separated_pair, terminated}, Finish, Parser};
 use nom::bytes::complete::take_while;
 use nom::combinator::{eof, verify};
@@ -200,7 +200,7 @@ fn maintenance<'output>() -> impl TeamFeedEventParser<'output> {
 fn roster<'output>() -> impl TeamFeedEventParser<'output> {
     context("Roster Feed Event", alt((
         player_moved(),
-        player_relegated(),
+        player_relegated.map(|player_name| ParsedTeamFeedEventText::PlayerRelegated { player_name }),
     )))
 }
 
@@ -211,16 +211,6 @@ fn player_moved<'output>() -> impl TeamFeedEventParser<'output> {
         let (input, player_name) = parse_terminated(" was moved to the Bench.").parse(input)?;
 
         Ok((input, ParsedTeamFeedEventText::PlayerMoved { team_emoji, player_name }))
-    }
-}
-
-fn player_relegated<'output>() -> impl TeamFeedEventParser<'output> {
-    |input| {
-        // This might be team emoji, not sure
-        let (input, _) = tag("🧳 ").parse(input)?;
-        let (input, player_name) = parse_terminated(" was relegated to the Even Lesser League.").parse(input)?;
-
-        Ok((input, ParsedTeamFeedEventText::PlayerRelegated { player_name }))
     }
 }
 

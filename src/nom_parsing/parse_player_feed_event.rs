@@ -2,7 +2,8 @@ use nom::{branch::alt, bytes::complete::tag, character::complete::{i16, u8}, com
 use nom::character::complete::u32;
 use crate::{enums::{CelestialEnergyTier, FeedEventType, ModificationType}, feed_event::{FeedEvent, FeedEventParseError, FeedFallingStarOutcome}, nom_parsing::shared::{emojiless_item, feed_delivery, name_eof, parse_terminated, sentence_eof, try_from_word}, player_feed::ParsedPlayerFeedEventText, time::{Breakpoints, Timestamp}};
 use crate::feed_event::GreaterAugment;
-use super::shared::{door_prize, falling_star, feed_event_contained, feed_event_door_prize, feed_event_equipped_door_prize, feed_event_party, feed_event_wither, grow, player_positions_swapped, purified, Error, IResult};
+use crate::team_feed::ParsedTeamFeedEventText;
+use super::shared::{door_prize, falling_star, feed_event_contained, feed_event_door_prize, feed_event_equipped_door_prize, feed_event_party, feed_event_wither, grow, player_positions_swapped, player_relegated, purified, Error, IResult};
 
 
 trait PlayerFeedEventParser<'output>: Parser<&'output str, Output = ParsedPlayerFeedEventText<&'output str>, Error = Error<'output>> {}
@@ -24,10 +25,10 @@ pub fn parse_player_feed_event<'output>(event: &'output FeedEvent) -> ParsedPlay
         FeedEventType::Release => release(event).parse(&event.text),
         FeedEventType::Season => season(event).parse(event.text.as_str()),
         FeedEventType::Election => election(event).parse(&event.text),
+        FeedEventType::Roster => roster(event).parse(event.text.as_str()),
         // TODO More descriptive error message
         FeedEventType::Lottery => fail().parse(event.text.as_str()),
         FeedEventType::Maintenance => fail().parse(event.text.as_str()),
-        FeedEventType::Roster => fail().parse(event.text.as_str()),
     };
     match result.finish() {
         Ok(("", output)) => output,
@@ -259,4 +260,10 @@ fn player_greater_augment_result(input: &str) -> IResult<&str, ParsedPlayerFeedE
     let (input, player_name) = parse_terminated(" gained +10 to all Defense Attributes.").parse(input)?;
 
     Ok((input, ParsedPlayerFeedEventText::GreaterAugment { player_name, greater_augment: GreaterAugment::Plating }))
+}
+
+fn roster<'output>(_event: &'output FeedEvent) -> impl PlayerFeedEventParser<'output> {
+    context("Roster Feed Event", alt((
+        player_relegated.map(|player_name| ParsedPlayerFeedEventText::PlayerRelegated { player_name }),
+    )))
 }

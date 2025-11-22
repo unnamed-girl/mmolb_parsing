@@ -1076,6 +1076,14 @@ fn deflected_falling_star_harmlessly(input: &str) -> IResult<&str, &str> {
     Ok((input, player_name))
 }
 
+pub(super) fn player_relegated<'output>(input: &str) -> IResult<&str, &str> {
+    // This might be team emoji, not sure
+    let (input, _) = tag("🧳 ").parse(input)?;
+    let (input, player_name) = parse_terminated(" was relegated to the Even Lesser League.").parse(input)?;
+
+    Ok((input, player_name))
+}
+
 pub(super) fn team_emoji<'parse, 'output, 'a>(side: HomeAway, parsing_context: &'a ParsingContext<'parse>) -> impl MyParser<'output, &'output str> + 'parse {
     let home_team_emoji = parsing_context.home_emoji_team.emoji;
     let away_team_emoji = parsing_context.away_emoji_team.emoji;

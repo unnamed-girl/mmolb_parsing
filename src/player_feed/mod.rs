@@ -117,7 +117,10 @@ pub enum ParsedPlayerFeedEventText<S> {
     GreaterAugment {
         player_name: S,
         greater_augment: GreaterAugment,
-    }
+    },
+    PlayerRelegated {
+        player_name: S,
+    },
 }
 
 impl<S: Display> ParsedPlayerFeedEventText<S> {
@@ -221,6 +224,9 @@ impl<S: Display> ParsedPlayerFeedEventText<S> {
                     GreaterAugment::LuckyDelivery => "gained +10 to all Defense Attributes",
                 })
             }
+            ParsedPlayerFeedEventText::PlayerRelegated { player_name } => {
+                format!("🧳 {player_name} was relegated to the Even Lesser League.")
+            },
         }
     }
 }
