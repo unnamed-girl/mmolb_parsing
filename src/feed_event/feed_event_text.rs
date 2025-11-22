@@ -215,6 +215,14 @@ pub enum GainedImmovable {
 }
 
 #[derive(Clone, Debug, Serialize, Deserialize, PartialEq)]
+pub enum GreaterAugment {
+    Headliners,
+    StartSmall,
+    Plating,
+    LuckyDelivery,
+}
+
+#[derive(Clone, Debug, Serialize, Deserialize, PartialEq)]
 pub struct FeedDelivery<S> {
     pub player: S,
     pub item: Item<S>,

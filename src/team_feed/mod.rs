@@ -7,7 +7,7 @@ use itertools::Itertools;
 
 use crate::{enums::{Attribute, FeedEventType, ModificationType}, feed_event::{EmojilessItem, FeedDelivery, FeedEvent, FeedEventParseError, FeedFallingStarOutcome}, time::{Breakpoints, Timestamp}, utils::extra_fields_deserialize};
 use crate::enums::{CelestialEnergyTier, FullSlot, Slot};
-use crate::feed_event::{AttributeChange, GrowAttributeChange, GainedImmovable};
+use crate::feed_event::{AttributeChange, GrowAttributeChange, GainedImmovable, GreaterAugment};
 pub use crate::nom_parsing::parse_team_feed_event::parse_team_feed_event;
 use crate::nom_parsing::shared::{FeedEventDoorPrize, FeedEventParty};
 use crate::parsed_event::{EmojiPlayer, EmojiTeam};
@@ -153,6 +153,10 @@ pub enum ParsedTeamFeedEventText<S> {
         slot: Slot,
         promoted_player_name: S,
         demoted_player_name: S,
+    },
+    GreaterAugment {
+        team: EmojiTeam<S>,
+        greater_augment: GreaterAugment,
     },
     // TODO Delete any of these that are still unused when parsing is up to date
 
@@ -363,6 +367,14 @@ impl<S: Display> ParsedTeamFeedEventText<S> {
                     {greater_league_team} {slot} {demoted_player_name}. {demoted_player_name} \
                     joined the {}.", lesser_league_team.name
                 )
+            }
+            ParsedTeamFeedEventText::GreaterAugment { team, greater_augment } => {
+                format!("{team} selected {}", match greater_augment {
+                    GreaterAugment::StartSmall => "Start Small, improving their Starting Pitchers.",
+                    GreaterAugment::Headliners => "Headliners, improving the three Batters at the top of their Lineup.",
+                    GreaterAugment::Plating => "Reinforced Plating, granting their Players +10 to all Defense Attributes.",
+                    GreaterAugment::LuckyDelivery => "TODO Insert the lucky delivery text here",
+                })
             }
         }
     }

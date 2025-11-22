@@ -5,7 +5,7 @@ use nom::multi::{many1, separated_list1};
 use nom::number::double;
 use crate::{enums::{CelestialEnergyTier, FeedEventType, ModificationType}, feed_event::{FeedEvent, FeedEventParseError, FeedFallingStarOutcome}, nom_parsing::shared::{emojiless_item, feed_delivery, name_eof, parse_terminated, sentence_eof, try_from_word}, team_feed::ParsedTeamFeedEventText, time::{Breakpoints, Timestamp}};
 use crate::enums::{BenchSlot, FullSlot, Slot};
-use crate::feed_event::{AttributeChange, GainedImmovable, GrowAttributeChange};
+use crate::feed_event::{AttributeChange, GainedImmovable, GreaterAugment, GrowAttributeChange};
 use crate::parsed_event::{EmojiPlayer, EmojiTeam};
 use crate::team_feed::PurifiedOutcome;
 use super::shared::{emoji, emoji_team_eof, emoji_team_eof_maybe_no_space, feed_event_door_prize, feed_event_equipped_door_prize, feed_event_party, parse_until_period_eof, team_emoji, Error, IResult};
@@ -296,6 +296,7 @@ fn player_positions_swapped<'output>() -> impl TeamFeedEventParser<'output> {
 fn election<'output>() -> impl TeamFeedEventParser<'output> {
     context("Election Feed Event", alt((
         callup,
+        greater_augment,
     )))
 }
 
@@ -342,6 +343,22 @@ fn callup(input: &str) -> IResult<&str, ParsedTeamFeedEventText<&str>> {
         promoted_player_name,
         demoted_player_name,
     }))
+}
+
+fn greater_augment(input: &str) -> IResult<&str, ParsedTeamFeedEventText<&str>> {
+    // I wouldn't trust a single word to delimit generic team names, but I'm willing
+    // to do it on this event that should only appear for greater league teams.
+    let (input, team_emoji_name_str) = parse_terminated(" selected ").parse(input)?;
+    let (_, team) = emoji_team_eof.parse(team_emoji_name_str)?;
+
+    let (input, greater_augment) = alt((
+        tag("Start Small, improving their Starting Pitchers.").map(|_| GreaterAugment::StartSmall),
+        tag("Headliners, improving the three Batters at the top of their Lineup.").map(|_| GreaterAugment::Headliners),
+        tag("Reinforced Plating, granting their Players +10 to all Defense Attributes.").map(|_| GreaterAugment::Plating),
+        tag("TODO Insert the lucky delivery text here").map(|_| GreaterAugment::LuckyDelivery),
+    )).parse(input)?;
+
+    Ok((input, ParsedTeamFeedEventText::GreaterAugment { team, greater_augment }))
 }
 
 fn grow_attribute_change(input: &str) -> IResult<&str, GrowAttributeChange> {
