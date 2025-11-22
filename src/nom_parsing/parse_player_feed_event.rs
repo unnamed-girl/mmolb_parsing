@@ -1,8 +1,7 @@
 use nom::{branch::alt, bytes::complete::tag, character::complete::{i16, u8}, combinator::{cond, fail, opt}, error::context, sequence::{delimited, preceded, separated_pair, terminated}, Finish, Parser};
 use nom::character::complete::u32;
 use crate::{enums::{CelestialEnergyTier, FeedEventType, ModificationType}, feed_event::{FeedEvent, FeedEventParseError, FeedFallingStarOutcome}, nom_parsing::shared::{emojiless_item, feed_delivery, name_eof, parse_terminated, sentence_eof, try_from_word}, player_feed::ParsedPlayerFeedEventText, time::{Breakpoints, Timestamp}};
-use crate::team_feed::ParsedTeamFeedEventText;
-use super::shared::{door_prize, falling_star, feed_event_contained, feed_event_door_prize, feed_event_party, feed_event_wither, grow, player_positions_swapped, purified, Error, IResult};
+use super::shared::{door_prize, falling_star, feed_event_contained, feed_event_door_prize, feed_event_equipped_door_prize, feed_event_party, feed_event_wither, grow, player_positions_swapped, purified, Error, IResult};
 
 
 trait PlayerFeedEventParser<'output>: Parser<&'output str, Output = ParsedPlayerFeedEventText<&'output str>, Error = Error<'output>> {}
@@ -50,6 +49,7 @@ fn game<'output>(event: &'output FeedEvent) -> impl PlayerFeedEventParser<'outpu
         feed_delivery("Shipment").map(|delivery| ParsedPlayerFeedEventText::Shipment { delivery } ),
         feed_delivery("Special Delivery").map(|delivery| ParsedPlayerFeedEventText::SpecialDelivery { delivery } ),
         feed_event_door_prize.map(|prize| ParsedPlayerFeedEventText::DoorPrize { prize }),
+        feed_event_equipped_door_prize.map(|prize| ParsedPlayerFeedEventText ::DoorPrize { prize }),
         falling_star(event).map(|(player_name, outcome)| ParsedPlayerFeedEventText::FallingStarOutcome { player_name, outcome }),
         retirement(true),
         feed_event_wither.map(|player_name| ParsedPlayerFeedEventText::CorruptedByWither { player_name }),
