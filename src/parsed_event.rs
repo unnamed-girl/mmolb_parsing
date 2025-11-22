@@ -527,7 +527,14 @@ impl<S: Display> ParsedEventMessage<S> {
                 if *corrupted {
                     format!("{team_emoji} {player} was Corrupted by the 🥀 Wither{delim}{contained}")
                 } else {
-                    format!("{team_emoji} {player} resisted the effects of the 🥀 Wither{delim}{contained}")
+                    // This one actually changed from present to past tense. Probably an accident.
+                    let resist = if Breakpoints::Season7WitherTenseChange.before(game.season, game.day.as_ref().ok().copied(), event_index) {
+                        "resists"
+                    } else {
+                        "resisted"
+                    };
+
+                    format!("{team_emoji} {player} {resist} the effects of the 🥀 Wither{delim}{contained}")
                 }
             },
             Self::LinealBeltTransfer { claimed_by, claimed_from } => {

@@ -107,6 +107,7 @@ pub enum Breakpoints {
     Season3PreSuperstarBreakUpdate,
     EternalBattle,
     Season5TenseChange,
+    Season7WitherTenseChange,
     Season7SuccessfulContainPeriodFix,
 }
 impl From<Breakpoints> for Time {
@@ -174,6 +175,12 @@ impl Breakpoints {
                 season: 5,
                 ascending_days: vec![
                     (DayEquivalent { day: 863, offset: 0 }, 0)
+                ]
+            },
+            Breakpoints::Season7WitherTenseChange => Time {
+                season: 7,
+                ascending_days: vec![
+                    (DayEquivalent { day: 0, offset: 0 }, 0)
                 ]
             },
             Breakpoints::Season7SuccessfulContainPeriodFix => Time {
