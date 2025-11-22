@@ -1084,6 +1084,14 @@ pub(super) fn player_relegated<'output>(input: &str) -> IResult<&str, &str> {
     Ok((input, player_name))
 }
 
+pub(super) fn player_moved(input: &str) -> IResult<&str, (&str, &str)> {
+    let (input, team_emoji) = emoji.parse(input)?;
+    let (input, _) = tag(" ").parse(input)?;
+    let (input, player_name) = parse_terminated(" was moved to the Bench.").parse(input)?;
+
+    Ok((input, (team_emoji, player_name)))
+}
+
 pub(super) fn team_emoji<'parse, 'output, 'a>(side: HomeAway, parsing_context: &'a ParsingContext<'parse>) -> impl MyParser<'output, &'output str> + 'parse {
     let home_team_emoji = parsing_context.home_emoji_team.emoji;
     let away_team_emoji = parsing_context.away_emoji_team.emoji;

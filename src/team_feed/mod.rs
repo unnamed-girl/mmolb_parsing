@@ -137,7 +137,6 @@ pub enum ParsedTeamFeedEventText<S> {
     PlayerMoved {
         team_emoji: S,
         player_name: S,
-        // This may get a "location" field soon
     },
     PlayerRelegated {
         player_name: S,

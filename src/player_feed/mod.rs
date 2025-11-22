@@ -121,6 +121,10 @@ pub enum ParsedPlayerFeedEventText<S> {
     PlayerRelegated {
         player_name: S,
     },
+    PlayerMoved {
+        team_emoji: S,
+        player_name: S,
+    },
 }
 
 impl<S: Display> ParsedPlayerFeedEventText<S> {
@@ -227,6 +231,9 @@ impl<S: Display> ParsedPlayerFeedEventText<S> {
             ParsedPlayerFeedEventText::PlayerRelegated { player_name } => {
                 format!("🧳 {player_name} was relegated to the Even Lesser League.")
             },
+            ParsedPlayerFeedEventText::PlayerMoved { team_emoji, player_name } => {
+                format!("{team_emoji} {player_name} was moved to the Bench.")
+            }
         }
     }
 }
