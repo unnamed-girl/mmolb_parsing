@@ -2,7 +2,7 @@ use nom::{branch::alt, bytes::complete::tag, character::complete::{i16, u8}, com
 use nom::character::complete::u32;
 use crate::{enums::{CelestialEnergyTier, FeedEventType, ModificationType}, feed_event::{FeedEvent, FeedEventParseError, FeedFallingStarOutcome}, nom_parsing::shared::{emojiless_item, feed_delivery, name_eof, parse_terminated, sentence_eof, try_from_word}, player_feed::ParsedPlayerFeedEventText, time::{Breakpoints, Timestamp}};
 use crate::team_feed::ParsedTeamFeedEventText;
-use super::shared::{door_prize, feed_event_contained, feed_event_door_prize, feed_event_party, feed_event_wither, grow, player_positions_swapped, purified, Error, IResult};
+use super::shared::{door_prize, falling_star, feed_event_contained, feed_event_door_prize, feed_event_party, feed_event_wither, grow, player_positions_swapped, purified, Error, IResult};
 
 
 trait PlayerFeedEventParser<'output>: Parser<&'output str, Output = ParsedPlayerFeedEventText<&'output str>, Error = Error<'output>> {}
@@ -50,9 +50,7 @@ fn game<'output>(event: &'output FeedEvent) -> impl PlayerFeedEventParser<'outpu
         feed_delivery("Shipment").map(|delivery| ParsedPlayerFeedEventText::Shipment { delivery } ),
         feed_delivery("Special Delivery").map(|delivery| ParsedPlayerFeedEventText::SpecialDelivery { delivery } ),
         feed_event_door_prize.map(|prize| ParsedPlayerFeedEventText::DoorPrize { prize }),
-        injured_by_falling_star(event),
-        infused_by_falling_star(),
-        deflected_falling_star_harmlessly(),
+        falling_star(event).map(|(player_name, outcome)| ParsedPlayerFeedEventText::FallingStarOutcome { player_name, outcome }),
         retirement(true),
         feed_event_wither.map(|player_name| ParsedPlayerFeedEventText::CorruptedByWither { player_name }),
         feed_event_party.map(|party| ParsedPlayerFeedEventText::Party { party }),
@@ -125,38 +123,6 @@ fn attribute_equal<'output>(event: &'output FeedEvent) -> impl PlayerFeedEventPa
         ).map(|(player_name, changing_attribute, value_attribute)| ParsedPlayerFeedEventText::AttributeEquals { player_name, changing_attribute, value_attribute })
         .parse(input)
     }
-}
-
-fn injured_by_falling_star<'output>(event: &'output FeedEvent) -> impl PlayerFeedEventParser<'output> {
-    |input|
-        if event.after(Breakpoints::EternalBattle) {
-            parse_terminated(" was injured by the extreme force of the impact!")
-                .and_then(name_eof)
-                .map(|player_name| ParsedPlayerFeedEventText::FallingStarOutcome { player_name, outcome: FeedFallingStarOutcome::Injury })
-                .parse(input)
-        } else {
-            parse_terminated(" was hit by a Falling Star!")
-                .and_then(name_eof)
-                .map(|player_name| ParsedPlayerFeedEventText::FallingStarOutcome { player_name, outcome: FeedFallingStarOutcome::Injury })
-                .parse(input)
-        }
-}
-
-fn infused_by_falling_star<'output>() -> impl PlayerFeedEventParser<'output> {
-    alt((
-        parse_terminated(" began to glow brightly with celestial energy!").and_then(name_eof).map(|player| (player, CelestialEnergyTier::BeganToGlow)),
-        parse_terminated(" was infused with a glimmer of celestial energy!").and_then(name_eof).map(|player| (player, CelestialEnergyTier::Infused)),
-        parse_terminated(" was fully charged with an abundance of celestial energy!").and_then(name_eof).map(|player| (player, CelestialEnergyTier::FullyCharged))
-    ))
-    .map(|(player_name, infusion_tier)| ParsedPlayerFeedEventText::FallingStarOutcome { player_name, outcome: FeedFallingStarOutcome::Infusion(infusion_tier) })
-}
-
-fn deflected_falling_star_harmlessly<'output>() -> impl PlayerFeedEventParser<'output> {
-    preceded(
-        tag("It deflected off "),
-        parse_terminated(" harmlessly.").and_then(name_eof)
-    )
-    .map(|player_name| ParsedPlayerFeedEventText::FallingStarOutcome { player_name, outcome: FeedFallingStarOutcome::DeflectedHarmlessly })
 }
 
 fn recompose<'output>(event: &'output FeedEvent) -> impl PlayerFeedEventParser<'output> {

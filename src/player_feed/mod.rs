@@ -125,17 +125,7 @@ impl<S: Display> ParsedPlayerFeedEventText<S> {
             ParsedPlayerFeedEventText::Shipment { delivery } => delivery.unparse(event, "Shipment"),
             ParsedPlayerFeedEventText::DoorPrize { prize } => prize.to_string(),
             ParsedPlayerFeedEventText::FallingStarOutcome { player_name, outcome } => {
-                match outcome {
-                    FeedFallingStarOutcome::Injury => {
-                        if event.after(Breakpoints::EternalBattle) {
-                            format!("{player_name} was injured by the extreme force of the impact!")
-                        } else {
-                            format!("{player_name} was hit by a Falling Star!")
-                        }
-                    },
-                    FeedFallingStarOutcome::Infusion(infusion_tier) => format!("{player_name} {infusion_tier}"),
-                    FeedFallingStarOutcome::DeflectedHarmlessly => format!("It deflected off {player_name} harmlessly.")
-                }
+                outcome.unparse(event, player_name)
             }
             ParsedPlayerFeedEventText::AttributeChanges { player_name, amount, attribute } => format!("{player_name} gained +{amount} {attribute}."),
             ParsedPlayerFeedEventText::AttributeEquals { player_name, changing_attribute, value_attribute } => {

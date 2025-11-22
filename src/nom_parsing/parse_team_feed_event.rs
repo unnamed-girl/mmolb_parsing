@@ -1,5 +1,5 @@
 use clap::builder::TypedValueParser;
-use crate::nom_parsing::shared::{active_slot, grow};
+use crate::nom_parsing::shared::{active_slot, grow, falling_star};
 use nom::{branch::alt, bytes::complete::tag, character::complete::{i16, u8, u32}, combinator::{cond, fail, opt}, error::context, sequence::{delimited, preceded, separated_pair, terminated}, Finish, Parser};
 use nom::bytes::complete::take_while;
 use nom::combinator::{eof, verify};
@@ -60,9 +60,7 @@ fn game(event: &FeedEvent) -> impl TeamFeedEventParser {
         feed_delivery("Shipment").map(|delivery| ParsedTeamFeedEventText::Shipment { delivery } ),
         feed_delivery("Special Delivery").map(|delivery| ParsedTeamFeedEventText::SpecialDelivery { delivery } ),
         photo_contest(),
-        injured_by_falling_star(event),
-        infused_by_falling_star(),
-        deflected_falling_star_harmlessly(),
+        falling_star(event).map(|(player_name, outcome)| ParsedTeamFeedEventText::FallingStarOutcome { player_name, outcome }),
         feed_event_party.map(|party| ParsedTeamFeedEventText::Party { party }),
         prosperous(),
         retirement(true),
@@ -347,44 +345,6 @@ fn multiple_attribute_equal(event: &FeedEvent) -> impl TeamFeedEventParser {
         })
             .parse(input)
     }
-}
-
-// TODO Dedup all falling star functions between team and player
-fn injured_by_falling_star<'output>(event: &'output FeedEvent) -> impl TeamFeedEventParser<'output> {
-    |input| {
-        let text = if event.after(Breakpoints::Season5TenseChange) {
-            " is injured by the extreme force of the impact!"
-        } else if event.after(Breakpoints::EternalBattle) {
-            " was injured by the extreme force of the impact!"
-        } else {
-            " was hit by a Falling Star!"
-        };
-
-        parse_terminated(text)
-            .and_then(name_eof)
-            .map(|team_name| ParsedTeamFeedEventText::FallingStarOutcome { team_name, outcome: FeedFallingStarOutcome::Injury })
-            .parse(input)
-    }
-}
-
-fn infused_by_falling_star<'output>() -> impl TeamFeedEventParser<'output> {
-    alt((
-        parse_terminated(" began to glow brightly with celestial energy!").and_then(name_eof).map(|team| (team, CelestialEnergyTier::BeganToGlow)),
-        parse_terminated(" begins to glow brightly with celestial energy!").and_then(name_eof).map(|team| (team, CelestialEnergyTier::BeganToGlow)),
-        parse_terminated(" was infused with a glimmer of celestial energy!").and_then(name_eof).map(|team| (team, CelestialEnergyTier::Infused)),
-        parse_terminated(" is infused with a glimmer of celestial energy!").and_then(name_eof).map(|team| (team, CelestialEnergyTier::Infused)),
-        parse_terminated(" was fully charged with an abundance of celestial energy!").and_then(name_eof).map(|team| (team, CelestialEnergyTier::FullyCharged)),
-        parse_terminated(" is fully charged with an abundance of celestial energy!").and_then(name_eof).map(|team| (team, CelestialEnergyTier::FullyCharged)),
-    ))
-    .map(|(team_name, infusion_tier)| ParsedTeamFeedEventText::FallingStarOutcome { team_name, outcome: FeedFallingStarOutcome::Infusion(infusion_tier) })
-}
-
-fn deflected_falling_star_harmlessly<'output>() -> impl TeamFeedEventParser<'output> {
-    preceded(
-        alt((tag("It deflected off "), tag("It deflects off "))),
-        parse_terminated(" harmlessly.").and_then(name_eof)
-    )
-    .map(|team_name| ParsedTeamFeedEventText::FallingStarOutcome { team_name, outcome: FeedFallingStarOutcome::DeflectedHarmlessly })
 }
 
 fn recompose<'output>(event: &'output FeedEvent) -> impl TeamFeedEventParser<'output> {

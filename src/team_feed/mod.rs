@@ -123,7 +123,7 @@ pub enum ParsedTeamFeedEventText<S> {
         modification: ModificationType
     },
     FallingStarOutcome {
-        team_name: S,
+        player_name: S,
         outcome: FeedFallingStarOutcome
     },
     CorruptedByWither {
@@ -211,38 +211,8 @@ impl<S: Display> ParsedTeamFeedEventText<S> {
             ParsedTeamFeedEventText::WonLottery { amount, league_name } => {
                 format!("Won {amount} 🪙 from the {league_name} Lottery!")
             }
-            ParsedTeamFeedEventText::FallingStarOutcome { team_name, outcome } => {
-                let was_is = if event.before(Breakpoints::Season5TenseChange) {
-                    "was"
-                } else {
-                    "is"
-                };
-
-                match outcome {
-                    FeedFallingStarOutcome::Injury => {
-                        if event.after(Breakpoints::EternalBattle) {
-                            format!("{team_name} {was_is} injured by the extreme force of the impact!")
-                        } else {
-                            format!("{team_name} {was_is} hit by a Falling Star!")
-                        }
-                    },
-                    FeedFallingStarOutcome::Infusion(infusion_tier) => {
-                        match infusion_tier {
-                            CelestialEnergyTier::BeganToGlow => if event.before(Breakpoints::Season5TenseChange) {
-                                format!("{team_name} began to glow brightly with celestial energy!")
-                            } else {
-                                format!("{team_name} begins to glow brightly with celestial energy!")
-                            },
-                            CelestialEnergyTier::Infused => format!("{team_name} {was_is} infused with a glimmer of celestial energy!"),
-                            CelestialEnergyTier::FullyCharged => format!("{team_name} {was_is} fully charged with an abundance of celestial energy!"),
-                        }
-                    },
-                    FeedFallingStarOutcome::DeflectedHarmlessly => if event.before(Breakpoints::Season5TenseChange) {
-                        format!("It deflected off {team_name} harmlessly.")
-                    } else {
-                        format!("It deflects off {team_name} harmlessly.")
-                    }
-                }
+            ParsedTeamFeedEventText::FallingStarOutcome { player_name, outcome } => {
+                outcome.unparse(event, player_name)
             }
             ParsedTeamFeedEventText::AttributeChanges { changes } => {
                 changes

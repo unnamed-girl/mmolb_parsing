@@ -8,7 +8,8 @@ use nom::number::double;
 use nom_language::error::VerboseError;
 
 use crate::{enums::{Base, BatterStat, Day, FairBallDestination, FairBallType, HomeAway, NowBattingStats, Place}, feed_event::{EmojilessItem, FeedDelivery, FeedEvent}, game::Event, parsed_event::{BaseSteal, Cheer, Delivery, DoorPrize, Ejection, EjectionReason, EmojiTeam, Item, ItemAffixes, PlacedPlayer, Prize, RunnerAdvance, RunnerOut, SnappedPhotos, ViolationType}, player, time::{Breakpoints, Time}, Game};
-use crate::enums::{Attribute, BenchSlot, FullSlot, ModificationType, Slot};
+use crate::enums::{Attribute, BenchSlot, CelestialEnergyTier, FullSlot, ModificationType, Slot};
+use crate::feed_event::FeedFallingStarOutcome;
 use crate::parsed_event::{EjectionReplacement, ItemEquip, ItemPrize, WitherStruggle};
 use crate::player::{Deserialize, Serialize};
 use crate::team_feed::{ParsedTeamFeedEventText, PurifiedOutcome};
@@ -1026,6 +1027,53 @@ pub(super) fn grow<'output>(input: &str) -> IResult<&str, Grow<&str>>{
         attribute_changes: [change_1, change_2, change_3],
         immovable_granted,
     }))
+}
+
+pub(super) fn falling_star(event: &FeedEvent) -> impl Fn(&str) -> IResult<&str, (&str, FeedFallingStarOutcome)> + use<'_> {
+    |input| {
+        alt((
+            injured_by_falling_star(event).map(|(team_name, outcome)| (team_name, outcome)),
+            infused_by_falling_star.map(|(team_name, infusion)| (team_name, FeedFallingStarOutcome::Infusion(infusion))),
+            deflected_falling_star_harmlessly.map(|team_name| (team_name, FeedFallingStarOutcome::DeflectedHarmlessly)),
+        ))
+            .parse(input)
+    }
+}
+
+fn injured_by_falling_star(event: &FeedEvent) -> impl Fn(&str) -> IResult<&str, (&str, FeedFallingStarOutcome)> + use<'_> {
+    |input| {
+        let text = if event.after(Breakpoints::Season5TenseChange) {
+            " is injured by the extreme force of the impact!"
+        } else if event.after(Breakpoints::EternalBattle) {
+            " was injured by the extreme force of the impact!"
+        } else {
+            " was hit by a Falling Star!"
+        };
+
+        parse_terminated(text)
+            .and_then(name_eof)
+            .map(|team_name| (team_name, FeedFallingStarOutcome::Injury))
+            .parse(input)
+    }
+}
+
+fn infused_by_falling_star(input: &str) -> IResult<&str, (&str, CelestialEnergyTier)> {
+    alt((
+        parse_terminated(" began to glow brightly with celestial energy!").and_then(name_eof).map(|team| (team, CelestialEnergyTier::BeganToGlow)),
+        parse_terminated(" begins to glow brightly with celestial energy!").and_then(name_eof).map(|team| (team, CelestialEnergyTier::BeganToGlow)),
+        parse_terminated(" was infused with a glimmer of celestial energy!").and_then(name_eof).map(|team| (team, CelestialEnergyTier::Infused)),
+        parse_terminated(" is infused with a glimmer of celestial energy!").and_then(name_eof).map(|team| (team, CelestialEnergyTier::Infused)),
+        parse_terminated(" was fully charged with an abundance of celestial energy!").and_then(name_eof).map(|team| (team, CelestialEnergyTier::FullyCharged)),
+        parse_terminated(" is fully charged with an abundance of celestial energy!").and_then(name_eof).map(|team| (team, CelestialEnergyTier::FullyCharged)),
+    ))
+        .parse(input)
+}
+
+fn deflected_falling_star_harmlessly(input: &str) -> IResult<&str, &str> {
+    let (input, _) = alt((tag("It deflected off "), tag("It deflects off "))).parse(input)?;
+    let (input, player_name) = parse_terminated(" harmlessly.").and_then(name_eof).parse(input)?;
+
+    Ok((input, player_name))
 }
 
 pub(super) fn team_emoji<'parse, 'output, 'a>(side: HomeAway, parsing_context: &'a ParsingContext<'parse>) -> impl MyParser<'output, &'output str> + 'parse {
