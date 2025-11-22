@@ -7,8 +7,7 @@ use crate::{enums::{CelestialEnergyTier, FeedEventType, ModificationType}, feed_
 use crate::enums::{BenchSlot, FullSlot, Slot};
 use crate::feed_event::{AttributeChange, GainedImmovable, GreaterAugment, GrowAttributeChange};
 use crate::parsed_event::{EmojiPlayer, EmojiTeam};
-use crate::team_feed::PurifiedOutcome;
-use super::shared::{emoji, emoji_team_eof, emoji_team_eof_maybe_no_space, feed_event_door_prize, feed_event_equipped_door_prize, feed_event_party, parse_until_period_eof, team_emoji, Error, IResult};
+use super::shared::{emoji, emoji_team_eof, emoji_team_eof_maybe_no_space, feed_event_door_prize, feed_event_equipped_door_prize, feed_event_party, feed_event_wither, parse_until_period_eof, purified, team_emoji, Error, IResult};
 
 
 trait TeamFeedEventParser<'output>: Parser<&'output str, Output = ParsedTeamFeedEventText<&'output str>, Error = Error<'output>> {}
@@ -64,7 +63,7 @@ fn game(event: &FeedEvent) -> impl TeamFeedEventParser {
         feed_event_party.map(|party| ParsedTeamFeedEventText::Party { party }),
         prosperous(),
         retirement(true),
-        wither(),
+        feed_event_wither.map(|player_name| ParsedTeamFeedEventText::CorruptedByWither { player_name }),
         contained(),
         fail(),
     )))
@@ -83,7 +82,7 @@ fn augment(event: &FeedEvent) -> impl TeamFeedEventParser {
         take_the_mound(),
         take_the_plate(),
         swap_places(),
-        purified(),
+        purified.map(|(player_name, outcome)| ParsedTeamFeedEventText::Purified { player_name, outcome }),
         player_positions_swapped(),
         grow(),
         fail(),
@@ -134,38 +133,6 @@ fn photo_contest_with_name<'output>() -> impl TeamFeedEventParser<'output> {
 
         let player = Some(EmojiPlayer { emoji, name });
         Ok((input, ParsedTeamFeedEventText::PhotoContest { player, earned_coins }))
-    }
-}
-
-fn wither<'output>() -> impl TeamFeedEventParser<'output> {
-    |input| {
-        let (input, player_name) = parse_terminated(" was Corrupted by the 🥀 Wither.").parse(input)?;
-
-        Ok((input, ParsedTeamFeedEventText::CorruptedByWither { player_name }))
-    }
-}
-
-fn purified<'output>() -> impl TeamFeedEventParser<'output> {
-    alt((purified_with_payout(), purified_without_payout()))
-}
-
-fn purified_with_payout<'output>() -> impl TeamFeedEventParser<'output> {
-    |input| {
-        let (input, player_name) = parse_terminated(" was Purified of 🫀 Corruption and earned ").parse(input)?;
-        let (input, payment) = u32.parse(input)?;
-        let (input, _) = tag(" 🪙.").parse(input)?;
-
-        Ok((input, ParsedTeamFeedEventText::Purified { player_name, outcome: PurifiedOutcome::Payment(payment) }))
-    }
-}
-
-fn purified_without_payout<'output>() -> impl TeamFeedEventParser<'output> {
-    |input| {
-        let (input, player_name) = parse_terminated(" was Purified of 🫀 Corruption.").parse(input)?;
-
-        let (input, no_corruption) = opt((tag(" "), tag(player_name), tag(" had no Corruption to remove."))).parse(input)?;
-
-        Ok((input, ParsedTeamFeedEventText::Purified { player_name, outcome: if no_corruption.is_some() { PurifiedOutcome::NoCorruption } else { PurifiedOutcome::None } }))
     }
 }
 

@@ -7,6 +7,7 @@ use crate::{enums::{Attribute, FeedEventType, ModificationType}, feed_event::{Em
 
 pub use crate::nom_parsing::parse_player_feed_event::parse_player_feed_event;
 use crate::nom_parsing::shared::FeedEventDoorPrize;
+use crate::team_feed::PurifiedOutcome;
 
 #[serde_as]
 #[derive(Serialize, Deserialize, Debug, Clone)]
@@ -88,6 +89,18 @@ pub enum ParsedPlayerFeedEventText<S> {
         lost_modification: Option<ModificationType>,
         modification: ModificationType
     },
+    SeasonalDurabilityLoss {
+        player_name: S,
+        durability_lost: u32,
+        season: u32,
+    },
+    CorruptedByWither {
+        player_name: S,
+    },
+    Purified {
+        player_name: S,
+        outcome: PurifiedOutcome,
+    },
 }
 
 impl<S: Display> ParsedPlayerFeedEventText<S> {
@@ -167,6 +180,15 @@ impl<S: Display> ParsedPlayerFeedEventText<S> {
                 let new = new.as_ref().map(|new| format!(" {new} was called up to take their place.")).unwrap_or_default();
                 let emoji = (matches!(event.event_type, Ok(FeedEventType::Game))).then_some("😇 ").unwrap_or_default();
                 format!("{emoji}{previous} retired from MMOLB!{new}")
+            }
+            ParsedPlayerFeedEventText::SeasonalDurabilityLoss { player_name, durability_lost, season } => {
+                format!("{player_name} lost {durability_lost} durability for playing in Season {season}.")
+            }
+            ParsedPlayerFeedEventText::CorruptedByWither { player_name } => {
+                format!("{player_name} was Corrupted by the 🥀 Wither.")
+            }
+            ParsedPlayerFeedEventText::Purified { player_name, outcome } => {
+                outcome.unparse(player_name)
             }
         }
     }

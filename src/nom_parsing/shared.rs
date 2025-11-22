@@ -2,12 +2,14 @@ use std::{fmt::Debug, str::FromStr};
 use std::fmt::{Display, Formatter};
 use nom::{branch::alt, bytes::complete::{tag, take, take_till, take_until, take_until1, take_while}, character::complete::{one_of, space0, u8, u16}, combinator::{all_consuming, fail, opt, recognize, rest, value, verify}, error::{ErrorKind, ParseError}, multi::{count, many0, many1, separated_list1}, sequence::{delimited, preceded, separated_pair, terminated}, AsChar, Input, Parser};
 use nom::bytes::complete::is_not;
+use nom::character::complete::u32;
 use nom_language::error::VerboseError;
 
 use crate::{enums::{Base, BatterStat, Day, FairBallDestination, FairBallType, HomeAway, NowBattingStats, Place}, feed_event::{EmojilessItem, FeedDelivery, FeedEvent}, game::Event, parsed_event::{BaseSteal, Cheer, Delivery, DoorPrize, Ejection, EjectionReason, EmojiTeam, Item, ItemAffixes, PlacedPlayer, Prize, RunnerAdvance, RunnerOut, SnappedPhotos, ViolationType}, player, time::{Breakpoints, Time}, Game};
 use crate::enums::Attribute;
 use crate::parsed_event::{EjectionReplacement, ItemEquip, ItemPrize, WitherStruggle};
 use crate::player::{Deserialize, Serialize};
+use crate::team_feed::{ParsedTeamFeedEventText, PurifiedOutcome};
 
 pub(super) type Error<'a> = VerboseError<&'a str>;
 pub(super) type IResult<'a, I, O> = nom::IResult<I, O, Error<'a>>;
@@ -827,6 +829,32 @@ pub(super) fn feed_event_equipped_door_prize(input: &str) -> IResult<&str, FeedE
         player_name,
         prize,
     }))
+}
+
+pub(super) fn feed_event_wither<'output>(input: &str) -> IResult<&str, &str> {
+    let (input, player_name) = parse_terminated(" was Corrupted by the 🥀 Wither.").parse(input)?;
+
+    Ok((input, player_name))
+}
+
+pub(super) fn purified<'output>(input: &str) -> IResult<&str, (&str, PurifiedOutcome)> {
+    alt((purified_with_payout, purified_without_payout)).parse(input)
+}
+
+fn purified_with_payout<'output>(input: &str) -> IResult<&str, (&str, PurifiedOutcome)> {
+    let (input, player_name) = parse_terminated(" was Purified of 🫀 Corruption and earned ").parse(input)?;
+    let (input, payment) = u32.parse(input)?;
+    let (input, _) = tag(" 🪙.").parse(input)?;
+
+    Ok((input, (player_name, PurifiedOutcome::Payment(payment))))
+}
+
+fn purified_without_payout<'output>(input: &str) -> IResult<&str, (&str, PurifiedOutcome)> {
+    let (input, player_name) = parse_terminated(" was Purified of 🫀 Corruption.").parse(input)?;
+
+    let (input, no_corruption) = opt((tag(" "), tag(player_name), tag(" had no Corruption to remove."))).parse(input)?;
+
+    Ok((input, (player_name, if no_corruption.is_some() { PurifiedOutcome::NoCorruption } else { PurifiedOutcome::None })))
 }
 
 pub(super) fn team_emoji<'parse, 'output, 'a>(side: HomeAway, parsing_context: &'a ParsingContext<'parse>) -> impl MyParser<'output, &'output str> + 'parse {

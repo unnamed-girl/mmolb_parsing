@@ -28,6 +28,16 @@ pub enum PurifiedOutcome {
     None,
 }
 
+impl PurifiedOutcome {
+    pub fn unparse<S: Display>(&self, player_name: S) -> String {
+        match self {
+            PurifiedOutcome::Payment(payment) => format!("{player_name} was Purified of 🫀 Corruption and earned {payment} 🪙."),
+            PurifiedOutcome::NoCorruption => format!("{player_name} was Purified of 🫀 Corruption. {player_name} had no Corruption to remove."),
+            PurifiedOutcome::None => format!("{player_name} was Purified of 🫀 Corruption."),
+        }
+    }
+}
+
 #[derive(Clone, Debug, Serialize, Deserialize, PartialEq)]
 pub enum ParsedTeamFeedEventText<S> {
     ParseError {
@@ -319,11 +329,7 @@ impl<S: Display> ParsedTeamFeedEventText<S> {
                 format!("{player_name} was Corrupted by the 🥀 Wither.")
             }
             ParsedTeamFeedEventText::Purified { player_name, outcome } => {
-                match outcome {
-                    PurifiedOutcome::Payment(payment) => format!("{player_name} was Purified of 🫀 Corruption and earned {payment} 🪙."),
-                    PurifiedOutcome::NoCorruption => format!("{player_name} was Purified of 🫀 Corruption. {player_name} had no Corruption to remove."),
-                    PurifiedOutcome::None => format!("{player_name} was Purified of 🫀 Corruption."),
-                }
+                outcome.unparse(player_name)
             }
             ParsedTeamFeedEventText::NameChanged => {
                 "The team's name was reset in accordance with site policy.".to_string()

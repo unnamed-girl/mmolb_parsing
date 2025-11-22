@@ -1,7 +1,8 @@
 use nom::{branch::alt, bytes::complete::tag, character::complete::{i16, u8}, combinator::{cond, fail, opt}, error::context, sequence::{delimited, preceded, separated_pair, terminated}, Finish, Parser};
+use nom::character::complete::u32;
 use crate::{enums::{CelestialEnergyTier, FeedEventType, ModificationType}, feed_event::{FeedEvent, FeedEventParseError, FeedFallingStarOutcome}, nom_parsing::shared::{emojiless_item, feed_delivery, name_eof, parse_terminated, sentence_eof, try_from_word}, player_feed::ParsedPlayerFeedEventText, time::{Breakpoints, Timestamp}};
 use crate::team_feed::ParsedTeamFeedEventText;
-use super::shared::{door_prize, feed_event_door_prize, Error};
+use super::shared::{door_prize, feed_event_door_prize, feed_event_wither, purified, Error, IResult};
 
 
 trait PlayerFeedEventParser<'output>: Parser<&'output str, Output = ParsedPlayerFeedEventText<&'output str>, Error = Error<'output>> {}
@@ -48,10 +49,12 @@ fn game<'output>(event: &'output FeedEvent) -> impl PlayerFeedEventParser<'outpu
         feed_delivery("Delivery").map(|delivery| ParsedPlayerFeedEventText::Delivery { delivery } ),
         feed_delivery("Shipment").map(|delivery| ParsedPlayerFeedEventText::Shipment { delivery } ),
         feed_delivery("Special Delivery").map(|delivery| ParsedPlayerFeedEventText::SpecialDelivery { delivery } ),
+        feed_event_door_prize.map(|prize| ParsedPlayerFeedEventText::DoorPrize { prize }),
         injured_by_falling_star(event),
         infused_by_falling_star(),
         deflected_falling_star_harmlessly(),
         retirement(true),
+        feed_event_wither.map(|player_name| ParsedPlayerFeedEventText::CorruptedByWither { player_name }),
         fail(),
     )))
 }
@@ -69,6 +72,7 @@ fn augment<'output>(event: &'output FeedEvent) -> impl PlayerFeedEventParser<'ou
         take_the_mound(),
         take_the_plate(),
         swap_places(),
+        purified.map(|(player_name, outcome)| ParsedPlayerFeedEventText::Purified { player_name, outcome }),
         fail(),
     )))
 }
@@ -82,6 +86,7 @@ fn release<'output>(_event: &'output FeedEvent) -> impl PlayerFeedEventParser<'o
 fn season<'output>(_event: &'output FeedEvent) -> impl PlayerFeedEventParser<'output> {
     context("Season Feed Event", alt((
         retirement(false),
+        durability_loss,
     )))
 }
 
@@ -260,4 +265,15 @@ fn retirement<'output>(emoji: bool) -> impl PlayerFeedEventParser<'output> {
         preceded(cond(emoji, tag("😇 ")), parse_terminated(" retired from MMOLB!").and_then(name_eof)),
         opt(preceded(tag(" "), parse_terminated(" was called up to take their place.").and_then(name_eof)))
     ).map(|(original, new)| ParsedPlayerFeedEventText::Retirement { previous: original, new })
+}
+
+fn durability_loss(input: &str) -> IResult<&str, ParsedPlayerFeedEventText<&str>> {
+    // This may need more intelligent parsing if " lost " is ever a player name substring
+    let (input, player_name) = parse_terminated(" lost ").parse(input)?;
+    let (input, durability_lost) = u32.parse(input)?;
+    let (input, _) = tag(" durability for playing in Season ").parse(input)?;
+    let (input, season) = u32.parse(input)?;
+    let (input, _) = tag(".").parse(input)?;
+
+    Ok((input, ParsedPlayerFeedEventText::SeasonalDurabilityLoss { player_name, durability_lost, season }))
 }
