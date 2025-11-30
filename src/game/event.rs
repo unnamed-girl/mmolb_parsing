@@ -31,11 +31,16 @@ pub(crate) struct RawEvent {
     /// Empty string between innings, null before game
     pub pitcher: EventPitcherVersions<String>,
 
-    /// Empty if none
-    pub pitch_info: String,
+    /// Empty if none. Starting in s8 this can be missing sometimes
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub pitch_info: Option<String>,
 
-    #[serde_as(as = "NonStringOrEmptyString")]
-    pub zone: Option<u8>,
+    #[serde_as(as = "Option<NonStringOrEmptyString>")]
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub zone: Option<Option<u8>>,
+
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub home_run_distance: Option<u32>,
 
     #[serde_as(as = "MaybeRecognizedHelper<_>")]
     pub event: MaybeRecognizedResult<EventType>,
@@ -70,6 +75,7 @@ pub struct Event {
     pub pitcher: EventPitcherVersions<String>,
 
     pub pitch: Option<Pitch>,
+    pub home_run_distance: Option<u32>,
 
     #[serde_as(as = "MaybeRecognizedHelper<_>")]
     pub event: MaybeRecognizedResult<EventType>,
@@ -88,11 +94,19 @@ impl From<RawEvent> for Event {
             (number, 2) => Inning::AfterGame { final_inning_number: number - 1 },
             (number, side) => Inning::DuringGame { number, batting_side: side.try_into().unwrap() }
         };
-        let pitch_info = (!value.pitch_info.is_empty()).then_some(value.pitch_info);
 
-        let pitch = pitch_info.zip(value.zone).map(|(pitch_info, zone)| Pitch::new(pitch_info, zone));
+        // TODO This won't round-trip correctly because it represents None and Some("") both as
+        //   the same value
+        let pitch_info = match value.pitch_info {
+            Some(s) if s.is_empty() => None,
+            Some(s) => Some(s),
+            None => None,
+        };
 
-        Self {inning, pitch, batter: value.batter, pitcher: value.pitcher, on_deck: value.on_deck, event: value.event, away_score: value.away_score, home_score: value.home_score, balls: value.balls, strikes: value.strikes, outs: value.outs, on_1b: value.on_1b, on_2b: value.on_2b, on_3b: value.on_3b, message: value.message, extra_fields: value.extra_fields, index: value.index }
+        // TODO Same as above
+        let pitch = pitch_info.zip(value.zone).and_then(|(pitch_info, zone)| zone.map(|zone| Pitch::new(pitch_info, zone)));
+
+        Self {inning, pitch, batter: value.batter, pitcher: value.pitcher, on_deck: value.on_deck, event: value.event, away_score: value.away_score, home_score: value.home_score, balls: value.balls, strikes: value.strikes, outs: value.outs, on_1b: value.on_1b, on_2b: value.on_2b, on_3b: value.on_3b, message: value.message, extra_fields: value.extra_fields, index: value.index, home_run_distance: value.home_run_distance }
     }
 }
 impl From<Event> for RawEvent {
@@ -105,6 +119,6 @@ impl From<Event> for RawEvent {
         };
         let (pitch_info, zone) = value.pitch.map(Pitch::unparse).map(|(pitch, zone)| (pitch, Some(zone))).unwrap_or(("".to_string(), None));
 
-        Self {inning, inning_side, pitch_info, zone, event: value.event, batter: value.batter, on_deck: value.on_deck, pitcher: value.pitcher, away_score: value.away_score, home_score: value.home_score, balls: value.balls, strikes: value.strikes, outs: value.outs, on_1b: value.on_1b, on_2b: value.on_2b, on_3b: value.on_3b, message: value.message, extra_fields: value.extra_fields, index: value.index.into() }
+        Self {inning, inning_side, pitch_info: Some(pitch_info), zone: Some(zone), event: value.event, batter: value.batter, on_deck: value.on_deck, pitcher: value.pitcher, away_score: value.away_score, home_score: value.home_score, balls: value.balls, strikes: value.strikes, outs: value.outs, on_1b: value.on_1b, on_2b: value.on_2b, on_3b: value.on_3b, message: value.message, extra_fields: value.extra_fields, index: value.index.into(), home_run_distance: value.home_run_distance }
     }
 }
