@@ -9,7 +9,7 @@ use reqwest::Client;
 use tracing::{error, info, span::EnteredSpan, Level};
 use tracing_subscriber::fmt::writer::MakeWriterExt;
 use strum::{IntoDiscriminant};
-use mmolb_parsing::parsed_event::{ContainResult, PartyDurabilityLoss};
+use mmolb_parsing::parsed_event::{ContainResult, PartyDurabilityLoss, WitherResult};
 
 #[derive(Serialize, Deserialize)]
 pub struct FreeCashewResponse<T> {
@@ -495,7 +495,12 @@ fn check<S>(event: &ParsedEventMessage<S>) -> String {
             format!("()")
         }
         ParsedEventMessage::WeatherWither { team_emoji: _, player: _, corrupted, contained } => {
-            format!("corrupted: {}, contained: {}", corrupted, match contained {
+            format!("corrupted: {}, contained: {}", match corrupted {
+                WitherResult::Resisted => "false",
+                WitherResult::ResistedEffloresced => "false_effloresced",
+                WitherResult::ResistedImmune => "false_immune",
+                WitherResult::Corrupted => "true",
+            }, match contained {
                 ContainResult::NoContain => "none",
                 ContainResult::SuccessfulContain { .. } => "success",
                 ContainResult::FailedContain { .. } => "failure",

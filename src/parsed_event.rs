@@ -171,7 +171,7 @@ pub enum ParsedEventMessage<S> {
     WeatherWither {
         team_emoji: S,
         player: PlacedPlayer<S>,
-        corrupted: bool,
+        corrupted: WitherResult,
         contained: ContainResult<S>,
     },
 
@@ -524,17 +524,26 @@ impl<S: Display> ParsedEventMessage<S> {
                     ContainResult::FailedContain { .. } => ".",
                 };
 
-                if *corrupted {
-                    format!("{team_emoji} {player} was Corrupted by the 🥀 Wither{delim}{contained}")
-                } else {
-                    // This one actually changed from present to past tense. Probably an accident.
-                    let resist = if Breakpoints::Season7WitherTenseChange.before(game.season, game.day.as_ref().ok().copied(), event_index) {
-                        "resists"
-                    } else {
-                        "resisted"
-                    };
+                match corrupted {
+                    WitherResult::Resisted => {
+                        // This one actually changed from present to past tense. Probably an accident.
+                        let resist = if Breakpoints::Season7WitherTenseChange.before(game.season, game.day.as_ref().ok().copied(), event_index) {
+                            "resists"
+                        } else {
+                            "resisted"
+                        };
 
-                    format!("{team_emoji} {player} {resist} the effects of the 🥀 Wither{delim}{contained}")
+                        format!("{team_emoji} {player} {resist} the effects of the 🥀 Wither{delim}{contained}")
+                    }
+                    WitherResult::ResistedEffloresced => {
+                        format!("{team_emoji} {player} resisted the effects of the 🥀 Wither while Effloresced{delim}{contained}")
+                    }
+                    WitherResult::ResistedImmune => {
+                        format!("{team_emoji} {player} resisted the effects of the 🥀 Wither with 🦠 Immunity{delim}{contained}")
+                    }
+                    WitherResult::Corrupted => {
+                        format!("{team_emoji} {player} was Corrupted by the 🥀 Wither{delim}{contained}")
+                    }
                 }
             },
             Self::LinealBeltTransfer { claimed_by, claimed_from } => {
@@ -863,6 +872,14 @@ impl<S: Display> Delivery<S> {
             }
         }
     }
+}
+
+#[derive(Debug, Clone, Copy, Serialize, Deserialize, PartialEq)]
+pub enum WitherResult {
+    Resisted,
+    ResistedEffloresced,
+    ResistedImmune,
+    Corrupted,
 }
 
 #[derive(Debug, Clone, Copy, Serialize, Deserialize, PartialEq)]
