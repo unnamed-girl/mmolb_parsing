@@ -6,7 +6,7 @@ use thiserror::Error;
 
 use crate::{enums::{Base, BaseNameVariant, BatterStat, Distance, EventType, FairBallDestination, FairBallType, FieldingErrorType, FoulType, GameOverMessage, HomeAway, ItemName, ItemPrefix, ItemSuffix, MoundVisitType, NowBattingStats, Place, StrikeType, TopBottom}, nom_parsing::shared::{hit_by_pitch_text, strike_out_text}, time::Breakpoints, Game, NotRecognized};
 use crate::enums::Attribute;
-use crate::nom_parsing::shared::{received_text, discarded_text};
+use crate::nom_parsing::shared::{received_text, discarded_text, GrowAttributeChange};
 
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Error)]
 pub enum GameEventParseError {
@@ -93,18 +93,19 @@ pub enum ParsedEventMessage<S> {
     },
 
     // Pitch
-    Ball { steals: Vec<BaseSteal<S>>, count:(u8, u8), cheer: Option<Cheer>, aurora_photos: Option<SnappedPhotos<S>>, ejection: Option<Ejection<S>>, door_prizes: Vec<DoorPrize<S>>, wither: Option<WitherStruggle<S>> },
-    Strike { strike: StrikeType, steals: Vec<BaseSteal<S>>, count:(u8, u8), cheer: Option<Cheer>, aurora_photos: Option<SnappedPhotos<S>>, ejection: Option<Ejection<S>>, door_prizes: Vec<DoorPrize<S>>, wither: Option<WitherStruggle<S>> },
-    Foul { foul: FoulType, steals: Vec<BaseSteal<S>>, count:(u8, u8), cheer: Option<Cheer>, aurora_photos: Option<SnappedPhotos<S>>, door_prizes: Vec<DoorPrize<S>>, wither: Option<WitherStruggle<S>> },
+    Ball { steals: Vec<BaseSteal<S>>, count:(u8, u8), cheer: Option<Cheer>, aurora_photos: Option<SnappedPhotos<S>>, ejection: Option<Ejection<S>>, door_prizes: Vec<DoorPrize<S>>, wither: Option<WitherStruggle<S>>, efflorescence: Vec<Efflorescence<S>> },
+    Strike { strike: StrikeType, steals: Vec<BaseSteal<S>>, count:(u8, u8), cheer: Option<Cheer>, aurora_photos: Option<SnappedPhotos<S>>, ejection: Option<Ejection<S>>, door_prizes: Vec<DoorPrize<S>>, wither: Option<WitherStruggle<S>>, efflorescence: Vec<Efflorescence<S>> },
+    Foul { foul: FoulType, steals: Vec<BaseSteal<S>>, count:(u8, u8), cheer: Option<Cheer>, aurora_photos: Option<SnappedPhotos<S>>, door_prizes: Vec<DoorPrize<S>>, wither: Option<WitherStruggle<S>>, efflorescence: Vec<Efflorescence<S>> },
     Walk { batter: S, scores: Vec<S>, advances: Vec<RunnerAdvance<S>>, cheer: Option<Cheer>, aurora_photos: Option<SnappedPhotos<S>>, ejection: Option<Ejection<S>>, wither: Option<WitherStruggle<S>> },
-    HitByPitch { batter: S, scores: Vec<S>, advances: Vec<RunnerAdvance<S>>, cheer: Option<Cheer>, aurora_photos: Option<SnappedPhotos<S>>, ejection: Option<Ejection<S>>, door_prizes: Vec<DoorPrize<S>>, wither: Option<WitherStruggle<S>> },
+    HitByPitch { batter: S, scores: Vec<S>, advances: Vec<RunnerAdvance<S>>, cheer: Option<Cheer>, aurora_photos: Option<SnappedPhotos<S>>, ejection: Option<Ejection<S>>, door_prizes: Vec<DoorPrize<S>>, wither: Option<WitherStruggle<S>>, efflorescence: Vec<Efflorescence<S>> },
     FairBall {
         batter: S,
         fair_ball_type: FairBallType,
         destination: FairBallDestination,
         cheer: Option<Cheer>,
         aurora_photos: Option<SnappedPhotos<S>>,
-        door_prizes: Vec<DoorPrize<S>>
+        door_prizes: Vec<DoorPrize<S>>,
+        efflorescence: Vec<Efflorescence<S>>
     },
     StrikeOut { foul: Option<FoulType>, batter: S, strike: StrikeType, steals: Vec<BaseSteal<S>>, cheer: Option<Cheer>, aurora_photos: Option<SnappedPhotos<S>>, ejection: Option<Ejection<S>>, wither: Option<WitherStruggle<S>> },
 
@@ -266,7 +267,7 @@ impl<S: Display> ParsedEventMessage<S> {
                 format!("{leaving_pitcher_emoji}{leaving_pitcher} is leaving the game. {arriving_pitcher_emoji}{arriving_pitcher_place}{arriving_pitcher_name} takes the mound.")
             },
 
-            Self::Ball { steals, count, cheer, aurora_photos, ejection, door_prizes, wither } => {
+            Self::Ball { steals, count, cheer, aurora_photos, ejection, door_prizes, wither, efflorescence } => {
                 let steals = once(String::new()).chain(steals.iter().map(BaseSteal::to_string))
                     .collect::<Vec<String>>()
                     .join(" ");
@@ -277,10 +278,11 @@ impl<S: Display> ParsedEventMessage<S> {
                 let ejection = ejection.as_ref().map(|e| e.unparse()).unwrap_or_default();
                 let door_prizes = once(String::new()).chain(door_prizes.iter().map(|d| d.unparse())).collect::<Vec<_>>().join("<br>");
                 let wither = wither.as_ref().map_or_else(String::new, |wither| format!(" {}", wither));
+                let efflorescence = once(String::new()).chain(efflorescence.iter().map(|d| d.unparse())).collect::<Vec<_>>().join("<br>🌹 ");
 
-                format!("{space}Ball. {}-{}.{steals}{aurora_photos}{ejection}{cheer}{door_prizes}{wither}", count.0, count.1)
+                format!("{space}Ball. {}-{}.{steals}{aurora_photos}{ejection}{cheer}{door_prizes}{wither}{efflorescence}", count.0, count.1)
             },
-            Self::Strike { strike, steals, count, cheer, aurora_photos, ejection, door_prizes, wither } => {
+            Self::Strike { strike, steals, count, cheer, aurora_photos, ejection, door_prizes, wither, efflorescence } => {
                 let steals: Vec<String> = once(String::new()).chain(steals.into_iter().map(|steal| steal.to_string())).collect();
                 let steals = steals.join(" ");
                 let space = old_space(game, event_index);
@@ -290,10 +292,11 @@ impl<S: Display> ParsedEventMessage<S> {
                 let ejection = ejection.as_ref().map(|e| e.unparse()).unwrap_or_default();
                 let door_prizes = once(String::new()).chain(door_prizes.iter().map(|d| d.unparse())).collect::<Vec<_>>().join("<br>");
                 let wither = wither.as_ref().map_or_else(String::new, |wither| format!(" {}", wither));
+                let efflorescence = once(String::new()).chain(efflorescence.iter().map(|d| d.unparse())).collect::<Vec<_>>().join("<br>🌹 ");
 
-                format!("{space}Strike, {strike}. {}-{}.{steals}{aurora_photos}{ejection}{cheer}{door_prizes}{wither}", count.0, count.1)
+                format!("{space}Strike, {strike}. {}-{}.{steals}{aurora_photos}{ejection}{cheer}{door_prizes}{wither}{efflorescence}", count.0, count.1)
             }
-            Self::Foul { foul, steals, count, cheer, aurora_photos, door_prizes, wither } => {
+            Self::Foul { foul, steals, count, cheer, aurora_photos, door_prizes, wither, efflorescence } => {
                 let steals: Vec<String> = once(String::new()).chain(steals.into_iter().map(|steal| steal.to_string())).collect();
                 let steals = steals.join(" ");
                 let space = old_space(game, event_index);
@@ -302,8 +305,9 @@ impl<S: Display> ParsedEventMessage<S> {
                 let aurora_photos = aurora_photos.as_ref().map(|p| p.unparse()).unwrap_or_default();
                 let door_prizes = once(String::new()).chain(door_prizes.iter().map(|d| d.unparse())).collect::<Vec<_>>().join("<br>");
                 let wither = wither.as_ref().map_or_else(String::new, |wither| format!(" {}", wither));
+                let efflorescence = once(String::new()).chain(efflorescence.iter().map(|d| d.unparse())).collect::<Vec<_>>().join("<br>🌹 ");
 
-                format!("{space}Foul {foul}. {}-{}.{steals}{aurora_photos}{cheer}{door_prizes}{wither}", count.0, count.1)
+                format!("{space}Foul {foul}. {}-{}.{steals}{aurora_photos}{cheer}{door_prizes}{wither}{efflorescence}", count.0, count.1)
             }
             Self::Walk { batter, scores, advances, cheer, aurora_photos, ejection, wither } => {
                 let scores_and_advances = unparse_scores_and_advances(scores, advances);
@@ -317,7 +321,7 @@ impl<S: Display> ParsedEventMessage<S> {
                 // Proof cheer is before ejection: https://mmolb.com/watch/6887e503f142e23550fc1254?event=369
                 format!("{space}Ball 4. {batter} walks.{scores_and_advances}{aurora_photos}{cheer}{ejection}{wither}")
             }
-            Self::HitByPitch { batter, scores, advances, cheer, aurora_photos, ejection, door_prizes, wither } => {
+            Self::HitByPitch { batter, scores, advances, cheer, aurora_photos, ejection, door_prizes, wither, efflorescence } => {
                 let scores_and_advances = unparse_scores_and_advances(scores, advances);
                 let space = old_space(game, event_index);
 
@@ -327,16 +331,18 @@ impl<S: Display> ParsedEventMessage<S> {
                 let door_prizes = once(String::new()).chain(door_prizes.iter().map(|d| d.unparse())).collect::<Vec<_>>().join("<br>");
                 let hbp_text = hit_by_pitch_text(game.season, game.day.as_ref().copied().ok(), event_index);
                 let wither = wither.as_ref().map_or_else(String::new, |wither| format!(" {}", wither));
-                format!("{space}{batter}{hbp_text}.{scores_and_advances}{aurora_photos}{cheer}{ejection}{door_prizes}{wither}")
+                let efflorescence = once(String::new()).chain(efflorescence.iter().map(|d| d.unparse())).collect::<Vec<_>>().join("<br>🌹 ");
+                format!("{space}{batter}{hbp_text}.{scores_and_advances}{aurora_photos}{cheer}{ejection}{door_prizes}{wither}{efflorescence}")
             }
-            Self::FairBall { batter, fair_ball_type, destination, cheer, aurora_photos, door_prizes } => {
+            Self::FairBall { batter, fair_ball_type, destination, cheer, aurora_photos, door_prizes, efflorescence } => {
                 let space = old_space(game, event_index);
 
                 let cheer = cheer.as_ref().map(|c| c.unparse(game, event_index)).unwrap_or_default();
                 let aurora_photos = aurora_photos.as_ref().map(|p| p.unparse()).unwrap_or_default();
                 let door_prizes = once(String::new()).chain(door_prizes.iter().map(|d| d.unparse())).collect::<Vec<_>>().join("<br>");
+                let efflorescence = once(String::new()).chain(efflorescence.iter().map(|d| d.unparse())).collect::<Vec<_>>().join("<br>🌹 ");
 
-                format!("{space}{batter} hits a {fair_ball_type} to {destination}.{aurora_photos}{cheer}{door_prizes}")
+                format!("{space}{batter} hits a {fair_ball_type} to {destination}.{aurora_photos}{cheer}{door_prizes}{efflorescence}")
             }
             Self::StrikeOut { foul, batter, strike, steals, cheer, aurora_photos, ejection, wither } => {
                 let foul = match foul {
@@ -1587,6 +1593,47 @@ impl<S: AsRef<str>> WitherStruggle<S> {
             team_emoji: self.team_emoji.as_ref(),
             source_name: self.source_name.as_ref().map(AsRef::as_ref),
             target: self.target.as_ref(),
+        }
+    }
+}
+
+#[derive(Debug, Clone, Copy, Serialize, Deserialize, PartialEq)]
+pub enum EfflorescenceOutcome {
+    Grow([GrowAttributeChange; 2]),
+    Effloresce,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
+pub struct Efflorescence<S> {
+    pub player: S,
+    pub outcome: EfflorescenceOutcome,
+}
+
+impl<S: Display> Efflorescence<S> {
+    pub fn unparse(&self) -> String {
+        match &self.outcome {
+            EfflorescenceOutcome::Grow(changes) => {
+                let mut s = String::new();
+                write!(s, "{} grew: ", self.player).unwrap();
+                for (i, change) in changes.iter().enumerate() {
+                    let prefix = if i == 0 { "" } else { ", " };
+                    write!(s, "{prefix}{:+} {}", change.amount, change.attribute).unwrap();
+                }
+                write!(s, ".").unwrap();
+                s
+            }
+            EfflorescenceOutcome::Effloresce => {
+                format!("{} Effloresced, shedding their Corrupted Modification.", self.player)
+            }
+        }
+    }
+}
+
+impl<S: AsRef<str>> Efflorescence<S> {
+    pub fn to_ref(&self) -> Efflorescence<&str> {
+        Efflorescence {
+            player: self.player.as_ref(),
+            outcome: self.outcome,
         }
     }
 }

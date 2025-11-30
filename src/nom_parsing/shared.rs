@@ -10,7 +10,7 @@ use nom_language::error::VerboseError;
 use crate::{enums::{Base, BatterStat, Day, FairBallDestination, FairBallType, HomeAway, NowBattingStats, Place}, feed_event::{EmojilessItem, FeedDelivery, FeedEvent}, game::Event, parsed_event::{BaseSteal, Cheer, Delivery, DoorPrize, Ejection, EjectionReason, EmojiTeam, Item, ItemAffixes, PlacedPlayer, Prize, RunnerAdvance, RunnerOut, SnappedPhotos, ViolationType}, player, time::{Breakpoints, Time}, Game};
 use crate::enums::{Attribute, BenchSlot, CelestialEnergyTier, FullSlot, ModificationType, Slot};
 use crate::feed_event::FeedFallingStarOutcome;
-use crate::parsed_event::{EjectionReplacement, ItemEquip, ItemPrize, WitherStruggle};
+use crate::parsed_event::{Efflorescence, EfflorescenceOutcome, EjectionReplacement, ItemEquip, ItemPrize, WitherStruggle};
 use crate::player::{Deserialize, Serialize};
 use crate::team_feed::{ParsedTeamFeedEventText, PurifiedOutcome};
 
@@ -740,6 +740,30 @@ pub(super) fn door_prize<'output>(input: &'output str) -> IResult<'output, &'out
     )).parse(input)
 }
 
+pub(super) fn efflorescence<'output>(input: &'output str) -> IResult<'output, &'output str, Efflorescence<&'output str>> {
+    let effloresced = |input: &'output str| {
+        let (input, player) = parse_terminated(" Effloresced, shedding their Corrupted Modification.").parse(input)?;
+        Ok((input, Efflorescence { player, outcome: EfflorescenceOutcome::Effloresce }))
+    };
+    let grow = |input: &'output str| {
+        let (input, player) = parse_terminated(" grew: ").parse(input)?;
+
+        // Decided to do this manually vs. with combinators because it's only 2 entries
+        let (input, change_1) = grow_attribute_change.parse(input)?;
+        let (input, _) = tag(", ")(input)?;
+        let (input, change_2) = grow_attribute_change.parse(input)?;
+        let (input, _) = tag(".").parse(input)?;
+
+        Ok((input, Efflorescence { player, outcome: EfflorescenceOutcome::Grow([change_1, change_2])}))
+    };
+
+    alt((effloresced, grow)).parse(input)
+}
+
+pub(super) fn efflorescences(input: &str) -> IResult<&str, Vec<Efflorescence<&str>>> {
+    many0(preceded(tag("<br>🌹 "), efflorescence)).parse(input)
+}
+
 #[derive(Clone, Debug, Serialize, Deserialize, PartialEq)]
 pub struct FeedEventParty<S> {
     pub player_name: S,
@@ -953,7 +977,7 @@ pub(super) fn player_positions_swapped(input: &str) -> IResult<&str, PositionSwa
 }
 
 
-#[derive(Clone, Debug, Serialize, Deserialize, PartialEq)]
+#[derive(Clone, Copy, Debug, Serialize, Deserialize, PartialEq)]
 pub struct GrowAttributeChange {
     pub attribute: Attribute,
     pub amount: f64,
