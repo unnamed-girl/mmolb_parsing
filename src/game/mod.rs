@@ -31,7 +31,7 @@ pub struct EventBatter<S> {
 #[serde(bound(deserialize = "S: Deserialize<'de> + PartialEq<&'static str>"))]
 pub struct EventPitcher<S> {
     pub id: S,
-    pub pitches: u8,
+    pub pitches: u16,
     pub era: ZeroOrF64,
     pub throws: Handedness,
     pub name: MaybePlayer<S>,
