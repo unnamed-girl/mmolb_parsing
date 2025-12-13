@@ -467,6 +467,32 @@ pub(super) fn emojiless_item(input: &str) -> IResult<&str, EmojilessItem> {
     .parse(input)
 }
 
+pub(super) fn post_s7_greater_league_delivery<'parse, 'output: 'parse>(parsing_context: &'parse ParsingContext<'parse>, label: &'parse str) -> impl MyParser<'output, Delivery<&'output str>> + 'parse {
+    move |input| {
+        // For lesser league teams this would be a problem if the away team's name was a leading
+        // substring of the home team's name. Thankfully this message only appears in the greater
+        // league where we know that is not the case (for now...?)
+        let (input, team) = alt((
+            parsing_context.away_emoji_team.parser(),
+            parsing_context.home_emoji_team.parser(),
+        )).parse(input)?;
+        let (input, _) = tag(" ").parse(input)?;
+        let (input, player_name) = parse_terminated(" equips ").parse(input)?;
+        let (input, item) = item.parse(input)?;
+        let (input, _) = tag(" from ").parse(input)?;
+        let (input, _) = tag(label).parse(input)?;
+        let (input, _) = tag(".").parse(input)?;
+
+        Ok((input, Delivery::Successful {
+            team,
+            player: Some(player_name),
+            item,
+            equipped: true,
+            discarded: None, // TODO
+        }))
+    }
+}
+
 pub(super) fn delivery<'parse, 'output: 'parse>(parsing_context: &'parse ParsingContext<'parse>, label: &'parse str) -> impl MyParser<'output, Delivery<&'output str>> + 'parse {
     let receive_text = received_text(parsing_context.season, parsing_context.day, parsing_context.event_index);
     let discard_text = discarded_text(parsing_context.season, parsing_context.day, parsing_context.event_index);
@@ -479,14 +505,15 @@ pub(super) fn delivery<'parse, 'output: 'parse>(parsing_context: &'parse Parsing
         )),
         terminated(item, (tag(" "), tag(label), tag("."))),
         opt(delimited(tag(discard_text), item, tag(".")))
-    ).map(|((team, player), item, discarded)| Delivery::Successful {team, player, item, discarded} );
+    ).map(|((team, player), item, discarded)| Delivery::Successful {team, player, item, equipped: false, discarded} );
 
     let discard_text = parsing_context.after(Breakpoints::Season5TenseChange).then_some(" is discarded as no player has space.").unwrap_or(" was discarded as no player had space.");
     let fail = terminated(item, tag(discard_text)).map(|item| Delivery::NoSpace { item });
 
     alt((
         success,
-        fail
+        fail,
+        post_s7_greater_league_delivery(parsing_context, label)
     ))
 }
 

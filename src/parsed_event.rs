@@ -849,6 +849,7 @@ pub enum Delivery<S> {
         team: EmojiTeam<S>,
         player: Option<S>,
         item: Item<S>,
+        equipped: bool,
         discarded: Option<Item<S>>
     },
     NoSpace {
@@ -859,8 +860,12 @@ pub enum Delivery<S> {
 impl<S: Display> Delivery<S> {
     pub fn unparse(&self, game: &Game, event_index: Option<u16>, delivery_label: &str) -> String {
         match self {
-            Self::Successful { team, player, item, discarded } => {
-                let received_text = received_text(game.season, game.day.as_ref().copied().ok(), event_index);
+            Self::Successful { team, player, item, equipped, discarded } => {
+                let received_text = if *equipped {
+                    " equips "
+                } else {
+                    received_text(game.season, game.day.as_ref().copied().ok(), event_index)
+                };
                 let discarded_text = discarded_text(game.season, game.day.as_ref().copied().ok(), event_index);
 
                 let discarded = match discarded {
@@ -870,7 +875,10 @@ impl<S: Display> Delivery<S> {
 
                 let player = player.as_ref().map(|player| format!(" {player}")).unwrap_or_default();
 
-                format!("{team}{player}{received_text}{item} {delivery_label}.{discarded}")
+                // There's this extra word "from" in the equipped message
+                let from_text = if *equipped { "from " }  else { "" };
+
+                format!("{team}{player}{received_text}{item} {from_text}{delivery_label}.{discarded}")
             }
             Self::NoSpace { item } => {
                 let discard_text = Breakpoints::Season5TenseChange.after(game.season, game.day.as_ref().ok().copied(), event_index).then_some(" is discarded as no player has space.").unwrap_or(" was discarded as no player had space.");
