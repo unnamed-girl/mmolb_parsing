@@ -949,7 +949,7 @@ pub(super) fn feed_event_wither<'output>(input: &str) -> IResult<&str, &str> {
 }
 
 pub(super) fn purified<'output>(input: &str) -> IResult<&str, (&str, PurifiedOutcome)> {
-    alt((purified_with_payout, purified_without_payout)).parse(input)
+    alt((purified_with_payout, purified_without_payout, purified_efflorescence)).parse(input)
 }
 
 fn purified_with_payout<'output>(input: &str) -> IResult<&str, (&str, PurifiedOutcome)> {
@@ -966,6 +966,14 @@ fn purified_without_payout<'output>(input: &str) -> IResult<&str, (&str, Purifie
     let (input, no_corruption) = opt((tag(" "), tag(player_name), tag(" had no Corruption to remove."))).parse(input)?;
 
     Ok((input, (player_name, if no_corruption.is_some() { PurifiedOutcome::NoCorruption } else { PurifiedOutcome::None })))
+}
+
+fn purified_efflorescence<'output>(input: &str) -> IResult<&str, (&str, PurifiedOutcome)> {
+    let (input, player_name) = parse_terminated(" was Purified of 🌹 Efflorescence, earned ").parse(input)?;
+    let (input, payment) = u32.parse(input)?;
+    let (input, _) = tag(" 🪙, and gained 🦠 Immunity.").parse(input)?;
+
+    Ok((input, (player_name, PurifiedOutcome::PaymentAndImmunityRemoved(payment))))
 }
 
 pub(super) fn feed_event_contained(input: &str) -> IResult<&str, (&str, &str)> {
