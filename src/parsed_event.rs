@@ -6,7 +6,9 @@ use thiserror::Error;
 
 use crate::{enums::{Base, BaseNameVariant, BatterStat, Distance, EventType, FairBallDestination, FairBallType, FieldingErrorType, FoulType, GameOverMessage, HomeAway, ItemName, ItemPrefix, ItemSuffix, MoundVisitType, NowBattingStats, Place, StrikeType, TopBottom}, nom_parsing::shared::{hit_by_pitch_text, strike_out_text}, time::Breakpoints, Game, NotRecognized};
 use crate::enums::Attribute;
-use crate::nom_parsing::shared::{received_text, discarded_text, GrowAttributeChange};
+use crate::nom_parsing::shared::{received_text, discarded_text};
+
+pub use crate::nom_parsing::shared::GrowAttributeChange;
 
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Error)]
 pub enum GameEventParseError {
