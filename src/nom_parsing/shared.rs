@@ -778,11 +778,17 @@ pub(super) fn door_prize<'output>(input: &'output str) -> IResult<'output, &'out
 
 pub(super) fn efflorescence<'output>(input: &'output str) -> IResult<'output, &'output str, Efflorescence<&'output str>> {
     let effloresced = |input: &'output str| {
-        let (input, player) = parse_terminated(" Effloresced, shedding their Corrupted Modification.").parse(input)?;
+        let (input, player) = verify(
+            parse_terminated(" Effloresced, shedding their Corrupted Modification."),
+            |s: &str| !s.contains("<br>")
+        ).parse(input)?;
         Ok((input, Efflorescence { player, outcome: EfflorescenceOutcome::Effloresce }))
     };
     let grow = |input: &'output str| {
-        let (input, player) = parse_terminated(" grew: ").parse(input)?;
+        let (input, player) = verify(
+            parse_terminated(" grew: "),
+            |s: &str| !s.contains("<br>")
+        ).parse(input)?;
 
         // Decided to do this manually vs. with combinators because it's only 2 entries
         let (input, change_1) = grow_attribute_change.parse(input)?;
