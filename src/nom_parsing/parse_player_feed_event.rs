@@ -269,6 +269,7 @@ fn election<'output>(_event: &'output FeedEvent) -> impl PlayerFeedEventParser<'
     context("Election Feed Event", alt((
         player_greater_augment_result,
         player_retracted_greater_augment_result,
+        player_retroactive_greater_augment_result,
     )))
 }
 
@@ -293,6 +294,16 @@ fn player_retracted_greater_augment_result(input: &str) -> IResult<&str, ParsedP
     )).parse(input)?;
 
     Ok((input, ParsedPlayerFeedEventText::RetractedGreaterAugment { player_name, greater_augment }))
+}
+
+fn player_retroactive_greater_augment_result(input: &str) -> IResult<&str, ParsedPlayerFeedEventText<&str>> {
+    let (input, (player_name, greater_augment)) = alt((
+        parse_terminated(" gained +0.1 to all Defense Attributes.").map(|p| (p, PlayerGreaterAugment::Plating)),
+        terminated((parse_terminated(" gained +0.75 "), try_from_word), tag(".")).map(|(p, attribute)| (p, PlayerGreaterAugment::Headliners { attribute })),
+        terminated((parse_terminated(" gained +0.50 "), try_from_word), tag(".")).map(|(p, attribute)| (p, PlayerGreaterAugment::StartSmall { attribute })),
+    )).parse(input)?;
+
+    Ok((input, ParsedPlayerFeedEventText::RetroactiveGreaterAugment { player_name, greater_augment }))
 }
 
 fn roster<'output>(_event: &'output FeedEvent) -> impl PlayerFeedEventParser<'output> {

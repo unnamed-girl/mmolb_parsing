@@ -119,7 +119,16 @@ pub enum ParsedPlayerFeedEventText<S> {
         player_name: S,
         greater_augment: PlayerGreaterAugment,
     },
+    // This is for players who incorrectly received a GreaterAugment and then later
+    // had it retracted
     RetractedGreaterAugment {
+        player_name: S,
+        greater_augment: PlayerGreaterAugment,
+    },
+    // This is the counterpoint of RetractedGreaterAugment. It's the players who were
+    // supposed to have received the original GreaterAugment but didn't get it until
+    // later
+    RetroactiveGreaterAugment {
         player_name: S,
         greater_augment: PlayerGreaterAugment,
     },
@@ -243,6 +252,14 @@ impl<S: Display> ParsedPlayerFeedEventText<S> {
                     PlayerGreaterAugment::StartSmall { attribute } => format!("{player_name} lost 0.5 from {attribute}."),
                     PlayerGreaterAugment::Plating => format!("{player_name} lost 0.1 to all Defense Attributes"),
                     PlayerGreaterAugment::LuckyDelivery => format!("{player_name} lost 0.1 to all Defense Attributes"),
+                }
+            }
+            ParsedPlayerFeedEventText::RetroactiveGreaterAugment { player_name, greater_augment } => {
+                match greater_augment {
+                    PlayerGreaterAugment::Headliners { attribute } => format!("{player_name} gained +0.75 {attribute}."),
+                    PlayerGreaterAugment::StartSmall { attribute } => format!("{player_name} gained +0.5 {attribute}."),
+                    PlayerGreaterAugment::Plating => format!("{player_name} gained +0.1 to all Defense Attributes."),
+                    PlayerGreaterAugment::LuckyDelivery => format!("{player_name} gained +0.1 to all Defense Attributes."),
                 }
             }
             ParsedPlayerFeedEventText::PlayerRelegated { player_name } => {
