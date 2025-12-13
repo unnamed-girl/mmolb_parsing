@@ -276,6 +276,7 @@ fn player_greater_augment_result(input: &str) -> IResult<&str, ParsedPlayerFeedE
     let (input, (player_name, greater_augment)) = alt((
         parse_terminated(" gained +10 to all Defense Attributes.").map(|p| (p, PlayerGreaterAugment::Plating)),
         terminated((parse_terminated(" gained +75 "), try_from_word), tag(".")).map(|(p, attribute)| (p, PlayerGreaterAugment::Headliners { attribute })),
+        terminated((parse_terminated(" gained +50 "), try_from_word), tag(".")).map(|(p, attribute)| (p, PlayerGreaterAugment::StartSmall { attribute })),
     )).parse(input)?;
 
     Ok((input, ParsedPlayerFeedEventText::GreaterAugment { player_name, greater_augment }))
@@ -288,6 +289,7 @@ fn player_retracted_greater_augment_result(input: &str) -> IResult<&str, ParsedP
     let (input, (player_name, greater_augment)) = alt((
         parse_terminated(" lost 0.1 from all Defense Attributes.").map(|p| (p, PlayerGreaterAugment::Plating)),
         terminated((parse_terminated(" lost 0.75 from "), try_from_word), tag(".")).map(|(p, attribute)| (p, PlayerGreaterAugment::Headliners { attribute })),
+        terminated((parse_terminated(" lost 0.5 from "), try_from_word), tag(".")).map(|(p, attribute)| (p, PlayerGreaterAugment::StartSmall { attribute })),
     )).parse(input)?;
 
     Ok((input, ParsedPlayerFeedEventText::RetractedGreaterAugment { player_name, greater_augment }))

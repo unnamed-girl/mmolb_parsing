@@ -232,7 +232,7 @@ impl<S: Display> ParsedPlayerFeedEventText<S> {
             ParsedPlayerFeedEventText::GreaterAugment { player_name, greater_augment } => {
                 match greater_augment {
                     PlayerGreaterAugment::Headliners { attribute } => format!("{player_name} gained +75 {attribute}."),
-                    PlayerGreaterAugment::StartSmall => format!("{player_name} gained +10 to all Defense Attributes"),
+                    PlayerGreaterAugment::StartSmall { attribute } => format!("{player_name} gained +50 {attribute}."),
                     PlayerGreaterAugment::Plating => format!("{player_name} gained +10 to all Defense Attributes"),
                     PlayerGreaterAugment::LuckyDelivery => format!("{player_name} gained +10 to all Defense Attributes"),
                 }
@@ -240,7 +240,7 @@ impl<S: Display> ParsedPlayerFeedEventText<S> {
             ParsedPlayerFeedEventText::RetractedGreaterAugment { player_name, greater_augment } => {
                 match greater_augment {
                     PlayerGreaterAugment::Headliners { attribute } => format!("{player_name} lost 0.75 from {attribute}."),
-                    PlayerGreaterAugment::StartSmall => format!("{player_name} lost 0.1 to all Defense Attributes"),
+                    PlayerGreaterAugment::StartSmall { attribute } => format!("{player_name} lost 0.5 from {attribute}."),
                     PlayerGreaterAugment::Plating => format!("{player_name} lost 0.1 to all Defense Attributes"),
                     PlayerGreaterAugment::LuckyDelivery => format!("{player_name} lost 0.1 to all Defense Attributes"),
                 }

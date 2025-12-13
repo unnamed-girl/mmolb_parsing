@@ -212,7 +212,9 @@ pub enum PlayerGreaterAugment {
     Headliners {
         attribute: Attribute,
     },
-    StartSmall,
+    StartSmall {
+        attribute: Attribute,
+    },
     Plating,
     LuckyDelivery,
 }
