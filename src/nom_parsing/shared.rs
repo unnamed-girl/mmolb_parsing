@@ -1,5 +1,6 @@
 use std::{fmt::Debug, str::FromStr};
 use std::fmt::{Display, Formatter};
+use clap::builder::TypedValueParser;
 use nom::{branch::alt, bytes::complete::{tag, take, take_till, take_until, take_until1, take_while}, character::complete::{one_of, space0, u8, u16}, combinator::{all_consuming, fail, opt, recognize, rest, value, verify}, error::{ErrorKind, ParseError}, multi::{count, many0, many1, separated_list1}, sequence::{delimited, preceded, separated_pair, terminated}, AsChar, Input, Parser};
 use nom::bytes::complete::is_not;
 use nom::character::complete::u32;
@@ -467,6 +468,13 @@ pub(super) fn emojiless_item(input: &str) -> IResult<&str, EmojilessItem> {
     .parse(input)
 }
 
+pub(super) fn delivery_discard(input: &'_ str) -> IResult<&'_ str, Item<&'_ str>> {
+    let (input, _) = tag(" They discard their ").parse(input)?;
+    let (input, discarded_item) = item.parse(input)?;
+    let (input, _) = tag(".").parse(input)?;
+
+    Ok((input, discarded_item))
+}
 pub(super) fn post_s7_greater_league_delivery<'parse, 'output: 'parse>(parsing_context: &'parse ParsingContext<'parse>, label: &'parse str) -> impl MyParser<'output, Delivery<&'output str>> + 'parse {
     move |input| {
         // For lesser league teams this would be a problem if the away team's name was a leading
@@ -482,13 +490,14 @@ pub(super) fn post_s7_greater_league_delivery<'parse, 'output: 'parse>(parsing_c
         let (input, _) = tag(" from ").parse(input)?;
         let (input, _) = tag(label).parse(input)?;
         let (input, _) = tag(".").parse(input)?;
+        let (input, discarded) = opt(delivery_discard).parse(input)?;
 
         Ok((input, Delivery::Successful {
             team,
             player: Some(player_name),
             item,
             equipped: true,
-            discarded: None, // TODO
+            discarded,
         }))
     }
 }
@@ -499,6 +508,7 @@ pub(super) fn delivery<'parse, 'output: 'parse>(parsing_context: &'parse Parsing
     let success = (
         alt(( // Alt needs the later context to distinguish "Buffalo Buffalo" and "Buffalo Buffalo Buffalo"
             terminated(parsing_context.away_emoji_team.parser(), tag(receive_text)).map(|team| (team, None)),
+
             (parsing_context.away_emoji_team.parser(), preceded(tag(" "), parse_terminated(receive_text).map(Some))),
             terminated(parsing_context.home_emoji_team.parser(), tag(receive_text)).map(|team| (team, None)),
             (parsing_context.home_emoji_team.parser(), preceded(tag(" "), parse_terminated(receive_text).map(Some))),
