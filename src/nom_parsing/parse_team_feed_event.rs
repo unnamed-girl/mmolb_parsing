@@ -1,4 +1,4 @@
-use crate::nom_parsing::shared::{active_slot, grow, falling_star, player_relegated, player_moved};
+use crate::nom_parsing::shared::{active_slot, grow, falling_star, player_relegated, player_moved, feed_event_efflorescence_growth, feed_event_effloresce};
 use nom::{branch::alt, bytes::complete::tag, character::complete::{i16, u8, u32}, combinator::{cond, fail, opt}, error::context, sequence::{delimited, preceded, separated_pair, terminated}, Finish, Parser};
 use nom::bytes::complete::take_while;
 use nom::combinator::{eof, verify};
@@ -65,6 +65,8 @@ fn game(event: &FeedEvent) -> impl TeamFeedEventParser {
         retirement(true),
         feed_event_wither.map(|player_name| ParsedTeamFeedEventText::CorruptedByWither { player_name }),
         feed_event_contained.map(|(contained_player_name, container_player_name)| ParsedTeamFeedEventText::PlayerContained { contained_player_name, container_player_name }),
+        feed_event_efflorescence_growth.map(|(player_name, growths)| ParsedTeamFeedEventText::PlayerGrewInEfflorescence { player_name, growths }),
+        feed_event_effloresce.map(|player_name| ParsedTeamFeedEventText::PlayerEffloresce { player_name }),
         fail(),
     )))
 }

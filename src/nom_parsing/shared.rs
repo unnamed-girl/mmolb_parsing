@@ -975,6 +975,22 @@ pub(super) fn feed_event_contained(input: &str) -> IResult<&str, (&str, &str)> {
     Ok((input, (contained_player_name, container_player_name)))
 }
 
+pub(super) fn feed_event_efflorescence_growth(input: &str) -> IResult<&str, (&str, [GrowAttributeChange; 2])> {
+    let (input, player_name) = parse_terminated(" grew in the 🌹 Efflorescence: ").parse(input)?;
+
+    // Decided to do this manually vs. with combinators because it's only 2 entries
+    let (input, change_1) = grow_attribute_change.parse(input)?;
+    let (input, _) = tag(", ")(input)?;
+    let (input, change_2) = grow_attribute_change.parse(input)?;
+    let (input, _) = tag(".").parse(input)?;
+
+    Ok((input, (player_name, [change_1, change_2])))
+}
+
+pub(super) fn feed_event_effloresce(input: &str) -> IResult<&str, &str> {
+    parse_terminated(" is Efflorescing and sheds their Corruption!").parse(input)
+}
+
 fn bench_slot(input: &str) -> IResult<&str, BenchSlot> {
     alt((
         preceded(tag("Bench Batter "), u8).map(|num| BenchSlot::Batter(num)),
@@ -1067,6 +1083,12 @@ pub struct GrowAttributeChange {
     pub amount: f64,
 }
 
+impl Display for GrowAttributeChange {
+    fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
+        write!(f, "{:+} {}", self.amount, self.attribute)
+    }
+}
+
 #[derive(Clone, Debug, Serialize, Deserialize, PartialEq)]
 pub enum GainedImmovable {
     No,
@@ -1087,6 +1109,8 @@ impl<S: Display> Display for Grow<S> {
         write!(f, "{}'s Corruption grew: ", self.player_name)?;
         for (i, change) in self.attribute_changes.iter().enumerate() {
             let prefix = if i == 0 { "" } else { ", " };
+            // Don't use GrowAttributeChange's Display implementation because it's the
+            // wrong number of decimal places
             write!(f, "{prefix}{:+.1} {}", change.amount, change.attribute)?;
         }
         match &self.immovable_granted {

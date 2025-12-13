@@ -10,7 +10,7 @@ use crate::enums::{CelestialEnergyTier, FullSlot, Slot};
 use crate::feed_event::{AttributeChange, GreaterAugment};
 pub use crate::nom_parsing::parse_team_feed_event::parse_team_feed_event;
 use crate::nom_parsing::shared::{FeedEventDoorPrize, FeedEventParty, Grow, PositionSwap};
-use crate::parsed_event::{EmojiPlayer, EmojiTeam};
+use crate::parsed_event::{EmojiPlayer, EmojiTeam, GrowAttributeChange};
 
 #[serde_as]
 #[derive(Serialize, Deserialize, Debug, Clone)]
@@ -161,6 +161,13 @@ pub enum ParsedTeamFeedEventText<S> {
     GreaterAugment {
         team: EmojiTeam<S>,
         greater_augment: GreaterAugment,
+    },
+    PlayerGrewInEfflorescence {
+        player_name: S,
+        growths: [GrowAttributeChange; 2],
+    },
+    PlayerEffloresce {
+        player_name: S,
     },
     // TODO Delete any of these that are still unused when parsing is up to date
 
@@ -330,6 +337,12 @@ impl<S: Display> ParsedTeamFeedEventText<S> {
                     GreaterAugment::Plating => "Reinforced Plating, granting their Players +10 to all Defense Attributes.",
                     GreaterAugment::LuckyDelivery => "TODO Insert the lucky delivery text here",
                 })
+            }
+            ParsedTeamFeedEventText::PlayerGrewInEfflorescence { player_name, growths: [grow_1, grow_2] } => {
+                format!("{player_name} grew in the 🌹 Efflorescence: {grow_1}, {grow_2}.")
+            }
+            ParsedTeamFeedEventText::PlayerEffloresce { player_name} => {
+                format!("{player_name} is Efflorescing and sheds their Corruption!")
             }
         }
     }
