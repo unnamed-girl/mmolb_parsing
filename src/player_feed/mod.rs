@@ -4,7 +4,7 @@ use serde::{Deserialize, Serialize};
 use serde_with::serde_as;
 
 use crate::{enums::{Attribute, FeedEventType, ModificationType}, feed_event::{EmojilessItem, FeedDelivery, FeedEvent, FeedEventParseError, FeedFallingStarOutcome}, time::{Breakpoints, Timestamp}, utils::extra_fields_deserialize};
-use crate::feed_event::GreaterAugment;
+use crate::feed_event::{GreaterAugment, PlayerGreaterAugment};
 pub use crate::nom_parsing::parse_player_feed_event::parse_player_feed_event;
 use crate::nom_parsing::shared::{FeedEventDoorPrize, FeedEventParty, Grow, PositionSwap};
 use crate::team_feed::{ParsedTeamFeedEventText, PurifiedOutcome};
@@ -117,11 +117,11 @@ pub enum ParsedPlayerFeedEventText<S> {
     },
     GreaterAugment {
         player_name: S,
-        greater_augment: GreaterAugment,
+        greater_augment: PlayerGreaterAugment,
     },
     RetractedGreaterAugment {
         player_name: S,
-        greater_augment: GreaterAugment,
+        greater_augment: PlayerGreaterAugment,
     },
     PlayerRelegated {
         player_name: S,
@@ -230,20 +230,20 @@ impl<S: Display> ParsedPlayerFeedEventText<S> {
                 format!("{grow}")
             }
             ParsedPlayerFeedEventText::GreaterAugment { player_name, greater_augment } => {
-                format!("{player_name} {}.", match greater_augment {
-                    GreaterAugment::Headliners => "gained +10 to all Defense Attributes",
-                    GreaterAugment::StartSmall => "gained +10 to all Defense Attributes",
-                    GreaterAugment::Plating => "gained +10 to all Defense Attributes",
-                    GreaterAugment::LuckyDelivery => "gained +10 to all Defense Attributes",
-                })
+                match greater_augment {
+                    PlayerGreaterAugment::Headliners { attribute } => format!("{player_name} gained +75 {attribute}."),
+                    PlayerGreaterAugment::StartSmall => format!("{player_name} gained +10 to all Defense Attributes"),
+                    PlayerGreaterAugment::Plating => format!("{player_name} gained +10 to all Defense Attributes"),
+                    PlayerGreaterAugment::LuckyDelivery => format!("{player_name} gained +10 to all Defense Attributes"),
+                }
             }
             ParsedPlayerFeedEventText::RetractedGreaterAugment { player_name, greater_augment } => {
-                format!("{player_name} {}.", match greater_augment {
-                    GreaterAugment::Headliners => "lost 0.1 from all Defense Attributes",
-                    GreaterAugment::StartSmall => "lost 0.1 from all Defense Attributes",
-                    GreaterAugment::Plating => "lost 0.1 from all Defense Attributes",
-                    GreaterAugment::LuckyDelivery => "lost 0.1 from all Defense Attributes",
-                })
+                match greater_augment {
+                    PlayerGreaterAugment::Headliners { attribute } => format!("{player_name} lost 0.75 from {attribute}."),
+                    PlayerGreaterAugment::StartSmall => format!("{player_name} lost 0.1 to all Defense Attributes"),
+                    PlayerGreaterAugment::Plating => format!("{player_name} lost 0.1 to all Defense Attributes"),
+                    PlayerGreaterAugment::LuckyDelivery => format!("{player_name} lost 0.1 to all Defense Attributes"),
+                }
             }
             ParsedPlayerFeedEventText::PlayerRelegated { player_name } => {
                 format!("🧳 {player_name} was relegated to the Even Lesser League.")

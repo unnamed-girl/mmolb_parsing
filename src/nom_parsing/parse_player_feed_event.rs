@@ -1,7 +1,7 @@
 use nom::{branch::alt, bytes::complete::tag, character::complete::{i16, u8}, combinator::{cond, fail, opt}, error::context, sequence::{delimited, preceded, separated_pair, terminated}, Finish, Parser};
 use nom::character::complete::u32;
 use crate::{enums::{CelestialEnergyTier, FeedEventType, ModificationType}, feed_event::{FeedEvent, FeedEventParseError, FeedFallingStarOutcome}, nom_parsing::shared::{emojiless_item, feed_delivery, name_eof, parse_terminated, sentence_eof, try_from_word}, player_feed::ParsedPlayerFeedEventText, time::{Breakpoints, Timestamp}};
-use crate::feed_event::GreaterAugment;
+use crate::feed_event::{GreaterAugment, PlayerGreaterAugment};
 use super::shared::{door_prize, falling_star, feed_event_contained, feed_event_door_prize, feed_event_equipped_door_prize, feed_event_party, feed_event_wither, grow, player_moved, player_positions_swapped, player_relegated, purified, Error, IResult};
 
 
@@ -273,18 +273,24 @@ fn election<'output>(_event: &'output FeedEvent) -> impl PlayerFeedEventParser<'
 }
 
 fn player_greater_augment_result(input: &str) -> IResult<&str, ParsedPlayerFeedEventText<&str>> {
-    let (input, player_name) = parse_terminated(" gained +10 to all Defense Attributes.").parse(input)?;
+    let (input, (player_name, greater_augment)) = alt((
+        parse_terminated(" gained +10 to all Defense Attributes.").map(|p| (p, PlayerGreaterAugment::Plating)),
+        terminated((parse_terminated(" gained +75 "), try_from_word), tag(".")).map(|(p, attribute)| (p, PlayerGreaterAugment::Headliners { attribute })),
+    )).parse(input)?;
 
-    Ok((input, ParsedPlayerFeedEventText::GreaterAugment { player_name, greater_augment: GreaterAugment::Plating }))
+    Ok((input, ParsedPlayerFeedEventText::GreaterAugment { player_name, greater_augment }))
 }
 
 // This is from when the s7 greater augments accidentally hit the demoted greater league players
 // instead of the newly promoted players, and then Danny retroactively corrected them.
 // The attribute numbers given here were accidentally in the 0-1 scale instead of the 0-100 scale
 fn player_retracted_greater_augment_result(input: &str) -> IResult<&str, ParsedPlayerFeedEventText<&str>> {
-    let (input, player_name) = parse_terminated(" lost 0.1 from all Defense Attributes.").parse(input)?;
+    let (input, (player_name, greater_augment)) = alt((
+        parse_terminated(" lost 0.1 from all Defense Attributes.").map(|p| (p, PlayerGreaterAugment::Plating)),
+        terminated((parse_terminated(" lost 0.75 from "), try_from_word), tag(".")).map(|(p, attribute)| (p, PlayerGreaterAugment::Headliners { attribute })),
+    )).parse(input)?;
 
-    Ok((input, ParsedPlayerFeedEventText::RetractedGreaterAugment { player_name, greater_augment: GreaterAugment::Plating }))
+    Ok((input, ParsedPlayerFeedEventText::RetractedGreaterAugment { player_name, greater_augment }))
 }
 
 fn roster<'output>(_event: &'output FeedEvent) -> impl PlayerFeedEventParser<'output> {

@@ -208,6 +208,16 @@ pub enum GreaterAugment {
 }
 
 #[derive(Clone, Debug, Serialize, Deserialize, PartialEq)]
+pub enum PlayerGreaterAugment {
+    Headliners {
+        attribute: Attribute,
+    },
+    StartSmall,
+    Plating,
+    LuckyDelivery,
+}
+
+#[derive(Clone, Debug, Serialize, Deserialize, PartialEq)]
 pub struct FeedDelivery<S> {
     pub player: S,
     pub item: Item<S>,
