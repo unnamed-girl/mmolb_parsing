@@ -119,6 +119,10 @@ pub enum ParsedPlayerFeedEventText<S> {
         player_name: S,
         greater_augment: GreaterAugment,
     },
+    RetractedGreaterAugment {
+        player_name: S,
+        greater_augment: GreaterAugment,
+    },
     PlayerRelegated {
         player_name: S,
     },
@@ -231,6 +235,14 @@ impl<S: Display> ParsedPlayerFeedEventText<S> {
                     GreaterAugment::StartSmall => "gained +10 to all Defense Attributes",
                     GreaterAugment::Plating => "gained +10 to all Defense Attributes",
                     GreaterAugment::LuckyDelivery => "gained +10 to all Defense Attributes",
+                })
+            }
+            ParsedPlayerFeedEventText::RetractedGreaterAugment { player_name, greater_augment } => {
+                format!("{player_name} {}.", match greater_augment {
+                    GreaterAugment::Headliners => "lost 0.1 from all Defense Attributes",
+                    GreaterAugment::StartSmall => "lost 0.1 from all Defense Attributes",
+                    GreaterAugment::Plating => "lost 0.1 from all Defense Attributes",
+                    GreaterAugment::LuckyDelivery => "lost 0.1 from all Defense Attributes",
                 })
             }
             ParsedPlayerFeedEventText::PlayerRelegated { player_name } => {

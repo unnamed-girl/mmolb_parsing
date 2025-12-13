@@ -268,6 +268,7 @@ fn seasonal_durability_loss_blocked(input: &str) -> IResult<&str, ParsedPlayerFe
 fn election<'output>(_event: &'output FeedEvent) -> impl PlayerFeedEventParser<'output> {
     context("Election Feed Event", alt((
         player_greater_augment_result,
+        player_retracted_greater_augment_result,
     )))
 }
 
@@ -275,6 +276,15 @@ fn player_greater_augment_result(input: &str) -> IResult<&str, ParsedPlayerFeedE
     let (input, player_name) = parse_terminated(" gained +10 to all Defense Attributes.").parse(input)?;
 
     Ok((input, ParsedPlayerFeedEventText::GreaterAugment { player_name, greater_augment: GreaterAugment::Plating }))
+}
+
+// This is from when the s7 greater augments accidentally hit the demoted greater league players
+// instead of the newly promoted players, and then Danny retroactively corrected them.
+// The attribute numbers given here were accidentally in the 0-1 scale instead of the 0-100 scale
+fn player_retracted_greater_augment_result(input: &str) -> IResult<&str, ParsedPlayerFeedEventText<&str>> {
+    let (input, player_name) = parse_terminated(" lost 0.1 from all Defense Attributes.").parse(input)?;
+
+    Ok((input, ParsedPlayerFeedEventText::RetractedGreaterAugment { player_name, greater_augment: GreaterAugment::Plating }))
 }
 
 fn roster<'output>(_event: &'output FeedEvent) -> impl PlayerFeedEventParser<'output> {
