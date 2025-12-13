@@ -304,10 +304,13 @@ pub(super) fn parse_terminated(tag_content: &str) -> impl Fn(&str) -> IResult<&s
     move |input| {
         // There's an "and Friends" name now
         if tag_content == " and " {
-            let (new_input, prefix) = opt(parse_terminated(" and Friends and ")).parse(input)?;
-            if let Some(prefix) = prefix {
+            let (new_input, prefix_and_name) = opt(alt((
+                parse_terminated(" and Friends and ").map(|prefix| (prefix, " and Friends")),
+                parse_terminated(" and Joe and ").map(|prefix| (prefix, " and Joe")),
+            ))).parse(input)?;
+            if let Some((prefix, name)) = prefix_and_name {
                 // Extend val by the length of " and Friends"
-                let name_len = prefix.len() + " and Friends".len();
+                let name_len = prefix.len() + name.len();
                 let full_match = &input[..name_len];
                 return Ok((new_input, full_match));
             }
