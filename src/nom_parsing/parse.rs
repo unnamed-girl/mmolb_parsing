@@ -1,4 +1,4 @@
-use crate::{nom_parsing::shared::{door_prizes, ejection_tail, hit_by_pitch_text, strike_out_text}, time::is_superstar_game};
+use crate::{nom_parsing::shared::{door_prizes, successful_ejection_tail, hit_by_pitch_text, strike_out_text}, time::is_superstar_game};
 use std::str::FromStr;
 use nom::{branch::alt, bytes::complete::{tag, take_until}, character::complete::{digit1, u8, u16}, combinator::{all_consuming, cut, fail, opt, rest, value, verify}, error::context, multi::{many0, many1, separated_list1}, sequence::{delimited, preceded, separated_pair, terminated}, Finish, Parser};
 use nom::character::complete::u32;
@@ -6,7 +6,7 @@ use nom::sequence::pair;
 use phf::phf_map;
 
 use crate::{enums::{EventType, GameOverMessage, HomeAway, MoundVisitType, NowBattingStats}, game::Event, nom_parsing::shared::{aurora, cheer, ejection, delivery, team_emoji, try_from_word, try_from_words_m_n, MyParser}, parsed_event::{EmojiTeam, FallingStarOutcome, FieldingAttempt, GameEventParseError, KnownBug, StartOfInningPitcher}, time::Breakpoints, ParsedEventMessage};
-use crate::nom_parsing::shared::{efflorescences, either_team_emoji, parse_until_exclamation_point_eof, parse_until_period_eof, wither};
+use crate::nom_parsing::shared::{efflorescences, either_team_emoji, failed_ejection_tail, parse_until_exclamation_point_eof, parse_until_period_eof, wither};
 use crate::parsed_event::{ContainResult, PartyDurabilityLoss, WitherResult};
 use super::{shared::{all_consuming_sentence_and, base_steal_sentence, bold, destination, emoji_team_eof, exclamation, fair_ball_type_verb_name, fielders_eof, fly_ball_type_verb_name, name_eof, now_batting_stats, ordinal_suffix, out, parse_and, parse_terminated, placed_player_eof, score_update, scores_and_advances, scores_sentence, sentence, sentence_eof}, ParsingContext};
 
@@ -389,7 +389,8 @@ fn field<'parse, 'output: 'parse>(parsing_context: &'parse ParsingContext<'parse
         (
             scores_and_advances,
             sentence_eof(separated_pair(try_from_word, tag(" error by "), alt((
-                pair(parse_terminated(". 🤖 ROBO-UMP ejected "), ejection_tail(parsing_context)).map(|(name, ejection)| (name, Some(ejection))),
+                pair(parse_terminated(". 🤖 ROBO-UMP ejected "), successful_ejection_tail(parsing_context)).map(|(name, ejection)| (name, Some(ejection))),
+                pair(parse_terminated(". 🤖 ROBO-UMP attempted an ejection, but "), failed_ejection_tail).map(|(name, ejection)| (name, Some(ejection))),
                 name_eof.map(|name| (name, None)),
             )))),
         )

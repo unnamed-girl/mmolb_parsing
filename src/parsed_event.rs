@@ -1421,34 +1421,46 @@ impl<S> EjectionReplacement<S> {
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
-pub struct Ejection<S> {
-    pub team: EmojiTeam<S>,
-    pub ejected_player: PlacedPlayer<S>,
-    pub violation_type: ViolationType,
-    pub reason: EjectionReason,
-    pub replacement: EjectionReplacement<S>,
+pub enum Ejection<S> {
+    Ejection {
+        team: EmojiTeam<S>,
+        ejected_player: PlacedPlayer<S>,
+        violation_type: ViolationType,
+        reason: EjectionReason,
+        replacement: EjectionReplacement<S>,
+    },
+    FailedEjection {
+        player_names: [S; 2]
+    }
 }
 
 impl<S: Display> Ejection<S> {
     pub fn unparse(&self) -> String {
-        match &self.replacement {
-            EjectionReplacement::BenchPlayer { player_name } => format!(
-                " 🤖 ROBO-UMP ejected {} {} for a {} Violation ({}). Bench Player {} takes their place.",
-                self.team,
-                self.ejected_player,
-                self.violation_type,
-                self.reason,
-                player_name,
-            ),
-            EjectionReplacement::RosterPlayer { player } => format!(
-                " 🤖 ROBO-UMP ejected {} {} for a {} Violation ({}). {} {} takes the mound.",
-                self.team,
-                self.ejected_player,
-                self.violation_type,
-                self.reason,
-                self.team.emoji,
-                player,
-            ),
+        match self {
+            Ejection::Ejection { team, ejected_player, violation_type, reason, replacement } => {
+                match replacement {
+                    EjectionReplacement::BenchPlayer { player_name } => format!(
+                        " 🤖 ROBO-UMP ejected {} {} for a {} Violation ({}). Bench Player {} takes their place.",
+                        team,
+                        ejected_player,
+                        violation_type,
+                        reason,
+                        player_name,
+                    ),
+                    EjectionReplacement::RosterPlayer { player } => format!(
+                        " 🤖 ROBO-UMP ejected {} {} for a {} Violation ({}). {} {} takes the mound.",
+                        team,
+                        ejected_player,
+                        violation_type,
+                        reason,
+                        team.emoji,
+                        player,
+                    ),
+                }
+            }
+            Ejection::FailedEjection { player_names: [n1, n2] } => format!(
+                " 🤖 ROBO-UMP attempted an ejection, but {}, {} would not budge.", n1, n2,
+            )
         }
     }
 }
@@ -1457,12 +1469,20 @@ impl<S: AsRef<str>> Ejection<S> {
     // This does clone violation_type and reason, which may (rarely) hold strings.
     // Perhaps it should be named something other than as_ref?
     pub fn as_ref(&self) -> Ejection<&str> {
-        Ejection {
-            team: self.team.as_ref(),
-            ejected_player: self.ejected_player.as_ref(),
-            violation_type: self.violation_type.clone(),
-            reason: self.reason.clone(),
-            replacement: self.replacement.as_ref(),
+        match self {
+            Ejection::Ejection { team, ejected_player, violation_type, reason, replacement } => {
+                Ejection::Ejection {
+                    team: team.as_ref(),
+                    ejected_player: ejected_player.as_ref(),
+                    violation_type: violation_type.clone(),
+                    reason: reason.clone(),
+                    replacement: replacement.as_ref(),
+                }
+
+            }
+            Ejection::FailedEjection { player_names: [n1, n2] } => {
+                Ejection::FailedEjection { player_names: [n1.as_ref(), n2.as_ref()] }
+            }
         }
     }
 }

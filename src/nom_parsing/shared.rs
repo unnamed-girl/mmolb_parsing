@@ -627,10 +627,14 @@ pub(super) fn aurora<'parse, 'output: 'parse>(parsing_context: &'parse ParsingCo
 // TODO Delete the leading space from this and instead add it in all the
 //   places this is used as a child parser
 pub(super) fn ejection<'parse, 'output: 'parse>(parsing_context: &'parse ParsingContext<'parse>) -> impl MyParser<'output, Ejection<&'output str>> + 'parse {
+    alt((successful_ejection(parsing_context), failed_ejection))
+}
+
+pub(super) fn successful_ejection<'parse, 'output: 'parse>(parsing_context: &'parse ParsingContext<'parse>) -> impl MyParser<'output, Ejection<&'output str>> + 'parse {
     |input| {
         let (input, _) = tag(" 🤖 ROBO-UMP ejected ").parse(input)?;
 
-        let (input, output)  = ejection_tail(parsing_context).parse(input)?;
+        let (input, output)  = successful_ejection_tail(parsing_context).parse(input)?;
 
         // ejection_tail intentionally doesn't consume the period
         let (input, _) = tag(".").parse(input)?;
@@ -641,7 +645,7 @@ pub(super) fn ejection<'parse, 'output: 'parse>(parsing_context: &'parse Parsing
 
 // This is an ejection when the leading " 🤖 ROBO-UMP ejected " has already
 // been consumed, e.g. by a parse_terminated
-pub(super) fn ejection_tail<'parse, 'output: 'parse>(parsing_context: &'parse ParsingContext<'parse>) -> impl MyParser<'output, Ejection<&'output str>> + 'parse {
+pub(super) fn successful_ejection_tail<'parse, 'output: 'parse>(parsing_context: &'parse ParsingContext<'parse>) -> impl MyParser<'output, Ejection<&'output str>> + 'parse {
     |input| {
         let (input, team) = alt((
             parsing_context.away_emoji_team.parser(),
@@ -666,7 +670,7 @@ pub(super) fn ejection_tail<'parse, 'output: 'parse>(parsing_context: &'parse Pa
               ),
         )).parse(input)?;
 
-        Ok((input, Ejection {
+        Ok((input, Ejection::Ejection {
             team,
             ejected_player,
             violation_type,
@@ -674,6 +678,28 @@ pub(super) fn ejection_tail<'parse, 'output: 'parse>(parsing_context: &'parse Pa
             replacement,
         }))
     }
+}
+pub(super) fn failed_ejection(input: &str) -> IResult<&str, Ejection<& str>> {
+    let (input, _) = tag(" 🤖 ROBO-UMP attempted an ejection, but ").parse(input)?;
+
+    let (input, output)  = failed_ejection_tail.parse(input)?;
+
+    // ejection_tail intentionally doesn't consume the period
+    let (input, _) = tag(".").parse(input)?;
+
+    Ok((input, output))
+}
+
+// This is a failed ejection when the leading " 🤖 ROBO-UMP attempted an ejection, but " has already
+// been consumed, e.g. by a parse_terminated
+pub(super) fn failed_ejection_tail(input: &str) -> IResult<&str, Ejection<&str>> {
+    // Hopefully comma-space never appears in a player name
+    let (input, name1) = parse_terminated(", ").parse(input)?;
+    let (input, name2) = parse_terminated(" would not budge").parse(input)?;
+
+    Ok((input, Ejection::FailedEjection {
+        player_names: [name1, name2]
+    }))
 }
 
 pub(super) fn door_prizes(input: &str) -> IResult<&str, Vec<DoorPrize<&str>>> {
