@@ -1,6 +1,5 @@
 use std::{fmt::Debug, str::FromStr};
 use std::fmt::{Display, Formatter};
-use clap::builder::TypedValueParser;
 use nom::{branch::alt, bytes::complete::{tag, take, take_till, take_until, take_until1, take_while}, character::complete::{one_of, space0, u8, u16}, combinator::{all_consuming, fail, opt, recognize, rest, value, verify}, error::{ErrorKind, ParseError}, multi::{count, many0, many1, separated_list1}, sequence::{delimited, preceded, separated_pair, terminated}, AsChar, Input, Parser};
 use nom::bytes::complete::is_not;
 use nom::character::complete::u32;
