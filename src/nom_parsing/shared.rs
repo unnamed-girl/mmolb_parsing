@@ -500,6 +500,12 @@ pub(super) fn post_s7_greater_league_delivery<'parse, 'output: 'parse>(parsing_c
         }))
     }
 }
+pub(super) fn post_s7_greater_league_discard(input: &str) -> IResult<&str, Delivery<&str>> {
+    println!("Parsing {input}");
+    let (input, item) = item.parse(input)?;
+
+    Ok((input, Delivery::NoSpace { item }))
+}
 
 pub(super) fn delivery<'parse, 'output: 'parse>(parsing_context: &'parse ParsingContext<'parse>, label: &'parse str) -> impl MyParser<'output, Delivery<&'output str>> + 'parse {
     let receive_text = received_text(parsing_context.season, parsing_context.day, parsing_context.event_index);
@@ -516,13 +522,20 @@ pub(super) fn delivery<'parse, 'output: 'parse>(parsing_context: &'parse Parsing
         opt(delimited(tag(discard_text), item, tag(".")))
     ).map(|((team, player), item, discarded)| Delivery::Successful {team, player, item, equipped: false, discarded} );
 
-    let discard_text = parsing_context.after(Breakpoints::Season5TenseChange).then_some(" is discarded as no player has space.").unwrap_or(" was discarded as no player had space.");
+    let discard_text = if parsing_context.after(Breakpoints::Season8ItemDiscardedMessageChange) {
+        " is discarded as no player can use it."
+    } else if parsing_context.after(Breakpoints::Season5TenseChange) {
+        " is discarded as no player has space."
+    } else {
+        " was discarded as no player had space."
+    };
     let fail = terminated(item, tag(discard_text)).map(|item| Delivery::NoSpace { item });
 
     alt((
         success,
         fail,
-        post_s7_greater_league_delivery(parsing_context, label)
+        post_s7_greater_league_delivery(parsing_context, label),
+        post_s7_greater_league_discard,
     ))
 }
 
