@@ -171,6 +171,14 @@ pub enum ParsedTeamFeedEventText<S> {
     PlayerEffloresce {
         player_name: S,
     },
+    ClaimedLinealBelt {
+        team: EmojiTeam<S>,
+        old_belt_holder_team: EmojiTeam<S>,
+    },
+    LostLinealBelt {
+        team: EmojiTeam<S>,
+        new_belt_holder_team: EmojiTeam<S>,
+    },
     // TODO Delete any of these that are still unused when parsing is up to date
 
     Released {
@@ -345,6 +353,12 @@ impl<S: Display> ParsedTeamFeedEventText<S> {
             }
             ParsedTeamFeedEventText::PlayerEffloresce { player_name} => {
                 format!("{player_name} is Efflorescing and sheds their Corruption!")
+            }
+            ParsedTeamFeedEventText::ClaimedLinealBelt { team, old_belt_holder_team} => {
+                format!("{team} claimed the Lineal Belt from {old_belt_holder_team}!")
+            }
+            ParsedTeamFeedEventText::LostLinealBelt { team, new_belt_holder_team } => {
+                format!("{team} lost the Lineal Belt to {new_belt_holder_team}.")
             }
         }
     }

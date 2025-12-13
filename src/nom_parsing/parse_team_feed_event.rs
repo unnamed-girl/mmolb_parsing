@@ -1,4 +1,4 @@
-use crate::nom_parsing::shared::{active_slot, grow, falling_star, player_relegated, player_moved, feed_event_efflorescence_growth, feed_event_effloresce};
+use crate::nom_parsing::shared::{active_slot, grow, falling_star, player_relegated, player_moved, feed_event_efflorescence_growth, feed_event_effloresce, parse_until_exclamation_point_eof};
 use nom::{branch::alt, bytes::complete::tag, character::complete::{i16, u8, u32}, combinator::{cond, fail, opt}, error::context, sequence::{delimited, preceded, separated_pair, terminated}, Finish, Parser};
 use nom::bytes::complete::take_while;
 use nom::combinator::{eof, verify};
@@ -67,6 +67,8 @@ fn game(event: &FeedEvent) -> impl TeamFeedEventParser {
         feed_event_contained.map(|(contained_player_name, container_player_name)| ParsedTeamFeedEventText::PlayerContained { contained_player_name, container_player_name }),
         feed_event_efflorescence_growth.map(|(player_name, growths)| ParsedTeamFeedEventText::PlayerGrewInEfflorescence { player_name, growths }),
         feed_event_effloresce.map(|player_name| ParsedTeamFeedEventText::PlayerEffloresce { player_name }),
+        claimed_lineal_belt,
+        lost_lineal_belt,
         fail(),
     )))
 }
@@ -438,4 +440,24 @@ fn retirement<'output>(emoji: bool) -> impl TeamFeedEventParser<'output> {
         preceded(cond(emoji, tag("😇 ")), parse_terminated(" retired from MMOLB!").and_then(name_eof)),
         opt(preceded(tag(" "), parse_terminated(" was called up to take their place.").and_then(name_eof)))
     ).map(|(original, new)| ParsedTeamFeedEventText::Retirement { previous: original, new })
+}
+
+fn claimed_lineal_belt(input: &str) -> IResult<&str, ParsedTeamFeedEventText<&str>> {
+    let (input, team_emoji_name) = parse_terminated(" claimed the Lineal Belt from ").parse(input)?;
+    let (_, team) = emoji_team_eof.parse(team_emoji_name)?;
+
+    let (input, old_belt_holder_team_emoji_name) = parse_until_exclamation_point_eof.parse(input)?;
+    let (_, old_belt_holder_team) = emoji_team_eof.parse(old_belt_holder_team_emoji_name)?;
+
+    Ok((input, ParsedTeamFeedEventText::ClaimedLinealBelt { team, old_belt_holder_team }))
+}
+
+fn lost_lineal_belt(input: &str) -> IResult<&str, ParsedTeamFeedEventText<&str>> {
+    let (input, team_emoji_name) = parse_terminated(" lost the Lineal Belt to ").parse(input)?;
+    let (_, team) = emoji_team_eof.parse(team_emoji_name)?;
+
+    let (input, new_belt_holder_team_emoji_name) = parse_until_period_eof.parse(input)?;
+    let (_, new_belt_holder_team) = emoji_team_eof.parse(new_belt_holder_team_emoji_name)?;
+
+    Ok((input, ParsedTeamFeedEventText::LostLinealBelt { team, new_belt_holder_team }))
 }
