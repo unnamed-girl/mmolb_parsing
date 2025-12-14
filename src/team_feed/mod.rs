@@ -1,15 +1,22 @@
 use std::fmt::Display;
 
+use itertools::Itertools;
 use serde::{Deserialize, Serialize};
 use serde_with::serde_as;
-use itertools::Itertools;
 
-use crate::{enums::{Attribute, FeedEventType, ModificationType}, feed_event::{EmojilessItem, FeedDelivery, FeedEvent, FeedEventParseError, FeedFallingStarOutcome}, time::{Breakpoints, Timestamp}, utils::extra_fields_deserialize};
 use crate::enums::Slot;
 use crate::feed_event::{AttributeChange, GreaterAugment};
 pub use crate::nom_parsing::parse_team_feed_event::parse_team_feed_event;
 use crate::nom_parsing::shared::{FeedEventDoorPrize, FeedEventParty, Grow, PositionSwap};
 use crate::parsed_event::{EmojiPlayer, EmojiTeam, GrowAttributeChange};
+use crate::{
+    enums::{Attribute, FeedEventType, ModificationType},
+    feed_event::{
+        EmojilessItem, FeedDelivery, FeedEvent, FeedEventParseError, FeedFallingStarOutcome,
+    },
+    time::{Breakpoints, Timestamp},
+    utils::extra_fields_deserialize,
+};
 
 #[serde_as]
 #[derive(Serialize, Deserialize, Debug, Clone)]
@@ -43,7 +50,7 @@ impl PurifiedOutcome {
 pub enum ParsedTeamFeedEventText<S> {
     ParseError {
         error: FeedEventParseError,
-        text: S
+        text: S,
     },
     GameResult {
         /// Sometimes this name is wrong: early season 1 bug where the events didn't have spaces between words.
@@ -52,16 +59,16 @@ pub enum ParsedTeamFeedEventText<S> {
         away_team: EmojiTeam<S>,
 
         home_score: u8,
-        away_score: u8
+        away_score: u8,
     },
     Delivery {
-        delivery: FeedDelivery<S>
+        delivery: FeedDelivery<S>,
     },
     Shipment {
-        delivery: FeedDelivery<S>
+        delivery: FeedDelivery<S>,
     },
     SpecialDelivery {
-        delivery: FeedDelivery<S>
+        delivery: FeedDelivery<S>,
     },
     PhotoContest {
         player: Option<EmojiPlayer<S>>,
@@ -75,7 +82,7 @@ pub enum ParsedTeamFeedEventText<S> {
     },
     Prosperous {
         team: EmojiTeam<S>,
-        income: u32
+        income: u32,
     },
     DonatedToLottery {
         team_name: S,
@@ -92,10 +99,10 @@ pub enum ParsedTeamFeedEventText<S> {
         amount: u8,
         attribute: Attribute,
         enchant_two: Option<(u8, Attribute)>,
-        compensatory: bool
+        compensatory: bool,
     },
     AttributeChanges {
-        changes: Vec<AttributeChange<S>>
+        changes: Vec<AttributeChange<S>>,
     },
     MassAttributeEquals {
         players: Vec<(Option<Slot>, S)>,
@@ -116,16 +123,16 @@ pub enum ParsedTeamFeedEventText<S> {
     },
     Recomposed {
         previous: S,
-        new: S
+        new: S,
     },
     Modification {
         team_name: S,
         lost_modification: Option<ModificationType>,
-        modification: ModificationType
+        modification: ModificationType,
     },
     FallingStarOutcome {
         player_name: S,
-        outcome: FeedFallingStarOutcome
+        outcome: FeedFallingStarOutcome,
     },
     CorruptedByWither {
         player_name: S,
@@ -150,7 +157,7 @@ pub enum ParsedTeamFeedEventText<S> {
         container_player_name: S,
     },
     PlayerGrow {
-        grow: Grow<S>
+        grow: Grow<S>,
     },
     Callup {
         lesser_league_team: EmojiTeam<S>,
@@ -179,13 +186,12 @@ pub enum ParsedTeamFeedEventText<S> {
         new_belt_holder_team: EmojiTeam<S>,
     },
     // TODO Delete any of these that are still unused when parsing is up to date
-
     Released {
-        team: S
+        team: S,
     },
     Retirement {
         previous: S,
-        new: Option<S>
+        new: Option<S>,
     },
 }
 

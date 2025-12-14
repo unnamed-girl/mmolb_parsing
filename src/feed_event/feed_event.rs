@@ -1,16 +1,21 @@
-use std::fmt::Display;
+use crate::time::Breakpoints;
+use crate::{
+    enums::{CelestialEnergyTier, Day, FeedEventType, LinkType, SeasonStatus},
+    utils::{
+        extra_fields_deserialize, MaybeRecognizedHelper, MaybeRecognizedResult, TimestampHelper,
+    },
+};
 use chrono::{DateTime, Utc};
 use serde::{Deserialize, Serialize};
 use serde_with::serde_as;
-use crate::{enums::{CelestialEnergyTier, Day, FeedEventType, LinkType, SeasonStatus}, utils::{extra_fields_deserialize, MaybeRecognizedHelper, MaybeRecognizedResult, TimestampHelper}};
-use crate::time::Breakpoints;
+use std::fmt::Display;
 
 #[serde_as]
 #[derive(Clone, Debug, Serialize, Deserialize, PartialEq)]
 pub struct FeedEvent {
     pub emoji: String,
     pub season: u8,
-    
+
     #[serde_as(as = "MaybeRecognizedHelper<_>")]
     pub day: MaybeRecognizedResult<Day>,
     #[serde_as(as = "MaybeRecognizedHelper<_>")]
@@ -48,7 +53,7 @@ pub struct Link {
 pub enum FeedFallingStarOutcome {
     Injury,
     Infusion(CelestialEnergyTier),
-    DeflectedHarmlessly
+    DeflectedHarmlessly,
 }
 
 impl FeedFallingStarOutcome {
@@ -58,7 +63,7 @@ impl FeedFallingStarOutcome {
         } else {
             "is"
         };
-        
+
         match self {
             FeedFallingStarOutcome::Injury => {
                 if event.after(Breakpoints::EternalBattle) {
@@ -66,25 +71,30 @@ impl FeedFallingStarOutcome {
                 } else {
                     format!("{player_name} {was_is} hit by a Falling Star!")
                 }
-            },
-            FeedFallingStarOutcome::Infusion(infusion_tier) => {
-                match infusion_tier {
-                    CelestialEnergyTier::BeganToGlow => if event.before(Breakpoints::Season5TenseChange) {
+            }
+            FeedFallingStarOutcome::Infusion(infusion_tier) => match infusion_tier {
+                CelestialEnergyTier::BeganToGlow => {
+                    if event.before(Breakpoints::Season5TenseChange) {
                         format!("{player_name} began to glow brightly with celestial energy!")
                     } else {
                         format!("{player_name} begins to glow brightly with celestial energy!")
-                    },
-                    CelestialEnergyTier::Infused => format!("{player_name} {was_is} infused with a glimmer of celestial energy!"),
-                    CelestialEnergyTier::FullyCharged => format!("{player_name} {was_is} fully charged with an abundance of celestial energy!"),
+                    }
                 }
+                CelestialEnergyTier::Infused => {
+                    format!("{player_name} {was_is} infused with a glimmer of celestial energy!")
+                }
+                CelestialEnergyTier::FullyCharged => format!(
+                    "{player_name} {was_is} fully charged with an abundance of celestial energy!"
+                ),
             },
-            FeedFallingStarOutcome::DeflectedHarmlessly => if event.before(Breakpoints::Season5TenseChange) {
-                format!("It deflected off {player_name} harmlessly.")
-            } else {
-                format!("It deflects off {player_name} harmlessly.")
+            FeedFallingStarOutcome::DeflectedHarmlessly => {
+                if event.before(Breakpoints::Season5TenseChange) {
+                    format!("It deflected off {player_name} harmlessly.")
+                } else {
+                    format!("It deflects off {player_name} harmlessly.")
+                }
             }
         }
-
     }
 }
 
@@ -92,15 +102,17 @@ impl FeedFallingStarOutcome {
 mod test {
     use std::path::Path;
 
-    use crate::{feed_event::FeedEvent, utils::{assert_round_trip, no_tracing_errs}};
-
+    use crate::{
+        feed_event::FeedEvent,
+        utils::{assert_round_trip, no_tracing_errs},
+    };
 
     #[test]
     fn feed_event_round_trip() -> Result<(), Box<dyn std::error::Error>> {
         let no_tracing_errs = no_tracing_errs();
 
         assert_round_trip::<FeedEvent>(Path::new("test_data/s2_feed_event.json"))?;
-        
+
         drop(no_tracing_errs);
         Ok(())
     }

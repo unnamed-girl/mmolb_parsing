@@ -1,12 +1,26 @@
-use std::{convert::Infallible, fmt::{Display, Write}, iter::once, str::FromStr};
+use serde::{Deserialize, Serialize};
 use std::fmt::Formatter;
-use serde::{Serialize, Deserialize};
-use strum::{EnumDiscriminants, EnumString, Display, IntoStaticStr};
+use std::{
+    convert::Infallible,
+    fmt::{Display, Write},
+    iter::once,
+    str::FromStr,
+};
+use strum::{Display, EnumDiscriminants, EnumString, IntoStaticStr};
 use thiserror::Error;
 
-use crate::{enums::{Base, BaseNameVariant, BatterStat, Distance, EventType, FairBallDestination, FairBallType, FieldingErrorType, FoulType, GameOverMessage, HomeAway, ItemName, ItemPrefix, ItemSuffix, MoundVisitType, NowBattingStats, Place, StrikeType, TopBottom}, nom_parsing::shared::{hit_by_pitch_text, strike_out_text}, time::Breakpoints, Game, NotRecognized};
 use crate::enums::Attribute;
-use crate::nom_parsing::shared::{received_text, discarded_text};
+use crate::nom_parsing::shared::{discarded_text, received_text};
+use crate::{
+    enums::{
+        Base, BaseNameVariant, BatterStat, Distance, EventType, FairBallDestination, FairBallType,
+        FieldingErrorType, FoulType, GameOverMessage, HomeAway, ItemName, ItemPrefix, ItemSuffix,
+        MoundVisitType, NowBattingStats, Place, StrikeType, TopBottom,
+    },
+    nom_parsing::shared::{hit_by_pitch_text, strike_out_text},
+    time::Breakpoints,
+    Game, NotRecognized,
+};
 
 pub use crate::nom_parsing::shared::GrowAttributeChange;
 
@@ -17,8 +31,8 @@ pub enum GameEventParseError {
     #[error("failed parsing {event_type} event \"{message}\"")]
     FailedParsingMessage {
         event_type: EventType,
-        message: String
-    }
+        message: String,
+    },
 }
 
 /// S is the string type used. S = &'output str is used by the parser,
@@ -29,16 +43,16 @@ pub enum GameEventParseError {
 pub enum ParsedEventMessage<S> {
     ParseError {
         error: GameEventParseError,
-        message: S
+        message: S,
     },
     KnownBug {
-        bug: KnownBug<S>
+        bug: KnownBug<S>,
     },
     // Season 0
     LiveNow {
         away_team: EmojiTeam<S>,
         home_team: EmojiTeam<S>,
-        stadium: Option<S>
+        stadium: Option<S>,
     },
     PitchingMatchup {
         away_team: EmojiTeam<S>,
@@ -48,11 +62,11 @@ pub enum ParsedEventMessage<S> {
     },
     Lineup {
         side: HomeAway,
-        players: Vec<PlacedPlayer<S>>
+        players: Vec<PlacedPlayer<S>>,
     },
     PlayBall,
     GameOver {
-        message: GameOverMessage
+        message: GameOverMessage,
     },
     Recordkeeping {
         winning_team: EmojiTeam<S>,
@@ -71,17 +85,17 @@ pub enum ParsedEventMessage<S> {
     },
     NowBatting {
         batter: S,
-        stats: NowBattingStats
+        stats: NowBattingStats,
     },
     InningEnd {
         number: u8,
-        side: TopBottom
+        side: TopBottom,
     },
 
     // Mound visits
     MoundVisit {
         team: EmojiTeam<S>,
-        mound_visit_type: MoundVisitType
+        mound_visit_type: MoundVisitType,
     },
     PitcherRemains {
         remaining_pitcher: PlacedPlayer<S>,
@@ -95,11 +109,57 @@ pub enum ParsedEventMessage<S> {
     },
 
     // Pitch
-    Ball { steals: Vec<BaseSteal<S>>, count:(u8, u8), cheer: Option<Cheer>, aurora_photos: Option<SnappedPhotos<S>>, ejection: Option<Ejection<S>>, door_prizes: Vec<DoorPrize<S>>, wither: Option<WitherStruggle<S>>, efflorescence: Vec<Efflorescence<S>> },
-    Strike { strike: StrikeType, steals: Vec<BaseSteal<S>>, count:(u8, u8), cheer: Option<Cheer>, aurora_photos: Option<SnappedPhotos<S>>, ejection: Option<Ejection<S>>, door_prizes: Vec<DoorPrize<S>>, wither: Option<WitherStruggle<S>>, efflorescence: Vec<Efflorescence<S>> },
-    Foul { foul: FoulType, steals: Vec<BaseSteal<S>>, count:(u8, u8), cheer: Option<Cheer>, aurora_photos: Option<SnappedPhotos<S>>, door_prizes: Vec<DoorPrize<S>>, wither: Option<WitherStruggle<S>>, efflorescence: Vec<Efflorescence<S>> },
-    Walk { batter: S, scores: Vec<S>, advances: Vec<RunnerAdvance<S>>, cheer: Option<Cheer>, aurora_photos: Option<SnappedPhotos<S>>, ejection: Option<Ejection<S>>, wither: Option<WitherStruggle<S>> },
-    HitByPitch { batter: S, scores: Vec<S>, advances: Vec<RunnerAdvance<S>>, cheer: Option<Cheer>, aurora_photos: Option<SnappedPhotos<S>>, ejection: Option<Ejection<S>>, door_prizes: Vec<DoorPrize<S>>, wither: Option<WitherStruggle<S>>, efflorescence: Vec<Efflorescence<S>> },
+    Ball {
+        steals: Vec<BaseSteal<S>>,
+        count: (u8, u8),
+        cheer: Option<Cheer>,
+        aurora_photos: Option<SnappedPhotos<S>>,
+        ejection: Option<Ejection<S>>,
+        door_prizes: Vec<DoorPrize<S>>,
+        wither: Option<WitherStruggle<S>>,
+        efflorescence: Vec<Efflorescence<S>>,
+    },
+    Strike {
+        strike: StrikeType,
+        steals: Vec<BaseSteal<S>>,
+        count: (u8, u8),
+        cheer: Option<Cheer>,
+        aurora_photos: Option<SnappedPhotos<S>>,
+        ejection: Option<Ejection<S>>,
+        door_prizes: Vec<DoorPrize<S>>,
+        wither: Option<WitherStruggle<S>>,
+        efflorescence: Vec<Efflorescence<S>>,
+    },
+    Foul {
+        foul: FoulType,
+        steals: Vec<BaseSteal<S>>,
+        count: (u8, u8),
+        cheer: Option<Cheer>,
+        aurora_photos: Option<SnappedPhotos<S>>,
+        door_prizes: Vec<DoorPrize<S>>,
+        wither: Option<WitherStruggle<S>>,
+        efflorescence: Vec<Efflorescence<S>>,
+    },
+    Walk {
+        batter: S,
+        scores: Vec<S>,
+        advances: Vec<RunnerAdvance<S>>,
+        cheer: Option<Cheer>,
+        aurora_photos: Option<SnappedPhotos<S>>,
+        ejection: Option<Ejection<S>>,
+        wither: Option<WitherStruggle<S>>,
+    },
+    HitByPitch {
+        batter: S,
+        scores: Vec<S>,
+        advances: Vec<RunnerAdvance<S>>,
+        cheer: Option<Cheer>,
+        aurora_photos: Option<SnappedPhotos<S>>,
+        ejection: Option<Ejection<S>>,
+        door_prizes: Vec<DoorPrize<S>>,
+        wither: Option<WitherStruggle<S>>,
+        efflorescence: Vec<Efflorescence<S>>,
+    },
     FairBall {
         batter: S,
         fair_ball_type: FairBallType,
@@ -107,43 +167,130 @@ pub enum ParsedEventMessage<S> {
         cheer: Option<Cheer>,
         aurora_photos: Option<SnappedPhotos<S>>,
         door_prizes: Vec<DoorPrize<S>>,
-        efflorescence: Vec<Efflorescence<S>>
+        efflorescence: Vec<Efflorescence<S>>,
     },
-    StrikeOut { foul: Option<FoulType>, batter: S, strike: StrikeType, steals: Vec<BaseSteal<S>>, cheer: Option<Cheer>, aurora_photos: Option<SnappedPhotos<S>>, ejection: Option<Ejection<S>>, wither: Option<WitherStruggle<S>> },
+    StrikeOut {
+        foul: Option<FoulType>,
+        batter: S,
+        strike: StrikeType,
+        steals: Vec<BaseSteal<S>>,
+        cheer: Option<Cheer>,
+        aurora_photos: Option<SnappedPhotos<S>>,
+        ejection: Option<Ejection<S>>,
+        wither: Option<WitherStruggle<S>>,
+    },
 
     // Field
-    BatterToBase { batter: S, distance: Distance, fair_ball_type: FairBallType, fielder: PlacedPlayer<S>, scores: Vec<S>, advances: Vec<RunnerAdvance<S>>, ejection: Option<Ejection<S>> },
-    HomeRun { batter: S, fair_ball_type: FairBallType, destination: FairBallDestination, scores: Vec<S>, grand_slam: bool, ejection: Option<Ejection<S>> },
-    CaughtOut { batter: S, fair_ball_type: FairBallType, caught_by: PlacedPlayer<S>, scores: Vec<S>, advances: Vec<RunnerAdvance<S>>, sacrifice: bool, perfect: bool, ejection: Option<Ejection<S>>},
-    GroundedOut { batter: S, fielders: Vec<PlacedPlayer<S>>, scores: Vec<S>, advances: Vec<RunnerAdvance<S>>, amazing: bool, ejection: Option<Ejection<S>> },
-    ForceOut { batter: S, fielders: Vec<PlacedPlayer<S>>, fair_ball_type: FairBallType, out:RunnerOut<S>, scores: Vec<S>, advances: Vec<RunnerAdvance<S>>, ejection: Option<Ejection<S>> },
-    ReachOnFieldersChoice { batter: S, fielders: Vec<PlacedPlayer<S>>, result:FieldingAttempt<S>, scores: Vec<S>, advances: Vec<RunnerAdvance<S>>, ejection: Option<Ejection<S>> },
-    DoublePlayGrounded { batter: S, fielders: Vec<PlacedPlayer<S>>, out_one:RunnerOut<S>, out_two:RunnerOut<S>, scores: Vec<S>, advances: Vec<RunnerAdvance<S>>, sacrifice: bool, ejection: Option<Ejection<S>> },
-    DoublePlayCaught { batter: S, fair_ball_type: FairBallType, fielders: Vec<PlacedPlayer<S>>, out_two:RunnerOut<S>, scores: Vec<S>, advances: Vec<RunnerAdvance<S>>, ejection: Option<Ejection<S>> },
-    ReachOnFieldingError { batter: S, fielder:PlacedPlayer<S>, error: FieldingErrorType, scores: Vec<S>, advances: Vec<RunnerAdvance<S>>, ejection: Option<Ejection<S>> },
+    BatterToBase {
+        batter: S,
+        distance: Distance,
+        fair_ball_type: FairBallType,
+        fielder: PlacedPlayer<S>,
+        scores: Vec<S>,
+        advances: Vec<RunnerAdvance<S>>,
+        ejection: Option<Ejection<S>>,
+    },
+    HomeRun {
+        batter: S,
+        fair_ball_type: FairBallType,
+        destination: FairBallDestination,
+        scores: Vec<S>,
+        grand_slam: bool,
+        ejection: Option<Ejection<S>>,
+    },
+    CaughtOut {
+        batter: S,
+        fair_ball_type: FairBallType,
+        caught_by: PlacedPlayer<S>,
+        scores: Vec<S>,
+        advances: Vec<RunnerAdvance<S>>,
+        sacrifice: bool,
+        perfect: bool,
+        ejection: Option<Ejection<S>>,
+    },
+    GroundedOut {
+        batter: S,
+        fielders: Vec<PlacedPlayer<S>>,
+        scores: Vec<S>,
+        advances: Vec<RunnerAdvance<S>>,
+        amazing: bool,
+        ejection: Option<Ejection<S>>,
+    },
+    ForceOut {
+        batter: S,
+        fielders: Vec<PlacedPlayer<S>>,
+        fair_ball_type: FairBallType,
+        out: RunnerOut<S>,
+        scores: Vec<S>,
+        advances: Vec<RunnerAdvance<S>>,
+        ejection: Option<Ejection<S>>,
+    },
+    ReachOnFieldersChoice {
+        batter: S,
+        fielders: Vec<PlacedPlayer<S>>,
+        result: FieldingAttempt<S>,
+        scores: Vec<S>,
+        advances: Vec<RunnerAdvance<S>>,
+        ejection: Option<Ejection<S>>,
+    },
+    DoublePlayGrounded {
+        batter: S,
+        fielders: Vec<PlacedPlayer<S>>,
+        out_one: RunnerOut<S>,
+        out_two: RunnerOut<S>,
+        scores: Vec<S>,
+        advances: Vec<RunnerAdvance<S>>,
+        sacrifice: bool,
+        ejection: Option<Ejection<S>>,
+    },
+    DoublePlayCaught {
+        batter: S,
+        fair_ball_type: FairBallType,
+        fielders: Vec<PlacedPlayer<S>>,
+        out_two: RunnerOut<S>,
+        scores: Vec<S>,
+        advances: Vec<RunnerAdvance<S>>,
+        ejection: Option<Ejection<S>>,
+    },
+    ReachOnFieldingError {
+        batter: S,
+        fielder: PlacedPlayer<S>,
+        error: FieldingErrorType,
+        scores: Vec<S>,
+        advances: Vec<RunnerAdvance<S>>,
+        ejection: Option<Ejection<S>>,
+    },
 
     // Season 1
-    WeatherDelivery { delivery: Delivery<S> },
-    FallingStar { player_name: S },
-    FallingStarOutcome { deflection: Option<S>, player_name: S, outcome: FallingStarOutcome<S> },
+    WeatherDelivery {
+        delivery: Delivery<S>,
+    },
+    FallingStar {
+        player_name: S,
+    },
+    FallingStarOutcome {
+        deflection: Option<S>,
+        player_name: S,
+        outcome: FallingStarOutcome<S>,
+    },
 
     // Season 2
     WeatherShipment {
-        deliveries: Vec<Delivery<S>>
+        deliveries: Vec<Delivery<S>>,
     },
     WeatherSpecialDelivery {
-        delivery: Delivery<S>
+        delivery: Delivery<S>,
     },
     Balk {
         pitcher: S,
         scores: Vec<S>,
-        advances: Vec<RunnerAdvance<S>>
+        advances: Vec<RunnerAdvance<S>>,
     },
 
     // Season 3,
     WeatherProsperity {
         home_income: u32,
-        away_income: u32
+        away_income: u32,
     },
 
     // Season 4
@@ -169,7 +316,7 @@ pub enum ParsedEventMessage<S> {
         durability_loss: PartyDurabilityLoss<S>,
     },
     WeatherReflection {
-        team: EmojiTeam<S>
+        team: EmojiTeam<S>,
     },
     WeatherWither {
         team_emoji: S,
@@ -182,196 +329,430 @@ pub enum ParsedEventMessage<S> {
     LinealBeltTransfer {
         claimed_by: EmojiTeam<S>,
         claimed_from: EmojiTeam<S>,
-    }
+    },
 }
 impl<S: Display> ParsedEventMessage<S> {
     /// Recreate the event message this ParsedEvent was built out of.
     pub fn unparse(&self, game: &Game, event_index: Option<u16>) -> String {
         match self {
             Self::ParseError { message, .. } => message.to_string(),
-            Self::LiveNow { away_team, home_team, stadium } => {
-                match stadium {
-                    Some(stadium) => format!("{} vs {} @ {}", away_team, home_team, stadium),
-                    None => format!("{} @ {}", away_team, home_team),
-                }
+            Self::LiveNow {
+                away_team,
+                home_team,
+                stadium,
+            } => match stadium {
+                Some(stadium) => format!("{} vs {} @ {}", away_team, home_team, stadium),
+                None => format!("{} @ {}", away_team, home_team),
             },
-            Self::PitchingMatchup { away_team, home_team, home_pitcher, away_pitcher } => format!("{away_team} {away_pitcher} vs. {home_team} {home_pitcher}"),
+            Self::PitchingMatchup {
+                away_team,
+                home_team,
+                home_pitcher,
+                away_pitcher,
+            } => format!("{away_team} {away_pitcher} vs. {home_team} {home_pitcher}"),
             Self::Lineup { side: _, players } => {
-                players.iter().enumerate().fold(String::new(), |mut acc, (index, player)| {
-                    let _ = write!(acc, "{}. {player}<br>", index + 1);
-                    acc
-                })
-            },
+                players
+                    .iter()
+                    .enumerate()
+                    .fold(String::new(), |mut acc, (index, player)| {
+                        let _ = write!(acc, "{}. {player}<br>", index + 1);
+                        acc
+                    })
+            }
             Self::PlayBall => "\"PLAY BALL.\"".to_string(),
             Self::GameOver { message } => message.to_string(),
-            Self::Recordkeeping { winning_team, losing_team, winning_score, losing_score } => {
+            Self::Recordkeeping {
+                winning_team,
+                losing_team,
+                winning_score,
+                losing_score,
+            } => {
                 format!("{winning_team} defeated {losing_team}. Final score: {winning_score}-{losing_score}")
             }
-            Self::InningStart { number, side, batting_team, automatic_runner, pitcher_status } => {
+            Self::InningStart {
+                number,
+                side,
+                batting_team,
+                automatic_runner,
+                pitcher_status,
+            } => {
                 let ordinal = match number {
                     0 => panic!("Should not have 0th innings"),
                     1 => "1st".to_string(),
                     2 => "2nd".to_string(),
                     3 => "3rd".to_string(),
-                    4.. => format!("{number}th")
+                    4.. => format!("{number}th"),
                 };
                 let pitcher_message = match pitcher_status {
-                    Some(StartOfInningPitcher::Same { emoji, name }) => format!(" {emoji} {name} pitching."),
-                    Some(StartOfInningPitcher::Different { leaving_emoji, leaving_pitcher, arriving_emoji, arriving_pitcher }) => {
-                        let leaving_emoji = leaving_emoji.as_ref().map(|e| format!("{e} ")).unwrap_or_default();
-                        let arriving_emoji = arriving_emoji.as_ref().map(|e| format!("{e} ")).unwrap_or_default();
+                    Some(StartOfInningPitcher::Same { emoji, name }) => {
+                        format!(" {emoji} {name} pitching.")
+                    }
+                    Some(StartOfInningPitcher::Different {
+                        leaving_emoji,
+                        leaving_pitcher,
+                        arriving_emoji,
+                        arriving_pitcher,
+                    }) => {
+                        let leaving_emoji = leaving_emoji
+                            .as_ref()
+                            .map(|e| format!("{e} "))
+                            .unwrap_or_default();
+                        let arriving_emoji = arriving_emoji
+                            .as_ref()
+                            .map(|e| format!("{e} "))
+                            .unwrap_or_default();
                         format!(" {leaving_emoji}{leaving_pitcher} is leaving the game. {arriving_emoji}{arriving_pitcher} takes the mound.")
-                    },
-                    None => String::new()
+                    }
+                    None => String::new(),
                 };
                 let automatic_runner = match automatic_runner {
                     Some(runner) => format!(" {runner} starts the inning on second base."),
-                    None => String::new()
+                    None => String::new(),
                 };
                 format!("Start of the {side} of the {ordinal}. {batting_team} batting.{automatic_runner}{pitcher_message}")
-            },
-            Self::NowBatting {batter, stats} => {
+            }
+            Self::NowBatting { batter, stats } => {
                 let stats = match stats {
-                    NowBattingStats::FirstPA =>  " (1st PA of game)".to_string(),
+                    NowBattingStats::FirstPA => " (1st PA of game)".to_string(),
                     NowBattingStats::Stats(stats) => {
-                        format!(" ({})", stats.iter().map(BatterStat::unparse).collect::<Vec<_>>().join(", "))
+                        format!(
+                            " ({})",
+                            stats
+                                .iter()
+                                .map(BatterStat::unparse)
+                                .collect::<Vec<_>>()
+                                .join(", ")
+                        )
                     }
-                    NowBattingStats::NoStats => {
-                        String::new()
-                    }
+                    NowBattingStats::NoStats => String::new(),
                 };
                 format!("Now batting: {batter}{stats}")
-            },
-            Self::InningEnd {number, side} => {
+            }
+            Self::InningEnd { number, side } => {
                 let ordinal = match number {
                     0 => panic!("Should not have 0th innings"),
                     1 => "1st".to_string(),
                     2 => "2nd".to_string(),
                     3 => "3rd".to_string(),
-                    4.. => format!("{number}th")
+                    4.. => format!("{number}th"),
                 };
                 format!("End of the {side} of the {ordinal}.")
-            },
-            Self::MoundVisit {team, mound_visit_type } => {
-                match mound_visit_type {
-                    MoundVisitType::MoundVisit => format!("The {team} manager is making a mound visit."),
-                    MoundVisitType::PitchingChange => format!("The {team} manager is making a pitching change.")
+            }
+            Self::MoundVisit {
+                team,
+                mound_visit_type,
+            } => match mound_visit_type {
+                MoundVisitType::MoundVisit => {
+                    format!("The {team} manager is making a mound visit.")
+                }
+                MoundVisitType::PitchingChange => {
+                    format!("The {team} manager is making a pitching change.")
                 }
             },
             Self::PitcherRemains { remaining_pitcher } => {
                 format!("{remaining_pitcher} remains in the game.")
-            },
-            Self::PitcherSwap { leaving_pitcher_emoji, leaving_pitcher, arriving_pitcher_emoji, arriving_pitcher_place, arriving_pitcher_name } => {
-                let arriving_pitcher_place = arriving_pitcher_place.map(|place| format!("{place} ")).unwrap_or_default();
-                let leaving_pitcher_emoji = leaving_pitcher_emoji.as_ref().map(|emoji| format!("{emoji} ")).unwrap_or_default();
-                let arriving_pitcher_emoji = arriving_pitcher_emoji.as_ref().map(|emoji| format!("{emoji} ")).unwrap_or_default();
+            }
+            Self::PitcherSwap {
+                leaving_pitcher_emoji,
+                leaving_pitcher,
+                arriving_pitcher_emoji,
+                arriving_pitcher_place,
+                arriving_pitcher_name,
+            } => {
+                let arriving_pitcher_place = arriving_pitcher_place
+                    .map(|place| format!("{place} "))
+                    .unwrap_or_default();
+                let leaving_pitcher_emoji = leaving_pitcher_emoji
+                    .as_ref()
+                    .map(|emoji| format!("{emoji} "))
+                    .unwrap_or_default();
+                let arriving_pitcher_emoji = arriving_pitcher_emoji
+                    .as_ref()
+                    .map(|emoji| format!("{emoji} "))
+                    .unwrap_or_default();
 
                 format!("{leaving_pitcher_emoji}{leaving_pitcher} is leaving the game. {arriving_pitcher_emoji}{arriving_pitcher_place}{arriving_pitcher_name} takes the mound.")
-            },
+            }
 
-            Self::Ball { steals, count, cheer, aurora_photos, ejection, door_prizes, wither, efflorescence } => {
-                let steals = once(String::new()).chain(steals.iter().map(BaseSteal::to_string))
+            Self::Ball {
+                steals,
+                count,
+                cheer,
+                aurora_photos,
+                ejection,
+                door_prizes,
+                wither,
+                efflorescence,
+            } => {
+                let steals = once(String::new())
+                    .chain(steals.iter().map(BaseSteal::to_string))
                     .collect::<Vec<String>>()
                     .join(" ");
                 let space = old_space(game, event_index);
 
-                let cheer = cheer.as_ref().map(|c| c.unparse(game, event_index)).unwrap_or_default();
-                let aurora_photos = aurora_photos.as_ref().map(|p| p.unparse()).unwrap_or_default();
+                let cheer = cheer
+                    .as_ref()
+                    .map(|c| c.unparse(game, event_index))
+                    .unwrap_or_default();
+                let aurora_photos = aurora_photos
+                    .as_ref()
+                    .map(|p| p.unparse())
+                    .unwrap_or_default();
                 let ejection = ejection.as_ref().map(|e| e.unparse()).unwrap_or_default();
-                let door_prizes = once(String::new()).chain(door_prizes.iter().map(|d| d.unparse())).collect::<Vec<_>>().join("<br>");
-                let wither = wither.as_ref().map_or_else(String::new, |wither| format!(" {}", wither));
-                let efflorescence = once(String::new()).chain(efflorescence.iter().map(|d| d.unparse())).collect::<Vec<_>>().join("<br>🌹 ");
+                let door_prizes = once(String::new())
+                    .chain(door_prizes.iter().map(|d| d.unparse()))
+                    .collect::<Vec<_>>()
+                    .join("<br>");
+                let wither = wither
+                    .as_ref()
+                    .map_or_else(String::new, |wither| format!(" {}", wither));
+                let efflorescence = once(String::new())
+                    .chain(efflorescence.iter().map(|d| d.unparse()))
+                    .collect::<Vec<_>>()
+                    .join("<br>🌹 ");
 
                 format!("{space}Ball. {}-{}.{steals}{aurora_photos}{ejection}{cheer}{door_prizes}{wither}{efflorescence}", count.0, count.1)
-            },
-            Self::Strike { strike, steals, count, cheer, aurora_photos, ejection, door_prizes, wither, efflorescence } => {
-                let steals: Vec<String> = once(String::new()).chain(steals.iter().map(|steal| steal.to_string())).collect();
+            }
+            Self::Strike {
+                strike,
+                steals,
+                count,
+                cheer,
+                aurora_photos,
+                ejection,
+                door_prizes,
+                wither,
+                efflorescence,
+            } => {
+                let steals: Vec<String> = once(String::new())
+                    .chain(steals.iter().map(|steal| steal.to_string()))
+                    .collect();
                 let steals = steals.join(" ");
                 let space = old_space(game, event_index);
 
-                let cheer = cheer.as_ref().map(|c| c.unparse(game, event_index)).unwrap_or_default();
-                let aurora_photos = aurora_photos.as_ref().map(|p| p.unparse()).unwrap_or_default();
+                let cheer = cheer
+                    .as_ref()
+                    .map(|c| c.unparse(game, event_index))
+                    .unwrap_or_default();
+                let aurora_photos = aurora_photos
+                    .as_ref()
+                    .map(|p| p.unparse())
+                    .unwrap_or_default();
                 let ejection = ejection.as_ref().map(|e| e.unparse()).unwrap_or_default();
-                let door_prizes = once(String::new()).chain(door_prizes.iter().map(|d| d.unparse())).collect::<Vec<_>>().join("<br>");
-                let wither = wither.as_ref().map_or_else(String::new, |wither| format!(" {}", wither));
-                let efflorescence = once(String::new()).chain(efflorescence.iter().map(|d| d.unparse())).collect::<Vec<_>>().join("<br>🌹 ");
+                let door_prizes = once(String::new())
+                    .chain(door_prizes.iter().map(|d| d.unparse()))
+                    .collect::<Vec<_>>()
+                    .join("<br>");
+                let wither = wither
+                    .as_ref()
+                    .map_or_else(String::new, |wither| format!(" {}", wither));
+                let efflorescence = once(String::new())
+                    .chain(efflorescence.iter().map(|d| d.unparse()))
+                    .collect::<Vec<_>>()
+                    .join("<br>🌹 ");
 
                 format!("{space}Strike, {strike}. {}-{}.{steals}{aurora_photos}{ejection}{cheer}{door_prizes}{wither}{efflorescence}", count.0, count.1)
             }
-            Self::Foul { foul, steals, count, cheer, aurora_photos, door_prizes, wither, efflorescence } => {
-                let steals: Vec<String> = once(String::new()).chain(steals.iter().map(|steal| steal.to_string())).collect();
+            Self::Foul {
+                foul,
+                steals,
+                count,
+                cheer,
+                aurora_photos,
+                door_prizes,
+                wither,
+                efflorescence,
+            } => {
+                let steals: Vec<String> = once(String::new())
+                    .chain(steals.iter().map(|steal| steal.to_string()))
+                    .collect();
                 let steals = steals.join(" ");
                 let space = old_space(game, event_index);
 
-                let cheer = cheer.as_ref().map(|c| c.unparse(game, event_index)).unwrap_or_default();
-                let aurora_photos = aurora_photos.as_ref().map(|p| p.unparse()).unwrap_or_default();
-                let door_prizes = once(String::new()).chain(door_prizes.iter().map(|d| d.unparse())).collect::<Vec<_>>().join("<br>");
-                let wither = wither.as_ref().map_or_else(String::new, |wither| format!(" {}", wither));
-                let efflorescence = once(String::new()).chain(efflorescence.iter().map(|d| d.unparse())).collect::<Vec<_>>().join("<br>🌹 ");
+                let cheer = cheer
+                    .as_ref()
+                    .map(|c| c.unparse(game, event_index))
+                    .unwrap_or_default();
+                let aurora_photos = aurora_photos
+                    .as_ref()
+                    .map(|p| p.unparse())
+                    .unwrap_or_default();
+                let door_prizes = once(String::new())
+                    .chain(door_prizes.iter().map(|d| d.unparse()))
+                    .collect::<Vec<_>>()
+                    .join("<br>");
+                let wither = wither
+                    .as_ref()
+                    .map_or_else(String::new, |wither| format!(" {}", wither));
+                let efflorescence = once(String::new())
+                    .chain(efflorescence.iter().map(|d| d.unparse()))
+                    .collect::<Vec<_>>()
+                    .join("<br>🌹 ");
 
                 format!("{space}Foul {foul}. {}-{}.{steals}{aurora_photos}{cheer}{door_prizes}{wither}{efflorescence}", count.0, count.1)
             }
-            Self::Walk { batter, scores, advances, cheer, aurora_photos, ejection, wither } => {
+            Self::Walk {
+                batter,
+                scores,
+                advances,
+                cheer,
+                aurora_photos,
+                ejection,
+                wither,
+            } => {
                 let scores_and_advances = unparse_scores_and_advances(scores, advances);
                 let space = old_space(game, event_index);
 
-                let cheer = cheer.as_ref().map(|c| c.unparse(game, event_index)).unwrap_or_default();
-                let aurora_photos = aurora_photos.as_ref().map(|p| p.unparse()).unwrap_or_default();
+                let cheer = cheer
+                    .as_ref()
+                    .map(|c| c.unparse(game, event_index))
+                    .unwrap_or_default();
+                let aurora_photos = aurora_photos
+                    .as_ref()
+                    .map(|p| p.unparse())
+                    .unwrap_or_default();
                 let ejection = ejection.as_ref().map(|e| e.unparse()).unwrap_or_default();
-                let wither = wither.as_ref().map_or_else(String::new, |wither| format!(" {}", wither));
+                let wither = wither
+                    .as_ref()
+                    .map_or_else(String::new, |wither| format!(" {}", wither));
 
                 // Proof cheer is before ejection: https://mmolb.com/watch/6887e503f142e23550fc1254?event=369
                 format!("{space}Ball 4. {batter} walks.{scores_and_advances}{aurora_photos}{cheer}{ejection}{wither}")
             }
-            Self::HitByPitch { batter, scores, advances, cheer, aurora_photos, ejection, door_prizes, wither, efflorescence } => {
+            Self::HitByPitch {
+                batter,
+                scores,
+                advances,
+                cheer,
+                aurora_photos,
+                ejection,
+                door_prizes,
+                wither,
+                efflorescence,
+            } => {
                 let scores_and_advances = unparse_scores_and_advances(scores, advances);
                 let space = old_space(game, event_index);
 
-                let cheer = cheer.as_ref().map(|c| c.unparse(game, event_index)).unwrap_or_default();
-                let aurora_photos = aurora_photos.as_ref().map(|p| p.unparse()).unwrap_or_default();
+                let cheer = cheer
+                    .as_ref()
+                    .map(|c| c.unparse(game, event_index))
+                    .unwrap_or_default();
+                let aurora_photos = aurora_photos
+                    .as_ref()
+                    .map(|p| p.unparse())
+                    .unwrap_or_default();
                 let ejection = ejection.as_ref().map(|e| e.unparse()).unwrap_or_default();
-                let door_prizes = once(String::new()).chain(door_prizes.iter().map(|d| d.unparse())).collect::<Vec<_>>().join("<br>");
-                let hbp_text = hit_by_pitch_text(game.season, game.day.as_ref().copied().ok(), event_index);
-                let wither = wither.as_ref().map_or_else(String::new, |wither| format!(" {}", wither));
-                let efflorescence = once(String::new()).chain(efflorescence.iter().map(|d| d.unparse())).collect::<Vec<_>>().join("<br>🌹 ");
+                let door_prizes = once(String::new())
+                    .chain(door_prizes.iter().map(|d| d.unparse()))
+                    .collect::<Vec<_>>()
+                    .join("<br>");
+                let hbp_text =
+                    hit_by_pitch_text(game.season, game.day.as_ref().copied().ok(), event_index);
+                let wither = wither
+                    .as_ref()
+                    .map_or_else(String::new, |wither| format!(" {}", wither));
+                let efflorescence = once(String::new())
+                    .chain(efflorescence.iter().map(|d| d.unparse()))
+                    .collect::<Vec<_>>()
+                    .join("<br>🌹 ");
                 format!("{space}{batter}{hbp_text}.{scores_and_advances}{aurora_photos}{cheer}{ejection}{door_prizes}{wither}{efflorescence}")
             }
-            Self::FairBall { batter, fair_ball_type, destination, cheer, aurora_photos, door_prizes, efflorescence } => {
+            Self::FairBall {
+                batter,
+                fair_ball_type,
+                destination,
+                cheer,
+                aurora_photos,
+                door_prizes,
+                efflorescence,
+            } => {
                 let space = old_space(game, event_index);
 
-                let cheer = cheer.as_ref().map(|c| c.unparse(game, event_index)).unwrap_or_default();
-                let aurora_photos = aurora_photos.as_ref().map(|p| p.unparse()).unwrap_or_default();
-                let door_prizes = once(String::new()).chain(door_prizes.iter().map(|d| d.unparse())).collect::<Vec<_>>().join("<br>");
-                let efflorescence = once(String::new()).chain(efflorescence.iter().map(|d| d.unparse())).collect::<Vec<_>>().join("<br>🌹 ");
+                let cheer = cheer
+                    .as_ref()
+                    .map(|c| c.unparse(game, event_index))
+                    .unwrap_or_default();
+                let aurora_photos = aurora_photos
+                    .as_ref()
+                    .map(|p| p.unparse())
+                    .unwrap_or_default();
+                let door_prizes = once(String::new())
+                    .chain(door_prizes.iter().map(|d| d.unparse()))
+                    .collect::<Vec<_>>()
+                    .join("<br>");
+                let efflorescence = once(String::new())
+                    .chain(efflorescence.iter().map(|d| d.unparse()))
+                    .collect::<Vec<_>>()
+                    .join("<br>🌹 ");
 
                 format!("{space}{batter} hits a {fair_ball_type} to {destination}.{aurora_photos}{cheer}{door_prizes}{efflorescence}")
             }
-            Self::StrikeOut { foul, batter, strike, steals, cheer, aurora_photos, ejection, wither } => {
+            Self::StrikeOut {
+                foul,
+                batter,
+                strike,
+                steals,
+                cheer,
+                aurora_photos,
+                ejection,
+                wither,
+            } => {
                 let foul = match foul {
                     Some(foul) => format!("Foul {foul}. "),
-                    None => String::new()
+                    None => String::new(),
                 };
-                let steals: Vec<String> = once(String::new()).chain(steals.iter().map(|steal| steal.to_string())).collect();
+                let steals: Vec<String> = once(String::new())
+                    .chain(steals.iter().map(|steal| steal.to_string()))
+                    .collect();
                 let steals = steals.join(" ");
                 let space = old_space(game, event_index);
 
-                let cheer = cheer.as_ref().map(|c| c.unparse(game, event_index)).unwrap_or_default();
-                let aurora_photos = aurora_photos.as_ref().map(|p| p.unparse()).unwrap_or_default();
+                let cheer = cheer
+                    .as_ref()
+                    .map(|c| c.unparse(game, event_index))
+                    .unwrap_or_default();
+                let aurora_photos = aurora_photos
+                    .as_ref()
+                    .map(|p| p.unparse())
+                    .unwrap_or_default();
                 let ejection = ejection.as_ref().map(|e| e.unparse()).unwrap_or_default();
-                let wither = wither.as_ref().map_or_else(String::new, |wither| format!(" {}", wither));
+                let wither = wither
+                    .as_ref()
+                    .map_or_else(String::new, |wither| format!(" {}", wither));
 
                 // I do have proof that cheer is before ejection at least on this event
                 // (game 6887e4f9f142e23550fc1134 event 265)
-                let strike_out_text = strike_out_text(game.season, game.day.as_ref().copied().ok(), event_index);
+                let strike_out_text =
+                    strike_out_text(game.season, game.day.as_ref().copied().ok(), event_index);
                 format!("{space}{foul}{batter}{strike_out_text}{strike}.{steals}{aurora_photos}{cheer}{ejection}{wither}")
             }
-            Self::BatterToBase { batter, distance, fair_ball_type, fielder, scores, advances, ejection } => {
+            Self::BatterToBase {
+                batter,
+                distance,
+                fair_ball_type,
+                fielder,
+                scores,
+                advances,
+                ejection,
+            } => {
                 let scores_and_advances = unparse_scores_and_advances(scores, advances);
                 let ejection = ejection.as_ref().map(|e| e.unparse()).unwrap_or_default();
                 format!("{batter} {distance} on a {fair_ball_type} to {fielder}.{scores_and_advances}{ejection}")
             }
-            Self::HomeRun { batter, fair_ball_type, destination, scores, grand_slam, ejection } => {
-                let scores = once(String::new()).chain(scores.iter().map(|runner| format!("<strong>{runner} scores!</strong>")))
+            Self::HomeRun {
+                batter,
+                fair_ball_type,
+                destination,
+                scores,
+                grand_slam,
+                ejection,
+            } => {
+                let scores = once(String::new())
+                    .chain(
+                        scores
+                            .iter()
+                            .map(|runner| format!("<strong>{runner} scores!</strong>")),
+                    )
                     .collect::<Vec<String>>()
                     .join(" ");
                 let ejection = ejection.as_ref().map(|e| e.unparse()).unwrap_or_default();
@@ -382,36 +763,97 @@ impl<S: Display> ParsedEventMessage<S> {
                     format!("<strong>{batter} hits a grand slam on a {fair_ball_type} to {destination}!</strong>{scores}{ejection}")
                 }
             }
-            Self::CaughtOut { batter, fair_ball_type, caught_by: catcher, scores, advances, ejection, sacrifice, perfect } => {
+            Self::CaughtOut {
+                batter,
+                fair_ball_type,
+                caught_by: catcher,
+                scores,
+                advances,
+                ejection,
+                sacrifice,
+                perfect,
+            } => {
                 let fair_ball_type = fair_ball_type.verb_name();
                 let scores_and_advances = unparse_scores_and_advances(scores, advances);
-                let sacrifice = if *sacrifice {"on a sacrifice fly "} else {""};
-                let perfect = if *perfect {" <strong>Perfect catch!</strong>"} else {""};
-                let ejection = if let Some(ej) = ejection { ej.unparse() } else { String::new() };
+                let sacrifice = if *sacrifice {
+                    "on a sacrifice fly "
+                } else {
+                    ""
+                };
+                let perfect = if *perfect {
+                    " <strong>Perfect catch!</strong>"
+                } else {
+                    ""
+                };
+                let ejection = if let Some(ej) = ejection {
+                    ej.unparse()
+                } else {
+                    String::new()
+                };
 
                 format!("{batter} {fair_ball_type} out {sacrifice}to {catcher}.{perfect}{scores_and_advances}{ejection}")
             }
-            Self::GroundedOut { batter, fielders, scores, advances, amazing, ejection } => {
+            Self::GroundedOut {
+                batter,
+                fielders,
+                scores,
+                advances,
+                amazing,
+                ejection,
+            } => {
                 let scores_and_advances = unparse_scores_and_advances(scores, advances);
                 let fielders = unparse_fielders(fielders);
                 let perfect = if *amazing {
-                    if game.season < 5 {" <strong>Perfect catch!</strong>"} else {" <strong>Amazing throw!</strong>"}
-                } else {""};
-                let ejection = if let Some(ej) = ejection { ej.unparse() } else { String::new() };
+                    if game.season < 5 {
+                        " <strong>Perfect catch!</strong>"
+                    } else {
+                        " <strong>Amazing throw!</strong>"
+                    }
+                } else {
+                    ""
+                };
+                let ejection = if let Some(ej) = ejection {
+                    ej.unparse()
+                } else {
+                    String::new()
+                };
                 format!("{batter} grounds out{fielders}.{scores_and_advances}{perfect}{ejection}")
             }
-            Self::ForceOut { batter, fielders, fair_ball_type, out, scores, advances, ejection } => {
+            Self::ForceOut {
+                batter,
+                fielders,
+                fair_ball_type,
+                out,
+                scores,
+                advances,
+                ejection,
+            } => {
                 let scores_and_advances = unparse_scores_and_advances(scores, advances);
                 let fielders = unparse_fielders_for_play(fielders);
                 let fair_ball_type = fair_ball_type.verb_name();
-                let ejection = if let Some(ej) = ejection { ej.unparse() } else { String::new() };
+                let ejection = if let Some(ej) = ejection {
+                    ej.unparse()
+                } else {
+                    String::new()
+                };
                 format!("{batter} {fair_ball_type} into a force out{fielders}. {out}{scores_and_advances}{ejection}")
             }
-            Self::ReachOnFieldersChoice { batter, fielders, result, scores, advances, ejection } => {
+            Self::ReachOnFieldersChoice {
+                batter,
+                fielders,
+                result,
+                scores,
+                advances,
+                ejection,
+            } => {
                 let scores_and_advances = unparse_scores_and_advances(scores, advances);
-                let ejection = if let Some(ej) = ejection { ej.unparse() } else { String::new() };
+                let ejection = if let Some(ej) = ejection {
+                    ej.unparse()
+                } else {
+                    String::new()
+                };
                 match result {
-                    FieldingAttempt::Out {out} => {
+                    FieldingAttempt::Out { out } => {
                         let fielders = unparse_fielders_for_play(fielders);
 
                         format!("{batter} reaches on a fielder's choice out{fielders}. {out}{scores_and_advances}{ejection}")
@@ -423,14 +865,31 @@ impl<S: Display> ParsedEventMessage<S> {
                     }
                 }
             }
-            Self::DoublePlayGrounded { batter, fielders, out_one, out_two, scores, advances, sacrifice, ejection } => {
+            Self::DoublePlayGrounded {
+                batter,
+                fielders,
+                out_one,
+                out_two,
+                scores,
+                advances,
+                sacrifice,
+                ejection,
+            } => {
                 let fielders = unparse_fielders_for_play(fielders);
                 let scores_and_advances = unparse_scores_and_advances(scores, advances);
-                let sacrifice = if *sacrifice {"sacrifice "} else {""};
+                let sacrifice = if *sacrifice { "sacrifice " } else { "" };
 
-                let ejection = if let Some(ej) = ejection { ej.unparse() } else { String::new() };
+                let ejection = if let Some(ej) = ejection {
+                    ej.unparse()
+                } else {
+                    String::new()
+                };
 
-                let verb = if Breakpoints::Season5TenseChange.before(game.season, game.day.as_ref().ok().copied(), event_index) {
+                let verb = if Breakpoints::Season5TenseChange.before(
+                    game.season,
+                    game.day.as_ref().ok().copied(),
+                    event_index,
+                ) {
                     "grounded"
                 } else {
                     "grounds"
@@ -438,102 +897,199 @@ impl<S: Display> ParsedEventMessage<S> {
 
                 format!("{batter} {verb} into a {sacrifice}double play{fielders}. {out_one} {out_two}{scores_and_advances}{ejection}")
             }
-            Self::DoublePlayCaught { batter, fair_ball_type, fielders, out_two, scores, advances, ejection } => {
+            Self::DoublePlayCaught {
+                batter,
+                fair_ball_type,
+                fielders,
+                out_two,
+                scores,
+                advances,
+                ejection,
+            } => {
                 let fair_ball_type = fair_ball_type.verb_name();
                 let fielders = unparse_fielders_for_play(fielders);
                 let scores_and_advances = unparse_scores_and_advances(scores, advances);
 
-                let ejection = if let Some(ej) = ejection { ej.unparse() } else { String::new() };
+                let ejection = if let Some(ej) = ejection {
+                    ej.unparse()
+                } else {
+                    String::new()
+                };
 
                 format!("{batter} {fair_ball_type} into a double play{fielders}. {out_two}{scores_and_advances}{ejection}")
             }
-            Self::ReachOnFieldingError { batter, fielder, error, scores, advances, ejection } => {
+            Self::ReachOnFieldingError {
+                batter,
+                fielder,
+                error,
+                scores,
+                advances,
+                ejection,
+            } => {
                 let scores_and_advances = unparse_scores_and_advances(scores, advances);
                 let error = error.lowercase();
-                let ejection = if let Some(e) = ejection { e.unparse() } else { String::new() };
+                let ejection = if let Some(e) = ejection {
+                    e.unparse()
+                } else {
+                    String::new()
+                };
                 format!("{batter} reaches on a {error} error by {fielder}.{scores_and_advances}{ejection}")
             }
-            Self::WeatherDelivery {delivery } => {
-                delivery.unparse(game, event_index, "Delivery")
-            },
+            Self::WeatherDelivery { delivery } => delivery.unparse(game, event_index, "Delivery"),
             Self::FallingStar { player_name } => {
                 format!("<strong>🌠 {player_name} is hit by a Falling Star!</strong>")
-            },
-            Self::FallingStarOutcome { deflection, player_name, outcome } => {
+            }
+            Self::FallingStarOutcome {
+                deflection,
+                player_name,
+                outcome,
+            } => {
                 let deflection_msg = if let Some(deflected_off_player_name) = deflection {
                     format!("It deflected off {deflected_off_player_name} and struck {player_name}!</strong> <strong>")
                 } else {
                     String::new()
                 };
 
-                let outcome_msg = outcome.unparse(game, event_index, player_name.to_string().as_str());
+                let outcome_msg =
+                    outcome.unparse(game, event_index, player_name.to_string().as_str());
 
                 format!(" <strong>{deflection_msg}{outcome_msg}</strong>")
-            },
-            Self::WeatherShipment { deliveries } => {
-                deliveries.iter().map(|d| d.unparse(game, event_index, "Shipment")).collect::<Vec<String>>().join(" ")
             }
+            Self::WeatherShipment { deliveries } => deliveries
+                .iter()
+                .map(|d| d.unparse(game, event_index, "Shipment"))
+                .collect::<Vec<String>>()
+                .join(" "),
             Self::WeatherSpecialDelivery { delivery } => {
                 delivery.unparse(game, event_index, "Special Delivery")
-            },
-            Self::Balk { pitcher, scores, advances } => {
+            }
+            Self::Balk {
+                pitcher,
+                scores,
+                advances,
+            } => {
                 let scores_and_advances = unparse_scores_and_advances(scores, advances);
                 format!("Balk. {pitcher} dropped the ball.{scores_and_advances}")
-            },
+            }
             Self::KnownBug { bug } => format!("{bug}"),
-            Self::WeatherProsperity { home_income, away_income } => {
-                let earn = if Breakpoints::Season5TenseChange.before(game.season, game.day.as_ref().ok().copied(), event_index) {
+            Self::WeatherProsperity {
+                home_income,
+                away_income,
+            } => {
+                let earn = if Breakpoints::Season5TenseChange.before(
+                    game.season,
+                    game.day.as_ref().ok().copied(),
+                    event_index,
+                ) {
                     "earned"
                 } else {
                     "earn"
                 };
 
-                let home = (*home_income > 0).then_some(format!("{} {} are Prosperous! They {earn} {home_income} 🪙.", game.home_team_emoji, game.home_team_name)).unwrap_or_default();
-                let away = (*away_income > 0).then_some(format!("{} {} are Prosperous! They {earn} {away_income} 🪙.", game.away_team_emoji, game.away_team_name)).unwrap_or_default();
-                let gap = if *home_income > 0 && *away_income > 0 { " " } else { Default::default() };
+                let home = (*home_income > 0)
+                    .then_some(format!(
+                        "{} {} are Prosperous! They {earn} {home_income} 🪙.",
+                        game.home_team_emoji, game.home_team_name
+                    ))
+                    .unwrap_or_default();
+                let away = (*away_income > 0)
+                    .then_some(format!(
+                        "{} {} are Prosperous! They {earn} {away_income} 🪙.",
+                        game.away_team_emoji, game.away_team_name
+                    ))
+                    .unwrap_or_default();
+                let gap = if *home_income > 0 && *away_income > 0 {
+                    " "
+                } else {
+                    Default::default()
+                };
 
-                if Breakpoints::Season3PreSuperstarBreakUpdate.before(game.season, game.day.as_ref().ok().copied(), event_index) {
+                if Breakpoints::Season3PreSuperstarBreakUpdate.before(
+                    game.season,
+                    game.day.as_ref().ok().copied(),
+                    event_index,
+                ) {
                     format!("{home}{gap}{away}")
                 } else if home_income > away_income {
                     format!("{away}{gap}{home}")
                 } else {
                     format!("{home}{gap}{away}")
                 }
-            },
-            Self::PhotoContest { winning_team, winning_tokens, winning_score, winning_player, losing_team, losing_tokens, losing_score, losing_player } => {
+            }
+            Self::PhotoContest {
+                winning_team,
+                winning_tokens,
+                winning_score,
+                winning_player,
+                losing_team,
+                losing_tokens,
+                losing_score,
+                losing_player,
+            } => {
                 let winning_emoji = &winning_team.emoji;
                 let losing_emoji = &losing_team.emoji;
 
-                let earn = if Breakpoints::Season5TenseChange.before(game.season, game.day.as_ref().ok().copied(), event_index) {
+                let earn = if Breakpoints::Season5TenseChange.before(
+                    game.season,
+                    game.day.as_ref().ok().copied(),
+                    event_index,
+                ) {
                     "earned"
                 } else {
                     "earn"
                 };
 
                 format!("{winning_team} {earn} {winning_tokens} 🪙. {losing_team} {earn} {losing_tokens} 🪙.<br>Top scoring Photos:<br>{winning_emoji} {winning_player} - {winning_score} {losing_emoji} {losing_player} - {losing_score}")
-            },
-            Self::Party { pitcher_name, pitcher_amount_gained, pitcher_attribute, batter_name, batter_amount_gained, batter_attribute, durability_loss } => {
+            }
+            Self::Party {
+                pitcher_name,
+                pitcher_amount_gained,
+                pitcher_attribute,
+                batter_name,
+                batter_amount_gained,
+                batter_attribute,
+                durability_loss,
+            } => {
                 format!(
                     "<strong>🥳 {pitcher_name} and {batter_name} are Partying!</strong> \
                     {pitcher_name} gained +{pitcher_amount_gained} {pitcher_attribute}. \
                     {batter_name} gained +{batter_amount_gained} {batter_attribute}. \
                     {durability_loss}"
                 )
-            },
+            }
             Self::WeatherReflection { team } => {
                 format!("🪞 The reflection shatters. {team} received a Fragment of Reflection.")
-            },
-            Self::WeatherWither { team_emoji, player, corrupted, contained } => {
+            }
+            Self::WeatherWither {
+                team_emoji,
+                player,
+                corrupted,
+                contained,
+            } => {
                 let delim = match contained {
                     ContainResult::NoContain => ".",
-                    ContainResult::SuccessfulContain { .. } => if Breakpoints::Season7SuccessfulContainPeriodFix.before(game.season, game.day.as_ref().ok().copied(), event_index) { "." } else { "" },
+                    ContainResult::SuccessfulContain { .. } => {
+                        if Breakpoints::Season7SuccessfulContainPeriodFix.before(
+                            game.season,
+                            game.day.as_ref().ok().copied(),
+                            event_index,
+                        ) {
+                            "."
+                        } else {
+                            ""
+                        }
+                    }
                     ContainResult::FailedContain { .. } => ".",
                 };
 
                 match corrupted {
                     WitherResult::Resisted => {
                         // This one actually changed from present to past tense. Probably an accident.
-                        let resist = if Breakpoints::Season7WitherTenseChange.before(game.season, game.day.as_ref().ok().copied(), event_index) {
+                        let resist = if Breakpoints::Season7WitherTenseChange.before(
+                            game.season,
+                            game.day.as_ref().ok().copied(),
+                            event_index,
+                        ) {
                             "resists"
                         } else {
                             "resisted"
@@ -551,32 +1107,54 @@ impl<S: Display> ParsedEventMessage<S> {
                         format!("{team_emoji} {player} was Corrupted by the 🥀 Wither{delim}{contained}")
                     }
                 }
-            },
-            Self::LinealBeltTransfer { claimed_by, claimed_from } => {
+            }
+            Self::LinealBeltTransfer {
+                claimed_by,
+                claimed_from,
+            } => {
                 format!("➰ {claimed_by} claimed the Lineal Belt from {claimed_from}!")
             }
         }
     }
 }
 
-fn unparse_fielders<S:Display>(fielders: &[PlacedPlayer<S>]) -> String {
+fn unparse_fielders<S: Display>(fielders: &[PlacedPlayer<S>]) -> String {
     match fielders.len() {
         0 => panic!("0-fielders"),
         1 => format!(" to {}", fielders.first().unwrap()),
-        _ => format!(", {}", fielders.iter().map(PlacedPlayer::to_string).collect::<Vec<_>>().join(" to "))
+        _ => format!(
+            ", {}",
+            fielders
+                .iter()
+                .map(PlacedPlayer::to_string)
+                .collect::<Vec<_>>()
+                .join(" to ")
+        ),
     }
 }
 
-fn unparse_fielders_for_play<S:Display>(fielders: &[PlacedPlayer<S>]) -> String {
+fn unparse_fielders_for_play<S: Display>(fielders: &[PlacedPlayer<S>]) -> String {
     match fielders.len() {
         0 => panic!("0-fielders"),
         1 => format!(", {} unassisted", fielders.first().unwrap()),
-        _ => format!(", {}", fielders.iter().map(PlacedPlayer::to_string).collect::<Vec<_>>().join(" to "))
+        _ => format!(
+            ", {}",
+            fielders
+                .iter()
+                .map(PlacedPlayer::to_string)
+                .collect::<Vec<_>>()
+                .join(" to ")
+        ),
     }
 }
 fn unparse_scores_and_advances<S: Display>(scores: &[S], advances: &[RunnerAdvance<S>]) -> String {
-    once(String::new()).chain(scores.iter().map(|runner| format!("<strong>{runner} scores!</strong>"))
-        .chain(advances.iter().map(|advance| advance.to_string())))
+    once(String::new())
+        .chain(
+            scores
+                .iter()
+                .map(|runner| format!("<strong>{runner} scores!</strong>"))
+                .chain(advances.iter().map(|advance| advance.to_string())),
+        )
         .collect::<Vec<_>>()
         .join(" ")
 }
@@ -584,13 +1162,16 @@ fn unparse_scores_and_advances<S: Display>(scores: &[S], advances: &[RunnerAdvan
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq, EnumDiscriminants)]
 #[strum_discriminants(derive(Display))]
 pub enum StartOfInningPitcher<S> {
-    Same {emoji: S, name: S},
+    Same {
+        emoji: S,
+        name: S,
+    },
     Different {
         leaving_emoji: Option<S>,
         leaving_pitcher: PlacedPlayer<S>,
         arriving_emoji: Option<S>,
         arriving_pitcher: PlacedPlayer<S>,
-    }
+    },
 }
 
 /// Either an Out or an Error - e.g. for a Fielder's Choice.
@@ -602,15 +1183,15 @@ pub enum FieldingAttempt<S> {
     },
     Error {
         fielder: S,
-        error: FieldingErrorType
-    }
+        error: FieldingErrorType,
+    },
 }
-impl<S:Display> Display for FieldingAttempt<S> {
+impl<S: Display> Display for FieldingAttempt<S> {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         match self {
             Self::Out { out } => {
                 write!(f, "{} out at {}.", out.runner, out.base)
-            },
+            }
             Self::Error { fielder, error } => {
                 let error = error.uppercase();
                 write!(f, "{error} by {fielder}.")
@@ -623,7 +1204,7 @@ impl<S:Display> Display for FieldingAttempt<S> {
 #[derive(Debug, Clone, Copy, Serialize, Deserialize, PartialEq)]
 pub struct EmojiTeam<S> {
     pub emoji: S,
-    pub name: S
+    pub name: S,
 }
 impl<S: Display> Display for EmojiTeam<S> {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
@@ -642,7 +1223,7 @@ impl<S: AsRef<str>> EmojiTeam<S> {
 #[derive(Debug, Clone, Copy, Serialize, Deserialize, PartialEq)]
 pub struct EmojiPlayer<S> {
     pub emoji: S,
-    pub name: S
+    pub name: S,
 }
 impl<S: Display> Display for EmojiPlayer<S> {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
@@ -662,7 +1243,7 @@ impl<S: AsRef<str>> EmojiPlayer<S> {
 #[derive(Debug, Clone, Copy, Serialize, Deserialize, PartialEq)]
 pub struct PlacedPlayer<S> {
     pub name: S,
-    pub place: Place
+    pub place: Place,
 }
 impl<S: Display> Display for PlacedPlayer<S> {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
@@ -692,7 +1273,7 @@ impl<S: Display> Display for RunnerOut<S> {
 #[derive(Debug, Clone, Copy, Serialize, Deserialize, PartialEq)]
 pub struct RunnerAdvance<S> {
     pub runner: S,
-    pub base: Base
+    pub base: Base,
 }
 impl<S: Display> Display for RunnerAdvance<S> {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
@@ -703,16 +1284,26 @@ impl<S: Display> Display for RunnerAdvance<S> {
 pub struct BaseSteal<S> {
     pub runner: S,
     pub base: Base,
-    pub caught: bool
+    pub caught: bool,
 }
 impl<S: Display> Display for BaseSteal<S> {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         match self.caught {
-            true => write!(f, "{} is caught stealing {}.", self.runner, self.base.to_base_str()),
+            true => write!(
+                f,
+                "{} is caught stealing {}.",
+                self.runner,
+                self.base.to_base_str()
+            ),
             false => match self.base {
-                Base::Home => write!(f, "<strong>{} steals {}!</strong>", self.runner, self.base.to_base_str()),
+                Base::Home => write!(
+                    f,
+                    "<strong>{} steals {}!</strong>",
+                    self.runner,
+                    self.base.to_base_str()
+                ),
                 _ => write!(f, "{} steals {}!", self.runner, self.base.to_base_str()),
-            }
+            },
         }
     }
 }
@@ -720,7 +1311,10 @@ impl<S> TryFrom<BaseSteal<S>> for RunnerOut<S> {
     type Error = ();
     fn try_from(value: BaseSteal<S>) -> Result<Self, Self::Error> {
         if value.caught {
-            Ok(RunnerOut { runner: value.runner, base: BaseNameVariant::basic_name(value.base) })
+            Ok(RunnerOut {
+                runner: value.runner,
+                base: BaseNameVariant::basic_name(value.base),
+            })
         } else {
             Err(())
         }
@@ -730,7 +1324,10 @@ impl<S> TryFrom<BaseSteal<S>> for RunnerAdvance<S> {
     type Error = ();
     fn try_from(value: BaseSteal<S>) -> Result<Self, Self::Error> {
         if !value.caught {
-            Ok(RunnerAdvance { runner: value.runner, base: value.base })
+            Ok(RunnerAdvance {
+                runner: value.runner,
+                base: value.base,
+            })
         } else {
             Err(())
         }
@@ -745,41 +1342,58 @@ pub enum FallingStarOutcome<S> {
     InfusionI,
     InfusionII,
     InfusionIII,
-    DeflectedHarmlessly
+    DeflectedHarmlessly,
 }
 
 impl<S: Display> FallingStarOutcome<S> {
     pub fn unparse(&self, game: &Game, event_index: Option<u16>, player_name: &str) -> String {
-        let was_is = if Breakpoints::Season5TenseChange.after(game.season, game.day.as_ref().ok().copied(), event_index) {
+        let was_is = if Breakpoints::Season5TenseChange.after(
+            game.season,
+            game.day.as_ref().ok().copied(),
+            event_index,
+        ) {
             "is"
         } else {
             "was"
         };
 
         match self {
-            FallingStarOutcome::Injury => format!("{player_name} {was_is} injured by the extreme force of the impact!"),
+            FallingStarOutcome::Injury => {
+                format!("{player_name} {was_is} injured by the extreme force of the impact!")
+            }
             FallingStarOutcome::Retired(None) => format!("😇 {player_name} retired from MMOLB!"),
             FallingStarOutcome::Retired(Some(replacement_player_name)) => {
                 format!("😇 {player_name} retired from MMOLB! {replacement_player_name} {was_is} called up to take their place.")
-            },
-            FallingStarOutcome::InfusionI => format!("{player_name} {was_is} infused with a glimmer of celestial energy!"),
+            }
+            FallingStarOutcome::InfusionI => {
+                format!("{player_name} {was_is} infused with a glimmer of celestial energy!")
+            }
             FallingStarOutcome::InfusionII => {
-                let began_begins = if Breakpoints::Season5TenseChange.after(game.season, game.day.as_ref().ok().copied(), event_index) {
+                let began_begins = if Breakpoints::Season5TenseChange.after(
+                    game.season,
+                    game.day.as_ref().ok().copied(),
+                    event_index,
+                ) {
                     "begins"
                 } else {
                     "began"
                 };
 
                 format!("{player_name} {began_begins} to glow brightly with celestial energy!")
-            },
-            FallingStarOutcome::InfusionIII => format!("{player_name} {was_is} fully charged with an abundance of celestial energy!"),
+            }
+            FallingStarOutcome::InfusionIII => format!(
+                "{player_name} {was_is} fully charged with an abundance of celestial energy!"
+            ),
             FallingStarOutcome::DeflectedHarmlessly => {
-                let deflected_deflects = if Breakpoints::Season5TenseChange.after(game.season, game.day.as_ref().ok().copied(), event_index) {
+                let deflected_deflects = if Breakpoints::Season5TenseChange.after(
+                    game.season,
+                    game.day.as_ref().ok().copied(),
+                    event_index,
+                ) {
                     "deflects"
                 } else {
                     "deflected"
                 };
-
 
                 format!("It {deflected_deflects} off {player_name} harmlessly.")
             }
@@ -791,14 +1405,16 @@ impl<S: Display> FallingStarOutcome<S> {
 pub enum ItemAffixes<S> {
     None,
     PrefixSuffix(Option<ItemPrefix>, Option<ItemSuffix>),
-    RareName(S)
+    RareName(S),
 }
 
 impl<S: AsRef<str>> ItemAffixes<S> {
     pub fn to_ref(&self) -> ItemAffixes<&str> {
         match self {
             ItemAffixes::RareName(s) => ItemAffixes::RareName(s.as_ref()),
-            ItemAffixes::PrefixSuffix(prefix, suffix) => ItemAffixes::PrefixSuffix(prefix.as_ref().copied(), suffix.as_ref().copied()),
+            ItemAffixes::PrefixSuffix(prefix, suffix) => {
+                ItemAffixes::PrefixSuffix(prefix.as_ref().copied(), suffix.as_ref().copied())
+            }
             ItemAffixes::None => ItemAffixes::None,
         }
     }
@@ -808,7 +1424,7 @@ impl<S: AsRef<str>> ItemAffixes<S> {
 pub struct Item<S> {
     pub item_emoji: S,
     pub item: ItemName,
-    pub affixes: ItemAffixes<S>
+    pub affixes: ItemAffixes<S>,
 }
 
 impl<S: AsRef<str>> Item<S> {
@@ -816,28 +1432,32 @@ impl<S: AsRef<str>> Item<S> {
         Item {
             item_emoji: self.item_emoji.as_ref(),
             item: self.item,
-            affixes: self.affixes.to_ref()
+            affixes: self.affixes.to_ref(),
         }
     }
 }
 
 impl<S: Display> Display for Item<S> {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        let Item { item_emoji, item, affixes} = self;
+        let Item {
+            item_emoji,
+            item,
+            affixes,
+        } = self;
 
         match affixes {
             ItemAffixes::None => write!(f, "{item_emoji} {item}"),
             ItemAffixes::PrefixSuffix(prefix, suffix) => {
-            let prefix = match prefix {
-                Some(prefix) => format!("{prefix} "),
-                None => String::new()
-            };
-            let suffix = match suffix {
-                Some(suffix) => format!(" {suffix}"),
-                None => String::new()
-            };
+                let prefix = match prefix {
+                    Some(prefix) => format!("{prefix} "),
+                    None => String::new(),
+                };
+                let suffix = match suffix {
+                    Some(suffix) => format!(" {suffix}"),
+                    None => String::new(),
+                };
                 write!(f, "{item_emoji} {prefix}{item}{suffix}")
-            },
+            }
             ItemAffixes::RareName(rare_name) => write!(f, "{item_emoji} {rare_name} {item}"),
         }
     }
@@ -850,40 +1470,60 @@ pub enum Delivery<S> {
         player: Option<S>,
         item: Item<S>,
         equipped: bool,
-        discarded: Option<Item<S>>
+        discarded: Option<Item<S>>,
     },
     NoSpace {
         item: Item<S>,
-    }
+    },
 }
 
 impl<S: Display> Delivery<S> {
     pub fn unparse(&self, game: &Game, event_index: Option<u16>, delivery_label: &str) -> String {
         match self {
-            Self::Successful { team, player, item, equipped, discarded } => {
+            Self::Successful {
+                team,
+                player,
+                item,
+                equipped,
+                discarded,
+            } => {
                 let received_text = if *equipped {
                     " equips "
                 } else {
                     received_text(game.season, game.day.as_ref().copied().ok(), event_index)
                 };
-                let discarded_text = discarded_text(game.season, game.day.as_ref().copied().ok(), event_index);
+                let discarded_text =
+                    discarded_text(game.season, game.day.as_ref().copied().ok(), event_index);
 
                 let discarded = match discarded {
                     Some(discarded) => format!("{discarded_text}{discarded}."),
                     None => String::new(),
                 };
 
-                let player = player.as_ref().map(|player| format!(" {player}")).unwrap_or_default();
+                let player = player
+                    .as_ref()
+                    .map(|player| format!(" {player}"))
+                    .unwrap_or_default();
 
                 // There's this extra word "from" in the equipped message
-                let from_text = if *equipped { "from " }  else { "" };
+                let from_text = if *equipped { "from " } else { "" };
 
-                format!("{team}{player}{received_text}{item} {from_text}{delivery_label}.{discarded}")
+                format!(
+                    "{team}{player}{received_text}{item} {from_text}{delivery_label}.{discarded}"
+                )
             }
             Self::NoSpace { item } => {
-                let discard_text = if Breakpoints::Season8ItemDiscardedMessageChange.after(game.season, game.day.as_ref().ok().copied(), event_index) {
+                let discard_text = if Breakpoints::Season8ItemDiscardedMessageChange.after(
+                    game.season,
+                    game.day.as_ref().ok().copied(),
+                    event_index,
+                ) {
                     " is discarded as no player can use it."
-                } else if Breakpoints::Season5TenseChange.after(game.season, game.day.as_ref().ok().copied(), event_index) {
+                } else if Breakpoints::Season5TenseChange.after(
+                    game.season,
+                    game.day.as_ref().ok().copied(),
+                    event_index,
+                ) {
                     " is discarded as no player has space."
                 } else {
                     " was discarded as no player had space."
@@ -922,7 +1562,7 @@ pub enum PartyDurabilityLoss<S> {
         protected_player_name: S,
         unprotected_player_name: S,
         durability_loss: u8,
-    }
+    },
 }
 
 impl<S: Display> Display for PartyDurabilityLoss<S> {
@@ -931,7 +1571,11 @@ impl<S: Display> Display for PartyDurabilityLoss<S> {
             PartyDurabilityLoss::Both(durability_loss) => {
                 write!(f, "Both players lose {durability_loss} Durability.")
             }
-            PartyDurabilityLoss::OneProtected { protected_player_name, unprotected_player_name, durability_loss } => {
+            PartyDurabilityLoss::OneProtected {
+                protected_player_name,
+                unprotected_player_name,
+                durability_loss,
+            } => {
                 write!(
                     f,
                     "{unprotected_player_name} loses {durability_loss} Durability, but \
@@ -946,14 +1590,19 @@ impl<S: Display> Display for ContainResult<S> {
     fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
         match self {
             ContainResult::NoContain => Ok(()),
-            ContainResult::SuccessfulContain { replacement_player_name, contained_player_name } => {
+            ContainResult::SuccessfulContain {
+                replacement_player_name,
+                contained_player_name,
+            } => {
                 write!(f, ", and Contained {contained_player_name}. They were replaced by {replacement_player_name}.")
             }
             ContainResult::FailedContain { target_player_name } => {
-                write!(f, ", and tried to Contain {target_player_name}, but they wouldn't budge.")
+                write!(
+                    f,
+                    ", and tried to Contain {target_player_name}, but they wouldn't budge."
+                )
             }
         }
-
     }
 }
 
@@ -978,10 +1627,7 @@ pub enum KnownBug<S> {
     /// - They (so far) always occur when no runners are on base
     /// - They count as an out for the count
     /// - the batter does end up on base
-    FirstBasemanChoosesAGhost {
-        batter: S,
-        first_baseman: S
-    },
+    FirstBasemanChoosesAGhost { batter: S, first_baseman: S },
     /// https://mmolb.com/watch/68758c796154982c31f5d803?event=412 ""
     ///
     /// Potentially fixed as a side effect of the Season 3 Pre-Superstar Break Update, s3d112
@@ -992,15 +1638,21 @@ pub enum KnownBug<S> {
     /// Properties
     /// - It displays as an empty string
     /// - It is a prosperity event in which neither team earned any tokens.
-    NoOneProspers
+    NoOneProspers,
 }
 
 impl<S: Display> Display for KnownBug<S> {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         match self {
-            KnownBug::FirstBasemanChoosesAGhost { batter, first_baseman } => {
-                write!(f, "{batter} reaches on a fielder's choice out, 1B {first_baseman}")
-            },
+            KnownBug::FirstBasemanChoosesAGhost {
+                batter,
+                first_baseman,
+            } => {
+                write!(
+                    f,
+                    "{batter} reaches on a fielder's choice out, 1B {first_baseman}"
+                )
+            }
             KnownBug::NoOneProspers => {
                 write!(f, "")
             }
@@ -1222,13 +1874,12 @@ pub enum Cheer {
     TheCrowdIsPumped,
 
     #[strum(default)]
-    Unknown(String)
+    Unknown(String),
 }
 
 impl Cheer {
     pub fn new(value: &str) -> Self {
-        let r = Cheer::from_str(value)
-            .expect("This error type is infallible");
+        let r = Cheer::from_str(value).expect("This error type is infallible");
 
         if matches!(r, Cheer::Unknown(_)) {
             tracing::warn!("Failed to match cheer '{value}'");
@@ -1238,7 +1889,11 @@ impl Cheer {
     }
 
     pub fn unparse(&self, game: &Game, event_index: Option<u16>) -> String {
-        if Breakpoints::CheersGetEmoji.before(game.season, game.day.as_ref().ok().copied(), event_index) {
+        if Breakpoints::CheersGetEmoji.before(
+            game.season,
+            game.day.as_ref().ok().copied(),
+            event_index,
+        ) {
             format!(" {self}!")
         } else {
             format!(" 📣 {self}!")
@@ -1307,13 +1962,12 @@ pub enum EjectionReason {
     Humming,
 
     #[strum(default)]
-    Unknown(String)
+    Unknown(String),
 }
 
 impl EjectionReason {
     pub fn new(value: &str) -> Self {
-        let r = EjectionReason::from_str(value)
-            .expect("This error type is infallible");
+        let r = EjectionReason::from_str(value).expect("This error type is infallible");
 
         if matches!(r, EjectionReason::Unknown(_)) {
             tracing::warn!("Failed to match ejection reason '{value}'");
@@ -1338,13 +1992,12 @@ pub enum ViolationType {
     Communication,
 
     #[strum(default)]
-    Unknown(String)
+    Unknown(String),
 }
 
 impl ViolationType {
     pub fn new(value: &str) -> Self {
-        let r = ViolationType::from_str(value)
-            .expect("This error type is infallible");
+        let r = ViolationType::from_str(value).expect("This error type is infallible");
 
         if matches!(r, ViolationType::Unknown(_)) {
             tracing::warn!("Failed to match violation type '{value}'");
@@ -1388,23 +2041,19 @@ impl<S: AsRef<str>> SnappedPhotos<S> {
 
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq, EnumDiscriminants)]
 pub enum EjectionReplacement<S> {
-    BenchPlayer {
-        player_name: S
-    },
-    RosterPlayer {
-        player: PlacedPlayer<S>,
-    },
+    BenchPlayer { player_name: S },
+    RosterPlayer { player: PlacedPlayer<S> },
 }
 
 impl<S: AsRef<str>> EjectionReplacement<S> {
     pub fn as_ref(&self) -> EjectionReplacement<&str> {
         match self {
-            EjectionReplacement::BenchPlayer { player_name } => {
-                EjectionReplacement::BenchPlayer { player_name: player_name.as_ref() }
-            }
-            EjectionReplacement::RosterPlayer { player } => {
-                EjectionReplacement::RosterPlayer { player: player.as_ref() }
-            }
+            EjectionReplacement::BenchPlayer { player_name } => EjectionReplacement::BenchPlayer {
+                player_name: player_name.as_ref(),
+            },
+            EjectionReplacement::RosterPlayer { player } => EjectionReplacement::RosterPlayer {
+                player: player.as_ref(),
+            },
         }
     }
 }
@@ -1428,8 +2077,8 @@ pub enum Ejection<S> {
         replacement: EjectionReplacement<S>,
     },
     FailedEjection {
-        player_names: [S; 2]
-    }
+        player_names: [S; 2],
+    },
 }
 
 impl<S: Display> Ejection<S> {
@@ -1468,19 +2117,24 @@ impl<S: AsRef<str>> Ejection<S> {
     // Perhaps it should be named something other than as_ref?
     pub fn as_ref(&self) -> Ejection<&str> {
         match self {
-            Ejection::Ejection { team, ejected_player, violation_type, reason, replacement } => {
-                Ejection::Ejection {
-                    team: team.as_ref(),
-                    ejected_player: ejected_player.as_ref(),
-                    violation_type: violation_type.clone(),
-                    reason: reason.clone(),
-                    replacement: replacement.as_ref(),
-                }
-
-            }
-            Ejection::FailedEjection { player_names: [n1, n2] } => {
-                Ejection::FailedEjection { player_names: [n1.as_ref(), n2.as_ref()] }
-            }
+            Ejection::Ejection {
+                team,
+                ejected_player,
+                violation_type,
+                reason,
+                replacement,
+            } => Ejection::Ejection {
+                team: team.as_ref(),
+                ejected_player: ejected_player.as_ref(),
+                violation_type: violation_type.clone(),
+                reason: reason.clone(),
+                replacement: replacement.as_ref(),
+            },
+            Ejection::FailedEjection {
+                player_names: [n1, n2],
+            } => Ejection::FailedEjection {
+                player_names: [n1.as_ref(), n2.as_ref()],
+            },
         }
     }
 }
@@ -1501,17 +2155,18 @@ impl<S> ItemEquip<S> {
     }
 }
 
-
-
 impl<S: AsRef<str>> ItemEquip<S> {
     pub fn to_ref(&self) -> ItemEquip<&str> {
         match self {
             ItemEquip::None => ItemEquip::None,
             ItemEquip::Discarded => ItemEquip::Discarded,
-            ItemEquip::Equipped { player_name, discarded_item } => ItemEquip::Equipped {
+            ItemEquip::Equipped {
+                player_name,
+                discarded_item,
+            } => ItemEquip::Equipped {
                 player_name: player_name.as_ref(),
                 discarded_item: discarded_item.as_ref().map(|i| i.to_ref()),
-            }
+            },
         }
     }
 }
@@ -1525,7 +2180,7 @@ pub struct ItemPrize<S> {
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
 pub enum Prize<S> {
     Tokens(u16),
-    Items(Vec<ItemPrize<S>>)
+    Items(Vec<ItemPrize<S>>),
 }
 
 impl<S: Display> Prize<S> {
@@ -1535,18 +2190,27 @@ impl<S: Display> Prize<S> {
             Prize::Items(items) => {
                 let has_equip = items.iter().any(|i| !i.equip.is_none());
 
-                items.iter()
+                items
+                    .iter()
                     .map(|prize| match &prize.equip {
                         ItemEquip::None => prize.item.to_string(),
                         ItemEquip::Discarded => {
                             format!("{} is discarded; nobody can use it", prize.item)
                         }
-                        ItemEquip::Equipped { player_name, discarded_item } => {
+                        ItemEquip::Equipped {
+                            player_name,
+                            discarded_item,
+                        } => {
                             let discard = match discarded_item {
                                 None => String::new(),
-                                Some(discarded_item) => format!(". They discard their {discarded_item}"),
+                                Some(discarded_item) => {
+                                    format!(". They discard their {discarded_item}")
+                                }
                             };
-                            format!("{player_name} equips {} from the Door Prize{discard}", prize.item)
+                            format!(
+                                "{player_name} equips {} from the Door Prize{discard}",
+                                prize.item
+                            )
                         }
                     })
                     .collect::<Vec<_>>()
@@ -1559,14 +2223,16 @@ impl<S: Display> Prize<S> {
 impl<S: AsRef<str>> Prize<S> {
     pub fn to_ref(&self) -> Prize<&str> {
         match self {
-            Prize::Items(items) => Prize::Items(items
+            Prize::Items(items) => Prize::Items(
+                items
                     .iter()
                     .map(|prize| ItemPrize {
                         item: prize.item.to_ref(),
                         equip: prize.equip.to_ref(),
                     })
-                    .collect()),
-            Prize::Tokens(t) => Prize::Tokens(*t)
+                    .collect(),
+            ),
+            Prize::Tokens(t) => Prize::Tokens(*t),
         }
     }
 }
@@ -1575,7 +2241,7 @@ impl<S: AsRef<str>> Prize<S> {
 pub struct DoorPrize<S> {
     pub player: S,
     /// None when they don't win.
-    pub prize: Option<Prize<S>>
+    pub prize: Option<Prize<S>>,
 }
 
 impl<S: Display> DoorPrize<S> {
@@ -1586,9 +2252,13 @@ impl<S: Display> DoorPrize<S> {
                     Prize::Items(items) if items.iter().any(|item| !item.equip.is_none()) => "!",
                     _ => ":",
                 };
-                format!("🥳 {} won a Door Prize{punct} {}.", self.player, prize.unparse())
-            },
-            None => format!("🥳 {} didn't win a Door Prize.", self.player)
+                format!(
+                    "🥳 {} won a Door Prize{punct} {}.",
+                    self.player,
+                    prize.unparse()
+                )
+            }
+            None => format!("🥳 {} didn't win a Door Prize.", self.player),
         }
     }
 }
@@ -1597,7 +2267,7 @@ impl<S: AsRef<str>> DoorPrize<S> {
     pub fn to_ref(&self) -> DoorPrize<&str> {
         DoorPrize {
             player: self.player.as_ref(),
-            prize: self.prize.as_ref().map(Prize::to_ref)
+            prize: self.prize.as_ref().map(Prize::to_ref),
         }
     }
 }
@@ -1613,8 +2283,16 @@ pub struct WitherStruggle<S> {
 impl<S: Display> Display for WitherStruggle<S> {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         match &self.source_name {
-            None => write!(f, "{} {} struggles against the 🥀 Wither.", self.team_emoji, self.target),
-            Some(source_name) => write!(f, "{source_name} is trying to spread the 🥀 Wither to {} {}!", self.team_emoji, self.target),
+            None => write!(
+                f,
+                "{} {} struggles against the 🥀 Wither.",
+                self.team_emoji, self.target
+            ),
+            Some(source_name) => write!(
+                f,
+                "{source_name} is trying to spread the 🥀 Wither to {} {}!",
+                self.team_emoji, self.target
+            ),
         }
     }
 }
@@ -1655,7 +2333,10 @@ impl<S: Display> Efflorescence<S> {
                 s
             }
             EfflorescenceOutcome::Effloresce => {
-                format!("{} Effloresced, shedding their Corrupted Modification.", self.player)
+                format!(
+                    "{} Effloresced, shedding their Corrupted Modification.",
+                    self.player
+                )
             }
         }
     }
@@ -1669,7 +2350,6 @@ impl<S: AsRef<str>> Efflorescence<S> {
         }
     }
 }
-
 
 #[cfg(test)]
 mod test {
@@ -1690,7 +2370,7 @@ mod test {
         #[derive(Deserialize)]
         pub struct GameEntity {
             pub data: Game,
-            pub entity_id: String
+            pub entity_id: String,
         }
 
         let no_tracing_errors = no_tracing_errs();

@@ -2,10 +2,13 @@ use serde::{Deserialize, Deserializer, Serialize};
 use serde_with::serde_as;
 
 use crate::enums::{Handedness, PitchType};
-use crate::utils::{extra_fields_deserialize, maybe_recognized_from_str, maybe_recognized_to_string, MaybeRecognizedHelper, MaybeRecognizedResult, ZeroOrF64};
+use crate::utils::{
+    extra_fields_deserialize, maybe_recognized_from_str, maybe_recognized_to_string,
+    MaybeRecognizedHelper, MaybeRecognizedResult, ZeroOrF64,
+};
 
-pub(crate) mod game;
 pub(crate) mod event;
+pub(crate) mod game;
 pub(crate) mod weather;
 
 pub use event::Event;
@@ -41,10 +44,13 @@ pub struct EventPitcher<S> {
 }
 
 #[derive(Debug, Clone, PartialEq, Deserialize, Serialize)]
-#[serde(untagged, bound(deserialize = "S: Deserialize<'de> + PartialEq<&'static str>"))]
+#[serde(
+    untagged,
+    bound(deserialize = "S: Deserialize<'de> + PartialEq<&'static str>")
+)]
 pub enum EventPitcherVersions<S> {
     New(EventPitcher<S>),
-    Old(MaybePlayer<S>)
+    Old(MaybePlayer<S>),
 }
 
 impl<S> EventPitcherVersions<S> {
@@ -56,12 +62,14 @@ impl<S> EventPitcherVersions<S> {
     }
 }
 
-
 #[derive(Debug, Clone, PartialEq, Deserialize, Serialize)]
-#[serde(untagged, bound(deserialize = "S: Deserialize<'de> + PartialEq<&'static str>"))]
+#[serde(
+    untagged,
+    bound(deserialize = "S: Deserialize<'de> + PartialEq<&'static str>")
+)]
 pub enum EventBatterVersions<S> {
     New(EventBatter<S>),
-    Old(MaybePlayer<S>)
+    Old(MaybePlayer<S>),
 }
 
 impl<S> EventBatterVersions<S> {
@@ -81,23 +89,25 @@ impl<S> EventBatterVersions<S> {
 pub enum MaybePlayer<S> {
     Player(S),
     EmptyString,
-    Null
+    Null,
 }
 impl<T: Serialize> Serialize for MaybePlayer<T> {
     fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error>
-        where
-            S: serde::Serializer {
+    where
+        S: serde::Serializer,
+    {
         match self {
             MaybePlayer::Player(player) => player.serialize(serializer),
             MaybePlayer::EmptyString => "".serialize(serializer),
-            MaybePlayer::Null => None::<T>.serialize(serializer)
+            MaybePlayer::Null => None::<T>.serialize(serializer),
         }
     }
 }
 impl<'de, T: Deserialize<'de> + PartialEq<&'static str>> Deserialize<'de> for MaybePlayer<T> {
     fn deserialize<D>(deserializer: D) -> Result<Self, D::Error>
-        where
-            D: Deserializer<'de> {
+    where
+        D: Deserializer<'de>,
+    {
         let t = Option::<T>::deserialize(deserializer)?;
         Ok(MaybePlayer::from(t))
     }
@@ -107,7 +117,7 @@ impl<S> MaybePlayer<S> {
         match self {
             MaybePlayer::Player(player) => Some(player),
             MaybePlayer::EmptyString => None,
-            MaybePlayer::Null => None
+            MaybePlayer::Null => None,
         }
     }
 }
@@ -116,7 +126,7 @@ impl MaybePlayer<String> {
         match self {
             MaybePlayer::Player(player) => MaybePlayer::Player(player.as_str()),
             MaybePlayer::EmptyString => MaybePlayer::EmptyString,
-            MaybePlayer::Null => MaybePlayer::Null
+            MaybePlayer::Null => MaybePlayer::Null,
         }
     }
 }
@@ -125,26 +135,28 @@ impl<S: From<&'static str>> MaybePlayer<S> {
         match self {
             MaybePlayer::Player(player) => Some(player),
             MaybePlayer::EmptyString => Some(S::from("")),
-            MaybePlayer::Null => None
+            MaybePlayer::Null => None,
         }
     }
 }
 impl<S: PartialEq<&'static str>> From<Option<S>> for MaybePlayer<S> {
     fn from(value: Option<S>) -> Self {
         match value {
-            Some(player) => if player == "" {
-                MaybePlayer::EmptyString
-            } else {
-                MaybePlayer::Player(player)
-            },
-            None => MaybePlayer::Null
+            Some(player) => {
+                if player == "" {
+                    MaybePlayer::EmptyString
+                } else {
+                    MaybePlayer::Player(player)
+                }
+            }
+            None => MaybePlayer::Null,
         }
     }
 }
 
 #[serde_as]
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
-pub struct Pitch  {
+pub struct Pitch {
     pub speed: f32,
     #[serde_as(as = "MaybeRecognizedHelper<_>")]
     pub pitch_type: MaybeRecognizedResult<PitchType>,
@@ -155,12 +167,19 @@ impl Pitch {
         let mut iter = pitch_info.split(" MPH ");
         let pitch_speed = iter.next().unwrap().parse().unwrap();
         let pitch_type = maybe_recognized_from_str(iter.next().unwrap());
-        Self { speed: pitch_speed, pitch_type, zone }
+        Self {
+            speed: pitch_speed,
+            pitch_type,
+            zone,
+        }
     }
     pub fn unparse(self) -> (String, u8) {
         let speed = format!("{:.1}", self.speed);
         // let speed = speed.strip_suffix(".0").unwrap_or(speed.as_str());
-        let pitch_info = format!("{speed} MPH {}", maybe_recognized_to_string(&self.pitch_type));
+        let pitch_info = format!(
+            "{speed} MPH {}",
+            maybe_recognized_to_string(&self.pitch_type)
+        );
         (pitch_info, self.zone)
     }
 }
@@ -169,12 +188,15 @@ impl Pitch {
 pub struct PitcherEntry {
     #[serde(rename = "bf", deserialize_with = "bf_de")]
     pub batters_faced: u8,
-    pub id: String
+    pub id: String,
 }
 
-fn bf_de<'de, D>(deserializer: D) -> Result<u8, D::Error> where D: Deserializer<'de> {
+fn bf_de<'de, D>(deserializer: D) -> Result<u8, D::Error>
+where
+    D: Deserializer<'de>,
+{
     let r = u8::deserialize(deserializer);
-    if let Ok(n)= r {
+    if let Ok(n) = r {
         if n > 0 {
             tracing::warn!("Thought batters_faced is always 0")
         }
@@ -188,8 +210,10 @@ mod test {
 
     use tracing_test::traced_test;
 
-    use crate::{utils::{assert_round_trip, no_tracing_errs}, Game};
-
+    use crate::{
+        utils::{assert_round_trip, no_tracing_errs},
+        Game,
+    };
 
     #[test]
     fn game_round_trip() -> Result<(), Box<dyn std::error::Error>> {
@@ -208,7 +232,11 @@ mod test {
         assert!(!logs_contain("not recognized"));
 
         logs_assert(|lines: &[&str]| {
-            match lines.iter().filter(|line| line.contains("extra fields")).count() {
+            match lines
+                .iter()
+                .filter(|line| line.contains("extra fields"))
+                .count()
+            {
                 2 => Ok(()),
                 n => Err(format!("Expected two extra fields, but found {}", n)),
             }

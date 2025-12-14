@@ -3,11 +3,18 @@ use std::fmt::Display;
 use serde::{Deserialize, Serialize};
 use serde_with::serde_as;
 
-use crate::{enums::{Attribute, FeedEventType, ModificationType}, feed_event::{EmojilessItem, FeedDelivery, FeedEvent, FeedEventParseError, FeedFallingStarOutcome}, time::{Breakpoints, Timestamp}, utils::extra_fields_deserialize};
 use crate::feed_event::PlayerGreaterAugment;
 pub use crate::nom_parsing::parse_player_feed_event::parse_player_feed_event;
 use crate::nom_parsing::shared::{FeedEventDoorPrize, FeedEventParty, Grow, PositionSwap};
 use crate::team_feed::PurifiedOutcome;
+use crate::{
+    enums::{Attribute, FeedEventType, ModificationType},
+    feed_event::{
+        EmojilessItem, FeedDelivery, FeedEvent, FeedEventParseError, FeedFallingStarOutcome,
+    },
+    time::{Breakpoints, Timestamp},
+    utils::extra_fields_deserialize,
+};
 
 #[serde_as]
 #[derive(Serialize, Deserialize, Debug, Clone)]
@@ -22,16 +29,16 @@ pub struct PlayerFeed {
 pub enum ParsedPlayerFeedEventText<S> {
     ParseError {
         error: FeedEventParseError,
-        text: S
+        text: S,
     },
     Delivery {
-        delivery: FeedDelivery<S>
+        delivery: FeedDelivery<S>,
     },
     Shipment {
-        delivery: FeedDelivery<S>
+        delivery: FeedDelivery<S>,
     },
     SpecialDelivery {
-        delivery: FeedDelivery<S>
+        delivery: FeedDelivery<S>,
     },
     DoorPrize {
         prize: FeedEventDoorPrize<S>,
@@ -66,28 +73,28 @@ pub enum ParsedPlayerFeedEventText<S> {
         amount: u8,
         attribute: Attribute,
         enchant_two: Option<(u8, Attribute)>,
-        compensatory: bool
+        compensatory: bool,
     },
 
     FallingStarOutcome {
         player_name: S,
-        outcome: FeedFallingStarOutcome
+        outcome: FeedFallingStarOutcome,
     },
     Recomposed {
         previous: S,
-        new: S
+        new: S,
     },
     Released {
-        team: S
+        team: S,
     },
     Retirement {
         previous: S,
-        new: Option<S>
+        new: Option<S>,
     },
     Modification {
         player_name: S,
         lost_modification: Option<ModificationType>,
-        modification: ModificationType
+        modification: ModificationType,
     },
     SeasonalDurabilityLoss {
         player_name: S,
@@ -113,7 +120,7 @@ pub enum ParsedPlayerFeedEventText<S> {
         swap: PositionSwap<S>,
     },
     PlayerGrow {
-        grow: Grow<S>
+        grow: Grow<S>,
     },
     GreaterAugment {
         player_name: S,
