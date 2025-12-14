@@ -1,4 +1,3 @@
-use std::fmt::Write;
 use std::fmt::Display;
 
 use serde::{Deserialize, Serialize};

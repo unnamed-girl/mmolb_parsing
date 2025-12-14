@@ -939,17 +939,17 @@ pub(super) fn feed_event_equipped_door_prize(input: &str) -> IResult<'_, &str, F
     }))
 }
 
-pub(super) fn feed_event_wither<'output>(input: &str) -> IResult<'_, &str, &str> {
+pub(super) fn feed_event_wither(input: &str) -> IResult<'_, &str, &str> {
     let (input, player_name) = parse_terminated(" was Corrupted by the 🥀 Wither.").parse(input)?;
 
     Ok((input, player_name))
 }
 
-pub(super) fn purified<'output>(input: &str) -> IResult<'_, &str, (&str, PurifiedOutcome)> {
+pub(super) fn purified(input: &str) -> IResult<'_, &str, (&str, PurifiedOutcome)> {
     alt((purified_with_payout, purified_without_payout, purified_efflorescence)).parse(input)
 }
 
-fn purified_with_payout<'output>(input: &str) -> IResult<'_, &str, (&str, PurifiedOutcome)> {
+fn purified_with_payout(input: &str) -> IResult<'_, &str, (&str, PurifiedOutcome)> {
     let (input, player_name) = parse_terminated(" was Purified of 🫀 Corruption and earned ").parse(input)?;
     let (input, payment) = u32.parse(input)?;
     let (input, _) = tag(" 🪙.").parse(input)?;
@@ -957,7 +957,7 @@ fn purified_with_payout<'output>(input: &str) -> IResult<'_, &str, (&str, Purifi
     Ok((input, (player_name, PurifiedOutcome::Payment(payment))))
 }
 
-fn purified_without_payout<'output>(input: &str) -> IResult<'_, &str, (&str, PurifiedOutcome)> {
+fn purified_without_payout(input: &str) -> IResult<'_, &str, (&str, PurifiedOutcome)> {
     let (input, player_name) = parse_terminated(" was Purified of 🫀 Corruption.").parse(input)?;
 
     let (input, no_corruption) = opt((tag(" "), tag(player_name), tag(" had no Corruption to remove."))).parse(input)?;
@@ -965,7 +965,7 @@ fn purified_without_payout<'output>(input: &str) -> IResult<'_, &str, (&str, Pur
     Ok((input, (player_name, if no_corruption.is_some() { PurifiedOutcome::NoCorruption } else { PurifiedOutcome::None })))
 }
 
-fn purified_efflorescence<'output>(input: &str) -> IResult<'_, &str, (&str, PurifiedOutcome)> {
+fn purified_efflorescence(input: &str) -> IResult<'_, &str, (&str, PurifiedOutcome)> {
     let (input, player_name) = parse_terminated(" was Purified of 🌹 Efflorescence, earned ").parse(input)?;
     let (input, payment) = u32.parse(input)?;
     let (input, _) = tag(" 🪙, and gained 🦠 Immunity.").parse(input)?;
@@ -1139,7 +1139,7 @@ fn grow_attribute_change(input: &str) -> IResult<'_, &str, GrowAttributeChange> 
     }))
 }
 
-pub(super) fn grow<'output>(input: &str) -> IResult<'_, &str, Grow<&str>>{
+pub(super) fn grow(input: &str) -> IResult<'_, &str, Grow<&str>>{
     let (input, player_name) = parse_terminated("'s Corruption grew: ").parse(input)?;
 
     // Decided to do this manually vs. with combinators because it's only 3 entries
@@ -1213,7 +1213,7 @@ fn deflected_falling_star_harmlessly(input: &str) -> IResult<'_, &str, &str> {
     Ok((input, player_name))
 }
 
-pub(super) fn player_relegated<'output>(input: &str) -> IResult<'_, &str, &str> {
+pub(super) fn player_relegated(input: &str) -> IResult<'_, &str, &str> {
     // This might be team emoji, not sure
     let (input, _) = tag("🧳 ").parse(input)?;
     let (input, player_name) = parse_terminated(" was relegated to the Even Lesser League.").parse(input)?;
@@ -1277,10 +1277,6 @@ pub fn received_text(season: u32, day: Option<Day>, event_index: Option<u16>) ->
 
 pub fn discarded_text(season: u32, day: Option<Day>, event_index: Option<u16>) -> &'static str {
     if Breakpoints::Season5TenseChange.after(season, day, event_index) { " They discard their " } else { " They discarded their " }
-}
-
-pub fn was_is_text(season: u32, day: Option<Day>, event_index: Option<u16>) -> &'static str {
-    if Breakpoints::Season5TenseChange.after(season, day, event_index) { "was" } else { "is" }
 }
 
 #[cfg(test)]

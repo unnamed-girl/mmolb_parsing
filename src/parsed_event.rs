@@ -559,7 +559,7 @@ impl<S: Display> ParsedEventMessage<S> {
     }
 }
 
-fn unparse_fielders<S:Display>(fielders: &Vec<PlacedPlayer<S>>) -> String {
+fn unparse_fielders<S:Display>(fielders: &[PlacedPlayer<S>]) -> String {
     match fielders.len() {
         0 => panic!("0-fielders"),
         1 => format!(" to {}", fielders.first().unwrap()),
@@ -567,14 +567,14 @@ fn unparse_fielders<S:Display>(fielders: &Vec<PlacedPlayer<S>>) -> String {
     }
 }
 
-fn unparse_fielders_for_play<S:Display>(fielders: &Vec<PlacedPlayer<S>>) -> String {
+fn unparse_fielders_for_play<S:Display>(fielders: &[PlacedPlayer<S>]) -> String {
     match fielders.len() {
         0 => panic!("0-fielders"),
         1 => format!(", {} unassisted", fielders.first().unwrap()),
         _ => format!(", {}", fielders.iter().map(PlacedPlayer::to_string).collect::<Vec<_>>().join(" to "))
     }
 }
-fn unparse_scores_and_advances<S: Display>(scores: &Vec<S>, advances: &Vec<RunnerAdvance<S>>) -> String {
+fn unparse_scores_and_advances<S: Display>(scores: &[S], advances: &[RunnerAdvance<S>]) -> String {
     once(String::new()).chain(scores.iter().map(|runner| format!("<strong>{runner} scores!</strong>"))
         .chain(advances.iter().map(|advance| advance.to_string())))
         .collect::<Vec<_>>()
@@ -632,7 +632,7 @@ impl<S: Display> Display for EmojiTeam<S> {
 }
 
 impl<S: AsRef<str>> EmojiTeam<S> {
-    fn as_ref(&self) -> EmojiTeam<&str> {
+    pub fn as_ref(&self) -> EmojiTeam<&str> {
         EmojiTeam {
             emoji: self.emoji.as_ref(),
             name: self.name.as_ref(),
@@ -651,7 +651,7 @@ impl<S: Display> Display for EmojiPlayer<S> {
 }
 
 impl<S: AsRef<str>> EmojiPlayer<S> {
-    fn as_ref(&self) -> EmojiPlayer<&str> {
+    pub fn as_ref(&self) -> EmojiPlayer<&str> {
         EmojiPlayer {
             emoji: self.emoji.as_ref(),
             name: self.name.as_ref(),
@@ -671,7 +671,7 @@ impl<S: Display> Display for PlacedPlayer<S> {
 }
 
 impl<S: AsRef<str>> PlacedPlayer<S> {
-    fn as_ref(&self) -> PlacedPlayer<&str> {
+    pub fn as_ref(&self) -> PlacedPlayer<&str> {
         PlacedPlayer {
             name: self.name.as_ref(),
             place: self.place,
@@ -1497,10 +1497,7 @@ pub enum ItemEquip<S> {
 
 impl<S> ItemEquip<S> {
     pub fn is_none(&self) -> bool {
-        match self {
-            ItemEquip::None => true,
-            _ => false,
-        }
+        matches!(self, ItemEquip::None)
     }
 }
 

@@ -160,10 +160,9 @@ pub(crate) fn extra_fields_deserialize<'de, D>(deserializer: D) -> Result<serde_
     Ok(result)
 }
 
+/// Couldn't parse this value, usually because it's a new mmolb feature we haven't handled yet.
 #[derive(Debug, Clone, PartialEq, Eq, Hash, Serialize, Deserialize, Error)]
 #[serde(transparent)]
-/// Couldn't parse this value, usually because it's a new mmolb feature we haven't handled yet.
-
 #[error("failed to parse value: {}", .0)]
 pub struct NotRecognized(pub serde_json::Value);
 

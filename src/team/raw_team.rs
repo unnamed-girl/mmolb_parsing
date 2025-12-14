@@ -46,7 +46,7 @@ impl From<RawTeamPlayer> for TeamPlayer {
 
 impl From<TeamPlayer> for RawTeamPlayer {
     fn from(value: TeamPlayer) -> Self {
-        let TeamPlayer { emoji, first_name, last_name, number, player_id, actual_position, position, slot, position_type, stats, extra_fields } = value;
+        let TeamPlayer { emoji, first_name, last_name, number, player_id, actual_position, position: _, slot, position_type, stats, extra_fields } = value;
 
         RawTeamPlayer { emoji, first_name, last_name, number, player_id, position: actual_position, slot, position_type, stats, extra_fields }
     }

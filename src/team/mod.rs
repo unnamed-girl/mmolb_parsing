@@ -1,4 +1,4 @@
- mod raw_team;
- mod team;
+mod raw_team;
+mod team;
 
 pub use team::{Team, TeamPlayer, TeamRecord, TeamPlayerCollection};
