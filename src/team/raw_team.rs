@@ -1,11 +1,17 @@
 use std::collections::HashMap;
 
-use serde::{Serialize, Deserialize};
+use serde::{Deserialize, Serialize};
 use serde_with::serde_as;
 
-use crate::{enums::{GameStat, PositionType, Slot}, utils::{maybe_recognized_from_str, AddedLaterResult, extra_fields_deserialize, MaybeRecognizedResult}};
-use crate::utils::{MaybeRecognizedHelper, SometimesMissingHelper};
 use super::team::TeamPlayer;
+use crate::utils::{MaybeRecognizedHelper, SometimesMissingHelper};
+use crate::{
+    enums::{GameStat, PositionType, Slot},
+    utils::{
+        extra_fields_deserialize, maybe_recognized_from_str, AddedLaterResult,
+        MaybeRecognizedResult,
+    },
+};
 
 #[serde_as]
 #[derive(Serialize, Deserialize, Debug, Clone)]
@@ -19,14 +25,23 @@ pub(crate) struct RawTeamPlayer {
     pub player_id: String,
     pub position: String,
     #[serde_as(as = "SometimesMissingHelper<MaybeRecognizedHelper<_>>")]
-    #[serde(default = "SometimesMissingHelper::default_result", skip_serializing_if = "AddedLaterResult::is_err")]
+    #[serde(
+        default = "SometimesMissingHelper::default_result",
+        skip_serializing_if = "AddedLaterResult::is_err"
+    )]
     pub slot: AddedLaterResult<MaybeRecognizedResult<Slot>>,
     #[serde_as(as = "SometimesMissingHelper<MaybeRecognizedHelper<_>>")]
-    #[serde(default = "SometimesMissingHelper::default_result", skip_serializing_if = "AddedLaterResult::is_err")]
+    #[serde(
+        default = "SometimesMissingHelper::default_result",
+        skip_serializing_if = "AddedLaterResult::is_err"
+    )]
     pub position_type: AddedLaterResult<MaybeRecognizedResult<PositionType>>,
 
     #[serde_as(as = "SometimesMissingHelper<HashMap<MaybeRecognizedHelper<_>, _>>")]
-    #[serde(default = "SometimesMissingHelper::default_result", skip_serializing_if = "AddedLaterResult::is_err")]
+    #[serde(
+        default = "SometimesMissingHelper::default_result",
+        skip_serializing_if = "AddedLaterResult::is_err"
+    )]
     pub stats: AddedLaterResult<HashMap<MaybeRecognizedResult<GameStat>, i32>>,
 
     #[serde(flatten, deserialize_with = "extra_fields_deserialize")]
@@ -35,19 +50,65 @@ pub(crate) struct RawTeamPlayer {
 
 impl From<RawTeamPlayer> for TeamPlayer {
     fn from(value: RawTeamPlayer) -> Self {
-        let RawTeamPlayer { emoji, first_name, last_name, number, player_id, position, slot, position_type, stats, extra_fields } = value;
+        let RawTeamPlayer {
+            emoji,
+            first_name,
+            last_name,
+            number,
+            player_id,
+            position,
+            slot,
+            position_type,
+            stats,
+            extra_fields,
+        } = value;
 
         // Undrafted player's positions are deeply unreliable
         let filtered_position = (player_id != "#").then(|| maybe_recognized_from_str(&position));
 
-        TeamPlayer { emoji, first_name, last_name, number, player_id, actual_position: position, position: filtered_position, slot, position_type, stats, extra_fields }
+        TeamPlayer {
+            emoji,
+            first_name,
+            last_name,
+            number,
+            player_id,
+            actual_position: position,
+            position: filtered_position,
+            slot,
+            position_type,
+            stats,
+            extra_fields,
+        }
     }
 }
 
 impl From<TeamPlayer> for RawTeamPlayer {
     fn from(value: TeamPlayer) -> Self {
-        let TeamPlayer { emoji, first_name, last_name, number, player_id, actual_position, position, slot, position_type, stats, extra_fields } = value;
+        let TeamPlayer {
+            emoji,
+            first_name,
+            last_name,
+            number,
+            player_id,
+            actual_position,
+            position: _,
+            slot,
+            position_type,
+            stats,
+            extra_fields,
+        } = value;
 
-        RawTeamPlayer { emoji, first_name, last_name, number, player_id, position: actual_position, slot, position_type, stats, extra_fields }
+        RawTeamPlayer {
+            emoji,
+            first_name,
+            last_name,
+            number,
+            player_id,
+            position: actual_position,
+            slot,
+            position_type,
+            stats,
+            extra_fields,
+        }
     }
 }

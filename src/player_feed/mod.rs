@@ -3,9 +3,18 @@ use std::fmt::Display;
 use serde::{Deserialize, Serialize};
 use serde_with::serde_as;
 
-use crate::{enums::{Attribute, FeedEventType, ModificationType}, feed_event::{EmojilessItem, FeedDelivery, FeedEvent, FeedEventParseError, FeedFallingStarOutcome}, time::{Breakpoints, Timestamp}, utils::extra_fields_deserialize};
-
+use crate::feed_event::PlayerGreaterAugment;
 pub use crate::nom_parsing::parse_player_feed_event::parse_player_feed_event;
+use crate::nom_parsing::shared::{FeedEventDoorPrize, FeedEventParty, Grow, PositionSwap};
+use crate::team_feed::PurifiedOutcome;
+use crate::{
+    enums::{Attribute, FeedEventType, ModificationType},
+    feed_event::{
+        EmojilessItem, FeedDelivery, FeedEvent, FeedEventParseError, FeedFallingStarOutcome,
+    },
+    time::{Breakpoints, Timestamp},
+    utils::extra_fields_deserialize,
+};
 
 #[serde_as]
 #[derive(Serialize, Deserialize, Debug, Clone)]
@@ -20,16 +29,19 @@ pub struct PlayerFeed {
 pub enum ParsedPlayerFeedEventText<S> {
     ParseError {
         error: FeedEventParseError,
-        text: S
+        text: S,
     },
     Delivery {
-        delivery: FeedDelivery<S>
+        delivery: FeedDelivery<S>,
     },
     Shipment {
-        delivery: FeedDelivery<S>
+        delivery: FeedDelivery<S>,
     },
     SpecialDelivery {
-        delivery: FeedDelivery<S>
+        delivery: FeedDelivery<S>,
+    },
+    DoorPrize {
+        prize: FeedEventDoorPrize<S>,
     },
     AttributeChanges {
         player_name: S,
@@ -61,28 +73,78 @@ pub enum ParsedPlayerFeedEventText<S> {
         amount: u8,
         attribute: Attribute,
         enchant_two: Option<(u8, Attribute)>,
-        compensatory: bool
+        compensatory: bool,
     },
 
     FallingStarOutcome {
         player_name: S,
-        outcome: FeedFallingStarOutcome
+        outcome: FeedFallingStarOutcome,
     },
     Recomposed {
         previous: S,
-        new: S
+        new: S,
     },
     Released {
-        team: S
+        team: S,
     },
     Retirement {
         previous: S,
-        new: Option<S>
+        new: Option<S>,
     },
     Modification {
         player_name: S,
         lost_modification: Option<ModificationType>,
-        modification: ModificationType
+        modification: ModificationType,
+    },
+    SeasonalDurabilityLoss {
+        player_name: S,
+        // None means that the Prolific boon resisted the durability loss
+        durability_lost: Option<u32>,
+        season: u32,
+    },
+    CorruptedByWither {
+        player_name: S,
+    },
+    Purified {
+        player_name: S,
+        outcome: PurifiedOutcome,
+    },
+    Party {
+        party: FeedEventParty<S>,
+    },
+    PlayerContained {
+        contained_player_name: S,
+        container_player_name: S,
+    },
+    PlayerPositionsSwapped {
+        swap: PositionSwap<S>,
+    },
+    PlayerGrow {
+        grow: Grow<S>,
+    },
+    GreaterAugment {
+        player_name: S,
+        greater_augment: PlayerGreaterAugment,
+    },
+    // This is for players who incorrectly received a GreaterAugment and then later
+    // had it retracted
+    RetractedGreaterAugment {
+        player_name: S,
+        greater_augment: PlayerGreaterAugment,
+    },
+    // This is the counterpoint of RetractedGreaterAugment. It's the players who were
+    // supposed to have received the original GreaterAugment but didn't get it until
+    // later
+    RetroactiveGreaterAugment {
+        player_name: S,
+        greater_augment: PlayerGreaterAugment,
+    },
+    PlayerRelegated {
+        player_name: S,
+    },
+    PlayerMoved {
+        team_emoji: S,
+        player_name: S,
     },
 }
 
@@ -90,21 +152,12 @@ impl<S: Display> ParsedPlayerFeedEventText<S> {
     pub fn unparse(&self, event: &FeedEvent) -> String {
         match self {
             ParsedPlayerFeedEventText::ParseError { error: _, text } => text.to_string(),
-            ParsedPlayerFeedEventText::Delivery { delivery } => delivery.unparse("Delivery"),
-            ParsedPlayerFeedEventText::SpecialDelivery { delivery } => delivery.unparse("Special Delivery"),
-            ParsedPlayerFeedEventText::Shipment { delivery } => delivery.unparse("Shipment"),
+            ParsedPlayerFeedEventText::Delivery { delivery } => delivery.unparse(event, "Delivery"),
+            ParsedPlayerFeedEventText::SpecialDelivery { delivery } => delivery.unparse(event, "Special Delivery"),
+            ParsedPlayerFeedEventText::Shipment { delivery } => delivery.unparse(event, "Shipment"),
+            ParsedPlayerFeedEventText::DoorPrize { prize } => prize.to_string(),
             ParsedPlayerFeedEventText::FallingStarOutcome { player_name, outcome } => {
-                match outcome {
-                    FeedFallingStarOutcome::Injury => {
-                        if event.after(Breakpoints::EternalBattle) {
-                            format!("{player_name} was injured by the extreme force of the impact!")
-                        } else {
-                            format!("{player_name} was hit by a Falling Star!")
-                        }
-                    },
-                    FeedFallingStarOutcome::Infusion(infusion_tier) => format!("{player_name} {infusion_tier}"),
-                    FeedFallingStarOutcome::DeflectedHarmlessly => format!("It deflected off {player_name} harmlessly.")
-                }
+                outcome.unparse(event, player_name)
             }
             ParsedPlayerFeedEventText::AttributeChanges { player_name, amount, attribute } => format!("{player_name} gained +{amount} {attribute}."),
             ParsedPlayerFeedEventText::AttributeEquals { player_name, changing_attribute, value_attribute } => {
@@ -162,6 +215,65 @@ impl<S: Display> ParsedPlayerFeedEventText<S> {
                 let new = new.as_ref().map(|new| format!(" {new} was called up to take their place.")).unwrap_or_default();
                 let emoji = (matches!(event.event_type, Ok(FeedEventType::Game))).then_some("😇 ").unwrap_or_default();
                 format!("{emoji}{previous} retired from MMOLB!{new}")
+            }
+            ParsedPlayerFeedEventText::SeasonalDurabilityLoss { player_name, durability_lost, season } => {
+                if let Some(durability_lost) = durability_lost {
+                    format!("{player_name} lost {durability_lost} durability for playing in Season {season}.")
+                } else {
+                    format!("{player_name}'s Prolific Greater Boon resisted Durability loss for Season {season}.")
+                }
+            }
+            ParsedPlayerFeedEventText::CorruptedByWither { player_name } => {
+                format!("{player_name} was Corrupted by the 🥀 Wither.")
+            }
+            ParsedPlayerFeedEventText::Purified { player_name, outcome } => {
+                outcome.unparse(player_name)
+            }
+            ParsedPlayerFeedEventText::Party { party } => {
+                format!("{party}")
+            }
+            ParsedPlayerFeedEventText::PlayerContained { contained_player_name, container_player_name } => {
+                // TODO Dedup with player feed
+                format!(
+                    "{contained_player_name} was contained by {container_player_name} during the \
+                    🥀 Wither.",
+                )
+            }
+            ParsedPlayerFeedEventText::PlayerPositionsSwapped { swap } => {
+                format!("{swap}")
+            }
+            ParsedPlayerFeedEventText::PlayerGrow { grow } => {
+                format!("{grow}")
+            }
+            ParsedPlayerFeedEventText::GreaterAugment { player_name, greater_augment } => {
+                match greater_augment {
+                    PlayerGreaterAugment::Headliners { attribute } => format!("{player_name} gained +75 {attribute}."),
+                    PlayerGreaterAugment::StartSmall { attribute } => format!("{player_name} gained +50 {attribute}."),
+                    PlayerGreaterAugment::Plating => format!("{player_name} gained +10 to all Defense Attributes"),
+                    PlayerGreaterAugment::LuckyDelivery => format!("{player_name} gained +10 to all Defense Attributes"),
+                }
+            }
+            ParsedPlayerFeedEventText::RetractedGreaterAugment { player_name, greater_augment } => {
+                match greater_augment {
+                    PlayerGreaterAugment::Headliners { attribute } => format!("{player_name} lost 0.75 from {attribute}."),
+                    PlayerGreaterAugment::StartSmall { attribute } => format!("{player_name} lost 0.5 from {attribute}."),
+                    PlayerGreaterAugment::Plating => format!("{player_name} lost 0.1 to all Defense Attributes"),
+                    PlayerGreaterAugment::LuckyDelivery => format!("{player_name} lost 0.1 to all Defense Attributes"),
+                }
+            }
+            ParsedPlayerFeedEventText::RetroactiveGreaterAugment { player_name, greater_augment } => {
+                match greater_augment {
+                    PlayerGreaterAugment::Headliners { attribute } => format!("{player_name} gained +0.75 to {attribute}."),
+                    PlayerGreaterAugment::StartSmall { attribute } => format!("{player_name} gained +0.5 to {attribute}."),
+                    PlayerGreaterAugment::Plating => format!("{player_name} gained +0.1 to all Defense Attributes."),
+                    PlayerGreaterAugment::LuckyDelivery => format!("{player_name} gained +0.1 to all Defense Attributes."),
+                }
+            }
+            ParsedPlayerFeedEventText::PlayerRelegated { player_name } => {
+                format!("🧳 {player_name} was relegated to the Even Lesser League.")
+            },
+            ParsedPlayerFeedEventText::PlayerMoved { team_emoji, player_name } => {
+                format!("{team_emoji} {player_name} was moved to the Bench.")
             }
         }
     }

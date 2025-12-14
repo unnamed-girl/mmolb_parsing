@@ -1,9 +1,13 @@
 use std::collections::HashMap;
 
-use crate::{enums::{Day, GameStat, LeagueScale, SeasonStatus, Slot}, game::{Event, PitcherEntry, Weather}, utils::{AddedLaterResult, extra_fields_deserialize, MaybeRecognizedResult}};
-use crate::utils::{MaybeRecognizedHelper, SometimesMissingHelper, ExpectNone};
+use crate::utils::{ExpectNone, MaybeRecognizedHelper, SometimesMissingHelper};
+use crate::{
+    enums::{Day, GameStat, LeagueScale, SeasonStatus, Slot},
+    game::{Event, PitcherEntry, Weather},
+    utils::{extra_fields_deserialize, AddedLaterResult, MaybeRecognizedResult},
+};
 
-use serde::{Serialize, Deserialize};
+use serde::{Deserialize, Serialize};
 use serde_with::serde_as;
 
 #[serde_as]
@@ -37,30 +41,43 @@ pub struct Game {
     #[serde(rename = "Realm")]
     pub realm_id: String,
 
-    #[serde(default = "SometimesMissingHelper::default_result", skip_serializing_if = "Result::is_err")]
+    #[serde(
+        default = "SometimesMissingHelper::default_result",
+        skip_serializing_if = "Result::is_err"
+    )]
     #[serde_as(as = "SometimesMissingHelper<_>")]
     pub ballpark_name: AddedLaterResult<String>,
-    
+
     /// TeamID -> PlayerID -> Stat -> Value
     #[serde_as(as = "HashMap<_, HashMap<_, HashMap<MaybeRecognizedHelper<_>, _>>>")]
     pub stats: HashMap<String, HashMap<String, HashMap<MaybeRecognizedResult<GameStat>, i32>>>,
 
     /// PitcherEntries were not retroactively added to old games
-    /// 
+    ///
     /// TeamID -> PitcherEntry for that team.
-    #[serde(rename = "PitcherEntry", default = "SometimesMissingHelper::default_result", skip_serializing_if = "AddedLaterResult::is_err")]
+    #[serde(
+        rename = "PitcherEntry",
+        default = "SometimesMissingHelper::default_result",
+        skip_serializing_if = "AddedLaterResult::is_err"
+    )]
     #[serde_as(as = "SometimesMissingHelper<_>")]
     pub pitcher_entries: AddedLaterResult<HashMap<String, PitcherEntry>>,
 
-    #[serde(default = "SometimesMissingHelper::default_result", skip_serializing_if = "Result::is_err")]
+    #[serde(
+        default = "SometimesMissingHelper::default_result",
+        skip_serializing_if = "Result::is_err"
+    )]
     #[serde_as(as = "SometimesMissingHelper<_>")]
     /// TODO
     pub(crate) current_pitcher_state: AddedLaterResult<serde_json::Value>,
-    
+
     /// PitchersUsed was not retroactively added to old games
-    /// 
+    ///
     /// TeamID -> List of pitchers for that team.
-    #[serde(default = "SometimesMissingHelper::default_result", skip_serializing_if = "AddedLaterResult::is_err")]
+    #[serde(
+        default = "SometimesMissingHelper::default_result",
+        skip_serializing_if = "AddedLaterResult::is_err"
+    )]
     #[serde_as(as = "SometimesMissingHelper<_>")]
     pub pitchers_used: AddedLaterResult<HashMap<String, Vec<String>>>,
 
@@ -78,39 +95,62 @@ pub struct Game {
     #[serde_as(as = "MaybeRecognizedHelper<_>")]
     pub league_scale: MaybeRecognizedResult<LeagueScale>,
 
-    #[serde(default = "SometimesMissingHelper::default_result", skip_serializing_if = "AddedLaterResult::is_err")]
+    #[serde(
+        default = "SometimesMissingHelper::default_result",
+        skip_serializing_if = "AddedLaterResult::is_err"
+    )]
     #[serde_as(as = "SometimesMissingHelper<ExpectNone<_>>")]
     pub(super) hype_end_index: AddedLaterResult<Option<serde_json::Value>>,
 
-    
-    #[serde(default = "SometimesMissingHelper::default_result", skip_serializing_if = "Result::is_err")]
+    #[serde(
+        default = "SometimesMissingHelper::default_result",
+        skip_serializing_if = "Result::is_err"
+    )]
     #[serde_as(as = "SometimesMissingHelper<_>")]
     pub aurora_photos: AddedLaterResult<Vec<AuroraPhoto>>,
 
-    #[serde(default = "SometimesMissingHelper::default_result", skip_serializing_if = "Result::is_err")]
+    #[serde(
+        default = "SometimesMissingHelper::default_result",
+        skip_serializing_if = "Result::is_err"
+    )]
     #[serde_as(as = "SometimesMissingHelper<_>")]
     /// ids
     pub ejected_players: AddedLaterResult<Vec<String>>,
 
-    #[serde(default = "SometimesMissingHelper::default_result", skip_serializing_if = "Result::is_err")]
+    #[serde(
+        default = "SometimesMissingHelper::default_result",
+        skip_serializing_if = "Result::is_err"
+    )]
     #[serde_as(as = "SometimesMissingHelper<_>")]
     pub geomagnetic_pending: AddedLaterResult<bool>,
 
-    #[serde(default = "SometimesMissingHelper::default_result", skip_serializing_if = "Result::is_err")]
+    #[serde(
+        default = "SometimesMissingHelper::default_result",
+        skip_serializing_if = "Result::is_err"
+    )]
     #[serde_as(as = "SometimesMissingHelper<_>")]
     /// Team id => bench
     pub original_bench: AddedLaterResult<HashMap<String, Bench>>,
 
-    #[serde(default = "SometimesMissingHelper::default_result", skip_serializing_if = "Result::is_err")]
+    #[serde(
+        default = "SometimesMissingHelper::default_result",
+        skip_serializing_if = "Result::is_err"
+    )]
     #[serde_as(as = "SometimesMissingHelper<_>")]
     /// Team id => slot => player id
     pub original_rosters: AddedLaterResult<HashMap<String, HashMap<Slot, String>>>,
 
-    #[serde(default = "SometimesMissingHelper::default_result", skip_serializing_if = "Result::is_err")]
+    #[serde(
+        default = "SometimesMissingHelper::default_result",
+        skip_serializing_if = "Result::is_err"
+    )]
     #[serde_as(as = "SometimesMissingHelper<_>")]
     /// TODO
     pub(super) pending_save: AddedLaterResult<HashMap<String, serde_json::Value>>,
-    #[serde(default = "SometimesMissingHelper::default_result", skip_serializing_if = "Result::is_err")]
+    #[serde(
+        default = "SometimesMissingHelper::default_result",
+        skip_serializing_if = "Result::is_err"
+    )]
     #[serde_as(as = "SometimesMissingHelper<_>")]
     /// TODO
     pub(super) hold_candidates: AddedLaterResult<HashMap<String, Vec<serde_json::Value>>>,
@@ -127,7 +167,7 @@ pub struct AuroraPhoto {
     /// id
     pub player: String,
     pub slot: Slot,
-    pub team: String
+    pub team: String,
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
@@ -136,5 +176,5 @@ pub struct Bench {
     /// ids
     pub batters: Vec<String>,
     /// ids
-    pub pitchers: Vec<String>
+    pub pitchers: Vec<String>,
 }
