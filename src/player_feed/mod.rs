@@ -257,7 +257,7 @@ impl<S: Display> ParsedPlayerFeedEventText<S> {
             ParsedPlayerFeedEventText::RetroactiveGreaterAugment { player_name, greater_augment } => {
                 match greater_augment {
                     PlayerGreaterAugment::Headliners { attribute } => format!("{player_name} gained +0.75 to {attribute}."),
-                    PlayerGreaterAugment::StartSmall { attribute } => format!("{player_name} gained +0.5 {attribute}."),
+                    PlayerGreaterAugment::StartSmall { attribute } => format!("{player_name} gained +0.5 to {attribute}."),
                     PlayerGreaterAugment::Plating => format!("{player_name} gained +0.1 to all Defense Attributes."),
                     PlayerGreaterAugment::LuckyDelivery => format!("{player_name} gained +0.1 to all Defense Attributes."),
                 }

@@ -300,7 +300,7 @@ fn player_retroactive_greater_augment_result(input: &str) -> IResult<&str, Parse
     let (input, (player_name, greater_augment)) = alt((
         parse_terminated(" gained +0.1 to all Defense Attributes.").map(|p| (p, PlayerGreaterAugment::Plating)),
         terminated((parse_terminated(" gained +0.75 to "), try_from_word), tag(".")).map(|(p, attribute)| (p, PlayerGreaterAugment::Headliners { attribute })),
-        terminated((parse_terminated(" gained +0.50 "), try_from_word), tag(".")).map(|(p, attribute)| (p, PlayerGreaterAugment::StartSmall { attribute })),
+        terminated((parse_terminated(" gained +0.5 to "), try_from_word), tag(".")).map(|(p, attribute)| (p, PlayerGreaterAugment::StartSmall { attribute })),
     )).parse(input)?;
 
     Ok((input, ParsedPlayerFeedEventText::RetroactiveGreaterAugment { player_name, greater_augment }))
