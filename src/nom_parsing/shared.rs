@@ -7,12 +7,12 @@ use nom::combinator::eof;
 use nom::number::double;
 use nom_language::error::VerboseError;
 
-use crate::{enums::{Base, BatterStat, Day, FairBallDestination, FairBallType, HomeAway, NowBattingStats, Place}, feed_event::{EmojilessItem, FeedDelivery, FeedEvent}, game::Event, parsed_event::{BaseSteal, Cheer, Delivery, DoorPrize, Ejection, EjectionReason, EmojiTeam, Item, ItemAffixes, PlacedPlayer, Prize, RunnerAdvance, RunnerOut, SnappedPhotos, ViolationType}, player, time::{Breakpoints, Time}, Game};
+use crate::{enums::{Base, BatterStat, Day, FairBallDestination, FairBallType, HomeAway, NowBattingStats, Place}, feed_event::{EmojilessItem, FeedDelivery, FeedEvent}, game::Event, parsed_event::{BaseSteal, Cheer, Delivery, DoorPrize, Ejection, EjectionReason, EmojiTeam, Item, ItemAffixes, PlacedPlayer, Prize, RunnerAdvance, RunnerOut, SnappedPhotos, ViolationType}, time::{Breakpoints, Time}, Game};
 use crate::enums::{Attribute, BenchSlot, CelestialEnergyTier, FullSlot, ModificationType, Slot};
 use crate::feed_event::FeedFallingStarOutcome;
 use crate::parsed_event::{Efflorescence, EfflorescenceOutcome, EjectionReplacement, ItemEquip, ItemPrize, WitherStruggle};
 use crate::player::{Deserialize, Serialize};
-use crate::team_feed::{ParsedTeamFeedEventText, PurifiedOutcome};
+use crate::team_feed::PurifiedOutcome;
 
 pub(super) type Error<'a> = VerboseError<&'a str>;
 pub(super) type IResult<'a, I, O> = nom::IResult<I, O, Error<'a>>;
@@ -107,7 +107,7 @@ pub(super) fn exclamation<'output, E: ParseError<&'output str>, F: Parser<&'outp
 }
 
 /// Takes until it sees punctuation or a space.
-pub(super) fn word(s: &str) -> IResult<&str, &str> {
+pub(super) fn word(s: &str) -> IResult<'_, &str, &str> {
     take_while(|char| ![',', '.', ' ', '!', '<', '>', ':', ';'].contains(&char)).parse(s)
 }
 
@@ -118,7 +118,7 @@ pub(super) fn words<'output>(n: usize) -> impl Parser<&'output str, Output = &'o
 }
 
 /// Verb names for fair ball types, e.g. "pops"
-pub(super) fn fair_ball_type_verb_name(i: &str) -> IResult<&str, FairBallType> {
+pub(super) fn fair_ball_type_verb_name(i: &str) -> IResult<'_, &str, FairBallType> {
     word.map_opt(|word| match word {
         "grounds" => Some(FairBallType::GroundBall),
         "flies" => Some(FairBallType::FlyBall),
@@ -128,7 +128,7 @@ pub(super) fn fair_ball_type_verb_name(i: &str) -> IResult<&str, FairBallType> {
     }).parse(i)
 }
 /// Verb names for fly ball types, e.g. "pops"
-pub(super) fn fly_ball_type_verb_name(i: &str) -> IResult<&str, FairBallType> {
+pub(super) fn fly_ball_type_verb_name(i: &str) -> IResult<'_, &str, FairBallType> {
     word.map_opt(|word| match word {
         "flies" => Some(FairBallType::FlyBall),
         "lines" => Some(FairBallType::LineDrive),
@@ -138,7 +138,7 @@ pub(super) fn fly_ball_type_verb_name(i: &str) -> IResult<&str, FairBallType> {
 }
 
 /// A destination for a fair ball, e.g. "the shortstop"
-pub(super) fn destination(i: &str) -> IResult<&str, FairBallDestination> {
+pub(super) fn destination(i: &str) -> IResult<'_, &str, FairBallDestination> {
     words(2).map_res(FairBallDestination::try_from)
         .parse(i)
 }
@@ -151,17 +151,14 @@ pub(super) fn try_from_word<'output, T:FromStr>(i: &'output str) -> IResult<'out
 pub(super) fn try_from_words_m_n<'output, T:FromStr>(m: usize, n:usize) -> impl MyParser<'output, T> {
     move |input: &'output str| {
         for i in (m..=n).rev() {
-            match words(i).map_res(T::from_str).parse(input) {
-                Ok(o) => return Ok(o),
-                Err(_) => ()
-            }
+            if let Ok(o) = words(i).map_res(T::from_str).parse(input) { return Ok(o) }
         }
         Err(nom::Err::Error(VerboseError::<&str>::from_error_kind(input, ErrorKind::MapRes)))
     }
 }
 
 /// A list of fielders involved in a catch, e.g. "P Niblet Hornsby to 1B Geo Kerr to 3B Joffrey Nishida"
-pub(super) fn fielders_eof(input: &str) -> IResult<&str, Vec<PlacedPlayer<&str>>> {
+pub(super) fn fielders_eof(input: &str) -> IResult<'_, &str, Vec<PlacedPlayer<&str>>> {
     all_consuming(alt((
         (
             many1(parse_terminated(" to ").and_then(placed_player_eof)),
@@ -176,7 +173,7 @@ pub(super) fn fielders_eof(input: &str) -> IResult<&str, Vec<PlacedPlayer<&str>>
 }
 
 /// A single instance of an out, e.g. "Franklin Shoebill out at home"
-pub(super) fn out(input: &str) -> IResult<&str, RunnerOut<&str>> {
+pub(super) fn out(input: &str) -> IResult<'_, &str, RunnerOut<&str>> {
     (
         parse_terminated(" out at ").and_then(name_eof),
         try_from_words_m_n(1,2)
@@ -186,20 +183,20 @@ pub(super) fn out(input: &str) -> IResult<&str, RunnerOut<&str>> {
 }
 
 /// A single instance of a runner scoring, e.g. "<bold>Franklin Shoebill scores!</bold>"
-pub(super) fn scores_sentence(input: &str) -> IResult<&str, &str> {
+pub(super) fn scores_sentence(input: &str) -> IResult<'_, &str, &str> {
     bold(exclamation(parse_terminated(" scores").and_then(name_eof)))
     .parse(input)
 }
 
 // A single instance of a runner advancing, e.g. "Franklin shoebill to third base."
-pub fn runner_advance_sentence(input: &str) -> IResult<&str, RunnerAdvance<&str>> {
+pub fn runner_advance_sentence(input: &str) -> IResult<'_, &str, RunnerAdvance<&str>> {
     sentence((parse_terminated(" to ").and_then(name_eof), terminated(try_from_word, tag(" base"))))
     .map(|(runner, base)| RunnerAdvance {runner, base})
     .parse(input)
 }
 
 /// The suffix of an ordinal, e.g. the "th" of 4th
-pub(super) fn ordinal_suffix(i: &str) -> IResult<&str, &str> {
+pub(super) fn ordinal_suffix(i: &str) -> IResult<'_, &str, &str> {
     alt((
         tag("th"),
         tag("rd"),
@@ -209,7 +206,7 @@ pub(super) fn ordinal_suffix(i: &str) -> IResult<&str, &str> {
 }
 
 /// Any number of runners scoring followed by any number of runners advancing
-pub(super) fn scores_and_advances(input: &str) -> IResult<&str, (Vec<&str>, Vec<RunnerAdvance<&str>>)> {
+pub(super) fn scores_and_advances(input: &str) -> IResult<'_, &str, (Vec<&str>, Vec<RunnerAdvance<&str>>)> {
     (
         many0(scores_sentence),
         many0(runner_advance_sentence)
@@ -217,7 +214,7 @@ pub(super) fn scores_and_advances(input: &str) -> IResult<&str, (Vec<&str>, Vec<
     .parse(input)
 }
 
-pub(super) fn base_steal_sentence(input: &str) -> IResult<&str, BaseSteal<&str>> {
+pub(super) fn base_steal_sentence(input: &str) -> IResult<'_, &str, BaseSteal<&str>> {
     let home_steal = bold(exclamation(parse_terminated(" steals home")))
     .map(|runner| BaseSteal { runner, base:Base::Home, caught:false });
 
@@ -238,7 +235,7 @@ pub(super) fn base_steal_sentence(input: &str) -> IResult<&str, BaseSteal<&str>>
     )).parse(input)
 }
 
-pub(super) fn score_update(i: &str) -> IResult<&str, (u8, u8)> {
+pub(super) fn score_update(i: &str) -> IResult<'_, &str, (u8, u8)> {
     separated_pair(u8, tag("-"), u8)
     .parse(i)
 }
@@ -334,7 +331,7 @@ pub(super) fn parse_terminated(tag_content: &str) -> impl Fn(&str) -> IResult<&s
 // This is for use in place of parse_terminated when the only remaining text in the string is ".",
 // and so you can't use parse_terminated because that would improperly cut off names with periods
 // like "Kaj Statter Jr."
-pub(super) fn parse_until_period_eof(input: &str) -> IResult<&str, &str> {
+pub(super) fn parse_until_period_eof(input: &str) -> IResult<'_, &str, &str> {
     let (input, replacement_name_with_dot) = is_not("\n").parse(input)?;
     let replacement_name = replacement_name_with_dot.strip_suffix(".")
         .ok_or_else(|| fail::<&str, &str, _>().parse(input).unwrap_err())?;
@@ -343,7 +340,7 @@ pub(super) fn parse_until_period_eof(input: &str) -> IResult<&str, &str> {
 }
 
 // Same idea as parse_until_period_eof
-pub(super) fn parse_until_exclamation_point_eof(input: &str) -> IResult<&str, &str> {
+pub(super) fn parse_until_exclamation_point_eof(input: &str) -> IResult<'_, &str, &str> {
     let (input, replacement_name_with_dot) = is_not("\n").parse(input)?;
     let replacement_name = replacement_name_with_dot.strip_suffix("!")
         .ok_or_else(|| fail::<&str, &str, _>().parse(input).unwrap_err())?;
@@ -352,24 +349,24 @@ pub(super) fn parse_until_exclamation_point_eof(input: &str) -> IResult<&str, &s
 }
 
 
-pub(super) fn placed_player_eof(input: &str) -> IResult<&str, PlacedPlayer<&str>> {
+pub(super) fn placed_player_eof(input: &str) -> IResult<'_, &str, PlacedPlayer<&str>> {
     separated_pair(try_from_word, tag(" "), name_eof)
     .map(|(place, name)| PlacedPlayer { name, place })
     .parse(input)
 }
 
-pub(super) fn name_eof(input: &str) -> IResult<&str, &str> {
+pub(super) fn name_eof(input: &str) -> IResult<'_, &str, &str> {
     verify(rest,  |name: &str|
         name.input_len() >= 2 &&
         !["Dr"].contains(&name) &&
         // ignoring 0-length words, all words are 2 characters long and contain an ascii character, except Stanley Demir I
         // and the 7 in the team name "Organiz. Nazionale Combattenti 7 Zombie Deer Revolution"
-        (name == "Stanley Demir I" || name.split_whitespace().all(|word| word.len() == 0 || (word.len() >= 2 && word.chars().any(|i| i.is_ascii())) || word.parse::<usize>().is_ok())) &&
+        (name == "Stanley Demir I" || name.split_whitespace().all(|word| word.is_empty() || (word.len() >= 2 && word.chars().any(|i| i.is_ascii())) || word.parse::<usize>().is_ok())) &&
         name.chars().any(|c| c == ' ') &&
         // Removed for now because of early season 1 bug where feed names didn't print their spaces
         // name.chars().any(|c| c == ' ') && // From the API, we know players have first/last name, so there should always be a space
         !name.chars().any(|c| [',', '(', ')', '<', '>', '\\', '\u{FE0F}'].contains(&c)) && // These characters should not be in names
-        !['.', ' '].contains(&name.chars().nth(0).unwrap()) && // Names shouldn't start with these, and this catches some common logic errors (e.g. forgetting to parse the space before the name)
+        !['.', ' '].contains(&name.chars().next().unwrap()) && // Names shouldn't start with these, and this catches some common logic errors (e.g. forgetting to parse the space before the name)
         ![' '].contains(&name.chars().last().unwrap()) && // Names shouldn't end with these, and this catches some common logic errors (e.g. forgetting to parse the space after the name)
         // Cleanest fix for https://mmolb.com/watch/68aab8a3318f19d301830b7c?event=316
         // "to 2B" etc. are exceedingly unlikely as a prefix to name
@@ -378,7 +375,7 @@ pub(super) fn name_eof(input: &str) -> IResult<&str, &str> {
     .parse(input)
 }
 
-pub(super) fn conjoined_name_eof(input: &str) -> IResult<&str, &str> {
+pub(super) fn conjoined_name_eof(input: &str) -> IResult<'_, &str, &str> {
     Ok(("", input))
 }
 
@@ -390,25 +387,25 @@ pub(super) fn sentence_eof<'output, E: ParseError<&'output str> + Debug, F: Pars
 }
 
 
-pub(super) fn emoji(input: &str) -> IResult<&str, &str> {
+pub(super) fn emoji(input: &str) -> IResult<'_, &str, &str> {
     verify(take_till(AsChar::is_space), |s: &str| {
         !s.is_ascii() && s.chars().all(|c| !['!', '.', '<', '>'].contains(&c))
     }).parse(input)
 }
 
-pub(super) fn emoji_team_eof(input: &str) -> IResult<&str, EmojiTeam<&str>> {
+pub(super) fn emoji_team_eof(input: &str) -> IResult<'_, &str, EmojiTeam<&str>> {
     separated_pair(emoji, tag(" "), name_eof)
     .map(|(emoji, name)| EmojiTeam { emoji, name })
     .parse(input)
 }
 
-pub(super) fn emoji_team_eof_maybe_no_space(input: &str) -> IResult<&str, EmojiTeam<&str>> {
+pub(super) fn emoji_team_eof_maybe_no_space(input: &str) -> IResult<'_, &str, EmojiTeam<&str>> {
     separated_pair(emoji, tag(" "), conjoined_name_eof)
     .map(|(emoji, name)| EmojiTeam { emoji, name })
     .parse(input)
 }
 
-pub(super) fn batter_stat(input: &str) -> IResult<&str, BatterStat> {
+pub(super) fn batter_stat(input: &str) -> IResult<'_, &str, BatterStat> {
     alt((
         terminated(u8, tag(" 1B")).map(BatterStat::FirstBases),
         terminated(u8, tag(" 2B")).map(BatterStat::SecondBases),
@@ -433,14 +430,14 @@ pub(super) fn batter_stat(input: &str) -> IResult<&str, BatterStat> {
 }
 
 /// Doesn't include the brackets. e.g. "1st PA of game" or "1 for 2, 1 1B, 1 FO"
-pub(super) fn now_batting_stats(input: &str) -> IResult<&str, NowBattingStats> {
+pub(super) fn now_batting_stats(input: &str) -> IResult<'_, &str, NowBattingStats> {
     alt ((
         value(NowBattingStats::FirstPA, tag("1st PA of game")),
-        separated_list1(tag(", "), batter_stat).map(|stats| NowBattingStats::Stats(stats) )
+        separated_list1(tag(", "), batter_stat).map(NowBattingStats::Stats )
     )).parse(input)
 }
 
-pub(super) fn item(input: &str) -> IResult<&str, Item<&str>> {
+pub(super) fn item(input: &str) -> IResult<'_, &str, Item<&str>> {
     alt((
         verify((
             emoji,
@@ -461,7 +458,7 @@ pub(super) fn item(input: &str) -> IResult<&str, Item<&str>> {
     .parse(input)
 }
 
-pub(super) fn emojiless_item(input: &str) -> IResult<&str, EmojilessItem> {
+pub(super) fn emojiless_item(input: &str) -> IResult<'_, &str, EmojilessItem> {
     (
         opt(terminated(try_from_word, tag(" "))),
         try_from_word,
@@ -470,7 +467,7 @@ pub(super) fn emojiless_item(input: &str) -> IResult<&str, EmojilessItem> {
     .parse(input)
 }
 
-pub(super) fn delivery_discard(input: &'_ str) -> IResult<&'_ str, Item<&'_ str>> {
+pub(super) fn delivery_discard(input: &'_ str) -> IResult<'_, &'_ str, Item<&'_ str>> {
     let (input, _) = tag(" They discard their ").parse(input)?;
     let (input, discarded_item) = item.parse(input)?;
     let (input, _) = tag(".").parse(input)?;
@@ -503,7 +500,7 @@ pub(super) fn post_s7_greater_league_delivery<'parse, 'output: 'parse>(parsing_c
         }))
     }
 }
-pub(super) fn post_s7_greater_league_discard(input: &str) -> IResult<&str, Delivery<&str>> {
+pub(super) fn post_s7_greater_league_discard(input: &str) -> IResult<'_, &str, Delivery<&str>> {
     println!("Parsing {input}");
     let (input, item) = item.parse(input)?;
 
@@ -542,7 +539,7 @@ pub(super) fn delivery<'parse, 'output: 'parse>(parsing_context: &'parse Parsing
     ))
 }
 
-pub(super) fn feed_delivery(label: &str) -> impl MyParser<FeedDelivery<&str>> {
+pub(super) fn feed_delivery(label: &str) -> impl MyParser<'_, FeedDelivery<&str>> {
     move |input| {
         let (input, (player, equipped)) = alt((
             parse_terminated(" received a ").map(|n| (n, false)),
@@ -682,7 +679,7 @@ pub(super) fn successful_ejection_tail<'parse, 'output: 'parse>(parsing_context:
         }))
     }
 }
-pub(super) fn failed_ejection(input: &str) -> IResult<&str, Ejection<& str>> {
+pub(super) fn failed_ejection(input: &str) -> IResult<'_, &str, Ejection<& str>> {
     let (input, _) = tag(" 🤖 ROBO-UMP attempted an ejection, but ").parse(input)?;
 
     let (input, output)  = failed_ejection_tail.parse(input)?;
@@ -695,7 +692,7 @@ pub(super) fn failed_ejection(input: &str) -> IResult<&str, Ejection<& str>> {
 
 // This is a failed ejection when the leading " 🤖 ROBO-UMP attempted an ejection, but " has already
 // been consumed, e.g. by a parse_terminated
-pub(super) fn failed_ejection_tail(input: &str) -> IResult<&str, Ejection<&str>> {
+pub(super) fn failed_ejection_tail(input: &str) -> IResult<'_, &str, Ejection<&str>> {
     // Hopefully comma-space never appears in a player name
     let (input, name1) = parse_terminated(", ").parse(input)?;
     let (input, name2) = parse_terminated(" would not budge").parse(input)?;
@@ -705,7 +702,7 @@ pub(super) fn failed_ejection_tail(input: &str) -> IResult<&str, Ejection<&str>>
     }))
 }
 
-pub(super) fn door_prizes(input: &str) -> IResult<&str, Vec<DoorPrize<&str>>> {
+pub(super) fn door_prizes(input: &str) -> IResult<'_, &str, Vec<DoorPrize<&str>>> {
     many0(preceded(tag("<br>"), door_prize)).parse(input)
 }
 
@@ -743,7 +740,7 @@ pub(super) fn wither<'parse>(parsing_context: &'parse ParsingContext<'parse>) ->
     |input| alt((wither_s6(parsing_context), wither_s7(parsing_context))).parse(input)
 }
 
-pub(super) fn equipped_item(input: &str) -> IResult<&str, ItemPrize<&str>> {
+pub(super) fn equipped_item(input: &str) -> IResult<'_, &str, ItemPrize<&str>> {
     let (input, player_name) = parse_terminated(" equips ").parse(input)?;
     let (input, item) = item.parse(input)?;
     let (input, _) = tag(" from the Door Prize").parse(input)?;
@@ -760,7 +757,7 @@ pub(super) fn equipped_item(input: &str) -> IResult<&str, ItemPrize<&str>> {
 
 // This is when the item from the door prize was discarded, not for when the player's
 // previous item was discarded after they equipped that one
-pub(super) fn door_prize_item_discarded(input: &str) -> IResult<&str, ItemPrize<&str>> {
+pub(super) fn door_prize_item_discarded(input: &str) -> IResult<'_, &str, ItemPrize<&str>> {
     let (input, item) = item.parse(input)?;
     let (input, _) = tag(" is discarded; nobody can use it").parse(input)?;
 
@@ -844,7 +841,7 @@ pub(super) fn efflorescence<'output>(input: &'output str) -> IResult<'output, &'
     alt((effloresced, grow)).parse(input)
 }
 
-pub(super) fn efflorescences(input: &str) -> IResult<&str, Vec<Efflorescence<&str>>> {
+pub(super) fn efflorescences(input: &str) -> IResult<'_, &str, Vec<Efflorescence<&str>>> {
     many0(preceded(tag("<br>🌹 "), efflorescence)).parse(input)
 }
 
@@ -875,7 +872,7 @@ impl<S: Display> Display for FeedEventParty<S> {
     }
 }
 
-pub(super) fn feed_event_party(input: &str) -> IResult<&str, FeedEventParty<&str>> {
+pub(super) fn feed_event_party(input: &str) -> IResult<'_, &str, FeedEventParty<&str>> {
     let (input, player_name) = parse_terminated(" is Partying! ").parse(input)?;
     let (input, _) = tag(player_name).parse(input)?;
     let (input, _) = tag(" gained +").parse(input)?;
@@ -920,7 +917,7 @@ impl<S: Display> Display for FeedEventDoorPrize<S> {
     }
 }
 
-pub(super) fn feed_event_door_prize(input: &str) -> IResult<&str, FeedEventDoorPrize<&str>> {
+pub(super) fn feed_event_door_prize(input: &str) -> IResult<'_, &str, FeedEventDoorPrize<&str>> {
     let (input, player_name) = parse_terminated(" won a Door Prize: ").parse(input)?;
     let (input, prize) = prize.parse(input)?;
     let (input, _) = tag(".").parse(input)?;
@@ -931,7 +928,7 @@ pub(super) fn feed_event_door_prize(input: &str) -> IResult<&str, FeedEventDoorP
     }))
 }
 
-pub(super) fn feed_event_equipped_door_prize(input: &str) -> IResult<&str, FeedEventDoorPrize<&str>> {
+pub(super) fn feed_event_equipped_door_prize(input: &str) -> IResult<'_, &str, FeedEventDoorPrize<&str>> {
     let (input, player_name) = parse_terminated(" won a Door Prize! ").parse(input)?;
     let (input, prize) = equipped_prize.parse(input)?;
     let (input, _) = tag(".").parse(input)?;
@@ -942,17 +939,17 @@ pub(super) fn feed_event_equipped_door_prize(input: &str) -> IResult<&str, FeedE
     }))
 }
 
-pub(super) fn feed_event_wither<'output>(input: &str) -> IResult<&str, &str> {
+pub(super) fn feed_event_wither<'output>(input: &str) -> IResult<'_, &str, &str> {
     let (input, player_name) = parse_terminated(" was Corrupted by the 🥀 Wither.").parse(input)?;
 
     Ok((input, player_name))
 }
 
-pub(super) fn purified<'output>(input: &str) -> IResult<&str, (&str, PurifiedOutcome)> {
+pub(super) fn purified<'output>(input: &str) -> IResult<'_, &str, (&str, PurifiedOutcome)> {
     alt((purified_with_payout, purified_without_payout, purified_efflorescence)).parse(input)
 }
 
-fn purified_with_payout<'output>(input: &str) -> IResult<&str, (&str, PurifiedOutcome)> {
+fn purified_with_payout<'output>(input: &str) -> IResult<'_, &str, (&str, PurifiedOutcome)> {
     let (input, player_name) = parse_terminated(" was Purified of 🫀 Corruption and earned ").parse(input)?;
     let (input, payment) = u32.parse(input)?;
     let (input, _) = tag(" 🪙.").parse(input)?;
@@ -960,7 +957,7 @@ fn purified_with_payout<'output>(input: &str) -> IResult<&str, (&str, PurifiedOu
     Ok((input, (player_name, PurifiedOutcome::Payment(payment))))
 }
 
-fn purified_without_payout<'output>(input: &str) -> IResult<&str, (&str, PurifiedOutcome)> {
+fn purified_without_payout<'output>(input: &str) -> IResult<'_, &str, (&str, PurifiedOutcome)> {
     let (input, player_name) = parse_terminated(" was Purified of 🫀 Corruption.").parse(input)?;
 
     let (input, no_corruption) = opt((tag(" "), tag(player_name), tag(" had no Corruption to remove."))).parse(input)?;
@@ -968,7 +965,7 @@ fn purified_without_payout<'output>(input: &str) -> IResult<&str, (&str, Purifie
     Ok((input, (player_name, if no_corruption.is_some() { PurifiedOutcome::NoCorruption } else { PurifiedOutcome::None })))
 }
 
-fn purified_efflorescence<'output>(input: &str) -> IResult<&str, (&str, PurifiedOutcome)> {
+fn purified_efflorescence<'output>(input: &str) -> IResult<'_, &str, (&str, PurifiedOutcome)> {
     let (input, player_name) = parse_terminated(" was Purified of 🌹 Efflorescence, earned ").parse(input)?;
     let (input, payment) = u32.parse(input)?;
     let (input, _) = tag(" 🪙, and gained 🦠 Immunity.").parse(input)?;
@@ -976,14 +973,14 @@ fn purified_efflorescence<'output>(input: &str) -> IResult<&str, (&str, Purified
     Ok((input, (player_name, PurifiedOutcome::PaymentAndImmunityRemoved(payment))))
 }
 
-pub(super) fn feed_event_contained(input: &str) -> IResult<&str, (&str, &str)> {
+pub(super) fn feed_event_contained(input: &str) -> IResult<'_, &str, (&str, &str)> {
     let (input, contained_player_name) = parse_terminated(" was contained by ").parse(input)?;
     let (input, container_player_name) = parse_terminated(" during the 🥀 Wither.").parse(input)?;
 
     Ok((input, (contained_player_name, container_player_name)))
 }
 
-pub(super) fn feed_event_efflorescence_growth(input: &str) -> IResult<&str, (&str, [GrowAttributeChange; 2])> {
+pub(super) fn feed_event_efflorescence_growth(input: &str) -> IResult<'_, &str, (&str, [GrowAttributeChange; 2])> {
     let (input, player_name) = parse_terminated(" grew in the 🌹 Efflorescence: ").parse(input)?;
 
     // Decided to do this manually vs. with combinators because it's only 2 entries
@@ -995,20 +992,20 @@ pub(super) fn feed_event_efflorescence_growth(input: &str) -> IResult<&str, (&st
     Ok((input, (player_name, [change_1, change_2])))
 }
 
-pub(super) fn feed_event_effloresce(input: &str) -> IResult<&str, &str> {
+pub(super) fn feed_event_effloresce(input: &str) -> IResult<'_, &str, &str> {
     parse_terminated(" is Efflorescing and sheds their Corruption!").parse(input)
 }
 
-fn bench_slot(input: &str) -> IResult<&str, BenchSlot> {
+fn bench_slot(input: &str) -> IResult<'_, &str, BenchSlot> {
     alt((
-        preceded(tag("Bench Batter "), u8).map(|num| BenchSlot::Batter(num)),
-        preceded(tag("Bench Pitcher "), u8).map(|num| BenchSlot::Pitcher(num)),
+        preceded(tag("Bench Batter "), u8).map(BenchSlot::Batter),
+        preceded(tag("Bench Pitcher "), u8).map(BenchSlot::Pitcher),
     )).parse(input)
 }
 
 
 // TODO Dedup this
-pub(super) fn active_slot(input: &str) -> IResult<&str, Slot> {
+pub(super) fn active_slot(input: &str) -> IResult<'_, &str, Slot> {
     alt((
         tag("1B").map(|_| Slot::FirstBaseman),
         tag("2B").map(|_| Slot::SecondBaseman),
@@ -1018,18 +1015,18 @@ pub(super) fn active_slot(input: &str) -> IResult<&str, Slot> {
         tag("RF").map(|_| Slot::RightField),
         tag("SS").map(|_| Slot::ShortStop),
         tag("DH").map(|_| Slot::DesignatedHitter),
-        preceded(tag("SP"), u8).map(|i| Slot::StartingPitcher(i)),
-        preceded(tag("RP"), u8).map(|i| Slot::ReliefPitcher(i)),
+        preceded(tag("SP"), u8).map(Slot::StartingPitcher),
+        preceded(tag("RP"), u8).map(Slot::ReliefPitcher),
         tag("CL").map(|_| Slot::Closer),
         // Has to be after CF and CL or it will match erroneously
         tag("C").map(|_| Slot::Catcher),
     )).parse(input)
 }
 
-fn full_slot(input: &str) -> IResult<&str, FullSlot> {
+fn full_slot(input: &str) -> IResult<'_, &str, FullSlot> {
     alt((
-        bench_slot.map(|s| FullSlot::Bench(s)),
-        active_slot.map(|s| FullSlot::Active(s)),
+        bench_slot.map(FullSlot::Bench),
+        active_slot.map(FullSlot::Active),
     )).parse(input)
 }
 
@@ -1058,7 +1055,7 @@ impl<S: Display> Display for PositionSwap<S> {
     }
 }
 
-pub(super) fn player_positions_swapped(input: &str) -> IResult<&str, PositionSwap<&str>> {
+pub(super) fn player_positions_swapped(input: &str) -> IResult<'_, &str, PositionSwap<&str>> {
     // I am not willing to bet on " and " being a reliable name separator, and we can
     // parse names reliably later in the message. So we're going to parse the combination
     // of names as a single unit here and then verify it after.
@@ -1131,7 +1128,7 @@ impl<S: Display> Display for Grow<S> {
     }
 }
 
-fn grow_attribute_change(input: &str) -> IResult<&str, GrowAttributeChange> {
+fn grow_attribute_change(input: &str) -> IResult<'_, &str, GrowAttributeChange> {
     let (input, amount) = double().parse(input)?;
     let (input, _) = tag(" ")(input)?;
     let (input, attribute) = try_from_word.parse(input)?;
@@ -1142,7 +1139,7 @@ fn grow_attribute_change(input: &str) -> IResult<&str, GrowAttributeChange> {
     }))
 }
 
-pub(super) fn grow<'output>(input: &str) -> IResult<&str, Grow<&str>>{
+pub(super) fn grow<'output>(input: &str) -> IResult<'_, &str, Grow<&str>>{
     let (input, player_name) = parse_terminated("'s Corruption grew: ").parse(input)?;
 
     // Decided to do this manually vs. with combinators because it's only 3 entries
@@ -1197,7 +1194,7 @@ fn injured_by_falling_star(event: &FeedEvent) -> impl Fn(&str) -> IResult<&str, 
     }
 }
 
-fn infused_by_falling_star(input: &str) -> IResult<&str, (&str, CelestialEnergyTier)> {
+fn infused_by_falling_star(input: &str) -> IResult<'_, &str, (&str, CelestialEnergyTier)> {
     alt((
         parse_terminated(" began to glow brightly with celestial energy!").and_then(name_eof).map(|team| (team, CelestialEnergyTier::BeganToGlow)),
         parse_terminated(" begins to glow brightly with celestial energy!").and_then(name_eof).map(|team| (team, CelestialEnergyTier::BeganToGlow)),
@@ -1209,14 +1206,14 @@ fn infused_by_falling_star(input: &str) -> IResult<&str, (&str, CelestialEnergyT
         .parse(input)
 }
 
-fn deflected_falling_star_harmlessly(input: &str) -> IResult<&str, &str> {
+fn deflected_falling_star_harmlessly(input: &str) -> IResult<'_, &str, &str> {
     let (input, _) = alt((tag("It deflected off "), tag("It deflects off "))).parse(input)?;
     let (input, player_name) = parse_terminated(" harmlessly.").and_then(name_eof).parse(input)?;
 
     Ok((input, player_name))
 }
 
-pub(super) fn player_relegated<'output>(input: &str) -> IResult<&str, &str> {
+pub(super) fn player_relegated<'output>(input: &str) -> IResult<'_, &str, &str> {
     // This might be team emoji, not sure
     let (input, _) = tag("🧳 ").parse(input)?;
     let (input, player_name) = parse_terminated(" was relegated to the Even Lesser League.").parse(input)?;
@@ -1224,7 +1221,7 @@ pub(super) fn player_relegated<'output>(input: &str) -> IResult<&str, &str> {
     Ok((input, player_name))
 }
 
-pub(super) fn player_moved(input: &str) -> IResult<&str, (&str, &str)> {
+pub(super) fn player_moved(input: &str) -> IResult<'_, &str, (&str, &str)> {
     let (input, team_emoji) = emoji.parse(input)?;
     let (input, _) = tag(" ").parse(input)?;
     let (input, player_name) = parse_terminated(" was moved to the Bench.").parse(input)?;
@@ -1232,7 +1229,7 @@ pub(super) fn player_moved(input: &str) -> IResult<&str, (&str, &str)> {
     Ok((input, (team_emoji, player_name)))
 }
 
-pub(super) fn team_emoji<'parse, 'output, 'a>(side: HomeAway, parsing_context: &'a ParsingContext<'parse>) -> impl MyParser<'output, &'output str> + 'parse {
+pub(super) fn team_emoji<'parse, 'output>(side: HomeAway, parsing_context: &ParsingContext<'parse>) -> impl MyParser<'output, &'output str> + 'parse {
     let home_team_emoji = parsing_context.home_emoji_team.emoji;
     let away_team_emoji = parsing_context.away_emoji_team.emoji;
     move |input| match side {
@@ -1241,7 +1238,7 @@ pub(super) fn team_emoji<'parse, 'output, 'a>(side: HomeAway, parsing_context: &
     }
 }
 
-pub(super) fn either_team_emoji<'parse, 'output, 'a>(parsing_context: &'a ParsingContext<'parse>) -> impl MyParser<'output, &'output str> + 'parse {
+pub(super) fn either_team_emoji<'parse, 'output>(parsing_context: &ParsingContext<'parse>) -> impl MyParser<'output, &'output str> + 'parse {
     // Most of the time when a team's emoji appears on its own we can't
     // know what team it is in case they have the same emoji
     alt((
@@ -1267,23 +1264,23 @@ where F: Parser<&'output str, Output = O, Error = Error<'output>>,
 }
 
 pub fn strike_out_text(season: u32, day: Option<Day>, event_index: Option<u16>) -> &'static str {
-    Breakpoints::Season5TenseChange.after(season, day, event_index).then_some(" strikes out ").unwrap_or(" struck out ")
+    if Breakpoints::Season5TenseChange.after(season, day, event_index) { " strikes out " } else { " struck out " }
 }
 
 pub fn hit_by_pitch_text(season: u32, day: Option<Day>, event_index: Option<u16>) -> &'static str {
-    Breakpoints::Season5TenseChange.after(season, day, event_index).then_some(" is hit by the pitch and advances to first base").unwrap_or(" was hit by the pitch and advances to first base")
+    if Breakpoints::Season5TenseChange.after(season, day, event_index) { " is hit by the pitch and advances to first base" } else { " was hit by the pitch and advances to first base" }
 }
 
 pub fn received_text(season: u32, day: Option<Day>, event_index: Option<u16>) -> &'static str {
-    Breakpoints::Season5TenseChange.after(season, day, event_index).then_some(" receives a ").unwrap_or(" received a ")
+    if Breakpoints::Season5TenseChange.after(season, day, event_index) { " receives a " } else { " received a " }
 }
 
 pub fn discarded_text(season: u32, day: Option<Day>, event_index: Option<u16>) -> &'static str {
-    Breakpoints::Season5TenseChange.after(season, day, event_index).then_some(" They discard their ").unwrap_or(" They discarded their ")
+    if Breakpoints::Season5TenseChange.after(season, day, event_index) { " They discard their " } else { " They discarded their " }
 }
 
 pub fn was_is_text(season: u32, day: Option<Day>, event_index: Option<u16>) -> &'static str {
-    Breakpoints::Season5TenseChange.after(season, day, event_index).then_some("was").unwrap_or("is")
+    if Breakpoints::Season5TenseChange.after(season, day, event_index) { "was" } else { "is" }
 }
 
 #[cfg(test)]

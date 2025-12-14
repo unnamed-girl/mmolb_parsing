@@ -15,9 +15,9 @@ pub enum TeamPlayerCollection {
     Map(indexmap::IndexMap<String, TeamPlayer>),
 }
 
-impl Into<Vec<TeamPlayer>> for TeamPlayerCollection {
-    fn into(self) -> Vec<TeamPlayer> {
-        match self {
+impl From<TeamPlayerCollection> for Vec<TeamPlayer> {
+    fn from(val: TeamPlayerCollection) -> Self {
+        match val {
             TeamPlayerCollection::Vec(v) => v,
             TeamPlayerCollection::Map(m) => {
                 m.into_iter()

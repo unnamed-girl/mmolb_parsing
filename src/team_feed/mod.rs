@@ -6,7 +6,7 @@ use serde_with::serde_as;
 use itertools::Itertools;
 
 use crate::{enums::{Attribute, FeedEventType, ModificationType}, feed_event::{EmojilessItem, FeedDelivery, FeedEvent, FeedEventParseError, FeedFallingStarOutcome}, time::{Breakpoints, Timestamp}, utils::extra_fields_deserialize};
-use crate::enums::{CelestialEnergyTier, FullSlot, Slot};
+use crate::enums::Slot;
 use crate::feed_event::{AttributeChange, GreaterAugment};
 pub use crate::nom_parsing::parse_team_feed_event::parse_team_feed_event;
 use crate::nom_parsing::shared::{FeedEventDoorPrize, FeedEventParty, Grow, PositionSwap};
@@ -239,7 +239,7 @@ impl<S: Display> ParsedTeamFeedEventText<S> {
             ParsedTeamFeedEventText::MassAttributeEquals { players, changing_attribute, value_attribute } => {
                 if Breakpoints::Season3.after(event.season as u32, event.day.as_ref().copied().ok(), None) {
                     let intro = format!("Batters' {changing_attribute} was set to their {value_attribute}. Lineup:");
-                    let lineup = players.into_iter()
+                    let lineup = players.iter()
                         .enumerate()
                         .map(|(i, (slot, p))| format!(" {}. {} {p}", i+1, slot.as_ref().map(Slot::to_string).unwrap_or_default()))
                         .collect::<Vec<_>>()
@@ -253,7 +253,7 @@ impl<S: Display> ParsedTeamFeedEventText<S> {
                             format!("{}'s {} became equal to their base {}.", player_name, changing_attribute, value_attribute)
                         }
                     };
-                    players.into_iter()
+                    players.iter()
                         .map(|(_, p)| f(p, changing_attribute, value_attribute))
                         .collect::<Vec<_>>()
                         .join(" ")

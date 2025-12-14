@@ -20,13 +20,13 @@ impl Time {
             Ordering::Less => true, // earlier season is before
             Ordering::Greater => false, // later season is after
             Ordering::Equal => match day {
-                None => return false, // Assume unknown days are at end of season, and therefore after
+                None => false, // Assume unknown days are at end of season, and therefore after
                 Some(day) => {
                     // Because of overflow, transition happens on multiple days
                     for (transition_day, transition_event_index) in &self.ascending_days {
-                        match day.cmp(&transition_day) {
+                        match day.cmp(transition_day) {
                             Ordering::Greater => (), // Move on to check the next day in the transition period
-                            Ordering::Equal => match event_index.cmp(&transition_event_index) {
+                            Ordering::Equal => match event_index.cmp(transition_event_index) {
                                 Ordering::Greater | Ordering::Equal => return false,
                                 Ordering::Less => return true,
                             },
@@ -41,7 +41,7 @@ impl Time {
 
     /// Is the time after self
     pub fn after(&self, season: u32, day: Option<Day>, event_index: Option<u16>) -> bool {
-        return !self.before(season, day, event_index)
+        !self.before(season, day, event_index)
     }
 }
 

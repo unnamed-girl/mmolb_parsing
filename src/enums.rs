@@ -1207,8 +1207,8 @@ impl FromStr for Slot {
             a_tag("RF").map(|_| Slot::RightField),
             a_tag("SS").map(|_| Slot::ShortStop),
             tag("DH").map(|_| Slot::DesignatedHitter),
-            preceded(tag("SP"), u8).map(|i| Slot::StartingPitcher(i)),
-            preceded(tag("RP"), u8).map(|i| Slot::ReliefPitcher(i)),
+            preceded(tag("SP"), u8).map(Slot::StartingPitcher),
+            preceded(tag("RP"), u8).map(Slot::ReliefPitcher),
             a_tag("CL").map(|_| Slot::Closer),
         )).parse(s).map(|(_, o)| o).map_err(|_| "Player's slot didn't match known slots")
     }
@@ -1235,9 +1235,9 @@ impl FromStr for BenchSlot {
     fn from_str(s: &str) -> Result<Self, Self::Err> {
         alt((
             preceded(tag("Bench Batter "), u8::<&str, nom::error::Error<&str>>)
-                .map(|i| BenchSlot::Batter(i)),
+                .map(BenchSlot::Batter),
             preceded(tag("Bench Pitcher "), u8::<&str, nom::error::Error<&str>>)
-                .map(|i| BenchSlot::Pitcher(i)),
+                .map(BenchSlot::Pitcher),
         ))
             .parse(s)
             .map(|(_, o)| o)
@@ -1513,8 +1513,8 @@ impl FromStr for Place {
             a_tag("RF").map(|_| Place::RightField),
             a_tag("SS").map(|_| Place::ShortStop),
             tag("DH").map(|_| Place::DesignatedHitter),
-            preceded(tag("SP"), opt(u8)).map(|i| Place::StartingPitcher(i)),
-            preceded(tag("RP"), opt(u8)).map(|i| Place::ReliefPitcher(i)),
+            preceded(tag("SP"), opt(u8)).map(Place::StartingPitcher),
+            preceded(tag("RP"), opt(u8)).map(Place::ReliefPitcher),
             a_tag("CL").map(|_| Place::Closer),
         )).parse(s).map(|(_, o)| o).map_err(|_| "Player's slot didn't match known slots")
     }

@@ -3,7 +3,7 @@ use std::fmt::Display;
 use thiserror::Error;
 use serde::{Serialize, Deserialize};
 
-use crate::{enums::{Attribute, CelestialEnergyTier, FeedEventSource, FeedEventType, ItemName, ItemPrefix, ItemSuffix, ModificationType, Slot}, feed_event::FeedEvent, parsed_event::{EmojiTeam, Item}, time::{Breakpoints, Timestamp}, NotRecognized};
+use crate::{enums::{Attribute, CelestialEnergyTier, FeedEventSource, FeedEventType, ItemName, ItemPrefix, ItemSuffix, ModificationType}, feed_event::FeedEvent, parsed_event::{EmojiTeam, Item}, time::{Breakpoints, Timestamp}, NotRecognized};
 
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Error)]
 pub enum FeedEventParseError {

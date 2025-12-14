@@ -260,7 +260,7 @@ impl SerializeAs<u8> for StarHelper {
 }
 
 pub(crate) struct TimestampHelper;
-const FORMAT: &'static str = "%Y-%m-%dT%H:%M:%S%.6f+00:00";
+const FORMAT: &str = "%Y-%m-%dT%H:%M:%S%.6f+00:00";
 
 impl<'de> DeserializeAs<'de, DateTime<Utc>> for TimestampHelper {
     fn deserialize_as<D>(deserializer: D) -> Result<DateTime<Utc>, D::Error>
@@ -329,9 +329,9 @@ impl Serialize for ZeroOrF64 {
     }
 }
 
-impl Into<f64> for ZeroOrF64 {
-    fn into(self) -> f64 {
-        match self {
+impl From<ZeroOrF64> for f64 {
+    fn from(val: ZeroOrF64) -> Self {
+        match val {
             ZeroOrF64::Zero => 0.0,
             ZeroOrF64::F64(f64) => f64
         }

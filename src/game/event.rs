@@ -119,6 +119,6 @@ impl From<Event> for RawEvent {
         };
         let (pitch_info, zone) = value.pitch.map(Pitch::unparse).map(|(pitch, zone)| (pitch, Some(zone))).unwrap_or(("".to_string(), None));
 
-        Self {inning, inning_side, pitch_info: Some(pitch_info), zone: Some(zone), event: value.event, batter: value.batter, on_deck: value.on_deck, pitcher: value.pitcher, away_score: value.away_score, home_score: value.home_score, balls: value.balls, strikes: value.strikes, outs: value.outs, on_1b: value.on_1b, on_2b: value.on_2b, on_3b: value.on_3b, message: value.message, extra_fields: value.extra_fields, index: value.index.into(), home_run_distance: value.home_run_distance }
+        Self {inning, inning_side, pitch_info: Some(pitch_info), zone: Some(zone), event: value.event, batter: value.batter, on_deck: value.on_deck, pitcher: value.pitcher, away_score: value.away_score, home_score: value.home_score, balls: value.balls, strikes: value.strikes, outs: value.outs, on_1b: value.on_1b, on_2b: value.on_2b, on_3b: value.on_3b, message: value.message, extra_fields: value.extra_fields, index: value.index, home_run_distance: value.home_run_distance }
     }
 }

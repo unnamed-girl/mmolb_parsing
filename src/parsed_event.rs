@@ -1,5 +1,5 @@
 use std::{convert::Infallible, fmt::{Display, Write}, iter::once, str::FromStr};
-use std::fmt::{format, Formatter};
+use std::fmt::Formatter;
 use serde::{Serialize, Deserialize};
 use strum::{EnumDiscriminants, EnumString, Display, IntoStaticStr};
 use thiserror::Error;
@@ -197,7 +197,7 @@ impl<S: Display> ParsedEventMessage<S> {
             },
             Self::PitchingMatchup { away_team, home_team, home_pitcher, away_pitcher } => format!("{away_team} {away_pitcher} vs. {home_team} {home_pitcher}"),
             Self::Lineup { side: _, players } => {
-                players.into_iter().enumerate().fold(String::new(), |mut acc, (index, player)| {
+                players.iter().enumerate().fold(String::new(), |mut acc, (index, player)| {
                     let _ = write!(acc, "{}. {player}<br>", index + 1);
                     acc
                 })
@@ -234,7 +234,7 @@ impl<S: Display> ParsedEventMessage<S> {
                 let stats = match stats {
                     NowBattingStats::FirstPA =>  " (1st PA of game)".to_string(),
                     NowBattingStats::Stats(stats) => {
-                        format!(" ({})", stats.into_iter().map(BatterStat::unparse).collect::<Vec<_>>().join(", "))
+                        format!(" ({})", stats.iter().map(BatterStat::unparse).collect::<Vec<_>>().join(", "))
                     }
                     NowBattingStats::NoStats => {
                         String::new()
@@ -285,7 +285,7 @@ impl<S: Display> ParsedEventMessage<S> {
                 format!("{space}Ball. {}-{}.{steals}{aurora_photos}{ejection}{cheer}{door_prizes}{wither}{efflorescence}", count.0, count.1)
             },
             Self::Strike { strike, steals, count, cheer, aurora_photos, ejection, door_prizes, wither, efflorescence } => {
-                let steals: Vec<String> = once(String::new()).chain(steals.into_iter().map(|steal| steal.to_string())).collect();
+                let steals: Vec<String> = once(String::new()).chain(steals.iter().map(|steal| steal.to_string())).collect();
                 let steals = steals.join(" ");
                 let space = old_space(game, event_index);
 
@@ -299,7 +299,7 @@ impl<S: Display> ParsedEventMessage<S> {
                 format!("{space}Strike, {strike}. {}-{}.{steals}{aurora_photos}{ejection}{cheer}{door_prizes}{wither}{efflorescence}", count.0, count.1)
             }
             Self::Foul { foul, steals, count, cheer, aurora_photos, door_prizes, wither, efflorescence } => {
-                let steals: Vec<String> = once(String::new()).chain(steals.into_iter().map(|steal| steal.to_string())).collect();
+                let steals: Vec<String> = once(String::new()).chain(steals.iter().map(|steal| steal.to_string())).collect();
                 let steals = steals.join(" ");
                 let space = old_space(game, event_index);
 
@@ -351,7 +351,7 @@ impl<S: Display> ParsedEventMessage<S> {
                     Some(foul) => format!("Foul {foul}. "),
                     None => String::new()
                 };
-                let steals: Vec<String> = once(String::new()).chain(steals.into_iter().map(|steal| steal.to_string())).collect();
+                let steals: Vec<String> = once(String::new()).chain(steals.iter().map(|steal| steal.to_string())).collect();
                 let steals = steals.join(" ");
                 let space = old_space(game, event_index);
 
@@ -371,7 +371,7 @@ impl<S: Display> ParsedEventMessage<S> {
                 format!("{batter} {distance} on a {fair_ball_type} to {fielder}.{scores_and_advances}{ejection}")
             }
             Self::HomeRun { batter, fair_ball_type, destination, scores, grand_slam, ejection } => {
-                let scores = once(String::new()).chain(scores.into_iter().map(|runner| format!("<strong>{runner} scores!</strong>")))
+                let scores = once(String::new()).chain(scores.iter().map(|runner| format!("<strong>{runner} scores!</strong>")))
                     .collect::<Vec<String>>()
                     .join(" ");
                 let ejection = ejection.as_ref().map(|e| e.unparse()).unwrap_or_default();
@@ -490,16 +490,14 @@ impl<S: Display> ParsedEventMessage<S> {
 
                 let home = (*home_income > 0).then_some(format!("{} {} are Prosperous! They {earn} {home_income} 🪙.", game.home_team_emoji, game.home_team_name)).unwrap_or_default();
                 let away = (*away_income > 0).then_some(format!("{} {} are Prosperous! They {earn} {away_income} 🪙.", game.away_team_emoji, game.away_team_name)).unwrap_or_default();
-                let gap = (*home_income > 0 && *away_income > 0).then_some(" ").unwrap_or_default();
+                let gap = if *home_income > 0 && *away_income > 0 { " " } else { Default::default() };
 
                 if Breakpoints::Season3PreSuperstarBreakUpdate.before(game.season, game.day.as_ref().ok().copied(), event_index) {
                     format!("{home}{gap}{away}")
+                } else if home_income > away_income {
+                    format!("{away}{gap}{home}")
                 } else {
-                    if home_income > away_income {
-                        format!("{away}{gap}{home}")
-                    } else {
-                        format!("{home}{gap}{away}")
-                    }
+                    format!("{home}{gap}{away}")
                 }
             },
             Self::PhotoContest { winning_team, winning_tokens, winning_score, winning_player, losing_team, losing_tokens, losing_score, losing_player } => {

@@ -1,15 +1,15 @@
 use nom::{branch::alt, bytes::complete::tag, character::complete::{i16, u8}, combinator::{cond, fail, opt}, error::context, sequence::{delimited, preceded, separated_pair, terminated}, Finish, Parser};
 use nom::character::complete::u32;
-use crate::{enums::{CelestialEnergyTier, FeedEventType, ModificationType}, feed_event::{FeedEvent, FeedEventParseError, FeedFallingStarOutcome}, nom_parsing::shared::{emojiless_item, feed_delivery, name_eof, parse_terminated, sentence_eof, try_from_word}, player_feed::ParsedPlayerFeedEventText, time::{Breakpoints, Timestamp}};
-use crate::feed_event::{GreaterAugment, PlayerGreaterAugment};
-use super::shared::{door_prize, falling_star, feed_event_contained, feed_event_door_prize, feed_event_equipped_door_prize, feed_event_party, feed_event_wither, grow, player_moved, player_positions_swapped, player_relegated, purified, Error, IResult};
+use crate::{enums::{FeedEventType, ModificationType}, feed_event::{FeedEvent, FeedEventParseError}, nom_parsing::shared::{emojiless_item, feed_delivery, name_eof, parse_terminated, sentence_eof, try_from_word}, player_feed::ParsedPlayerFeedEventText, time::{Breakpoints, Timestamp}};
+use crate::feed_event::PlayerGreaterAugment;
+use super::shared::{falling_star, feed_event_contained, feed_event_door_prize, feed_event_equipped_door_prize, feed_event_party, feed_event_wither, grow, player_moved, player_positions_swapped, player_relegated, purified, Error, IResult};
 
 
 trait PlayerFeedEventParser<'output>: Parser<&'output str, Output = ParsedPlayerFeedEventText<&'output str>, Error = Error<'output>> {}
 impl<'output, T: Parser<&'output str, Output = ParsedPlayerFeedEventText<&'output str>, Error = Error<'output>>> PlayerFeedEventParser<'output> for T {}
 
 
-pub fn parse_player_feed_event<'output>(event: &'output FeedEvent) -> ParsedPlayerFeedEventText<&'output str> {
+pub fn parse_player_feed_event(event: &FeedEvent) -> ParsedPlayerFeedEventText<&str> {
     let event_type = match &event.event_type {
         Ok(event_type) => event_type,
         Err(e) => {
@@ -238,7 +238,7 @@ fn retirement<'output>(emoji: bool) -> impl PlayerFeedEventParser<'output> {
     ).map(|(original, new)| ParsedPlayerFeedEventText::Retirement { previous: original, new })
 }
 
-fn seasonal_durability_loss(input: &str) -> IResult<&str, ParsedPlayerFeedEventText<&str>> {
+fn seasonal_durability_loss(input: &str) -> IResult<'_, &str, ParsedPlayerFeedEventText<&str>> {
     alt((
         seasonal_durability_loss_happened,
         seasonal_durability_loss_blocked,
@@ -246,7 +246,7 @@ fn seasonal_durability_loss(input: &str) -> IResult<&str, ParsedPlayerFeedEventT
         .parse(input)
 }
 
-fn seasonal_durability_loss_happened(input: &str) -> IResult<&str, ParsedPlayerFeedEventText<&str>> {
+fn seasonal_durability_loss_happened(input: &str) -> IResult<'_, &str, ParsedPlayerFeedEventText<&str>> {
     // This may need more intelligent parsing if " lost " is ever a player name substring
     let (input, player_name) = parse_terminated(" lost ").parse(input)?;
     let (input, durability_lost) = u32.parse(input)?;
@@ -257,7 +257,7 @@ fn seasonal_durability_loss_happened(input: &str) -> IResult<&str, ParsedPlayerF
     Ok((input, ParsedPlayerFeedEventText::SeasonalDurabilityLoss { player_name, durability_lost: Some(durability_lost), season }))
 }
 
-fn seasonal_durability_loss_blocked(input: &str) -> IResult<&str, ParsedPlayerFeedEventText<&str>> {
+fn seasonal_durability_loss_blocked(input: &str) -> IResult<'_, &str, ParsedPlayerFeedEventText<&str>> {
     let (input, player_name) = parse_terminated("'s Prolific Greater Boon resisted Durability loss for Season ").parse(input)?;
     let (input, season) = u32.parse(input)?;
     let (input, _) = tag(".").parse(input)?;
@@ -273,7 +273,7 @@ fn election<'output>(_event: &'output FeedEvent) -> impl PlayerFeedEventParser<'
     )))
 }
 
-fn player_greater_augment_result(input: &str) -> IResult<&str, ParsedPlayerFeedEventText<&str>> {
+fn player_greater_augment_result(input: &str) -> IResult<'_, &str, ParsedPlayerFeedEventText<&str>> {
     let (input, (player_name, greater_augment)) = alt((
         parse_terminated(" gained +10 to all Defense Attributes.").map(|p| (p, PlayerGreaterAugment::Plating)),
         terminated((parse_terminated(" gained +75 "), try_from_word), tag(".")).map(|(p, attribute)| (p, PlayerGreaterAugment::Headliners { attribute })),
@@ -286,7 +286,7 @@ fn player_greater_augment_result(input: &str) -> IResult<&str, ParsedPlayerFeedE
 // This is from when the s7 greater augments accidentally hit the demoted greater league players
 // instead of the newly promoted players, and then Danny retroactively corrected them.
 // The attribute numbers given here were accidentally in the 0-1 scale instead of the 0-100 scale
-fn player_retracted_greater_augment_result(input: &str) -> IResult<&str, ParsedPlayerFeedEventText<&str>> {
+fn player_retracted_greater_augment_result(input: &str) -> IResult<'_, &str, ParsedPlayerFeedEventText<&str>> {
     let (input, (player_name, greater_augment)) = alt((
         parse_terminated(" lost 0.1 from all Defense Attributes.").map(|p| (p, PlayerGreaterAugment::Plating)),
         terminated((parse_terminated(" lost 0.75 from "), try_from_word), tag(".")).map(|(p, attribute)| (p, PlayerGreaterAugment::Headliners { attribute })),
@@ -296,7 +296,7 @@ fn player_retracted_greater_augment_result(input: &str) -> IResult<&str, ParsedP
     Ok((input, ParsedPlayerFeedEventText::RetractedGreaterAugment { player_name, greater_augment }))
 }
 
-fn player_retroactive_greater_augment_result(input: &str) -> IResult<&str, ParsedPlayerFeedEventText<&str>> {
+fn player_retroactive_greater_augment_result(input: &str) -> IResult<'_, &str, ParsedPlayerFeedEventText<&str>> {
     let (input, (player_name, greater_augment)) = alt((
         parse_terminated(" gained +0.1 to all Defense Attributes.").map(|p| (p, PlayerGreaterAugment::Plating)),
         terminated((parse_terminated(" gained +0.75 to "), try_from_word), tag(".")).map(|(p, attribute)| (p, PlayerGreaterAugment::Headliners { attribute })),

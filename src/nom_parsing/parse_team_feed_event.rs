@@ -3,13 +3,10 @@ use nom::{branch::alt, bytes::complete::tag, character::complete::{i16, u8, u32}
 use nom::bytes::complete::take_while;
 use nom::combinator::{eof, verify};
 use nom::multi::{many1, separated_list1};
-use nom::number::double;
-use crate::{enums::{CelestialEnergyTier, FeedEventType, ModificationType}, feed_event::{FeedEvent, FeedEventParseError, FeedFallingStarOutcome}, nom_parsing::shared::{emojiless_item, feed_delivery, name_eof, parse_terminated, sentence_eof, try_from_word}, team_feed::ParsedTeamFeedEventText, time::{Breakpoints, Timestamp}};
-use crate::enums::{BenchSlot, FullSlot, Slot};
+use crate::{enums::{FeedEventType, ModificationType}, feed_event::{FeedEvent, FeedEventParseError}, nom_parsing::shared::{emojiless_item, feed_delivery, name_eof, parse_terminated, sentence_eof, try_from_word}, team_feed::ParsedTeamFeedEventText, time::{Breakpoints, Timestamp}};
 use crate::feed_event::{AttributeChange, GreaterAugment};
 use crate::parsed_event::{EmojiPlayer, EmojiTeam};
-use crate::player_feed::ParsedPlayerFeedEventText;
-use super::shared::{emoji, emoji_team_eof, emoji_team_eof_maybe_no_space, feed_event_door_prize, feed_event_equipped_door_prize, feed_event_party, feed_event_wither, feed_event_contained, parse_until_period_eof, purified, team_emoji, Error, IResult, player_positions_swapped};
+use super::shared::{emoji, emoji_team_eof, emoji_team_eof_maybe_no_space, feed_event_door_prize, feed_event_equipped_door_prize, feed_event_party, feed_event_wither, feed_event_contained, parse_until_period_eof, purified, Error, IResult, player_positions_swapped};
 
 
 trait TeamFeedEventParser<'output>: Parser<&'output str, Output = ParsedTeamFeedEventText<&'output str>, Error = Error<'output>> {}
@@ -50,7 +47,7 @@ pub fn parse_team_feed_event(event: &FeedEvent) -> ParsedTeamFeedEventText<&str>
     }
 }
 
-fn game(event: &FeedEvent) -> impl TeamFeedEventParser {
+fn game(event: &FeedEvent) -> impl TeamFeedEventParser<'_> {
     context("Game Feed Event", alt((
         game_result(),
         feed_event_door_prize.map(|prize| ParsedTeamFeedEventText::DoorPrize { prize }),
@@ -73,7 +70,7 @@ fn game(event: &FeedEvent) -> impl TeamFeedEventParser {
     )))
 }
 
-fn augment(event: &FeedEvent) -> impl TeamFeedEventParser {
+fn augment(event: &FeedEvent) -> impl TeamFeedEventParser<'_> {
     context("Augment Feed Event", alt((
         attribute_gain(),
         modification(),
@@ -214,7 +211,7 @@ fn election<'output>() -> impl TeamFeedEventParser<'output> {
     )))
 }
 
-fn callup(input: &str) -> IResult<&str, ParsedTeamFeedEventText<&str>> {
+fn callup(input: &str) -> IResult<'_, &str, ParsedTeamFeedEventText<&str>> {
     // First, look ahead for an easier-to-parse version of the team name
     // `input` is intentionally second here, and yes that is weird
     // Oh and to add to the weird, I'm including the leading space so it can
@@ -259,7 +256,7 @@ fn callup(input: &str) -> IResult<&str, ParsedTeamFeedEventText<&str>> {
     }))
 }
 
-fn greater_augment(input: &str) -> IResult<&str, ParsedTeamFeedEventText<&str>> {
+fn greater_augment(input: &str) -> IResult<'_, &str, ParsedTeamFeedEventText<&str>> {
     // I wouldn't trust a single word to delimit generic team names, but I'm willing
     // to do it on this event that should only appear for greater league teams.
     let (input, team_emoji_name_str) = parse_terminated(" selected ").parse(input)?;
@@ -285,7 +282,7 @@ fn attribute_gain<'output>() -> impl TeamFeedEventParser<'output> {
     ).map(|changes| ParsedTeamFeedEventText::AttributeChanges { changes })
 }
 
-fn multiple_attribute_equal(event: &FeedEvent) -> impl TeamFeedEventParser {
+fn multiple_attribute_equal(event: &FeedEvent) -> impl TeamFeedEventParser<'_> {
     |input| if event.after(Breakpoints::Season3) {
         (
             delimited(tag("Batters' "), try_from_word, tag(" was set to their ")),
@@ -442,7 +439,7 @@ fn retirement<'output>(emoji: bool) -> impl TeamFeedEventParser<'output> {
     ).map(|(original, new)| ParsedTeamFeedEventText::Retirement { previous: original, new })
 }
 
-fn claimed_lineal_belt(input: &str) -> IResult<&str, ParsedTeamFeedEventText<&str>> {
+fn claimed_lineal_belt(input: &str) -> IResult<'_, &str, ParsedTeamFeedEventText<&str>> {
     let (input, team_emoji_name) = parse_terminated(" claimed the Lineal Belt from ").parse(input)?;
     let (_, team) = emoji_team_eof.parse(team_emoji_name)?;
 
@@ -452,7 +449,7 @@ fn claimed_lineal_belt(input: &str) -> IResult<&str, ParsedTeamFeedEventText<&st
     Ok((input, ParsedTeamFeedEventText::ClaimedLinealBelt { team, old_belt_holder_team }))
 }
 
-fn lost_lineal_belt(input: &str) -> IResult<&str, ParsedTeamFeedEventText<&str>> {
+fn lost_lineal_belt(input: &str) -> IResult<'_, &str, ParsedTeamFeedEventText<&str>> {
     let (input, team_emoji_name) = parse_terminated(" lost the Lineal Belt to ").parse(input)?;
     let (_, team) = emoji_team_eof.parse(team_emoji_name)?;
 
