@@ -479,13 +479,20 @@ pub(super) fn placed_player_eof(input: &str) -> IResult<'_, &str, PlacedPlayer<&
         .parse(input)
 }
 
+/// Verifies that the given input forms a valid name with what we know about the name pool
+/// 
+/// This is important because we have events of the form "... [NAME]. [NAME] ..."
+/// make it impossible in the general case to distinguish between the two names (because names can have periods and multiple words in them).
 pub(super) fn name_eof(input: &str) -> IResult<'_, &str, &str> {
     verify(rest,  |name: &str|
         name.input_len() >= 2 &&
         !["Dr"].contains(&name) &&
-        // ignoring 0-length words, all words are 2 characters long and contain an ascii character, except Stanley Demir I
-        // and the 7 in the team name "Organiz. Nazionale Combattenti 7 Zombie Deer Revolution"
-        (name == "Stanley Demir I" || name.split_whitespace().all(|word| word.is_empty() || (word.len() >= 2 && word.chars().any(|i| i.is_ascii())) || word.parse::<usize>().is_ok())) &&
+        // The anti "U. Livingston" clause. Prevents "U"s from being parsed as a valid name on its own
+        // ignoring 0-length words, all words are 2 characters long and contain, except:
+        // - the I in "Stanley Demir I"
+        // - the 7 in the team name "Organiz. Nazionale Combattenti 7 Zombie Deer Revolution"
+        // - the à in the "à la Mode"
+        (name == "Stanley Demir I" || name.split_whitespace().all(|word| word.is_empty() || word.len() >= 2 || word == "à" || word.parse::<usize>().is_ok())) &&
         name.chars().any(|c| c == ' ') &&
         // Removed for now because of early season 1 bug where feed names didn't print their spaces
         // name.chars().any(|c| c == ' ') && // From the API, we know players have first/last name, so there should always be a space
