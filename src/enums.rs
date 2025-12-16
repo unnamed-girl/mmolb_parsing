@@ -2,7 +2,7 @@ use nom::{
     branch::alt,
     bytes::complete::tag,
     character::complete::u8,
-    combinator::{all_consuming, opt},
+    combinator::{all_consuming, opt, value},
     sequence::{preceded, separated_pair, terminated},
     Parser,
 };
@@ -13,7 +13,12 @@ use std::{
     fmt::{Debug, Display},
     str::FromStr,
 };
-use strum::{Display, EnumDiscriminants, EnumIter, EnumString, IntoDiscriminant, IntoStaticStr};
+use strum::{
+    Display, EnumDiscriminants, EnumIter, EnumString, IntoDiscriminant, IntoEnumIterator,
+    IntoStaticStr,
+};
+
+use crate::nom_parsing::shared::IResult;
 
 /// Possible values of the "event" field of an mmolb event.
 #[derive(
@@ -96,6 +101,11 @@ pub enum EventType {
     #[serde(rename = "Weather_Wither")]
     WeatherWither,
     LinealBeltTransfer,
+
+    // Season 9
+    #[strum(to_string = "Weather_Consumption")]
+    #[serde(rename = "Weather_Consumption")]
+    WeatherConsumption,
 }
 
 /// Top or bottom of an inning.
@@ -2262,6 +2272,54 @@ pub enum CelestialEnergyTier {
     BeganToGlow,
     Infused,
     FullyCharged,
+}
+
+#[derive(
+    Debug,
+    Serialize,
+    Deserialize,
+    Clone,
+    Copy,
+    EnumIter,
+    PartialEq,
+    Eq,
+    Hash,
+    EnumString,
+    IntoStaticStr,
+    Display,
+)]
+#[strum(serialize_all = "lowercase")]
+#[serde(rename_all = "lowercase")]
+pub enum FoodName {
+    #[strum(to_string = "bunches of grapes")]
+    #[serde(rename = "bunches of grapes")]
+    BunchesOfGrapes,
+    #[strum(to_string = "giant hot dogs")]
+    #[serde(rename = "giant hot dogs")]
+    GiantHotDogs,
+    #[strum(to_string = "pints of beer")]
+    #[serde(rename = "pints of beer")]
+    PintsOfBeer,
+}
+
+impl FoodName {
+    pub(crate) fn parse(input: &str) -> IResult<'_, &str, Self> {
+        for food in FoodName::iter() {
+            if let r @ Ok(_) = value(
+                food,
+                tag::<&str, &str, crate::nom_parsing::shared::Error>(food.into()),
+            )
+            .parse(input)
+            {
+                return r;
+            }
+        }
+
+        Err(nom::Err::Error(nom::error::make_error(
+            input,
+            nom::error::ErrorKind::Tag,
+        )))
+    }
 }
 
 #[cfg(test)]

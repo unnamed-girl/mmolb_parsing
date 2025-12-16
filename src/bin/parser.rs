@@ -938,6 +938,7 @@ fn check<S>(event: &ParsedEventMessage<S>) -> String {
         } => {
             format!("()")
         }
+        _ => unimplemented!("add the new event here before trying this"),
     };
 
     format!("{discriminant_name} ({unique})")
