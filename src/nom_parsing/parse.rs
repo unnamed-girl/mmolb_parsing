@@ -1449,6 +1449,7 @@ fn weather_consumption<'parse, 'output: 'parse>(
             weather_consumption_start_contest(parsing_context),
             weather_consumption_consumes(parsing_context),
             weather_consumption_end_contest(),
+            weather_consumption_end_contest_tie(),
         ))
         .parse(input)?;
 
@@ -1496,20 +1497,27 @@ fn weather_consumption_consumes<'parse, 'output: 'parse>(
     parsing_context: &'parse ParsingContext<'parse>,
 ) -> impl MyParser<'output, WeatherConsumptionEvents<&'output str>> + 'parse {
     |input: &'output str| {
+        let (input, batting_team_emoji) = either_team_emoji(parsing_context).parse(input)?;
+        let (input, _) = tag(" ").parse(input)?;
         let (input, batting_team_player) = take_till(|c: char| c.is_ascii_digit()).parse(input)?;
         let (_, batting_team_player) = batting_team_player
             .strip_suffix(" Consumes ")
             .ok_or_else(|| {
                 nom::Err::Error(nom::error::make_error(batting_team_player, ErrorKind::Tag))
             })
-            .and_then(|batting_team_| {
-                either_team_emoji_player_eof(parsing_context).parse(batting_team_)
+            .and_then(|batting_team| {
+                name_eof.parse(batting_team)
             })?;
+        let batting_team_player = EmojiPlayer { emoji: batting_team_emoji, name: batting_team_player};
+
         let (input, batting_team_progress) = u32(input)?;
         let (input, _) = tag(" ").parse(input)?;
+        let (input, food_emoji) = opt(terminated(emoji, tag(" "))).parse(input)?;
         let (input, food1) = FoodName::parse(input)?;
         let (input, _) = tag("!<br>").parse(input)?;
 
+        let (input, pitching_team_emoji) = either_team_emoji(parsing_context).parse(input)?;
+        let (input, _) = tag(" ").parse(input)?;
         let (input, pitching_team_player) = take_till(|c: char| c.is_ascii_digit()).parse(input)?;
         let (_, pitching_team_player) = pitching_team_player
             .strip_suffix(" Consumes ")
@@ -1517,10 +1525,17 @@ fn weather_consumption_consumes<'parse, 'output: 'parse>(
                 nom::Err::Error(nom::error::make_error(pitching_team_player, ErrorKind::Tag))
             })
             .and_then(|pitching_team| {
-                either_team_emoji_player_eof(parsing_context).parse(pitching_team)
+                name_eof.parse(pitching_team)
             })?;
+        let pitching_team_player = EmojiPlayer { emoji: pitching_team_emoji, name: pitching_team_player};
+
         let (input, pitching_team_progress) = u32(input)?;
         let (input, _) = tag(" ").parse(input)?;
+        let input = if let Some(food_emoji) = food_emoji {
+            tag(food_emoji).parse(input)?.0
+        } else {
+            input
+        };
         let (input, _) = verify(FoodName::parse, |food2| *food2 == food1).parse(input)?;
         let (input, _) = tag("!<br>Score: ").parse(input)?;
 
@@ -1535,6 +1550,7 @@ fn weather_consumption_consumes<'parse, 'output: 'parse>(
                 batting_team_progress,
                 pitching_team_player,
                 pitching_team_progress,
+                food_emoji,
                 food: food1,
                 batting_team_score,
                 pitching_team_score,
@@ -1549,6 +1565,7 @@ fn weather_consumption_end_contest<'parse, 'output: 'parse>(
         let (input, _) = tag("The winner with ").parse(input)?;
         let (input, winning_score) = u32(input)?;
         let (input, _) = tag(" ").parse(input)?;
+        let (input, food_emoji) = opt(terminated(emoji, tag(" "))).parse(input)?;
         let (input, food) = FoodName::parse(input)?;
         let (input, _) = tag(" Consumed is ").parse(input)?;
 
@@ -1579,12 +1596,58 @@ fn weather_consumption_end_contest<'parse, 'output: 'parse>(
             WeatherConsumptionEvents::EndContest {
                 winning_score,
                 food,
+                food_emoji,
                 winning_player,
                 winning_team,
                 winning_tokens,
                 winning_prize,
                 losing_team,
                 losing_tokens,
+            },
+        ))
+    }
+}
+
+fn weather_consumption_end_contest_tie<'parse, 'output: 'parse>(
+) -> impl MyParser<'output, WeatherConsumptionEvents<&'output str>> + 'parse {
+    |input| {
+        let (input, _) = tag("The Consumption Contest ends in a tie at ").parse(input)?;
+        let (input, final_score) = u32(input)?;
+        let (input, _) = tag(" ").parse(input)?;
+        let (input, food_emoji) = opt(terminated(emoji, tag(" "))).parse(input)?;
+        let (input, food) = FoodName::parse(input)?;
+        let (input, _) = tag(" Consumed!<br>").parse(input)?;
+
+        let (input, batting_team) = take_until(" receives 🪙 ")
+            .and_then(emoji_team_eof)
+            .parse(input)?;
+        let (input, _) = tag(" receives 🪙 ").parse(input)?;
+        let (input, batting_team_tokens) = u32(input)?;
+        let (input, _) = tag(" and a ").parse(input)?;
+        let (input, batting_team_prize) = item.parse(input)?;
+        let (input, _) = tag(".<br>").parse(input)?;
+
+        let (input, pitching_team) = take_until(" receives 🪙 ")
+            .and_then(emoji_team_eof)
+            .parse(input)?;
+        let (input, _) = tag(" receives 🪙 ").parse(input)?;
+        let (input, pitching_team_tokens) = u32(input)?;
+        let (input, _) = tag(" and a ").parse(input)?;
+        let (input, pitching_team_prize) = item.parse(input)?;
+        let (input, _) = tag(".").parse(input)?;
+
+        Ok((
+            input,
+            WeatherConsumptionEvents::EndContestTie {
+                final_score,
+                food_emoji,
+                food,
+                batting_team,
+                batting_team_tokens,
+                batting_team_prize,
+                pitching_team,
+                pitching_team_tokens,
+                pitching_team_prize,
             },
         ))
     }
@@ -1757,6 +1820,30 @@ mod test {
             away_emoji_team: EmojiTeam {
                 emoji: "🧮",
                 name: "Dallas Instruments",
+            },
+            season: 9,
+            day: Some(Day::Day(0)),
+        };
+        super::weather_consumption_consumes(&context)
+            .parse(text)
+            .finish()
+            .unwrap_or_else(|e| panic!("{e}"));
+    }
+
+    #[test]
+    fn weather_consumption_consumes_with_number_emoji() {
+        let text = "4️⃣ Nap Nelson Consumes 22 Belgian waffles!<br>☠️ Loopy Fujii Consumes 11 Belgian waffles!<br>Score: 54 - 36";
+        let context = ParsingContext {
+            game_id: "6941d6928f4b689f46bfdeed",
+            event_log: &[],
+            event_index: None,
+            home_emoji_team: EmojiTeam {
+                emoji: "4️⃣",
+                name: "Monroeville Objective Objects",
+            },
+            away_emoji_team: EmojiTeam {
+                emoji: "☠️",
+                name: "Batman Dead Parents",
             },
             season: 9,
             day: Some(Day::Day(0)),
