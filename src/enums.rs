@@ -2,7 +2,7 @@ use nom::{
     branch::alt,
     bytes::complete::tag,
     character::complete::u8,
-    combinator::{all_consuming, opt},
+    combinator::{all_consuming, opt, value},
     sequence::{preceded, separated_pair, terminated},
     Parser,
 };
@@ -13,7 +13,12 @@ use std::{
     fmt::{Debug, Display},
     str::FromStr,
 };
-use strum::{Display, EnumDiscriminants, EnumIter, EnumString, IntoDiscriminant, IntoStaticStr};
+use strum::{
+    Display, EnumDiscriminants, EnumIter, EnumString, IntoDiscriminant, IntoEnumIterator,
+    IntoStaticStr,
+};
+
+use crate::nom_parsing::shared::IResult;
 
 /// Possible values of the "event" field of an mmolb event.
 #[derive(
@@ -96,6 +101,11 @@ pub enum EventType {
     #[serde(rename = "Weather_Wither")]
     WeatherWither,
     LinealBeltTransfer,
+
+    // Season 9
+    #[strum(to_string = "Weather_Consumption")]
+    #[serde(rename = "Weather_Consumption")]
+    WeatherConsumption,
 }
 
 /// Top or bottom of an inning.
@@ -2262,6 +2272,146 @@ pub enum CelestialEnergyTier {
     BeganToGlow,
     Infused,
     FullyCharged,
+}
+
+#[derive(
+    Debug,
+    Serialize,
+    Deserialize,
+    Clone,
+    Copy,
+    EnumIter,
+    PartialEq,
+    Eq,
+    Hash,
+    EnumString,
+    IntoStaticStr,
+    Display,
+)]
+#[strum(serialize_all = "lowercase")]
+#[serde(rename_all = "lowercase")]
+pub enum FoodName {
+    #[strum(to_string = "bunches of grapes")]
+    #[serde(rename = "bunches of grapes")]
+    BunchesOfGrapes,
+    #[strum(to_string = "giant hot dogs")]
+    #[serde(rename = "giant hot dogs")]
+    GiantHotDogs,
+    #[strum(to_string = "pints of beer")]
+    #[serde(rename = "pints of beer")]
+    PintsOfBeer,
+    #[strum(to_string = "bowls of ramen")]
+    #[serde(rename = "bowls of ramen")]
+    BowlsOfRamen,
+    #[strum(to_string = "house salads")]
+    #[serde(rename = "house salads")]
+    HouseSalads,
+    #[strum(to_string = "big ol' meats")]
+    #[serde(rename = "big ol' meats")]
+    BigOlMeats,
+    #[strum(to_string = "skewers of dango")]
+    #[serde(rename = "skewers of dango")]
+    SkewersOfDango,
+    #[strum(to_string = "bowls of ice cream")]
+    #[serde(rename = "bowls of ice cream")]
+    BowlsOfIceCream,
+    #[strum(to_string = "pots of honey")]
+    #[serde(rename = "pots of honey")]
+    PotsOfHoney,
+    #[strum(to_string = "Belgian waffles")]
+    #[serde(rename = "Belgian waffles")]
+    BelgianWaffles,
+    #[strum(to_string = "glasses of milk")]
+    #[serde(rename = "glasses of milk")]
+    GlassesOfMilk,
+    #[strum(to_string = "birthday cakes")]
+    #[serde(rename = "birthday cakes")]
+    BirthdayCakes,
+    #[strum(to_string = "stacks of pancakes")]
+    #[serde(rename = "stacks of pancakes")]
+    StacksOfPancakes,
+    #[strum(to_string = "8oz steaks")]
+    #[serde(rename = "8oz steaks")]
+    EightOzSteaks,
+    #[strum(to_string = "chicken wings")]
+    #[serde(rename = "chicken wings")]
+    ChickenWings,
+    #[strum(to_string = "stalks of broccoli")]
+    #[serde(rename = "stalks of broccoli")]
+    StalksOfBroccoli,
+    Pineapples,
+    Baguettes,
+    #[strum(to_string = "yellow onions")]
+    #[serde(rename = "yellow onions")]
+    YellowOnions,
+    #[strum(to_string = "bowls of steamed rice")]
+    #[serde(rename = "bowls of steamed rice")]
+    BowlsOfSteamedRice,
+    #[strum(to_string = "apple pies")]
+    #[serde(rename = "apple pies")]
+    ApplePies,
+    #[strum(to_string = "super-spicy peppers")]
+    #[serde(rename = "super-spicy peppers")]
+    SuperSpicyPeppers,
+    #[strum(to_string = "sticks of butter")]
+    #[serde(rename = "sticks of butter")]
+    SticksOfButter,
+    #[strum(to_string = "buckets of popcorn")]
+    #[serde(rename = "buckets of popcorn")]
+    BucketsOfPopcorn,
+    #[strum(to_string = "XL burritos")]
+    #[serde(rename = "XL burritos")]
+    XlBurritos,
+    #[strum(to_string = "mega pretzels")]
+    #[serde(rename = "mega pretzels")]
+    MegaPretzels,
+    #[strum(to_string = "blocks of cheese")]
+    #[serde(rename = "blocks of cheese")]
+    BlocksOfCheese,
+    #[strum(to_string = "cheeseburgers")]
+    #[serde(rename = "cheeseburgers")]
+    Cheeseburgers,
+    #[strum(to_string = "spiced potatoes")]
+    #[serde(rename = "spiced potatoes")]
+    SpicedPotatoes,
+    #[strum(to_string = "100% cacao chocolate bars")]
+    #[serde(rename = "100% cacao chocolate bars")]
+    HundredPercentCacaoChocolateBars,
+    #[strum(to_string = "bulbs of garlic")]
+    #[serde(rename = "bulbs of garlic")]
+    BulbsOfGarlic,
+    #[strum(to_string = "watermelons")]
+    #[serde(rename = "watermelons")]
+    Watermelons,
+    #[strum(to_string = "lettuce roll-ups")]
+    #[serde(rename = "lettuce roll-ups")]
+    LettuceRollUps,
+    #[strum(to_string = "NY pizza slices")]
+    #[serde(rename = "NY pizza slices")]
+    NyPizzaSlices,
+    #[strum(to_string = "ears of corn")]
+    #[serde(rename = "ears of corn")]
+    EarsOfCorn,
+}
+
+impl FoodName {
+    pub(crate) fn parse(input: &str) -> IResult<'_, &str, Self> {
+        for food in FoodName::iter() {
+            if let r @ Ok(_) = value(
+                food,
+                tag::<&str, &str, crate::nom_parsing::shared::Error>(food.into()),
+            )
+            .parse(input)
+            {
+                return r;
+            }
+        }
+
+        Err(nom::Err::Error(nom::error::make_error(
+            input,
+            nom::error::ErrorKind::Tag,
+        )))
+    }
 }
 
 #[cfg(test)]

@@ -16,10 +16,13 @@ use nom_language::error::VerboseError;
 use std::fmt::{Display, Formatter};
 use std::{fmt::Debug, str::FromStr};
 
-use crate::enums::{Attribute, BenchSlot, CelestialEnergyTier, FullSlot, ModificationType, Slot};
+use crate::enums::{
+    Attribute, BenchSlot, CelestialEnergyTier, FoodName, FullSlot, ModificationType, Slot,
+};
 use crate::feed_event::FeedFallingStarOutcome;
 use crate::parsed_event::{
-    Efflorescence, EfflorescenceOutcome, EjectionReplacement, ItemEquip, ItemPrize, WitherStruggle,
+    Efflorescence, EfflorescenceOutcome, EjectionReplacement, EmojiFood, EmojiPlayer, ItemEquip,
+    ItemPrize, WitherStruggle,
 };
 use crate::player::{Deserialize, Serialize};
 use crate::team_feed::PurifiedOutcome;
@@ -37,9 +40,9 @@ use crate::{
     Game,
 };
 
-pub(super) type Error<'a> = VerboseError<&'a str>;
-pub(super) type IResult<'a, I, O> = nom::IResult<I, O, Error<'a>>;
-pub(super) trait MyParser<'output, T>:
+pub(crate) type Error<'a> = VerboseError<&'a str>;
+pub(crate) type IResult<'a, I, O> = nom::IResult<I, O, Error<'a>>;
+pub(crate) trait MyParser<'output, T>:
     Parser<&'output str, Output = T, Error = Error<'output>>
 {
 }
@@ -480,7 +483,7 @@ pub(super) fn placed_player_eof(input: &str) -> IResult<'_, &str, PlacedPlayer<&
 }
 
 /// Verifies that the given input forms a valid name with what we know about the name pool
-/// 
+///
 /// This is important because we have events of the form "... [NAME]. [NAME] ..."
 /// make it impossible in the general case to distinguish between the two names (because names can have periods and multiple words in them).
 pub(super) fn name_eof(input: &str) -> IResult<'_, &str, &str> {
@@ -1704,6 +1707,36 @@ pub fn discarded_text(season: u32, day: Option<Day>, event_index: Option<u16>) -
         " They discard their "
     } else {
         " They discarded their "
+    }
+}
+
+pub fn emoji_food(input: &str) -> IResult<'_, &str, EmojiFood<&str>> {
+    let (input, (food_emoji, food)) =
+        separated_pair(emoji, tag(" "), FoodName::parse).parse(input)?;
+
+    Ok((input, EmojiFood { food_emoji, food }))
+}
+
+pub(super) fn team_emoji_player_eof<'parse, 'output>(
+    side: HomeAway,
+    parsing_context: &'parse ParsingContext<'parse>,
+) -> impl MyParser<'output, EmojiPlayer<&'output str>> + 'parse {
+    move |input| {
+        let (input, (emoji, name)) =
+            separated_pair(team_emoji(side, parsing_context), tag(" "), name_eof).parse(input)?;
+
+        Ok((input, EmojiPlayer { emoji, name }))
+    }
+}
+
+pub(super) fn either_team_emoji_player_eof<'parse, 'output>(
+    parsing_context: &'parse ParsingContext<'parse>,
+) -> impl MyParser<'output, EmojiPlayer<&'output str>> + 'parse {
+    move |input| {
+        let (input, (emoji, name)) =
+            separated_pair(either_team_emoji(parsing_context), tag(" "), name_eof).parse(input)?;
+
+        Ok((input, EmojiPlayer { emoji, name }))
     }
 }
 

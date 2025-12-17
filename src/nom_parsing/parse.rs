@@ -1,10 +1,12 @@
 use crate::{
+    enums::FoodName,
     nom_parsing::shared::{
-        door_prizes, hit_by_pitch_text, strike_out_text, successful_ejection_tail,
+        door_prizes, either_team_emoji_player_eof, emoji, emoji_food, hit_by_pitch_text, item,
+        strike_out_text, successful_ejection_tail,
     },
+    parsed_event::{EmojiPlayer, WeatherConsumptionEvents},
     time::is_superstar_game,
 };
-use nom::character::complete::u32;
 use nom::sequence::pair;
 use nom::{
     branch::alt,
@@ -16,6 +18,7 @@ use nom::{
     sequence::{delimited, preceded, separated_pair, terminated},
     Finish, Parser,
 };
+use nom::{bytes::complete::take_till, character::complete::u32, error::ErrorKind};
 use phf::phf_map;
 use std::str::FromStr;
 
@@ -115,15 +118,18 @@ pub fn parse_event<'parse, 'output: 'parse>(
         EventType::WeatherReflection => weather_reflection(parsing_context).parse(&event.message),
         EventType::WeatherWither => weather_wither(parsing_context).parse(&event.message),
         EventType::LinealBeltTransfer => lineal_belt().parse(event.message.as_str()),
+        EventType::WeatherConsumption => {
+            weather_consumption(parsing_context).parse(event.message.as_str())
+        }
     }
     .finish()
     .map(|(_, o)| o)
-    .unwrap_or_else(move |_| {
+    .unwrap_or_else(move |e| {
         let error = GameEventParseError::FailedParsingMessage {
             event_type: *event_type,
             message: event.message.clone(),
         };
-        tracing::error!("Parse error: {}", error);
+        tracing::error!("Parse error: {e}");
         ParsedEventMessage::ParseError {
             error,
             message: &event.message,
@@ -1435,12 +1441,224 @@ fn lineal_belt<'parse, 'output: 'parse>(
     }
 }
 
+fn weather_consumption<'parse, 'output: 'parse>(
+    parsing_context: &'parse ParsingContext<'parse>,
+) -> impl MyParser<'output, ParsedEventMessage<&'output str>> + 'parse {
+    let f = |input| {
+        let (input, weather_consumption) = alt((
+            weather_consumption_start_contest(parsing_context),
+            weather_consumption_consumes(parsing_context),
+            weather_consumption_end_contest(),
+            weather_consumption_end_contest_tie(),
+        ))
+        .parse(input)?;
+
+        Ok((
+            input,
+            ParsedEventMessage::WeatherConsumption(weather_consumption),
+        ))
+    };
+
+    context("Weather Consumption", f)
+}
+
+fn weather_consumption_start_contest<'parse, 'output: 'parse>(
+    parsing_context: &'parse ParsingContext<'parse>,
+) -> impl MyParser<'output, WeatherConsumptionEvents<&'output str>> + 'parse {
+    |input| {
+        let (input, _) = tag("🍽️ Consumption Contest! ").parse(input)?;
+
+        let (input, batting_team_player) = take_until(" vs. ").parse(input)?;
+        let (input, _) = tag(" vs. ").parse(input)?;
+        let (_, batting_team_player) =
+            either_team_emoji_player_eof(parsing_context).parse(batting_team_player)?;
+
+        let (input, pitching_team_player) = take_until(".<br>").parse(input)?;
+        let (input, _) = tag(".<br>").parse(input)?;
+        let (_, pitching_team_player) =
+            either_team_emoji_player_eof(parsing_context).parse(pitching_team_player)?;
+
+        let (input, _) = tag("Who can Consume the most ").parse(input)?;
+        let (input, emoji_food) = emoji_food(input)?;
+        let (input, _) = tag("? Go!").parse(input)?;
+
+        Ok((
+            input,
+            WeatherConsumptionEvents::StartContest {
+                batting_team_player,
+                pitching_team_player,
+                emoji_food,
+            },
+        ))
+    }
+}
+
+fn weather_consumption_consumes<'parse, 'output: 'parse>(
+    parsing_context: &'parse ParsingContext<'parse>,
+) -> impl MyParser<'output, WeatherConsumptionEvents<&'output str>> + 'parse {
+    |input: &'output str| {
+        let (input, batting_team_emoji) = either_team_emoji(parsing_context).parse(input)?;
+        let (input, _) = tag(" ").parse(input)?;
+        let (input, batting_team_player) = take_till(|c: char| c.is_ascii_digit()).parse(input)?;
+        let (_, batting_team_player) = batting_team_player
+            .strip_suffix(" Consumes ")
+            .ok_or_else(|| {
+                nom::Err::Error(nom::error::make_error(batting_team_player, ErrorKind::Tag))
+            })
+            .and_then(|batting_team| {
+                name_eof.parse(batting_team)
+            })?;
+        let batting_team_player = EmojiPlayer { emoji: batting_team_emoji, name: batting_team_player};
+
+        let (input, batting_team_progress) = u32(input)?;
+        let (input, _) = tag(" ").parse(input)?;
+        let (input, food_emoji) = opt(terminated(emoji, tag(" "))).parse(input)?;
+        let (input, food1) = FoodName::parse(input)?;
+        let (input, _) = tag("!<br>").parse(input)?;
+
+        let (input, pitching_team_emoji) = either_team_emoji(parsing_context).parse(input)?;
+        let (input, _) = tag(" ").parse(input)?;
+        let (input, pitching_team_player) = take_till(|c: char| c.is_ascii_digit()).parse(input)?;
+        let (_, pitching_team_player) = pitching_team_player
+            .strip_suffix(" Consumes ")
+            .ok_or_else(|| {
+                nom::Err::Error(nom::error::make_error(pitching_team_player, ErrorKind::Tag))
+            })
+            .and_then(|pitching_team| {
+                name_eof.parse(pitching_team)
+            })?;
+        let pitching_team_player = EmojiPlayer { emoji: pitching_team_emoji, name: pitching_team_player};
+
+        let (input, pitching_team_progress) = u32(input)?;
+        let (input, _) = tag(" ").parse(input)?;
+        let input = if let Some(food_emoji) = food_emoji {
+            tag(food_emoji).parse(input)?.0
+        } else {
+            input
+        };
+        let (input, _) = verify(FoodName::parse, |food2| *food2 == food1).parse(input)?;
+        let (input, _) = tag("!<br>Score: ").parse(input)?;
+
+        let (input, batting_team_score) = u32(input)?;
+        let (input, _) = tag(" - ").parse(input)?;
+        let (input, pitching_team_score) = u32(input)?;
+
+        Ok((
+            input,
+            WeatherConsumptionEvents::Consumes {
+                batting_team_player,
+                batting_team_progress,
+                pitching_team_player,
+                pitching_team_progress,
+                food_emoji,
+                food: food1,
+                batting_team_score,
+                pitching_team_score,
+            },
+        ))
+    }
+}
+
+fn weather_consumption_end_contest<'parse, 'output: 'parse>(
+) -> impl MyParser<'output, WeatherConsumptionEvents<&'output str>> + 'parse {
+    |input| {
+        let (input, _) = tag("The winner with ").parse(input)?;
+        let (input, winning_score) = u32(input)?;
+        let (input, _) = tag(" ").parse(input)?;
+        let (input, food_emoji) = opt(terminated(emoji, tag(" "))).parse(input)?;
+        let (input, food) = FoodName::parse(input)?;
+        let (input, _) = tag(" Consumed is ").parse(input)?;
+
+        let (input, (emoji, name)) = take_until("!<br>")
+            .and_then(separated_pair(emoji, tag(" "), name_eof))
+            .parse(input)?;
+        let winning_player = EmojiPlayer { emoji, name };
+        let (input, _) = tag("!<br>").parse(input)?;
+
+        let (input, winning_team) = take_until(" receives 🪙 ")
+            .and_then(emoji_team_eof)
+            .parse(input)?;
+        let (input, _) = tag(" receives 🪙 ").parse(input)?;
+        let (input, winning_tokens) = u32(input)?;
+        let (input, _) = tag(", and win a ").parse(input)?;
+        let (input, winning_prize) = item.parse(input)?;
+        let (input, _) = tag(".<br>").parse(input)?;
+
+        let (input, losing_team) = take_until(" receives 🪙 ")
+            .and_then(emoji_team_eof)
+            .parse(input)?;
+        let (input, _) = tag(" receives 🪙 ").parse(input)?;
+        let (input, losing_tokens) = u32(input)?;
+        let (input, _) = tag(".").parse(input)?;
+
+        Ok((
+            input,
+            WeatherConsumptionEvents::EndContest {
+                winning_score,
+                food,
+                food_emoji,
+                winning_player,
+                winning_team,
+                winning_tokens,
+                winning_prize,
+                losing_team,
+                losing_tokens,
+            },
+        ))
+    }
+}
+
+fn weather_consumption_end_contest_tie<'parse, 'output: 'parse>(
+) -> impl MyParser<'output, WeatherConsumptionEvents<&'output str>> + 'parse {
+    |input| {
+        let (input, _) = tag("The Consumption Contest ends in a tie at ").parse(input)?;
+        let (input, final_score) = u32(input)?;
+        let (input, _) = tag(" ").parse(input)?;
+        let (input, food_emoji) = opt(terminated(emoji, tag(" "))).parse(input)?;
+        let (input, food) = FoodName::parse(input)?;
+        let (input, _) = tag(" Consumed!<br>").parse(input)?;
+
+        let (input, batting_team) = take_until(" receives 🪙 ")
+            .and_then(emoji_team_eof)
+            .parse(input)?;
+        let (input, _) = tag(" receives 🪙 ").parse(input)?;
+        let (input, batting_team_tokens) = u32(input)?;
+        let (input, _) = tag(" and a ").parse(input)?;
+        let (input, batting_team_prize) = item.parse(input)?;
+        let (input, _) = tag(".<br>").parse(input)?;
+
+        let (input, pitching_team) = take_until(" receives 🪙 ")
+            .and_then(emoji_team_eof)
+            .parse(input)?;
+        let (input, _) = tag(" receives 🪙 ").parse(input)?;
+        let (input, pitching_team_tokens) = u32(input)?;
+        let (input, _) = tag(" and a ").parse(input)?;
+        let (input, pitching_team_prize) = item.parse(input)?;
+        let (input, _) = tag(".").parse(input)?;
+
+        Ok((
+            input,
+            WeatherConsumptionEvents::EndContestTie {
+                final_score,
+                food_emoji,
+                food,
+                batting_team,
+                batting_team_tokens,
+                batting_team_prize,
+                pitching_team,
+                pitching_team_tokens,
+                pitching_team_prize,
+            },
+        ))
+    }
+}
+
 #[cfg(test)]
 mod test {
-    use nom::Parser;
+    use nom::{Finish, Parser};
 
     use crate::{
-        enums::{Base, BaseNameVariant, Distance, FairBallType, Place},
+        enums::{Base, BaseNameVariant, Day, Distance, FairBallType, Place},
         nom_parsing::{shared::name_eof, ParsingContext},
         parsed_event::{EmojiTeam, PlacedPlayer, RunnerAdvance, RunnerOut},
         ParsedEventMessage,
@@ -1586,5 +1804,53 @@ mod test {
     fn dr_connor() {
         assert!(name_eof("Dr").is_err());
         assert!(name_eof("Dr. Connor").is_ok());
+    }
+
+    #[test]
+    fn weather_consumption_consumes() {
+        let text = "🦡 Cool Tanner Consumes 14 bunches of grapes!<br>🧮 Yadier Valencia Consumes 19 bunches of grapes!<br>Score: 66 - 72";
+        let context = ParsingContext {
+            game_id: "69409776b5f71d23c819c208",
+            event_log: &[],
+            event_index: None,
+            home_emoji_team: EmojiTeam {
+                emoji: "🦡",
+                name: "Durhamshire Badgers",
+            },
+            away_emoji_team: EmojiTeam {
+                emoji: "🧮",
+                name: "Dallas Instruments",
+            },
+            season: 9,
+            day: Some(Day::Day(0)),
+        };
+        super::weather_consumption_consumes(&context)
+            .parse(text)
+            .finish()
+            .unwrap_or_else(|e| panic!("{e}"));
+    }
+
+    #[test]
+    fn weather_consumption_consumes_with_number_emoji() {
+        let text = "4️⃣ Nap Nelson Consumes 22 Belgian waffles!<br>☠️ Loopy Fujii Consumes 11 Belgian waffles!<br>Score: 54 - 36";
+        let context = ParsingContext {
+            game_id: "6941d6928f4b689f46bfdeed",
+            event_log: &[],
+            event_index: None,
+            home_emoji_team: EmojiTeam {
+                emoji: "4️⃣",
+                name: "Monroeville Objective Objects",
+            },
+            away_emoji_team: EmojiTeam {
+                emoji: "☠️",
+                name: "Batman Dead Parents",
+            },
+            season: 9,
+            day: Some(Day::Day(0)),
+        };
+        super::weather_consumption_consumes(&context)
+            .parse(text)
+            .finish()
+            .unwrap_or_else(|e| panic!("{e}"));
     }
 }

@@ -1,7 +1,7 @@
 use clap::{Parser, ValueEnum};
 use futures::{Stream, StreamExt};
 use mmolb_parsing::{
-    enums::{FeedEventSource, FoulType},
+    enums::FoulType,
     player::Player,
     player_feed::{parse_player_feed_event, PlayerFeed},
     process_event,
@@ -10,7 +10,6 @@ use mmolb_parsing::{
     Game, ParsedEventMessage,
 };
 use serde::{de::IntoDeserializer, Deserialize, Serialize};
-use std::fmt::format;
 use std::{
     collections::HashSet,
     fs::File,
@@ -22,8 +21,8 @@ use std::{
 use mmolb_parsing::parsed_event::{ContainResult, PartyDurabilityLoss, WitherResult};
 use reqwest::Client;
 use strum::IntoDiscriminant;
-use tracing::{error, info, span::EnteredSpan, Level};
-use tracing_subscriber::fmt::writer::MakeWriterExt;
+use tracing::{info, span::EnteredSpan, Level};
+use tracing_subscriber::{fmt::writer::MakeWriterExt, layer::SubscriberExt};
 
 #[derive(Serialize, Deserialize)]
 pub struct FreeCashewResponse<T> {
@@ -68,6 +67,8 @@ struct Args {
 
     #[clap(short, long, action)]
     verbose: bool,
+    #[clap(long)]
+    with_max_level: Option<Level>,
 
     #[clap(long, action)]
     desc: bool,
@@ -157,14 +158,21 @@ static mut EVENT_VARIANTS: Option<HashSet<String>> = None;
 
 #[tokio::main]
 async fn main() {
-    let writer = std::io::stderr
-        .with_max_level(Level::WARN)
-        .or_else(std::io::stdout);
-
-    let subscriber = tracing_subscriber::fmt().with_writer(writer).finish();
-    let guard = tracing::subscriber::set_default(subscriber);
-
     let args = Args::parse();
+
+    let err_layer = tracing_subscriber::fmt::Layer::new()
+        .with_ansi(false)
+        .with_writer(std::io::stderr.with_max_level(Level::ERROR));
+
+    let stdout_layer = tracing_subscriber::fmt::Layer::new()
+        .with_writer(std::io::stdout.with_max_level(args.with_max_level.unwrap_or(Level::INFO)));
+
+    let collector = tracing_subscriber::registry()
+        .with(err_layer)
+        .with(stdout_layer);
+
+    let guard = tracing::subscriber::set_global_default(collector);
+
     let endpoint = if args.beiju {
         "https://cheapcashews.beiju.me/chron/v0"
     } else {
@@ -272,7 +280,7 @@ fn ingest<'de, T: for<'a> Deserialize<'a> + Serialize>(
 
         let diff = serde_json_diff::values(data, round_tripped);
         if let Some(diff) = diff {
-            error!(
+            tracing::warn!(
                 "round trip failed. Diff: {}",
                 serde_json::to_string(&diff).unwrap()
             );
@@ -317,12 +325,13 @@ fn player_inner(
         .entered();
 
         let parsed_text = parse_player_feed_event(&event);
-        if tracing::enabled!(Level::ERROR) {
+        if tracing::enabled!(Level::WARN) {
             let unparsed = parsed_text.unparse(&event);
             if event.text != unparsed {
-                error!(
+                tracing::warn!(
                     "Feed event round trip failure expected:\n'{}'\nGot:\n'{}'",
-                    event.text, unparsed
+                    event.text,
+                    unparsed
                 );
             }
         }
@@ -364,12 +373,13 @@ fn team_inner(
         .entered();
 
         let parsed_text = parse_team_feed_event(&event);
-        if tracing::enabled!(Level::ERROR) {
+        if tracing::enabled!(Level::WARN) {
             let unparsed = parsed_text.unparse(&event);
             if event.text != unparsed {
-                error!(
+                tracing::warn!(
                     "Feed event round trip failure expected:\n'{}'\nGot:\n'{}'",
-                    event.text, unparsed
+                    event.text,
+                    unparsed
                 );
             }
         }
@@ -422,12 +432,13 @@ fn game_inner(
         .entered();
 
         let parsed_event_message = process_event(event, &game, &response.entity_id);
-        if tracing::enabled!(Level::ERROR) {
+        if tracing::enabled!(Level::WARN) {
             let unparsed = parsed_event_message.unparse(&game, event.index);
             if event.message != unparsed {
-                error!(
+                tracing::warn!(
                     "Event round trip failure expected:\n'{}'\nGot:\n'{}'",
-                    event.message, unparsed
+                    event.message,
+                    unparsed
                 );
             }
         }
@@ -489,12 +500,13 @@ fn player_feed_inner(
         .entered();
 
         let parsed_text = parse_player_feed_event(&event);
-        if tracing::enabled!(Level::ERROR) {
+        if tracing::enabled!(Level::WARN) {
             let unparsed = parsed_text.unparse(&event);
             if event.text != unparsed {
-                error!(
+                tracing::warn!(
                     "Feed event round trip failure expected:\n'{}'\nGot:\n'{}'",
-                    event.text, unparsed
+                    event.text,
+                    unparsed
                 );
             }
         }
@@ -536,12 +548,13 @@ fn team_feed_inner(
         .entered();
 
         let parsed_text = parse_team_feed_event(&event);
-        if tracing::enabled!(Level::ERROR) {
+        if tracing::enabled!(Level::WARN) {
             let unparsed = parsed_text.unparse(&event);
             if event.text != unparsed {
-                error!(
+                tracing::warn!(
                     "Feed event round trip failure expected:\n'{}'\nGot:\n'{}'",
-                    event.text, unparsed
+                    event.text,
+                    unparsed
                 );
             }
         }
@@ -938,6 +951,7 @@ fn check<S>(event: &ParsedEventMessage<S>) -> String {
         } => {
             format!("()")
         }
+        _ => unimplemented!("add the new event here before trying this"),
     };
 
     format!("{discriminant_name} ({unique})")

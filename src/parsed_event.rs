@@ -9,7 +9,7 @@ use std::{
 use strum::{Display, EnumDiscriminants, EnumString, IntoStaticStr};
 use thiserror::Error;
 
-use crate::enums::Attribute;
+use crate::enums::{Attribute, FoodName};
 use crate::nom_parsing::shared::{discarded_text, received_text};
 use crate::{
     enums::{
@@ -330,6 +330,9 @@ pub enum ParsedEventMessage<S> {
         claimed_by: EmojiTeam<S>,
         claimed_from: EmojiTeam<S>,
     },
+
+    // Season 9
+    WeatherConsumption(WeatherConsumptionEvents<S>),
 }
 impl<S: Display> ParsedEventMessage<S> {
     /// Recreate the event message this ParsedEvent was built out of.
@@ -1114,6 +1117,7 @@ impl<S: Display> ParsedEventMessage<S> {
             } => {
                 format!("➰ {claimed_by} claimed the Lineal Belt from {claimed_from}!")
             }
+            Self::WeatherConsumption(weather_consumption) => weather_consumption.unparse(),
         }
     }
 }
@@ -2347,6 +2351,212 @@ impl<S: AsRef<str>> Efflorescence<S> {
         Efflorescence {
             player: self.player.as_ref(),
             outcome: self.outcome,
+        }
+    }
+}
+
+#[derive(Debug, Clone, Copy, Serialize, Deserialize, PartialEq)]
+pub struct EmojiFood<S> {
+    pub food_emoji: S,
+    pub food: FoodName,
+}
+
+impl<S: AsRef<str>> EmojiFood<S> {
+    pub fn as_ref(&self) -> EmojiFood<&str> {
+        EmojiFood {
+            food_emoji: self.food_emoji.as_ref(),
+            food: self.food,
+        }
+    }
+}
+
+impl<S: Display> EmojiFood<S> {
+    pub fn unparse(&self) -> String {
+        format!("{} {}", self.food_emoji, self.food)
+    }
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
+pub enum WeatherConsumptionEvents<S> {
+    StartContest {
+        batting_team_player: EmojiPlayer<S>,
+        pitching_team_player: EmojiPlayer<S>,
+        emoji_food: EmojiFood<S>,
+    },
+    Consumes {
+        batting_team_player: EmojiPlayer<S>,
+        batting_team_progress: u32,
+        pitching_team_player: EmojiPlayer<S>,
+        pitching_team_progress: u32,
+        food_emoji: Option<S>,
+        food: FoodName,
+        batting_team_score: u32,
+        pitching_team_score: u32,
+    },
+    EndContest {
+        winning_score: u32,
+        food_emoji: Option<S>,
+        food: FoodName,
+        winning_player: EmojiPlayer<S>,
+        winning_team: EmojiTeam<S>,
+        winning_tokens: u32,
+        winning_prize: Item<S>,
+        losing_team: EmojiTeam<S>,
+        losing_tokens: u32,
+    },
+    EndContestTie {
+        final_score: u32,
+        food_emoji: Option<S>,
+        food: FoodName,
+        batting_team: EmojiTeam<S>,
+        batting_team_tokens: u32,
+        batting_team_prize: Item<S>,
+        pitching_team: EmojiTeam<S>,
+        pitching_team_tokens: u32,
+        pitching_team_prize: Item<S>,
+    },
+}
+
+impl<S: Display> WeatherConsumptionEvents<S> {
+    pub fn unparse(&self) -> String {
+        match &self {
+            WeatherConsumptionEvents::StartContest {
+                batting_team_player,
+                pitching_team_player,
+                emoji_food: food,
+            } => {
+                format!("🍽️ Consumption Contest! {batting_team_player} vs. {pitching_team_player}.<br>Who can Consume the most {food}? Go!", food = food.unparse())
+            }
+            WeatherConsumptionEvents::Consumes {
+                batting_team_player,
+                batting_team_progress,
+                pitching_team_player,
+                pitching_team_progress,
+                food_emoji,
+                food,
+                batting_team_score,
+                pitching_team_score,
+            } => {
+                let food = if let Some(emoji) = food_emoji {
+                    format!("{emoji} {food}")
+                } else {
+                    food.to_string()
+                };
+                format!("{batting_team_player} Consumes {batting_team_progress} {food}!<br>{pitching_team_player} Consumes {pitching_team_progress} {food}!<br>Score: {batting_team_score} - {pitching_team_score}")
+            }
+            WeatherConsumptionEvents::EndContest {
+                winning_score,
+                food_emoji,
+                food,
+                winning_player,
+                winning_team,
+                winning_prize,
+                winning_tokens,
+                losing_team,
+                losing_tokens,
+            } => {
+                let food = if let Some(emoji) = food_emoji {
+                    format!("{emoji} {food}")
+                } else {
+                    food.to_string()
+                };
+                format!("The winner with {winning_score} {food} Consumed is {winning_player}!<br>{winning_team} receives 🪙 {winning_tokens}, and win a {winning_prize}.<br>{losing_team} receives 🪙 {losing_tokens}.")
+            }
+            WeatherConsumptionEvents::EndContestTie {
+                final_score,
+                food_emoji,
+                food,
+                batting_team,
+                batting_team_tokens,
+                batting_team_prize,
+                pitching_team,
+                pitching_team_tokens,
+                pitching_team_prize,
+            } => {
+                let food = if let Some(emoji) = food_emoji {
+                    format!("{emoji} {food}")
+                } else {
+                    food.to_string()
+                };
+                format!("The Consumption Contest ends in a tie at {final_score} {food} Consumed!<br>{batting_team} receives 🪙 {batting_team_tokens} and a {batting_team_prize}.<br>{pitching_team} receives 🪙 {pitching_team_tokens} and a {pitching_team_prize}.")
+            }
+        }
+    }
+}
+
+impl<S: AsRef<str>> WeatherConsumptionEvents<S> {
+    pub fn to_ref(&self) -> WeatherConsumptionEvents<&str> {
+        match &self {
+            WeatherConsumptionEvents::StartContest {
+                batting_team_player,
+                pitching_team_player,
+                emoji_food: food,
+            } => WeatherConsumptionEvents::StartContest {
+                batting_team_player: batting_team_player.as_ref(),
+                pitching_team_player: pitching_team_player.as_ref(),
+                emoji_food: food.as_ref(),
+            },
+            WeatherConsumptionEvents::Consumes {
+                batting_team_player,
+                batting_team_progress,
+                pitching_team_player,
+                pitching_team_progress,
+                food_emoji,
+                food,
+                batting_team_score,
+                pitching_team_score,
+            } => WeatherConsumptionEvents::Consumes {
+                batting_team_player: batting_team_player.as_ref(),
+                batting_team_progress: *batting_team_progress,
+                pitching_team_player: pitching_team_player.as_ref(),
+                pitching_team_progress: *pitching_team_progress,
+                food_emoji: food_emoji.as_ref().map(|s| s.as_ref()),
+                food: *food,
+                batting_team_score: *batting_team_score,
+                pitching_team_score: *pitching_team_score,
+            },
+            WeatherConsumptionEvents::EndContest {
+                winning_score,
+                food_emoji,
+                food,
+                winning_player,
+                winning_team,
+                winning_tokens,
+                winning_prize,
+                losing_team,
+                losing_tokens,
+            } => WeatherConsumptionEvents::EndContest {
+                winning_score: *winning_score,
+                food_emoji: food_emoji.as_ref().map(|s| s.as_ref()),
+                food: *food,
+                winning_player: winning_player.as_ref(),
+                winning_team: winning_team.as_ref(),
+                winning_tokens: *winning_tokens,
+                winning_prize: winning_prize.to_ref(),
+                losing_team: losing_team.as_ref(),
+                losing_tokens: *losing_tokens,
+            },
+            WeatherConsumptionEvents::EndContestTie {
+                final_score,
+                food_emoji,
+                food,
+                batting_team,
+                batting_team_tokens,
+                batting_team_prize,
+                pitching_team,
+                pitching_team_tokens,
+                pitching_team_prize,
+            } => WeatherConsumptionEvents::EndContestTie {
+                final_score: *final_score,
+                food_emoji: food_emoji.as_ref().map(|s| s.as_ref()),
+                food: *food,
+                batting_team: batting_team.as_ref(),
+                batting_team_tokens: *batting_team_tokens,
+                batting_team_prize: batting_team_prize.to_ref(),
+                pitching_team: pitching_team.as_ref(),
+                pitching_team_tokens: *pitching_team_tokens,
+                pitching_team_prize: pitching_team_prize.to_ref(),
+            },
         }
     }
 }
