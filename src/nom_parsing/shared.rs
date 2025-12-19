@@ -1649,12 +1649,12 @@ pub(super) fn team_emoji<'parse, 'output>(
     side: HomeAway,
     parsing_context: &ParsingContext<'parse>,
 ) -> impl MyParser<'output, &'output str> + 'parse {
-    let home_team_emoji = parsing_context.home_emoji_team.emoji;
-    let away_team_emoji = parsing_context.away_emoji_team.emoji;
-    move |input| match side {
-        HomeAway::Home => tag(home_team_emoji).parse(input),
-        HomeAway::Away => tag(away_team_emoji).parse(input),
-    }
+    let emoji = match side {
+        HomeAway::Home => parsing_context.home_emoji_team.emoji,
+        HomeAway::Away => parsing_context.away_emoji_team.emoji,
+    };
+
+    move |input| verify(take_until(" "), |word: &str| word == emoji).parse(input)
 }
 
 pub(super) fn either_team_emoji<'parse, 'output>(
