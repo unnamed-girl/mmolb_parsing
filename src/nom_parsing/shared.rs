@@ -257,7 +257,7 @@ pub(super) fn fielders_eof(input: &str) -> IResult<'_, &str, Vec<PlacedPlayer<&s
 /// A single instance of an out, e.g. "Franklin Shoebill out at home"
 pub(super) fn out(input: &str) -> IResult<'_, &str, RunnerOut<&str>> {
     (
-        parse_terminated(" out at ").and_then(name_eof),
+        parse_terminated(" out at ").and_then(verify_name),
         try_from_words_m_n(1, 2),
     )
         .map(|(player, base)| RunnerOut {
@@ -269,13 +269,16 @@ pub(super) fn out(input: &str) -> IResult<'_, &str, RunnerOut<&str>> {
 
 /// A single instance of a runner scoring, e.g. "<bold>Franklin Shoebill scores!</bold>"
 pub(super) fn scores_sentence(input: &str) -> IResult<'_, &str, &str> {
-    bold(exclamation(parse_terminated(" scores").and_then(name_eof))).parse(input)
+    bold(exclamation(
+        parse_terminated(" scores").and_then(verify_name),
+    ))
+    .parse(input)
 }
 
 // A single instance of a runner advancing, e.g. "Franklin shoebill to third base."
 pub fn runner_advance_sentence(input: &str) -> IResult<'_, &str, RunnerAdvance<&str>> {
     sentence((
-        parse_terminated(" to ").and_then(name_eof),
+        parse_terminated(" to ").and_then(verify_name),
         terminated(try_from_word, tag(" base")),
     ))
     .map(|(runner, base)| RunnerAdvance { runner, base })
@@ -477,7 +480,7 @@ pub(super) fn parse_until_exclamation_point_eof(input: &str) -> IResult<'_, &str
 }
 
 pub(super) fn placed_player_eof(input: &str) -> IResult<'_, &str, PlacedPlayer<&str>> {
-    separated_pair(try_from_word, tag(" "), name_eof)
+    separated_pair(try_from_word, tag(" "), verify_name)
         .map(|(place, name)| PlacedPlayer { name, place })
         .parse(input)
 }
@@ -486,7 +489,7 @@ pub(super) fn placed_player_eof(input: &str) -> IResult<'_, &str, PlacedPlayer<&
 ///
 /// This is important because we have events of the form "... [NAME]. [NAME] ..."
 /// make it impossible in the general case to distinguish between the two names (because names can have periods and multiple words in them).
-pub(super) fn name_eof(input: &str) -> IResult<'_, &str, &str> {
+pub(super) fn verify_name(input: &str) -> IResult<'_, &str, &str> {
     verify(rest,  |name: &str|
         name.input_len() >= 2 &&
         !["Dr"].contains(&name) &&
@@ -536,7 +539,7 @@ pub(super) fn emoji(input: &str) -> IResult<'_, &str, &str> {
 }
 
 pub(super) fn emoji_team_eof(input: &str) -> IResult<'_, &str, EmojiTeam<&str>> {
-    separated_pair(emoji, tag(" "), name_eof)
+    separated_pair(emoji, tag(" "), verify_name)
         .map(|(emoji, name)| EmojiTeam { emoji, name })
         .parse(input)
 }
@@ -1087,7 +1090,9 @@ pub(super) fn door_prize<'output>(
     input: &'output str,
 ) -> IResult<'output, &'output str, DoorPrize<&'output str>> {
     let not_win = |input: &'output str| {
-        let (input, player) = parse_terminated(" didn't win a Door Prize.").parse(input)?;
+        let (input, player) = parse_terminated(" didn't win a Door Prize.")
+            .and_then(verify_name)
+            .parse(input)?;
         Ok((
             input,
             DoorPrize {
@@ -1097,7 +1102,9 @@ pub(super) fn door_prize<'output>(
         ))
     };
     let win = |input: &'output str| {
-        let (input, player) = parse_terminated(" won a Door Prize: ").parse(input)?;
+        let (input, player) = parse_terminated(" won a Door Prize: ")
+            .and_then(verify_name)
+            .parse(input)?;
         let (input, prize) = prize.parse(input)?;
         let (input, _) = tag(".").parse(input)?;
         Ok((
@@ -1582,7 +1589,7 @@ fn injured_by_falling_star(
         };
 
         parse_terminated(text)
-            .and_then(name_eof)
+            .and_then(verify_name)
             .map(|team_name| (team_name, FeedFallingStarOutcome::Injury))
             .parse(input)
     }
@@ -1591,22 +1598,22 @@ fn injured_by_falling_star(
 fn infused_by_falling_star(input: &str) -> IResult<'_, &str, (&str, CelestialEnergyTier)> {
     alt((
         parse_terminated(" began to glow brightly with celestial energy!")
-            .and_then(name_eof)
+            .and_then(verify_name)
             .map(|team| (team, CelestialEnergyTier::BeganToGlow)),
         parse_terminated(" begins to glow brightly with celestial energy!")
-            .and_then(name_eof)
+            .and_then(verify_name)
             .map(|team| (team, CelestialEnergyTier::BeganToGlow)),
         parse_terminated(" was infused with a glimmer of celestial energy!")
-            .and_then(name_eof)
+            .and_then(verify_name)
             .map(|team| (team, CelestialEnergyTier::Infused)),
         parse_terminated(" is infused with a glimmer of celestial energy!")
-            .and_then(name_eof)
+            .and_then(verify_name)
             .map(|team| (team, CelestialEnergyTier::Infused)),
         parse_terminated(" was fully charged with an abundance of celestial energy!")
-            .and_then(name_eof)
+            .and_then(verify_name)
             .map(|team| (team, CelestialEnergyTier::FullyCharged)),
         parse_terminated(" is fully charged with an abundance of celestial energy!")
-            .and_then(name_eof)
+            .and_then(verify_name)
             .map(|team| (team, CelestialEnergyTier::FullyCharged)),
     ))
     .parse(input)
@@ -1615,7 +1622,7 @@ fn infused_by_falling_star(input: &str) -> IResult<'_, &str, (&str, CelestialEne
 fn deflected_falling_star_harmlessly(input: &str) -> IResult<'_, &str, &str> {
     let (input, _) = alt((tag("It deflected off "), tag("It deflects off "))).parse(input)?;
     let (input, player_name) = parse_terminated(" harmlessly.")
-        .and_then(name_eof)
+        .and_then(verify_name)
         .parse(input)?;
 
     Ok((input, player_name))
@@ -1723,7 +1730,8 @@ pub(super) fn team_emoji_player_eof<'parse, 'output>(
 ) -> impl MyParser<'output, EmojiPlayer<&'output str>> + 'parse {
     move |input| {
         let (input, (emoji, name)) =
-            separated_pair(team_emoji(side, parsing_context), tag(" "), name_eof).parse(input)?;
+            separated_pair(team_emoji(side, parsing_context), tag(" "), verify_name)
+                .parse(input)?;
 
         Ok((input, EmojiPlayer { emoji, name }))
     }
@@ -1734,7 +1742,8 @@ pub(super) fn either_team_emoji_player_eof<'parse, 'output>(
 ) -> impl MyParser<'output, EmojiPlayer<&'output str>> + 'parse {
     move |input| {
         let (input, (emoji, name)) =
-            separated_pair(either_team_emoji(parsing_context), tag(" "), name_eof).parse(input)?;
+            separated_pair(either_team_emoji(parsing_context), tag(" "), verify_name)
+                .parse(input)?;
 
         Ok((input, EmojiPlayer { emoji, name }))
     }

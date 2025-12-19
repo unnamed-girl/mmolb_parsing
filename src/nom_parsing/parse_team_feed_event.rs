@@ -13,7 +13,7 @@ use crate::{
     enums::{FeedEventType, ModificationType},
     feed_event::{FeedEvent, FeedEventParseError},
     nom_parsing::shared::{
-        emojiless_item, feed_delivery, name_eof, parse_terminated, sentence_eof, try_from_word,
+        emojiless_item, feed_delivery, parse_terminated, sentence_eof, try_from_word, verify_name,
     },
     team_feed::ParsedTeamFeedEventText,
     time::{Breakpoints, Timestamp},
@@ -250,8 +250,10 @@ fn prosperous<'output>() -> impl TeamFeedEventParser<'output> {
 fn release<'output>(_event: &'output FeedEvent) -> impl TeamFeedEventParser<'output> {
     context(
         "Release Feed Event",
-        alt((preceded(tag("Released by the "), sentence_eof(name_eof))
-            .map(|team| ParsedTeamFeedEventText::Released { team }),)),
+        alt(
+            (preceded(tag("Released by the "), sentence_eof(verify_name))
+                .map(|team| ParsedTeamFeedEventText::Released { team }),),
+        ),
     )
 }
 
@@ -433,7 +435,7 @@ fn multiple_attribute_equal(event: &FeedEvent) -> impl TeamFeedEventParser<'_> {
                     (
                         delimited(tag(" "), u8, tag(". ")),
                         terminated(try_from_word, tag(" ")),
-                        take_while(|c| c != ',').and_then(name_eof),
+                        take_while(|c| c != ',').and_then(verify_name),
                     )
                         .map(|(_, slot, name)| (Some(slot), name)),
                 ),
@@ -501,7 +503,7 @@ fn recompose<'output>(event: &'output FeedEvent) -> impl TeamFeedEventParser<'ou
         if event.timestamp > Timestamp::Season3RecomposeChange.timestamp() {
             (
                 parse_terminated(" was Recomposed into "),
-                sentence_eof(name_eof),
+                sentence_eof(verify_name),
             )
                 .map(|(original, new)| ParsedTeamFeedEventText::Recomposed {
                     previous: original,
@@ -511,7 +513,7 @@ fn recompose<'output>(event: &'output FeedEvent) -> impl TeamFeedEventParser<'ou
         } else {
             (
                 parse_terminated(" was Recomposed using "),
-                sentence_eof(name_eof),
+                sentence_eof(verify_name),
             )
                 .map(|(original, new)| ParsedTeamFeedEventText::Recomposed {
                     previous: original,
@@ -659,14 +661,14 @@ fn take_the_plate<'output>() -> impl TeamFeedEventParser<'output> {
 }
 
 fn swap_places<'output>() -> impl TeamFeedEventParser<'output> {
-    sentence_eof((parse_terminated(" swapped places with "), name_eof))
+    sentence_eof((parse_terminated(" swapped places with "), verify_name))
         .map(|(team_one, team_two)| ParsedTeamFeedEventText::SwapPlaces { team_one, team_two })
 }
 
 fn modification<'output>() -> impl TeamFeedEventParser<'output> {
     |input| {
         if let Ok((input, team_name)) = (parse_terminated(" lost the ")).parse(input) {
-            let (_, team_name) = name_eof(team_name)?;
+            let (_, team_name) = verify_name(team_name)?;
             let (input, lost_modification) = parse_terminated(" Modification. ")
                 .map(ModificationType::new)
                 .parse(input)?;
@@ -705,11 +707,11 @@ fn retirement<'output>(emoji: bool) -> impl TeamFeedEventParser<'output> {
     (
         preceded(
             cond(emoji, tag("😇 ")),
-            parse_terminated(" retired from MMOLB!").and_then(name_eof),
+            parse_terminated(" retired from MMOLB!").and_then(verify_name),
         ),
         opt(preceded(
             tag(" "),
-            parse_terminated(" was called up to take their place.").and_then(name_eof),
+            parse_terminated(" was called up to take their place.").and_then(verify_name),
         )),
     )
         .map(|(original, new)| ParsedTeamFeedEventText::Retirement {
