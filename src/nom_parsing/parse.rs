@@ -1686,10 +1686,7 @@ mod test {
     use nom::{Finish, Parser};
 
     use crate::{
-        enums::{Base, BaseNameVariant, Day, Distance, FairBallType, Place},
-        nom_parsing::{shared::verify_name, ParsingContext},
-        parsed_event::{EmojiTeam, PlacedPlayer, RunnerAdvance, RunnerOut},
-        ParsedEventMessage,
+        ParsedEventMessage, UnparsingContext, enums::{Base, BaseNameVariant, Day, Distance, FairBallType, Place}, nom_parsing::{ParsingContext, shared::verify_name}, parsed_event::{EmojiTeam, PlacedPlayer, RunnerAdvance, RunnerOut}
     };
 
     #[test]
@@ -1880,5 +1877,41 @@ mod test {
             .parse(text)
             .finish()
             .unwrap_or_else(|e| panic!("{e}"));
+    }
+
+    #[test]
+    fn weird_round_trip_failure() {
+        let text = "Lincoln Hwang flies out to P Dizzy Pereira. Luna Ren to second base. <strong>Perfect catch!</strong>";
+        let parsing_context = ParsingContext {
+            game_id: "694657ad277e53871c0f855b",
+            event_log: &[],
+            event_index: Some(14),
+            home_emoji_team: EmojiTeam {
+                emoji: "👩‍❤️‍💋‍👩",
+                name: "Eden Ultimate Room Mates",
+            },
+            away_emoji_team: EmojiTeam {
+                emoji: "🌌",
+                name: "Providence Astronomers",
+            },
+            season: 9,
+            day: Some(Day::Day(106)),
+        };
+        let (_, event) = super::field(&parsing_context).parse(text).unwrap();
+
+        let unparsing_context = UnparsingContext {
+            season: 9,
+            day: Some(Day::Day(106)),
+            away_emoji_team: EmojiTeam {
+                emoji: "🌌",
+                name: "Providence Astronomers",
+            },
+            home_emoji_team: EmojiTeam {
+                emoji: "👩‍❤️‍💋‍👩",
+                name: "Eden Ultimate Room Mates",
+            }
+        };
+
+        assert_eq!(text, event.unparse(unparsing_context, Some(14)));
     }
 }

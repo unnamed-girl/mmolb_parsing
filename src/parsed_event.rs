@@ -11,6 +11,7 @@ use thiserror::Error;
 
 use crate::enums::{Attribute, FoodName};
 use crate::nom_parsing::shared::{discarded_text, received_text};
+use crate::UnparsingContext;
 use crate::{
     enums::{
         Base, BaseNameVariant, BatterStat, Distance, EventType, FairBallDestination, FairBallType,
@@ -18,8 +19,7 @@ use crate::{
         MoundVisitType, NowBattingStats, Place, StrikeType, TopBottom,
     },
     nom_parsing::shared::{hit_by_pitch_text, strike_out_text},
-    time::Breakpoints,
-    Game, NotRecognized,
+    time::Breakpoints, NotRecognized,
 };
 
 pub use crate::nom_parsing::shared::GrowAttributeChange;
@@ -336,7 +336,9 @@ pub enum ParsedEventMessage<S> {
 }
 impl<S: Display> ParsedEventMessage<S> {
     /// Recreate the event message this ParsedEvent was built out of.
-    pub fn unparse(&self, game: &Game, event_index: Option<u16>) -> String {
+    pub fn unparse<'a>(&self, context: impl Into<UnparsingContext<'a>>, event_index: Option<u16>) -> String
+    {
+        let context = context.into();
         match self {
             Self::ParseError { message, .. } => message.to_string(),
             Self::LiveNow {
@@ -491,11 +493,11 @@ impl<S: Display> ParsedEventMessage<S> {
                     .chain(steals.iter().map(BaseSteal::to_string))
                     .collect::<Vec<String>>()
                     .join(" ");
-                let space = old_space(game, event_index);
+                let space = old_space(context, event_index);
 
                 let cheer = cheer
                     .as_ref()
-                    .map(|c| c.unparse(game, event_index))
+                    .map(|c| c.unparse(context, event_index))
                     .unwrap_or_default();
                 let aurora_photos = aurora_photos
                     .as_ref()
@@ -531,11 +533,11 @@ impl<S: Display> ParsedEventMessage<S> {
                     .chain(steals.iter().map(|steal| steal.to_string()))
                     .collect();
                 let steals = steals.join(" ");
-                let space = old_space(game, event_index);
+                let space = old_space(context, event_index);
 
                 let cheer = cheer
                     .as_ref()
-                    .map(|c| c.unparse(game, event_index))
+                    .map(|c| c.unparse(context, event_index))
                     .unwrap_or_default();
                 let aurora_photos = aurora_photos
                     .as_ref()
@@ -570,11 +572,11 @@ impl<S: Display> ParsedEventMessage<S> {
                     .chain(steals.iter().map(|steal| steal.to_string()))
                     .collect();
                 let steals = steals.join(" ");
-                let space = old_space(game, event_index);
+                let space = old_space(context, event_index);
 
                 let cheer = cheer
                     .as_ref()
-                    .map(|c| c.unparse(game, event_index))
+                    .map(|c| c.unparse(context, event_index))
                     .unwrap_or_default();
                 let aurora_photos = aurora_photos
                     .as_ref()
@@ -604,11 +606,11 @@ impl<S: Display> ParsedEventMessage<S> {
                 wither,
             } => {
                 let scores_and_advances = unparse_scores_and_advances(scores, advances);
-                let space = old_space(game, event_index);
+                let space = old_space(context, event_index);
 
                 let cheer = cheer
                     .as_ref()
-                    .map(|c| c.unparse(game, event_index))
+                    .map(|c| c.unparse(context, event_index))
                     .unwrap_or_default();
                 let aurora_photos = aurora_photos
                     .as_ref()
@@ -634,11 +636,11 @@ impl<S: Display> ParsedEventMessage<S> {
                 efflorescence,
             } => {
                 let scores_and_advances = unparse_scores_and_advances(scores, advances);
-                let space = old_space(game, event_index);
+                let space = old_space(context, event_index);
 
                 let cheer = cheer
                     .as_ref()
-                    .map(|c| c.unparse(game, event_index))
+                    .map(|c| c.unparse(context, event_index))
                     .unwrap_or_default();
                 let aurora_photos = aurora_photos
                     .as_ref()
@@ -650,7 +652,7 @@ impl<S: Display> ParsedEventMessage<S> {
                     .collect::<Vec<_>>()
                     .join("<br>");
                 let hbp_text =
-                    hit_by_pitch_text(game.season, game.day.as_ref().copied().ok(), event_index);
+                    hit_by_pitch_text(context.season, context.day, event_index);
                 let wither = wither
                     .as_ref()
                     .map_or_else(String::new, |wither| format!(" {}", wither));
@@ -669,11 +671,11 @@ impl<S: Display> ParsedEventMessage<S> {
                 door_prizes,
                 efflorescence,
             } => {
-                let space = old_space(game, event_index);
+                let space = old_space(context, event_index);
 
                 let cheer = cheer
                     .as_ref()
-                    .map(|c| c.unparse(game, event_index))
+                    .map(|c| c.unparse(context, event_index))
                     .unwrap_or_default();
                 let aurora_photos = aurora_photos
                     .as_ref()
@@ -708,11 +710,11 @@ impl<S: Display> ParsedEventMessage<S> {
                     .chain(steals.iter().map(|steal| steal.to_string()))
                     .collect();
                 let steals = steals.join(" ");
-                let space = old_space(game, event_index);
+                let space = old_space(context, event_index);
 
                 let cheer = cheer
                     .as_ref()
-                    .map(|c| c.unparse(game, event_index))
+                    .map(|c| c.unparse(context, event_index))
                     .unwrap_or_default();
                 let aurora_photos = aurora_photos
                     .as_ref()
@@ -726,7 +728,7 @@ impl<S: Display> ParsedEventMessage<S> {
                 // I do have proof that cheer is before ejection at least on this event
                 // (game 6887e4f9f142e23550fc1134 event 265)
                 let strike_out_text =
-                    strike_out_text(game.season, game.day.as_ref().copied().ok(), event_index);
+                    strike_out_text(context.season, context.day, event_index);
                 format!("{space}{foul}{batter}{strike_out_text}{strike}.{steals}{aurora_photos}{cheer}{ejection}{wither}")
             }
             Self::BatterToBase {
@@ -794,7 +796,7 @@ impl<S: Display> ParsedEventMessage<S> {
                     String::new()
                 };
 
-                format!("{batter} {fair_ball_type} out {sacrifice}to {catcher}.{perfect}{scores_and_advances}{ejection}")
+                format!("{batter} {fair_ball_type} out {sacrifice}to {catcher}.{scores_and_advances}{perfect}{ejection}")
             }
             Self::GroundedOut {
                 batter,
@@ -807,7 +809,7 @@ impl<S: Display> ParsedEventMessage<S> {
                 let scores_and_advances = unparse_scores_and_advances(scores, advances);
                 let fielders = unparse_fielders(fielders);
                 let perfect = if *amazing {
-                    if game.season < 5 {
+                    if context.season < 5 {
                         " <strong>Perfect catch!</strong>"
                     } else {
                         " <strong>Amazing throw!</strong>"
@@ -889,8 +891,8 @@ impl<S: Display> ParsedEventMessage<S> {
                 };
 
                 let verb = if Breakpoints::Season5TenseChange.before(
-                    game.season,
-                    game.day.as_ref().ok().copied(),
+                    context.season,
+                    context.day,
                     event_index,
                 ) {
                     "grounded"
@@ -938,7 +940,7 @@ impl<S: Display> ParsedEventMessage<S> {
                 };
                 format!("{batter} reaches on a {error} error by {fielder}.{scores_and_advances}{ejection}")
             }
-            Self::WeatherDelivery { delivery } => delivery.unparse(game, event_index, "Delivery"),
+            Self::WeatherDelivery { delivery } => delivery.unparse(context, event_index, "Delivery"),
             Self::FallingStar { player_name } => {
                 format!("<strong>🌠 {player_name} is hit by a Falling Star!</strong>")
             }
@@ -954,17 +956,17 @@ impl<S: Display> ParsedEventMessage<S> {
                 };
 
                 let outcome_msg =
-                    outcome.unparse(game, event_index, player_name.to_string().as_str());
+                    outcome.unparse(context, event_index, player_name.to_string().as_str());
 
                 format!(" <strong>{deflection_msg}{outcome_msg}</strong>")
             }
             Self::WeatherShipment { deliveries } => deliveries
                 .iter()
-                .map(|d| d.unparse(game, event_index, "Shipment"))
+                .map(|d| d.unparse(context, event_index, "Shipment"))
                 .collect::<Vec<String>>()
                 .join(" "),
             Self::WeatherSpecialDelivery { delivery } => {
-                delivery.unparse(game, event_index, "Special Delivery")
+                delivery.unparse(context, event_index, "Special Delivery")
             }
             Self::Balk {
                 pitcher,
@@ -980,8 +982,8 @@ impl<S: Display> ParsedEventMessage<S> {
                 away_income,
             } => {
                 let earn = if Breakpoints::Season5TenseChange.before(
-                    game.season,
-                    game.day.as_ref().ok().copied(),
+                    context.season,
+                    context.day,
                     event_index,
                 ) {
                     "earned"
@@ -992,13 +994,13 @@ impl<S: Display> ParsedEventMessage<S> {
                 let home = (*home_income > 0)
                     .then_some(format!(
                         "{} {} are Prosperous! They {earn} {home_income} 🪙.",
-                        game.home_team_emoji, game.home_team_name
+                        context.home_emoji_team.emoji, context.home_emoji_team.name
                     ))
                     .unwrap_or_default();
                 let away = (*away_income > 0)
                     .then_some(format!(
                         "{} {} are Prosperous! They {earn} {away_income} 🪙.",
-                        game.away_team_emoji, game.away_team_name
+                        context.away_emoji_team.emoji, context.away_emoji_team.name
                     ))
                     .unwrap_or_default();
                 let gap = if *home_income > 0 && *away_income > 0 {
@@ -1008,8 +1010,8 @@ impl<S: Display> ParsedEventMessage<S> {
                 };
 
                 if Breakpoints::Season3PreSuperstarBreakUpdate.before(
-                    game.season,
-                    game.day.as_ref().ok().copied(),
+                    context.season,
+                    context.day,
                     event_index,
                 ) {
                     format!("{home}{gap}{away}")
@@ -1033,8 +1035,8 @@ impl<S: Display> ParsedEventMessage<S> {
                 let losing_emoji = &losing_team.emoji;
 
                 let earn = if Breakpoints::Season5TenseChange.before(
-                    game.season,
-                    game.day.as_ref().ok().copied(),
+                    context.season,
+                    context.day,
                     event_index,
                 ) {
                     "earned"
@@ -1073,8 +1075,8 @@ impl<S: Display> ParsedEventMessage<S> {
                     ContainResult::NoContain => ".",
                     ContainResult::SuccessfulContain { .. } => {
                         if Breakpoints::Season7SuccessfulContainPeriodFix.before(
-                            game.season,
-                            game.day.as_ref().ok().copied(),
+                            context.season,
+                            context.day,
                             event_index,
                         ) {
                             "."
@@ -1089,8 +1091,8 @@ impl<S: Display> ParsedEventMessage<S> {
                     WitherResult::Resisted => {
                         // This one actually changed from present to past tense. Probably an accident.
                         let resist = if Breakpoints::Season7WitherTenseChange.before(
-                            game.season,
-                            game.day.as_ref().ok().copied(),
+                            context.season,
+                            context.day,
                             event_index,
                         ) {
                             "resists"
@@ -1350,10 +1352,11 @@ pub enum FallingStarOutcome<S> {
 }
 
 impl<S: Display> FallingStarOutcome<S> {
-    pub fn unparse(&self, game: &Game, event_index: Option<u16>, player_name: &str) -> String {
+    pub fn unparse<'a>(&self, context: impl Into<UnparsingContext<'a>>, event_index: Option<u16>, player_name: &str) -> String {
+        let context = context.into();
         let was_is = if Breakpoints::Season5TenseChange.after(
-            game.season,
-            game.day.as_ref().ok().copied(),
+            context.season,
+            context.day,
             event_index,
         ) {
             "is"
@@ -1374,8 +1377,8 @@ impl<S: Display> FallingStarOutcome<S> {
             }
             FallingStarOutcome::InfusionII => {
                 let began_begins = if Breakpoints::Season5TenseChange.after(
-                    game.season,
-                    game.day.as_ref().ok().copied(),
+                    context.season,
+                    context.day,
                     event_index,
                 ) {
                     "begins"
@@ -1390,8 +1393,8 @@ impl<S: Display> FallingStarOutcome<S> {
             ),
             FallingStarOutcome::DeflectedHarmlessly => {
                 let deflected_deflects = if Breakpoints::Season5TenseChange.after(
-                    game.season,
-                    game.day.as_ref().ok().copied(),
+                    context.season,
+                    context.day,
                     event_index,
                 ) {
                     "deflects"
@@ -1482,7 +1485,9 @@ pub enum Delivery<S> {
 }
 
 impl<S: Display> Delivery<S> {
-    pub fn unparse(&self, game: &Game, event_index: Option<u16>, delivery_label: &str) -> String {
+    pub fn unparse<'a>(&self, context: impl Into<UnparsingContext<'a>>, event_index: Option<u16>, delivery_label: &str) -> String 
+    {
+        let context = context.into();
         match self {
             Self::Successful {
                 team,
@@ -1494,10 +1499,10 @@ impl<S: Display> Delivery<S> {
                 let received_text = if *equipped {
                     " equips "
                 } else {
-                    received_text(game.season, game.day.as_ref().copied().ok(), event_index)
+                    received_text(context.season, context.day, event_index)
                 };
                 let discarded_text =
-                    discarded_text(game.season, game.day.as_ref().copied().ok(), event_index);
+                    discarded_text(context.season, context.day, event_index);
 
                 let discarded = match discarded {
                     Some(discarded) => format!("{discarded_text}{discarded}."),
@@ -1518,14 +1523,14 @@ impl<S: Display> Delivery<S> {
             }
             Self::NoSpace { item } => {
                 let discard_text = if Breakpoints::Season8ItemDiscardedMessageChange.after(
-                    game.season,
-                    game.day.as_ref().ok().copied(),
+                    context.season,
+                    context.day,
                     event_index,
                 ) {
                     " is discarded as no player can use it."
                 } else if Breakpoints::Season5TenseChange.after(
-                    game.season,
-                    game.day.as_ref().ok().copied(),
+                    context.season,
+                    context.day,
                     event_index,
                 ) {
                     " is discarded as no player has space."
@@ -1610,8 +1615,8 @@ impl<S: Display> Display for ContainResult<S> {
     }
 }
 
-fn old_space(game: &Game, event_index: Option<u16>) -> &'static str {
-    if Breakpoints::S2D169.before(game.season, game.day.as_ref().copied().ok(), event_index) {
+fn old_space(context: UnparsingContext, event_index: Option<u16>) -> &'static str {
+    if Breakpoints::S2D169.before(context.season, context.day, event_index) {
         " "
     } else {
         ""
@@ -1892,10 +1897,11 @@ impl Cheer {
         r
     }
 
-    pub fn unparse(&self, game: &Game, event_index: Option<u16>) -> String {
+    pub fn unparse<'a>(&self, context: impl Into<UnparsingContext<'a>>, event_index: Option<u16>) -> String {
+        let context = context.into();
         if Breakpoints::CheersGetEmoji.before(
-            game.season,
-            game.day.as_ref().ok().copied(),
+            context.season,
+            context.day,
             event_index,
         ) {
             format!(" {self}!")

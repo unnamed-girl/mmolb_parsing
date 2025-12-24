@@ -22,3 +22,33 @@ pub use utils::{
     AddedLater, AddedLaterResult, EmptyArrayOr, MaybeRecognizedResult, NotRecognized, RemovedLater,
     RemovedLaterResult,
 };
+
+use crate::{enums::Day, parsed_event::EmojiTeam};
+
+#[derive(Clone, Copy)]
+pub struct UnparsingContext<'a> {
+    pub season: u32,
+    pub day: Option<Day>,
+    pub away_emoji_team: EmojiTeam<&'a str>,
+    pub home_emoji_team: EmojiTeam<&'a str>,
+}
+
+impl<'a> From<&'a Game> for UnparsingContext<'a> {
+    fn from(value: &'a Game) -> Self {
+        let Game {
+            season,
+            day,
+            away_team_emoji,
+            away_team_name,
+            home_team_emoji,
+            home_team_name,
+            ..
+        } = value;
+        UnparsingContext {
+            season: *season,
+            day: day.as_ref().ok().copied(),
+            away_emoji_team: EmojiTeam { emoji: away_team_emoji, name: away_team_name },
+            home_emoji_team: EmojiTeam { emoji: home_team_emoji, name: home_team_name }
+        }
+    }
+}
