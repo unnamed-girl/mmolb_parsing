@@ -1832,6 +1832,12 @@ mod test {
     }
 
     #[test]
+    fn cecilia_st_galentines() {
+        assert!(verify_name("Cecilia St").is_err());
+        assert!(verify_name("Cecilia St. Galentines").is_ok());
+    }
+
+    #[test]
     fn weather_consumption_consumes() {
         let text = "🦡 Cool Tanner Consumes 14 bunches of grapes!<br>🧮 Yadier Valencia Consumes 19 bunches of grapes!<br>Score: 66 - 72";
         let context = ParsingContext {
