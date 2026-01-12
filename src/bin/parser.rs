@@ -1,7 +1,13 @@
 use clap::{Parser, ValueEnum};
 use futures::{Stream, StreamExt};
 use mmolb_parsing::{
-    Game, ParsedEventMessage, UnparsingContext, enums::FoulType, player::Player, player_feed::{PlayerFeed, parse_player_feed_event}, process_event, team::Team, team_feed::{TeamFeed, parse_team_feed_event}
+    enums::FoulType,
+    player::Player,
+    player_feed::{parse_player_feed_event, PlayerFeed},
+    process_event,
+    team::Team,
+    team_feed::{parse_team_feed_event, TeamFeed},
+    Game, ParsedEventMessage, UnparsingContext,
 };
 use serde::{de::IntoDeserializer, Deserialize, Serialize};
 use std::{
@@ -127,20 +133,20 @@ fn cashews_fetch_json<'a>(
     let kind = kind.as_chron_kind();
     async_stream::stream! {
         let (mut url, mut page) = match start_page {
-            Some(page) => (format!("{endpoint}?kind={kind}&count=1000{extra}&page={page}"), Some(page)),
-            None => (format!("{endpoint}?kind={kind}&count=1000{extra}"), None)
+            Some(page) => (format!("{endpoint}?kind={kind}&count=10{extra}&page={page}"), Some(page)),
+            None => (format!("{endpoint}?kind={kind}&count=10{extra}"), None)
         };
         loop {
             info!("Fetching {kind}s from cashews page {page:?}");
             let response = client.get(&url).send().await.unwrap();
             info!("{response:?}");
-            let response = response.json::<FreeCashewResponse<EntityResponse<Box<serde_json::value::RawValue>>>>().await.unwrap();
+            let response = response.error_for_status().unwrap().json::<FreeCashewResponse<EntityResponse<Box<serde_json::value::RawValue>>>>().await.unwrap();
             info!("{} {kind}s fetched from cashews page {page:?}", response.items.len());
             page = response.next_page;
             yield response.items;
 
             if let Some(page) = &page {
-                url = format!("{endpoint}?kind={kind}&count=1000&page={page}{extra}");
+                url = format!("{endpoint}?kind={kind}&count=10&page={page}{extra}");
             } else {
                 break
             }

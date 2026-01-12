@@ -47,8 +47,14 @@ impl<'a> From<&'a Game> for UnparsingContext<'a> {
         UnparsingContext {
             season: *season,
             day: day.as_ref().ok().copied(),
-            away_emoji_team: EmojiTeam { emoji: away_team_emoji, name: away_team_name },
-            home_emoji_team: EmojiTeam { emoji: home_team_emoji, name: home_team_name }
+            away_emoji_team: EmojiTeam {
+                emoji: away_team_emoji,
+                name: away_team_name,
+            },
+            home_emoji_team: EmojiTeam {
+                emoji: home_team_emoji,
+                name: home_team_name,
+            },
         }
     }
 }

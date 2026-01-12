@@ -47,10 +47,8 @@ pub struct Player {
     pub last_name: String,
     pub home: String,
 
-    /// Word of god that lesser boons are a subcategory of modifications https://discord.com/channels/1136709081319604324/1148829574524850197/1365237630043820093
-    pub greater_boon: Option<Modification>,
-    /// Word of god that lesser boons are a subcategory of modifications https://discord.com/channels/1136709081319604324/1148829574524850197/1365237630043820093
-    pub lesser_boon: Option<Modification>,
+    pub greater_boon: BoonCollection,
+    pub lesser_boon: BoonCollection,
     pub modifications: Vec<Modification>,
 
     pub likes: String,
@@ -340,6 +338,51 @@ pub enum TalkStars {
     },
     Simple(#[serde_as(as = "StarHelper")] u8),
 }
+
+/// In season 10, Lesser and Greater boons moved from Option<Modification> to Option<Vec<Modification>>
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Default)]
+#[serde(untagged)]
+pub enum BoonCollection {
+    /// Null
+    #[default]
+    None,
+    Single(Modification),
+    Many(Vec<Modification>),
+}
+
+pub enum BoonCollectionIterator {
+    None(std::iter::Empty<Modification>),
+    Single(std::iter::Once<Modification>),
+    Many(std::vec::IntoIter<Modification>),
+}
+
+impl Iterator for BoonCollectionIterator {
+    type Item = Modification;
+    fn next(&mut self) -> Option<Self::Item> {
+        match self {
+            BoonCollectionIterator::None(empty) => empty.next(),
+            BoonCollectionIterator::Single(once) => once.next(),
+            BoonCollectionIterator::Many(many) => many.next(),
+        }
+    }
+}
+
+impl IntoIterator for BoonCollection {
+    type Item = Modification;
+    type IntoIter = BoonCollectionIterator;
+    fn into_iter(self) -> Self::IntoIter {
+        match self {
+            BoonCollection::None => BoonCollectionIterator::None(std::iter::empty()),
+            BoonCollection::Single(modification) => {
+                BoonCollectionIterator::Single(std::iter::once(modification))
+            }
+            BoonCollection::Many(modifications) => {
+                BoonCollectionIterator::Many(modifications.into_iter())
+            }
+        }
+    }
+}
+
 #[cfg(test)]
 mod test {
     use crate::{

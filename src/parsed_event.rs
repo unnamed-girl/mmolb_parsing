@@ -19,7 +19,8 @@ use crate::{
         MoundVisitType, NowBattingStats, Place, StrikeType, TopBottom,
     },
     nom_parsing::shared::{hit_by_pitch_text, strike_out_text},
-    time::Breakpoints, NotRecognized,
+    time::Breakpoints,
+    NotRecognized,
 };
 
 pub use crate::nom_parsing::shared::GrowAttributeChange;
@@ -336,8 +337,11 @@ pub enum ParsedEventMessage<S> {
 }
 impl<S: Display> ParsedEventMessage<S> {
     /// Recreate the event message this ParsedEvent was built out of.
-    pub fn unparse<'a>(&self, context: impl Into<UnparsingContext<'a>>, event_index: Option<u16>) -> String
-    {
+    pub fn unparse<'a>(
+        &self,
+        context: impl Into<UnparsingContext<'a>>,
+        event_index: Option<u16>,
+    ) -> String {
         let context = context.into();
         match self {
             Self::ParseError { message, .. } => message.to_string(),
@@ -651,8 +655,7 @@ impl<S: Display> ParsedEventMessage<S> {
                     .chain(door_prizes.iter().map(|d| d.unparse()))
                     .collect::<Vec<_>>()
                     .join("<br>");
-                let hbp_text =
-                    hit_by_pitch_text(context.season, context.day, event_index);
+                let hbp_text = hit_by_pitch_text(context.season, context.day, event_index);
                 let wither = wither
                     .as_ref()
                     .map_or_else(String::new, |wither| format!(" {}", wither));
@@ -727,8 +730,7 @@ impl<S: Display> ParsedEventMessage<S> {
 
                 // I do have proof that cheer is before ejection at least on this event
                 // (game 6887e4f9f142e23550fc1134 event 265)
-                let strike_out_text =
-                    strike_out_text(context.season, context.day, event_index);
+                let strike_out_text = strike_out_text(context.season, context.day, event_index);
                 format!("{space}{foul}{batter}{strike_out_text}{strike}.{steals}{aurora_photos}{cheer}{ejection}{wither}")
             }
             Self::BatterToBase {
@@ -940,7 +942,9 @@ impl<S: Display> ParsedEventMessage<S> {
                 };
                 format!("{batter} reaches on a {error} error by {fielder}.{scores_and_advances}{ejection}")
             }
-            Self::WeatherDelivery { delivery } => delivery.unparse(context, event_index, "Delivery"),
+            Self::WeatherDelivery { delivery } => {
+                delivery.unparse(context, event_index, "Delivery")
+            }
             Self::FallingStar { player_name } => {
                 format!("<strong>🌠 {player_name} is hit by a Falling Star!</strong>")
             }
@@ -1352,17 +1356,19 @@ pub enum FallingStarOutcome<S> {
 }
 
 impl<S: Display> FallingStarOutcome<S> {
-    pub fn unparse<'a>(&self, context: impl Into<UnparsingContext<'a>>, event_index: Option<u16>, player_name: &str) -> String {
+    pub fn unparse<'a>(
+        &self,
+        context: impl Into<UnparsingContext<'a>>,
+        event_index: Option<u16>,
+        player_name: &str,
+    ) -> String {
         let context = context.into();
-        let was_is = if Breakpoints::Season5TenseChange.after(
-            context.season,
-            context.day,
-            event_index,
-        ) {
-            "is"
-        } else {
-            "was"
-        };
+        let was_is =
+            if Breakpoints::Season5TenseChange.after(context.season, context.day, event_index) {
+                "is"
+            } else {
+                "was"
+            };
 
         match self {
             FallingStarOutcome::Injury => {
@@ -1485,8 +1491,12 @@ pub enum Delivery<S> {
 }
 
 impl<S: Display> Delivery<S> {
-    pub fn unparse<'a>(&self, context: impl Into<UnparsingContext<'a>>, event_index: Option<u16>, delivery_label: &str) -> String 
-    {
+    pub fn unparse<'a>(
+        &self,
+        context: impl Into<UnparsingContext<'a>>,
+        event_index: Option<u16>,
+        delivery_label: &str,
+    ) -> String {
         let context = context.into();
         match self {
             Self::Successful {
@@ -1501,8 +1511,7 @@ impl<S: Display> Delivery<S> {
                 } else {
                     received_text(context.season, context.day, event_index)
                 };
-                let discarded_text =
-                    discarded_text(context.season, context.day, event_index);
+                let discarded_text = discarded_text(context.season, context.day, event_index);
 
                 let discarded = match discarded {
                     Some(discarded) => format!("{discarded_text}{discarded}."),
@@ -1897,13 +1906,13 @@ impl Cheer {
         r
     }
 
-    pub fn unparse<'a>(&self, context: impl Into<UnparsingContext<'a>>, event_index: Option<u16>) -> String {
+    pub fn unparse<'a>(
+        &self,
+        context: impl Into<UnparsingContext<'a>>,
+        event_index: Option<u16>,
+    ) -> String {
         let context = context.into();
-        if Breakpoints::CheersGetEmoji.before(
-            context.season,
-            context.day,
-            event_index,
-        ) {
+        if Breakpoints::CheersGetEmoji.before(context.season, context.day, event_index) {
             format!(" {self}!")
         } else {
             format!(" 📣 {self}!")

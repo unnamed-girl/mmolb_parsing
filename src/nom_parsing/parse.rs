@@ -1686,7 +1686,10 @@ mod test {
     use nom::{Finish, Parser};
 
     use crate::{
-        ParsedEventMessage, UnparsingContext, enums::{Base, BaseNameVariant, Day, Distance, FairBallType, Place}, nom_parsing::{ParsingContext, shared::verify_name}, parsed_event::{EmojiTeam, PlacedPlayer, RunnerAdvance, RunnerOut}
+        enums::{Base, BaseNameVariant, Day, Distance, FairBallType, Place},
+        nom_parsing::{shared::verify_name, ParsingContext},
+        parsed_event::{EmojiTeam, PlacedPlayer, RunnerAdvance, RunnerOut},
+        ParsedEventMessage, UnparsingContext,
     };
 
     #[test]
@@ -1915,7 +1918,7 @@ mod test {
             home_emoji_team: EmojiTeam {
                 emoji: "👩‍❤️‍💋‍👩",
                 name: "Eden Ultimate Room Mates",
-            }
+            },
         };
 
         assert_eq!(text, event.unparse(unparsing_context, Some(14)));
