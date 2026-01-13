@@ -443,6 +443,24 @@ impl IntoIterator for BoonCollection {
     }
 }
 
+impl<'a> IntoIterator for &'a BoonCollection {
+    type Item = &'a Modification;
+    type IntoIter = BoonCollectionRefIterator<'a>;
+    
+    fn into_iter(self) -> Self::IntoIter {
+        self.iter()
+    }
+}
+
+impl<'a> IntoIterator for &'a mut BoonCollection {
+    type Item = &'a mut Modification;
+    type IntoIter = BoonCollectionMutIterator<'a>;
+    
+    fn into_iter(self) -> Self::IntoIter {
+        self.iter_mut()
+    }
+}
+
 #[cfg(test)]
 mod test {
     use crate::{
