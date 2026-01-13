@@ -23,7 +23,7 @@ pub use utils::{
     RemovedLaterResult,
 };
 
-use crate::{enums::Day, parsed_event::EmojiTeam};
+use crate::{enums::Day, parsed_event::EmojiTeam, time::Time};
 
 #[derive(Clone, Copy)]
 pub struct UnparsingContext<'a> {
@@ -56,5 +56,17 @@ impl<'a> From<&'a Game> for UnparsingContext<'a> {
                 name: home_team_name,
             },
         }
+    }
+}
+
+impl<'a> UnparsingContext<'a> {
+    /// Whether this event is before the given time
+    pub(crate) fn before(&self, event_index: Option<u16>, time: impl Into<Time>) -> bool {
+        time.into().before(self.season, self.day, event_index)
+    }
+
+    /// Whether this event is after the given time
+    pub(crate) fn after(&self, event_index: Option<u16>, time: impl Into<Time>) -> bool {
+        time.into().after(self.season, self.day, event_index)
     }
 }

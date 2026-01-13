@@ -1121,7 +1121,11 @@ impl<S: Display> ParsedEventMessage<S> {
                 claimed_by,
                 claimed_from,
             } => {
-                format!("➰ {claimed_by} claimed the Lineal Belt from {claimed_from}!")
+                if context.before(event_index, Breakpoints::Season10) {
+                    format!("➰ {claimed_by} claimed the Lineal Belt from {claimed_from}!")
+                } else {
+                    format!("{claimed_by} claimed the ➰ Lineal Belt from {claimed_from}!")
+                }
             }
             Self::WeatherConsumption(weather_consumption) => weather_consumption.unparse(),
         }

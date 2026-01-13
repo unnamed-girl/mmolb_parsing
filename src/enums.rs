@@ -1669,6 +1669,10 @@ pub enum Attribute {
     Speed,
     Stealth,
     Guts,
+
+    // Season 10
+    Deception,
+    Intuition,
 }
 
 #[derive(Debug, Clone, Copy, EnumIter, PartialEq, Eq, Hash)]
@@ -1695,7 +1699,8 @@ impl From<Attribute> for AttributeCategory {
             | Attribute::Muscle
             | Attribute::Selflessness
             | Attribute::Vision
-            | Attribute::Wisdom => AttributeCategory::Batting,
+            | Attribute::Wisdom
+            | Attribute::Intuition => AttributeCategory::Batting,
             Attribute::Greed | Attribute::Performance | Attribute::Speed | Attribute::Stealth => {
                 AttributeCategory::Baserunning
             }
@@ -1710,7 +1715,8 @@ impl From<Attribute> for AttributeCategory {
             | Attribute::Stuff
             | Attribute::Velocity
             | Attribute::Acrobatics
-            | Attribute::Agility => AttributeCategory::Pitching,
+            | Attribute::Agility
+            | Attribute::Deception => AttributeCategory::Pitching,
             Attribute::Arm
             | Attribute::Awareness
             | Attribute::Composure

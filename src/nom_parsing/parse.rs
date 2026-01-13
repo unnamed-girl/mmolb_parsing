@@ -117,7 +117,7 @@ pub fn parse_event<'parse, 'output: 'parse>(
         EventType::Party => party(parsing_context).parse(event.message.as_str()),
         EventType::WeatherReflection => weather_reflection(parsing_context).parse(&event.message),
         EventType::WeatherWither => weather_wither(parsing_context).parse(&event.message),
-        EventType::LinealBeltTransfer => lineal_belt().parse(event.message.as_str()),
+        EventType::LinealBeltTransfer => lineal_belt(parsing_context).parse(event.message.as_str()),
         EventType::WeatherConsumption => {
             weather_consumption(parsing_context).parse(event.message.as_str())
         }
@@ -1453,24 +1453,43 @@ fn wither_contain_failed<'parse, 'output: 'parse>(
 }
 
 fn lineal_belt<'parse, 'output: 'parse>(
+    parsing_context: &'parse ParsingContext<'parse>,
 ) -> impl MyParser<'output, ParsedEventMessage<&'output str>> + 'parse {
     |input| {
-        let (input, _) = tag("➰ ").parse(input)?;
-        let (input, claimed_by_str) =
-            parse_terminated(" claimed the Lineal Belt from ").parse(input)?;
-        let (_, claimed_by) = emoji_team_eof.parse(claimed_by_str)?;
+        if parsing_context.before(Breakpoints::Season10) {
+            let (input, _) = tag("➰ ").parse(input)?;
+            let (input, claimed_by_str) =
+                parse_terminated(" claimed the Lineal Belt from ").parse(input)?;
+            let (_, claimed_by) = emoji_team_eof.parse(claimed_by_str)?;
 
-        // I don't trust that team name locations won't have an exclamation point in them
-        let (input, claimed_from_str) = parse_until_exclamation_point_eof.parse(input)?;
-        let (_, claimed_from) = emoji_team_eof.parse(claimed_from_str)?;
+            // I don't trust that team name locations won't have an exclamation point in them
+            let (input, claimed_from_str) = parse_until_exclamation_point_eof.parse(input)?;
+            let (_, claimed_from) = emoji_team_eof.parse(claimed_from_str)?;
 
-        Ok((
-            input,
-            ParsedEventMessage::LinealBeltTransfer {
-                claimed_by,
-                claimed_from,
-            },
-        ))
+            Ok((
+                input,
+                ParsedEventMessage::LinealBeltTransfer {
+                    claimed_by,
+                    claimed_from,
+                },
+            ))
+        } else {
+            let (input, claimed_by_str) =
+                parse_terminated(" claimed the ➰ Lineal Belt from ").parse(input)?;
+            let (_, claimed_by) = emoji_team_eof.parse(claimed_by_str)?;
+
+            // I don't trust that team name locations won't have an exclamation point in them
+            let (input, claimed_from_str) = parse_until_exclamation_point_eof.parse(input)?;
+            let (_, claimed_from) = emoji_team_eof.parse(claimed_from_str)?;
+
+            Ok((
+                input,
+                ParsedEventMessage::LinealBeltTransfer {
+                    claimed_by,
+                    claimed_from,
+                },
+            ))
+        }
     }
 }
 
