@@ -350,6 +350,32 @@ pub enum BoonCollection {
     Many(Vec<Modification>),
 }
 
+impl BoonCollection {
+    pub fn iter(&'_ self) -> BoonCollectionRefIterator<'_> {
+        match self {
+            BoonCollection::None => BoonCollectionRefIterator::None(std::iter::empty()),
+            BoonCollection::Single(modification) => {
+                BoonCollectionRefIterator::Single(std::iter::once(modification))
+            }
+            BoonCollection::Many(modifications) => {
+                BoonCollectionRefIterator::Many(modifications.iter())
+            }
+        }
+    }
+
+    pub fn iter_mut(&'_ mut self) -> BoonCollectionMutIterator<'_> {
+        match self {
+            BoonCollection::None => BoonCollectionMutIterator::None(std::iter::empty()),
+            BoonCollection::Single(modification) => {
+                BoonCollectionMutIterator::Single(std::iter::once(modification))
+            }
+            BoonCollection::Many(modifications) => {
+                BoonCollectionMutIterator::Many(modifications.iter_mut())
+            }
+        }
+    }
+}
+
 pub enum BoonCollectionIterator {
     None(std::iter::Empty<Modification>),
     Single(std::iter::Once<Modification>),
@@ -363,6 +389,40 @@ impl Iterator for BoonCollectionIterator {
             BoonCollectionIterator::None(empty) => empty.next(),
             BoonCollectionIterator::Single(once) => once.next(),
             BoonCollectionIterator::Many(many) => many.next(),
+        }
+    }
+}
+
+pub enum BoonCollectionRefIterator<'a> {
+    None(std::iter::Empty<&'a Modification>),
+    Single(std::iter::Once<&'a Modification>),
+    Many(core::slice::Iter<'a, Modification>),
+}
+
+impl<'a> Iterator for BoonCollectionRefIterator<'a> {
+    type Item = &'a Modification;
+    fn next(&mut self) -> Option<Self::Item> {
+        match self {
+            BoonCollectionRefIterator::None(empty) => empty.next(),
+            BoonCollectionRefIterator::Single(once) => once.next(),
+            BoonCollectionRefIterator::Many(many) => many.next(),
+        }
+    }
+}
+
+pub enum BoonCollectionMutIterator<'a> {
+    None(std::iter::Empty<&'a mut Modification>),
+    Single(std::iter::Once<&'a mut Modification>),
+    Many(core::slice::IterMut<'a, Modification>),
+}
+
+impl<'a> Iterator for BoonCollectionMutIterator<'a> {
+    type Item = &'a mut Modification;
+    fn next(&mut self) -> Option<Self::Item> {
+        match self {
+            BoonCollectionMutIterator::None(empty) => empty.next(),
+            BoonCollectionMutIterator::Single(once) => once.next(),
+            BoonCollectionMutIterator::Many(many) => many.next(),
         }
     }
 }
