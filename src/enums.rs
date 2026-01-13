@@ -1801,6 +1801,8 @@ pub enum ItemPrefix {
     Tireless,
     #[strum(to_string = "Sage's")]
     Sages,
+
+    Prescient,
 }
 
 #[derive(

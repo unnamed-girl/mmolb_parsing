@@ -1418,10 +1418,10 @@ impl<S: Display> FallingStarOutcome<S> {
     }
 }
 
-#[derive(Debug, Clone, Copy, Serialize, Deserialize, PartialEq)]
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
 pub enum ItemAffixes<S> {
     None,
-    PrefixSuffix(Option<ItemPrefix>, Option<ItemSuffix>),
+    PrefixSuffix(Vec<ItemPrefix>, Vec<ItemSuffix>),
     RareName(S),
 }
 
@@ -1430,14 +1430,14 @@ impl<S: AsRef<str>> ItemAffixes<S> {
         match self {
             ItemAffixes::RareName(s) => ItemAffixes::RareName(s.as_ref()),
             ItemAffixes::PrefixSuffix(prefix, suffix) => {
-                ItemAffixes::PrefixSuffix(prefix.as_ref().copied(), suffix.as_ref().copied())
+                ItemAffixes::PrefixSuffix(prefix.clone(), suffix.clone())
             }
             ItemAffixes::None => ItemAffixes::None,
         }
     }
 }
 
-#[derive(Debug, Clone, Copy, Serialize, Deserialize, PartialEq)]
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
 pub struct Item<S> {
     pub item_emoji: S,
     pub item: ItemName,
@@ -1465,14 +1465,8 @@ impl<S: Display> Display for Item<S> {
         match affixes {
             ItemAffixes::None => write!(f, "{item_emoji} {item}"),
             ItemAffixes::PrefixSuffix(prefix, suffix) => {
-                let prefix = match prefix {
-                    Some(prefix) => format!("{prefix} "),
-                    None => String::new(),
-                };
-                let suffix = match suffix {
-                    Some(suffix) => format!(" {suffix}"),
-                    None => String::new(),
-                };
+                let prefix = prefix.iter().map(|p| format!("{p} ")).collect::<String>();
+                let suffix = suffix.iter().map(|s| format!(" {s}")).collect::<String>();
                 write!(f, "{item_emoji} {prefix}{item}{suffix}")
             }
             ItemAffixes::RareName(rare_name) => write!(f, "{item_emoji} {rare_name} {item}"),
@@ -1480,7 +1474,7 @@ impl<S: Display> Display for Item<S> {
     }
 }
 
-#[derive(Debug, Clone, Copy, Serialize, Deserialize, PartialEq)]
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
 pub enum Delivery<S> {
     Successful {
         team: EmojiTeam<S>,

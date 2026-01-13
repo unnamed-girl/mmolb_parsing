@@ -589,11 +589,11 @@ pub(super) fn item(input: &str) -> IResult<'_, &str, Item<&str>> {
         verify(
             (
                 emoji,
-                opt(preceded(tag(" "), try_from_word)),
+                many0(preceded(tag(" "), try_from_word)),
                 preceded(tag(" "), try_from_words_m_n(1, 3)),
-                opt(preceded(tag(" "), try_from_words_m_n(2, 3))),
+                many0(preceded(tag(" "), try_from_words_m_n(2, 3))),
             ),
-            |(_, prefix, _, suffix)| prefix.is_some() || suffix.is_some(),
+            |(_, prefix, _, suffix)| prefix.len() > 0 || suffix.len() > 0,
         )
         .map(|(item_emoji, prefix, item, suffix)| Item {
             item_emoji,
