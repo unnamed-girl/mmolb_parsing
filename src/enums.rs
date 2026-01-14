@@ -1802,7 +1802,12 @@ pub enum ItemPrefix {
     #[strum(to_string = "Sage's")]
     Sages,
 
+    // Season 10
+    Deceptive,
+    #[strum(to_string = "Phantom's")]
+    Phantoms,
     Prescient,
+    Intuitive,
 }
 
 #[derive(
