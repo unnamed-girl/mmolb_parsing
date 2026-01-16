@@ -96,6 +96,9 @@ struct Args {
     export_event_variants: Option<String>,
 
     #[clap(long)]
+    count: Option<u32>,
+
+    #[clap(long)]
     output_folder: Option<String>,
 }
 
@@ -133,8 +136,8 @@ fn cashews_fetch_json<'a>(
     let kind = kind.as_chron_kind();
     async_stream::stream! {
         let (mut url, mut page) = match start_page {
-            Some(page) => (format!("{endpoint}?kind={kind}&count=10{extra}&page={page}"), Some(page)),
-            None => (format!("{endpoint}?kind={kind}&count=10{extra}"), None)
+            Some(page) => (format!("{endpoint}?kind={kind}{extra}&page={page}"), Some(page)),
+            None => (format!("{endpoint}?kind={kind}{extra}"), None)
         };
         loop {
             info!("Fetching {kind}s from cashews page {page:?}");
@@ -146,7 +149,7 @@ fn cashews_fetch_json<'a>(
             yield response.items;
 
             if let Some(page) = &page {
-                url = format!("{endpoint}?kind={kind}&count=10&page={page}{extra}");
+                url = format!("{endpoint}?kind={kind}&page={page}{extra}");
             } else {
                 break
             }
@@ -237,7 +240,8 @@ async fn main() {
         .map(|before| format!("&before={before}"))
         .unwrap_or_default();
     let desc = args.desc.then_some("&order=desc").unwrap_or_default();
-    let extra = format!("{after}{before}{desc}");
+    let count = args.count.unwrap_or(1000);
+    let extra = format!("{after}{before}{desc}&count={count}");
 
     let client = Client::new();
 
@@ -310,7 +314,7 @@ fn player_inner(
     let mut output = args
         .output_folder
         .as_ref()
-        .map(|folder| File::create(format!("{folder}/{}.ron", response.entity_id)).unwrap());
+        .map(|folder| File::create(format!("{folder}/{}.json", response.entity_id)).unwrap());
 
     for event in player.feed.unwrap_or_default() {
         let _event_span_guard = tracing::span!(
@@ -341,7 +345,7 @@ fn player_inner(
         }
 
         if let Some(f) = &mut output {
-            writeln!(f, "{}", ron::to_string(&parsed_text).unwrap()).unwrap();
+            writeln!(f, "{}", serde_json::to_string(&parsed_text).unwrap()).unwrap();
         }
 
         drop(_event_span_guard);
@@ -358,7 +362,7 @@ fn team_inner(
     let mut output = args
         .output_folder
         .as_ref()
-        .map(|folder| File::create(format!("{folder}/{}.ron", response.entity_id)).unwrap());
+        .map(|folder| File::create(format!("{folder}/{}.json", response.entity_id)).unwrap());
 
     for event in team.feed.unwrap_or_default() {
         let _event_span_guard = tracing::span!(
@@ -389,7 +393,7 @@ fn team_inner(
         }
 
         if let Some(f) = &mut output {
-            writeln!(f, "{}", ron::to_string(&parsed_text).unwrap()).unwrap();
+            writeln!(f, "{}", serde_json::to_string(&parsed_text).unwrap()).unwrap();
         }
 
         drop(_event_span_guard);
@@ -415,7 +419,7 @@ fn game_inner(
     let mut output = args
         .output_folder
         .as_ref()
-        .map(|folder| File::create(format!("{folder}/{}.ron", response.entity_id)).unwrap());
+        .map(|folder| File::create(format!("{folder}/{}.json", response.entity_id)).unwrap());
     let mut event_variants_file = args
         .export_event_variants
         .as_ref()
@@ -468,7 +472,7 @@ fn game_inner(
         }
 
         if let Some(f) = &mut output {
-            writeln!(f, "{}", ron::to_string(&parsed_event_message).unwrap()).unwrap();
+            writeln!(f, "{}", serde_json::to_string(&parsed_event_message).unwrap()).unwrap();
         }
 
         drop(_event_span_guard);
@@ -485,7 +489,7 @@ fn player_feed_inner(
     let mut output = args
         .output_folder
         .as_ref()
-        .map(|folder| File::create(format!("{folder}/{}.ron", response.entity_id)).unwrap());
+        .map(|folder| File::create(format!("{folder}/{}.json", response.entity_id)).unwrap());
 
     for event in feed.feed {
         let _event_span_guard = tracing::span!(
@@ -516,7 +520,7 @@ fn player_feed_inner(
         }
 
         if let Some(f) = &mut output {
-            writeln!(f, "{}", ron::to_string(&parsed_text).unwrap()).unwrap();
+            writeln!(f, "{}", serde_json::to_string(&parsed_text).unwrap()).unwrap();
         }
 
         drop(_event_span_guard);
@@ -533,7 +537,7 @@ fn team_feed_inner(
     let mut output = args
         .output_folder
         .as_ref()
-        .map(|folder| File::create(format!("{folder}/{}.ron", response.entity_id)).unwrap());
+        .map(|folder| File::create(format!("{folder}/{}.json", response.entity_id)).unwrap());
 
     for event in feed.feed {
         let _event_span_guard = tracing::span!(
@@ -564,7 +568,7 @@ fn team_feed_inner(
         }
 
         if let Some(f) = &mut output {
-            writeln!(f, "{}", ron::to_string(&parsed_text).unwrap()).unwrap();
+            writeln!(f, "{}", serde_json::to_string(&parsed_text).unwrap()).unwrap();
         }
 
         drop(_event_span_guard);

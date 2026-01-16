@@ -2,6 +2,7 @@ pub use serde::{Deserialize, Serialize};
 use serde_with::serde_as;
 use std::collections::HashMap;
 
+use crate::enums::{AttributeCategory, PitchType};
 use crate::utils::{extra_fields_deserialize, MaybeRecognizedHelper, SometimesMissingHelper};
 use crate::{
     enums::{
@@ -9,7 +10,7 @@ use crate::{
         ItemName, ItemPrefix, ItemSuffix, Position, PositionType, SeasonStatus, SpecialItemType,
     },
     feed_event::FeedEvent,
-    utils::{AddedLaterResult, MaybeRecognizedResult, RemovedLaterResult, StarHelper},
+    utils::{AddedLaterResult, MaybeRecognizedResult, RemovedLaterResult, StarHelper, PitchTypeAcronymHelper},
     EmptyArrayOr,
 };
 
@@ -73,6 +74,46 @@ pub struct Player {
 
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub talk: Option<Talk>,
+
+    #[serde(
+        default = "SometimesMissingHelper::default_result",
+        skip_serializing_if = "AddedLaterResult::is_err"
+    )]
+    #[serde_as(as = "SometimesMissingHelper<_>")]
+    pub attribute_stars: AddedLaterResult<HashMap<AttributeCategory, HashMap<Attribute, TalkStars>>>,
+    #[serde(
+        default = "SometimesMissingHelper::default_result",
+        skip_serializing_if = "AddedLaterResult::is_err"
+    )]
+    #[serde_as(as = "SometimesMissingHelper<_>")]
+    pub base_attributes: AddedLaterResult<BaseAttributes>,
+
+    #[serde(
+        default = "SometimesMissingHelper::default_result",
+        skip_serializing_if = "AddedLaterResult::is_err",
+        rename = "XP",
+    )]
+    #[serde_as(as = "SometimesMissingHelper<_>")]
+    pub xp: AddedLaterResult<u32>,
+    #[serde(
+        default = "SometimesMissingHelper::default_result",
+        skip_serializing_if = "AddedLaterResult::is_err",
+    )]
+    #[serde_as(as = "SometimesMissingHelper<_>")]
+    pub suffix: AddedLaterResult<Option<String>>,
+    /// This is less precise than BaseAttributes.pitch_selection
+    #[serde(
+        default = "SometimesMissingHelper::default_result",
+        skip_serializing_if = "AddedLaterResult::is_err",
+    )]
+    #[serde_as(as = "SometimesMissingHelper<_>")]
+    pub pitch_selection: AddedLaterResult<Vec<f64>>,
+    #[serde(
+        default = "SometimesMissingHelper::default_result",
+        skip_serializing_if = "AddedLaterResult::is_err",
+    )]
+    #[serde_as(as = "SometimesMissingHelper<Vec<PitchTypeAcronymHelper>>")]
+    pub pitch_types: AddedLaterResult<Vec<PitchType>>,
 
     #[serde(flatten, deserialize_with = "extra_fields_deserialize")]
     pub extra_fields: serde_json::Map<String, serde_json::Value>,
@@ -203,6 +244,25 @@ pub struct PlayerEquipment {
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub cost: Option<u8>,
 
+    #[serde(
+        default = "SometimesMissingHelper::default_result",
+        skip_serializing_if = "AddedLaterResult::is_err"
+    )]
+    #[serde_as(as = "SometimesMissingHelper<_>")]
+    pub durability: AddedLaterResult<u32>,
+    #[serde(
+        default = "SometimesMissingHelper::default_result",
+        skip_serializing_if = "AddedLaterResult::is_err"
+    )]
+    #[serde_as(as = "SometimesMissingHelper<_>")]
+    pub prefix_position_type: AddedLaterResult<PositionType>,
+    #[serde(
+        default = "SometimesMissingHelper::default_result",
+        skip_serializing_if = "AddedLaterResult::is_err"
+    )]
+    #[serde_as(as = "SometimesMissingHelper<_>")]
+    pub specialized: AddedLaterResult<bool>,
+
     /// Only exists on deleted player's equipment. Was replaced with the "prefixes" field once multi-prefix items
     /// were added.
     #[serde(
@@ -255,6 +315,13 @@ pub struct EquipmentEffect {
     #[serde_as(as = "MaybeRecognizedHelper<_>")]
     pub effect_type: MaybeRecognizedResult<EquipmentEffectType>,
     pub value: f64,
+
+    #[serde(
+        default = "SometimesMissingHelper::default_result",
+        skip_serializing_if = "AddedLaterResult::is_err"
+    )]
+    #[serde_as(as = "SometimesMissingHelper<_>")]
+    pub tier: AddedLaterResult<u32>,
 
     #[serde(flatten, deserialize_with = "extra_fields_deserialize")]
     pub extra_fields: serde_json::Map<String, serde_json::Value>,
@@ -309,6 +376,13 @@ pub struct TalkCategory {
     pub season: AddedLaterResult<Option<u8>>,
     pub stars: HashMap<Attribute, TalkStars>,
 
+    #[serde(
+        default = "SometimesMissingHelper::default_result",
+        skip_serializing_if = "AddedLaterResult::is_err"
+    )]
+    #[serde_as(as = "SometimesMissingHelper<HashMap<_, _>>")]
+    pub attributes: AddedLaterResult<HashMap<Attribute, f64>>,
+
     #[serde(flatten, deserialize_with = "extra_fields_deserialize")]
     pub extra_fields: serde_json::Map<String, serde_json::Value>,
 }
@@ -318,6 +392,7 @@ pub struct TalkCategory {
 #[serde(untagged)]
 pub enum TalkStars {
     Complex {
+        attribute: String,
         display: String,
         regular: u8,
         shiny: u8,
@@ -459,6 +534,17 @@ impl<'a> IntoIterator for &'a mut BoonCollection {
     fn into_iter(self) -> Self::IntoIter {
         self.iter_mut()
     }
+}
+
+#[serde_as]
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
+#[serde(rename_all = "PascalCase")]
+pub struct BaseAttributes {
+    #[serde(flatten)]
+    pub attributes: HashMap<Attribute, f64>,
+    #[serde_as(as = "Vec<PitchTypeAcronymHelper>")]
+    pub pitch_types: Vec<PitchType>,
+    pub pitch_selection: Vec<f64>,
 }
 
 #[cfg(test)]

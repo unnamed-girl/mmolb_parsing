@@ -39,17 +39,18 @@ mod test {
     fn livingston() -> Result<(), Box<dyn Error>> {
         let no_tracing_errors = no_tracing_errs();
 
-        let f = File::open("test_data/livingston_game.json")?;
-        let game: Game = serde_json::from_reader(f)?;
+        let f = File::open("test_data/livingston_game.json").unwrap();
+        let game: Game = serde_json::from_reader(f).unwrap();
 
         let mut buf = String::new();
-        let mut f = File::open("test_data/livingston_game.ron")?;
-        f.read_to_string(&mut buf)?;
+        let mut f = File::open("test_data/livingston_game_result.json").unwrap();
+        f.read_to_string(&mut buf).unwrap();
 
         let actual_events: Vec<ParsedEventMessage<String>> = buf
             .lines()
-            .map(|line| ron::from_str(line))
-            .collect::<Result<Vec<_>, _>>()?;
+            .enumerate()
+            .map(|(i, line)| serde_json::from_str(line).map_err(|e| (i, e)))
+            .collect::<Result<Vec<_>, _>>().unwrap();
 
         assert_eq!(
             game.event_log.len(),

@@ -14,6 +14,8 @@ use thiserror::Error;
 #[cfg(test)]
 pub(crate) use test_utils::*;
 
+use crate::enums::PitchType;
+
 #[derive(Debug, Clone, PartialEq, Eq, Hash, Serialize, Deserialize, Error, Default)]
 /// Error for fields where some cashews data is missing the field.
 ///
@@ -428,6 +430,30 @@ where
             EmptyArrayOr::EmptyArray => Vec::<()>::new().serialize(serializer),
             EmptyArrayOr::Value(v) => SerializeAsWrap::<T, U>::new(v).serialize(serializer),
         }
+    }
+}
+
+pub struct PitchTypeAcronymHelper;
+
+impl<'de> DeserializeAs<'de, PitchType> for PitchTypeAcronymHelper
+{
+    fn deserialize_as<D>(deserializer: D) -> Result<PitchType, D::Error>
+    where
+        D: Deserializer<'de>,
+    {
+        let acronym = <&str>::deserialize(deserializer)?;
+        
+        PitchType::from_acronym(acronym).map_err(D::Error::custom)
+    }
+}
+
+impl SerializeAs<PitchType> for PitchTypeAcronymHelper
+{
+    fn serialize_as<S>(source: &PitchType, serializer: S) -> Result<S::Ok, S::Error>
+    where
+        S: Serializer,
+    {
+        source.acronym().serialize(serializer)
     }
 }
 

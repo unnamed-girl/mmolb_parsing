@@ -1,0 +1,430 @@
+{"event_type":"LiveNow","away_team":{"emoji":"🛸","name":"Roswell Weather Balloons"},"home_team":{"emoji":"🧹","name":"Boston Street Sweepers"},"stadium":null}
+{"event_type":"PitchingMatchup","away_team":{"emoji":"🛸","name":"Roswell Weather Balloons"},"home_team":{"emoji":"🧹","name":"Boston Street Sweepers"},"home_pitcher":"Elena Karapetyan","away_pitcher":"Angela Parrish"}
+{"event_type":"Lineup","side":"Away","players":[{"name":"Graziela Flowers","place":"1B"},{"name":"Viola de Jesus","place":"DH"},{"name":"Matthew Denbigh","place":"3B"},{"name":"Axel Johns","place":"RF"},{"name":"Lulu Vacation","place":"CF"},{"name":"Orlando Dempsey","place":"C"},{"name":"Quinn Keogh","place":"LF"},{"name":"Jacob Taş","place":"SS"},{"name":"Christina Salminen","place":"2B"}]}
+{"event_type":"Lineup","side":"Home","players":[{"name":"Princess Injury","place":"3B"},{"name":"Regina Mashaba","place":"DH"},{"name":"Doc Bowen","place":"CF"},{"name":"Eleanor Komatsu","place":"2B"},{"name":"Saki Thapa","place":"C"},{"name":"Willie Coles","place":"1B"},{"name":"Bertha Rivera","place":"RF"},{"name":"U. Livingston","place":"LF"},{"name":"Mabel Hailu","place":"SS"}]}
+{"event_type":"PlayBall"}
+{"event_type":"InningStart","number":1,"side":"Top","batting_team":{"emoji":"🛸","name":"Roswell Weather Balloons"},"automatic_runner":null,"pitcher_status":{"Same":{"emoji":"🧹","name":"Elena Karapetyan"}}}
+{"event_type":"NowBatting","batter":"Graziela Flowers","stats":"FirstPA"}
+{"event_type":"Ball","steals":[],"count":[1,0],"cheer":null,"aurora_photos":null,"ejection":null,"door_prizes":[],"wither":null,"efflorescence":[]}
+{"event_type":"Strike","strike":"Swinging","steals":[],"count":[1,1],"cheer":null,"aurora_photos":null,"ejection":null,"door_prizes":[],"wither":null,"efflorescence":[]}
+{"event_type":"Strike","strike":"Looking","steals":[],"count":[1,2],"cheer":null,"aurora_photos":null,"ejection":null,"door_prizes":[],"wither":null,"efflorescence":[]}
+{"event_type":"StrikeOut","foul":null,"batter":"Graziela Flowers","strike":"Looking","steals":[],"cheer":null,"aurora_photos":null,"ejection":null,"wither":null}
+{"event_type":"NowBatting","batter":"Viola de Jesus","stats":"FirstPA"}
+{"event_type":"Ball","steals":[],"count":[1,0],"cheer":null,"aurora_photos":null,"ejection":null,"door_prizes":[],"wither":null,"efflorescence":[]}
+{"event_type":"FairBall","batter":"Viola de Jesus","fair_ball_type":"GroundBall","destination":"SecondBase","cheer":null,"aurora_photos":null,"door_prizes":[],"efflorescence":[]}
+{"event_type":"GroundedOut","batter":"Viola de Jesus","fielders":[{"name":"Eleanor Komatsu","place":"2B"},{"name":"Willie Coles","place":"1B"}],"scores":[],"advances":[],"amazing":false,"ejection":null}
+{"event_type":"NowBatting","batter":"Matthew Denbigh","stats":"FirstPA"}
+{"event_type":"FairBall","batter":"Matthew Denbigh","fair_ball_type":"Popup","destination":"SecondBase","cheer":null,"aurora_photos":null,"door_prizes":[],"efflorescence":[]}
+{"event_type":"CaughtOut","batter":"Matthew Denbigh","fair_ball_type":"Popup","caught_by":{"name":"Eleanor Komatsu","place":"2B"},"scores":[],"advances":[],"sacrifice":false,"perfect":false,"ejection":null}
+{"event_type":"InningEnd","number":1,"side":"Top"}
+{"event_type":"InningStart","number":1,"side":"Bottom","batting_team":{"emoji":"🧹","name":"Boston Street Sweepers"},"automatic_runner":null,"pitcher_status":{"Same":{"emoji":"🛸","name":"Angela Parrish"}}}
+{"event_type":"NowBatting","batter":"Princess Injury","stats":"FirstPA"}
+{"event_type":"Foul","foul":"Ball","steals":[],"count":[0,1],"cheer":null,"aurora_photos":null,"door_prizes":[],"wither":null,"efflorescence":[]}
+{"event_type":"FairBall","batter":"Princess Injury","fair_ball_type":"FlyBall","destination":"CenterField","cheer":null,"aurora_photos":null,"door_prizes":[],"efflorescence":[]}
+{"event_type":"CaughtOut","batter":"Princess Injury","fair_ball_type":"FlyBall","caught_by":{"name":"Lulu Vacation","place":"CF"},"scores":[],"advances":[],"sacrifice":false,"perfect":false,"ejection":null}
+{"event_type":"NowBatting","batter":"Regina Mashaba","stats":"FirstPA"}
+{"event_type":"Foul","foul":"Ball","steals":[],"count":[0,1],"cheer":null,"aurora_photos":null,"door_prizes":[],"wither":null,"efflorescence":[]}
+{"event_type":"Foul","foul":"Ball","steals":[],"count":[0,2],"cheer":null,"aurora_photos":null,"door_prizes":[],"wither":null,"efflorescence":[]}
+{"event_type":"Ball","steals":[],"count":[1,2],"cheer":null,"aurora_photos":null,"ejection":null,"door_prizes":[],"wither":null,"efflorescence":[]}
+{"event_type":"Ball","steals":[],"count":[2,2],"cheer":null,"aurora_photos":null,"ejection":null,"door_prizes":[],"wither":null,"efflorescence":[]}
+{"event_type":"Foul","foul":"Ball","steals":[],"count":[2,2],"cheer":null,"aurora_photos":null,"door_prizes":[],"wither":null,"efflorescence":[]}
+{"event_type":"Ball","steals":[],"count":[3,2],"cheer":null,"aurora_photos":null,"ejection":null,"door_prizes":[],"wither":null,"efflorescence":[]}
+{"event_type":"Walk","batter":"Regina Mashaba","scores":[],"advances":[],"cheer":null,"aurora_photos":null,"ejection":null,"wither":null}
+{"event_type":"NowBatting","batter":"Doc Bowen","stats":"FirstPA"}
+{"event_type":"FairBall","batter":"Doc Bowen","fair_ball_type":"LineDrive","destination":"SecondBase","cheer":null,"aurora_photos":null,"door_prizes":[],"efflorescence":[]}
+{"event_type":"CaughtOut","batter":"Doc Bowen","fair_ball_type":"LineDrive","caught_by":{"name":"Christina Salminen","place":"2B"},"scores":[],"advances":[],"sacrifice":false,"perfect":false,"ejection":null}
+{"event_type":"NowBatting","batter":"Eleanor Komatsu","stats":"FirstPA"}
+{"event_type":"Strike","strike":"Looking","steals":[{"runner":"Regina Mashaba","base":"Second","caught":false}],"count":[0,1],"cheer":null,"aurora_photos":null,"ejection":null,"door_prizes":[],"wither":null,"efflorescence":[]}
+{"event_type":"Ball","steals":[],"count":[1,1],"cheer":null,"aurora_photos":null,"ejection":null,"door_prizes":[],"wither":null,"efflorescence":[]}
+{"event_type":"Foul","foul":"Ball","steals":[],"count":[1,2],"cheer":null,"aurora_photos":null,"door_prizes":[],"wither":null,"efflorescence":[]}
+{"event_type":"StrikeOut","foul":null,"batter":"Eleanor Komatsu","strike":"Looking","steals":[],"cheer":null,"aurora_photos":null,"ejection":null,"wither":null}
+{"event_type":"InningEnd","number":1,"side":"Bottom"}
+{"event_type":"InningStart","number":2,"side":"Top","batting_team":{"emoji":"🛸","name":"Roswell Weather Balloons"},"automatic_runner":null,"pitcher_status":{"Same":{"emoji":"🧹","name":"Elena Karapetyan"}}}
+{"event_type":"NowBatting","batter":"Axel Johns","stats":"FirstPA"}
+{"event_type":"Strike","strike":"Swinging","steals":[],"count":[0,1],"cheer":null,"aurora_photos":null,"ejection":null,"door_prizes":[],"wither":null,"efflorescence":[]}
+{"event_type":"Ball","steals":[],"count":[1,1],"cheer":null,"aurora_photos":null,"ejection":null,"door_prizes":[],"wither":null,"efflorescence":[]}
+{"event_type":"Ball","steals":[],"count":[2,1],"cheer":null,"aurora_photos":null,"ejection":null,"door_prizes":[],"wither":null,"efflorescence":[]}
+{"event_type":"Ball","steals":[],"count":[3,1],"cheer":null,"aurora_photos":null,"ejection":null,"door_prizes":[],"wither":null,"efflorescence":[]}
+{"event_type":"FairBall","batter":"Axel Johns","fair_ball_type":"FlyBall","destination":"LeftField","cheer":null,"aurora_photos":null,"door_prizes":[],"efflorescence":[]}
+{"event_type":"HomeRun","batter":"Axel Johns","fair_ball_type":"FlyBall","destination":"LeftField","scores":[],"grand_slam":false,"ejection":null}
+{"event_type":"NowBatting","batter":"Lulu Vacation","stats":"FirstPA"}
+{"event_type":"FairBall","batter":"Lulu Vacation","fair_ball_type":"Popup","destination":"SecondBase","cheer":null,"aurora_photos":null,"door_prizes":[],"efflorescence":[]}
+{"event_type":"CaughtOut","batter":"Lulu Vacation","fair_ball_type":"Popup","caught_by":{"name":"Eleanor Komatsu","place":"2B"},"scores":[],"advances":[],"sacrifice":false,"perfect":false,"ejection":null}
+{"event_type":"NowBatting","batter":"Orlando Dempsey","stats":"FirstPA"}
+{"event_type":"Strike","strike":"Looking","steals":[],"count":[0,1],"cheer":null,"aurora_photos":null,"ejection":null,"door_prizes":[],"wither":null,"efflorescence":[]}
+{"event_type":"Strike","strike":"Swinging","steals":[],"count":[0,2],"cheer":null,"aurora_photos":null,"ejection":null,"door_prizes":[],"wither":null,"efflorescence":[]}
+{"event_type":"FairBall","batter":"Orlando Dempsey","fair_ball_type":"GroundBall","destination":"CenterField","cheer":null,"aurora_photos":null,"door_prizes":[],"efflorescence":[]}
+{"event_type":"BatterToBase","batter":"Orlando Dempsey","distance":"Single","fair_ball_type":"GroundBall","fielder":{"name":"Doc Bowen","place":"CF"},"scores":[],"advances":[],"ejection":null}
+{"event_type":"NowBatting","batter":"Quinn Keogh","stats":"FirstPA"}
+{"event_type":"FairBall","batter":"Quinn Keogh","fair_ball_type":"FlyBall","destination":"LeftField","cheer":null,"aurora_photos":null,"door_prizes":[],"efflorescence":[]}
+{"event_type":"BatterToBase","batter":"Quinn Keogh","distance":"Single","fair_ball_type":"FlyBall","fielder":{"name":"U. Livingston","place":"LF"},"scores":[],"advances":[{"runner":"Orlando Dempsey","base":"Second"}],"ejection":null}
+{"event_type":"NowBatting","batter":"Jacob Taş","stats":"FirstPA"}
+{"event_type":"Ball","steals":[],"count":[1,0],"cheer":null,"aurora_photos":null,"ejection":null,"door_prizes":[],"wither":null,"efflorescence":[]}
+{"event_type":"Foul","foul":"Ball","steals":[],"count":[1,1],"cheer":null,"aurora_photos":null,"door_prizes":[],"wither":null,"efflorescence":[]}
+{"event_type":"Foul","foul":"Ball","steals":[],"count":[1,2],"cheer":null,"aurora_photos":null,"door_prizes":[],"wither":null,"efflorescence":[]}
+{"event_type":"StrikeOut","foul":null,"batter":"Jacob Taş","strike":"Swinging","steals":[],"cheer":null,"aurora_photos":null,"ejection":null,"wither":null}
+{"event_type":"NowBatting","batter":"Christina Salminen","stats":"FirstPA"}
+{"event_type":"FairBall","batter":"Christina Salminen","fair_ball_type":"GroundBall","destination":"FirstBase","cheer":null,"aurora_photos":null,"door_prizes":[],"efflorescence":[]}
+{"event_type":"GroundedOut","batter":"Christina Salminen","fielders":[{"name":"Willie Coles","place":"1B"}],"scores":[],"advances":[],"amazing":false,"ejection":null}
+{"event_type":"InningEnd","number":2,"side":"Top"}
+{"event_type":"InningStart","number":2,"side":"Bottom","batting_team":{"emoji":"🧹","name":"Boston Street Sweepers"},"automatic_runner":null,"pitcher_status":{"Same":{"emoji":"🛸","name":"Angela Parrish"}}}
+{"event_type":"NowBatting","batter":"Saki Thapa","stats":"FirstPA"}
+{"event_type":"Ball","steals":[],"count":[1,0],"cheer":null,"aurora_photos":null,"ejection":null,"door_prizes":[],"wither":null,"efflorescence":[]}
+{"event_type":"Ball","steals":[],"count":[2,0],"cheer":null,"aurora_photos":null,"ejection":null,"door_prizes":[],"wither":null,"efflorescence":[]}
+{"event_type":"FairBall","batter":"Saki Thapa","fair_ball_type":"LineDrive","destination":"CenterField","cheer":null,"aurora_photos":null,"door_prizes":[],"efflorescence":[]}
+{"event_type":"BatterToBase","batter":"Saki Thapa","distance":"Double","fair_ball_type":"LineDrive","fielder":{"name":"Lulu Vacation","place":"CF"},"scores":[],"advances":[],"ejection":null}
+{"event_type":"NowBatting","batter":"Willie Coles","stats":"FirstPA"}
+{"event_type":"Strike","strike":"Looking","steals":[{"runner":"Saki Thapa","base":"Third","caught":true}],"count":[0,1],"cheer":null,"aurora_photos":null,"ejection":null,"door_prizes":[],"wither":null,"efflorescence":[]}
+{"event_type":"Ball","steals":[],"count":[1,1],"cheer":null,"aurora_photos":null,"ejection":null,"door_prizes":[],"wither":null,"efflorescence":[]}
+{"event_type":"Ball","steals":[],"count":[2,1],"cheer":null,"aurora_photos":null,"ejection":null,"door_prizes":[],"wither":null,"efflorescence":[]}
+{"event_type":"Ball","steals":[],"count":[3,1],"cheer":null,"aurora_photos":null,"ejection":null,"door_prizes":[],"wither":null,"efflorescence":[]}
+{"event_type":"FairBall","batter":"Willie Coles","fair_ball_type":"FlyBall","destination":"LeftField","cheer":null,"aurora_photos":null,"door_prizes":[],"efflorescence":[]}
+{"event_type":"CaughtOut","batter":"Willie Coles","fair_ball_type":"FlyBall","caught_by":{"name":"Quinn Keogh","place":"LF"},"scores":[],"advances":[],"sacrifice":false,"perfect":false,"ejection":null}
+{"event_type":"NowBatting","batter":"Bertha Rivera","stats":"FirstPA"}
+{"event_type":"FairBall","batter":"Bertha Rivera","fair_ball_type":"GroundBall","destination":"SecondBase","cheer":null,"aurora_photos":null,"door_prizes":[],"efflorescence":[]}
+{"event_type":"GroundedOut","batter":"Bertha Rivera","fielders":[{"name":"Christina Salminen","place":"2B"},{"name":"Graziela Flowers","place":"1B"}],"scores":[],"advances":[],"amazing":false,"ejection":null}
+{"event_type":"InningEnd","number":2,"side":"Bottom"}
+{"event_type":"InningStart","number":3,"side":"Top","batting_team":{"emoji":"🛸","name":"Roswell Weather Balloons"},"automatic_runner":null,"pitcher_status":{"Same":{"emoji":"🧹","name":"Elena Karapetyan"}}}
+{"event_type":"NowBatting","batter":"Graziela Flowers","stats":{"Stats":[{"stat":"HitsForAtBats","value":{"hits":0,"at_bats":1}},{"stat":"StrikeOuts","value":1}]}}
+{"event_type":"Ball","steals":[],"count":[1,0],"cheer":null,"aurora_photos":null,"ejection":null,"door_prizes":[],"wither":null,"efflorescence":[]}
+{"event_type":"FairBall","batter":"Graziela Flowers","fair_ball_type":"GroundBall","destination":"ShortStop","cheer":null,"aurora_photos":null,"door_prizes":[],"efflorescence":[]}
+{"event_type":"GroundedOut","batter":"Graziela Flowers","fielders":[{"name":"Mabel Hailu","place":"SS"},{"name":"Willie Coles","place":"1B"}],"scores":[],"advances":[],"amazing":false,"ejection":null}
+{"event_type":"NowBatting","batter":"Viola de Jesus","stats":{"Stats":[{"stat":"HitsForAtBats","value":{"hits":0,"at_bats":1}},{"stat":"GroundOuts","value":1}]}}
+{"event_type":"FairBall","batter":"Viola de Jesus","fair_ball_type":"LineDrive","destination":"CenterField","cheer":null,"aurora_photos":null,"door_prizes":[],"efflorescence":[]}
+{"event_type":"BatterToBase","batter":"Viola de Jesus","distance":"Double","fair_ball_type":"LineDrive","fielder":{"name":"Doc Bowen","place":"CF"},"scores":[],"advances":[],"ejection":null}
+{"event_type":"NowBatting","batter":"Matthew Denbigh","stats":{"Stats":[{"stat":"HitsForAtBats","value":{"hits":0,"at_bats":1}},{"stat":"PopOuts","value":1}]}}
+{"event_type":"FairBall","batter":"Matthew Denbigh","fair_ball_type":"FlyBall","destination":"RightField","cheer":null,"aurora_photos":null,"door_prizes":[],"efflorescence":[]}
+{"event_type":"CaughtOut","batter":"Matthew Denbigh","fair_ball_type":"FlyBall","caught_by":{"name":"Bertha Rivera","place":"RF"},"scores":[],"advances":[],"sacrifice":false,"perfect":false,"ejection":null}
+{"event_type":"NowBatting","batter":"Axel Johns","stats":{"Stats":[{"stat":"HitsForAtBats","value":{"hits":1,"at_bats":1}},{"stat":"HomeRuns","value":1}]}}
+{"event_type":"Strike","strike":"Looking","steals":[],"count":[0,1],"cheer":null,"aurora_photos":null,"ejection":null,"door_prizes":[],"wither":null,"efflorescence":[]}
+{"event_type":"Strike","strike":"Looking","steals":[],"count":[0,2],"cheer":null,"aurora_photos":null,"ejection":null,"door_prizes":[],"wither":null,"efflorescence":[]}
+{"event_type":"StrikeOut","foul":null,"batter":"Axel Johns","strike":"Swinging","steals":[],"cheer":null,"aurora_photos":null,"ejection":null,"wither":null}
+{"event_type":"InningEnd","number":3,"side":"Top"}
+{"event_type":"InningStart","number":3,"side":"Bottom","batting_team":{"emoji":"🧹","name":"Boston Street Sweepers"},"automatic_runner":null,"pitcher_status":{"Same":{"emoji":"🛸","name":"Angela Parrish"}}}
+{"event_type":"NowBatting","batter":"U. Livingston","stats":"FirstPA"}
+{"event_type":"Ball","steals":[],"count":[1,0],"cheer":null,"aurora_photos":null,"ejection":null,"door_prizes":[],"wither":null,"efflorescence":[]}
+{"event_type":"Strike","strike":"Swinging","steals":[],"count":[1,1],"cheer":null,"aurora_photos":null,"ejection":null,"door_prizes":[],"wither":null,"efflorescence":[]}
+{"event_type":"Strike","strike":"Looking","steals":[],"count":[1,2],"cheer":null,"aurora_photos":null,"ejection":null,"door_prizes":[],"wither":null,"efflorescence":[]}
+{"event_type":"Foul","foul":"Ball","steals":[],"count":[1,2],"cheer":null,"aurora_photos":null,"door_prizes":[],"wither":null,"efflorescence":[]}
+{"event_type":"StrikeOut","foul":null,"batter":"U. Livingston","strike":"Swinging","steals":[],"cheer":null,"aurora_photos":null,"ejection":null,"wither":null}
+{"event_type":"NowBatting","batter":"Mabel Hailu","stats":"FirstPA"}
+{"event_type":"Strike","strike":"Looking","steals":[],"count":[0,1],"cheer":null,"aurora_photos":null,"ejection":null,"door_prizes":[],"wither":null,"efflorescence":[]}
+{"event_type":"Strike","strike":"Swinging","steals":[],"count":[0,2],"cheer":null,"aurora_photos":null,"ejection":null,"door_prizes":[],"wither":null,"efflorescence":[]}
+{"event_type":"Foul","foul":"Ball","steals":[],"count":[0,2],"cheer":null,"aurora_photos":null,"door_prizes":[],"wither":null,"efflorescence":[]}
+{"event_type":"StrikeOut","foul":null,"batter":"Mabel Hailu","strike":"Looking","steals":[],"cheer":null,"aurora_photos":null,"ejection":null,"wither":null}
+{"event_type":"NowBatting","batter":"Princess Injury","stats":{"Stats":[{"stat":"HitsForAtBats","value":{"hits":0,"at_bats":1}},{"stat":"ForceOuts","value":1}]}}
+{"event_type":"FairBall","batter":"Princess Injury","fair_ball_type":"GroundBall","destination":"CenterField","cheer":null,"aurora_photos":null,"door_prizes":[],"efflorescence":[]}
+{"event_type":"BatterToBase","batter":"Princess Injury","distance":"Single","fair_ball_type":"GroundBall","fielder":{"name":"Lulu Vacation","place":"CF"},"scores":[],"advances":[],"ejection":null}
+{"event_type":"NowBatting","batter":"Regina Mashaba","stats":{"Stats":[{"stat":"BaseOnBalls","value":1}]}}
+{"event_type":"Ball","steals":[],"count":[1,0],"cheer":null,"aurora_photos":null,"ejection":null,"door_prizes":[],"wither":null,"efflorescence":[]}
+{"event_type":"Ball","steals":[],"count":[2,0],"cheer":null,"aurora_photos":null,"ejection":null,"door_prizes":[],"wither":null,"efflorescence":[]}
+{"event_type":"Strike","strike":"Looking","steals":[],"count":[2,1],"cheer":null,"aurora_photos":null,"ejection":null,"door_prizes":[],"wither":null,"efflorescence":[]}
+{"event_type":"Ball","steals":[],"count":[3,1],"cheer":null,"aurora_photos":null,"ejection":null,"door_prizes":[],"wither":null,"efflorescence":[]}
+{"event_type":"Walk","batter":"Regina Mashaba","scores":[],"advances":[{"runner":"Princess Injury","base":"Second"}],"cheer":null,"aurora_photos":null,"ejection":null,"wither":null}
+{"event_type":"NowBatting","batter":"Doc Bowen","stats":{"Stats":[{"stat":"HitsForAtBats","value":{"hits":0,"at_bats":1}},{"stat":"LineOuts","value":1}]}}
+{"event_type":"Ball","steals":[],"count":[1,0],"cheer":null,"aurora_photos":null,"ejection":null,"door_prizes":[],"wither":null,"efflorescence":[]}
+{"event_type":"Strike","strike":"Swinging","steals":[],"count":[1,1],"cheer":null,"aurora_photos":null,"ejection":null,"door_prizes":[],"wither":null,"efflorescence":[]}
+{"event_type":"Strike","strike":"Looking","steals":[],"count":[1,2],"cheer":null,"aurora_photos":null,"ejection":null,"door_prizes":[],"wither":null,"efflorescence":[]}
+{"event_type":"Ball","steals":[],"count":[2,2],"cheer":null,"aurora_photos":null,"ejection":null,"door_prizes":[],"wither":null,"efflorescence":[]}
+{"event_type":"StrikeOut","foul":null,"batter":"Doc Bowen","strike":"Looking","steals":[],"cheer":null,"aurora_photos":null,"ejection":null,"wither":null}
+{"event_type":"InningEnd","number":3,"side":"Bottom"}
+{"event_type":"InningStart","number":4,"side":"Top","batting_team":{"emoji":"🛸","name":"Roswell Weather Balloons"},"automatic_runner":null,"pitcher_status":{"Same":{"emoji":"🧹","name":"Elena Karapetyan"}}}
+{"event_type":"NowBatting","batter":"Lulu Vacation","stats":{"Stats":[{"stat":"HitsForAtBats","value":{"hits":0,"at_bats":1}},{"stat":"PopOuts","value":1}]}}
+{"event_type":"Foul","foul":"Ball","steals":[],"count":[0,1],"cheer":null,"aurora_photos":null,"door_prizes":[],"wither":null,"efflorescence":[]}
+{"event_type":"Ball","steals":[],"count":[1,1],"cheer":null,"aurora_photos":null,"ejection":null,"door_prizes":[],"wither":null,"efflorescence":[]}
+{"event_type":"Ball","steals":[],"count":[2,1],"cheer":null,"aurora_photos":null,"ejection":null,"door_prizes":[],"wither":null,"efflorescence":[]}
+{"event_type":"FairBall","batter":"Lulu Vacation","fair_ball_type":"GroundBall","destination":"SecondBase","cheer":null,"aurora_photos":null,"door_prizes":[],"efflorescence":[]}
+{"event_type":"GroundedOut","batter":"Lulu Vacation","fielders":[{"name":"Eleanor Komatsu","place":"2B"},{"name":"Willie Coles","place":"1B"}],"scores":[],"advances":[],"amazing":false,"ejection":null}
+{"event_type":"NowBatting","batter":"Orlando Dempsey","stats":{"Stats":[{"stat":"HitsForAtBats","value":{"hits":1,"at_bats":1}},{"stat":"FirstBases","value":1}]}}
+{"event_type":"Foul","foul":"Ball","steals":[],"count":[0,1],"cheer":null,"aurora_photos":null,"door_prizes":[],"wither":null,"efflorescence":[]}
+{"event_type":"FairBall","batter":"Orlando Dempsey","fair_ball_type":"GroundBall","destination":"ShortStop","cheer":null,"aurora_photos":null,"door_prizes":[],"efflorescence":[]}
+{"event_type":"BatterToBase","batter":"Orlando Dempsey","distance":"Single","fair_ball_type":"GroundBall","fielder":{"name":"Mabel Hailu","place":"SS"},"scores":[],"advances":[],"ejection":null}
+{"event_type":"NowBatting","batter":"Quinn Keogh","stats":{"Stats":[{"stat":"HitsForAtBats","value":{"hits":1,"at_bats":1}},{"stat":"FirstBases","value":1}]}}
+{"event_type":"Foul","foul":"Ball","steals":[],"count":[0,1],"cheer":null,"aurora_photos":null,"door_prizes":[],"wither":null,"efflorescence":[]}
+{"event_type":"FairBall","batter":"Quinn Keogh","fair_ball_type":"GroundBall","destination":"LeftField","cheer":null,"aurora_photos":null,"door_prizes":[],"efflorescence":[]}
+{"event_type":"BatterToBase","batter":"Quinn Keogh","distance":"Single","fair_ball_type":"GroundBall","fielder":{"name":"U. Livingston","place":"LF"},"scores":[],"advances":[{"runner":"Orlando Dempsey","base":"Third"}],"ejection":null}
+{"event_type":"NowBatting","batter":"Jacob Taş","stats":{"Stats":[{"stat":"HitsForAtBats","value":{"hits":0,"at_bats":1}},{"stat":"StrikeOuts","value":1}]}}
+{"event_type":"Ball","steals":[{"runner":"Quinn Keogh","base":"Second","caught":false}],"count":[1,0],"cheer":null,"aurora_photos":null,"ejection":null,"door_prizes":[],"wither":null,"efflorescence":[]}
+{"event_type":"FairBall","batter":"Jacob Taş","fair_ball_type":"GroundBall","destination":"CenterField","cheer":null,"aurora_photos":null,"door_prizes":[],"efflorescence":[]}
+{"event_type":"BatterToBase","batter":"Jacob Taş","distance":"Single","fair_ball_type":"GroundBall","fielder":{"name":"Doc Bowen","place":"CF"},"scores":["Orlando Dempsey"],"advances":[{"runner":"Quinn Keogh","base":"Third"}],"ejection":null}
+{"event_type":"NowBatting","batter":"Christina Salminen","stats":{"Stats":[{"stat":"HitsForAtBats","value":{"hits":0,"at_bats":1}},{"stat":"GroundOuts","value":1}]}}
+{"event_type":"Ball","steals":[],"count":[1,0],"cheer":null,"aurora_photos":null,"ejection":null,"door_prizes":[],"wither":null,"efflorescence":[]}
+{"event_type":"FairBall","batter":"Christina Salminen","fair_ball_type":"FlyBall","destination":"LeftField","cheer":null,"aurora_photos":null,"door_prizes":[],"efflorescence":[]}
+{"event_type":"BatterToBase","batter":"Christina Salminen","distance":"Double","fair_ball_type":"FlyBall","fielder":{"name":"U. Livingston","place":"LF"},"scores":["Quinn Keogh"],"advances":[{"runner":"Jacob Taş","base":"Third"}],"ejection":null}
+{"event_type":"NowBatting","batter":"Graziela Flowers","stats":{"Stats":[{"stat":"HitsForAtBats","value":{"hits":0,"at_bats":2}},{"stat":"StrikeOuts","value":1},{"stat":"GroundOuts","value":1}]}}
+{"event_type":"FairBall","batter":"Graziela Flowers","fair_ball_type":"LineDrive","destination":"LeftField","cheer":null,"aurora_photos":null,"door_prizes":[],"efflorescence":[]}
+{"event_type":"CaughtOut","batter":"Graziela Flowers","fair_ball_type":"LineDrive","caught_by":{"name":"U. Livingston","place":"LF"},"scores":["Jacob Taş"],"advances":[],"sacrifice":true,"perfect":false,"ejection":null}
+{"event_type":"NowBatting","batter":"Viola de Jesus","stats":{"Stats":[{"stat":"HitsForAtBats","value":{"hits":1,"at_bats":2}},{"stat":"GroundOuts","value":1},{"stat":"SecondBases","value":1}]}}
+{"event_type":"Strike","strike":"Swinging","steals":[],"count":[0,1],"cheer":null,"aurora_photos":null,"ejection":null,"door_prizes":[],"wither":null,"efflorescence":[]}
+{"event_type":"FairBall","batter":"Viola de Jesus","fair_ball_type":"GroundBall","destination":"SecondBase","cheer":null,"aurora_photos":null,"door_prizes":[],"efflorescence":[]}
+{"event_type":"GroundedOut","batter":"Viola de Jesus","fielders":[{"name":"Eleanor Komatsu","place":"2B"},{"name":"Willie Coles","place":"1B"}],"scores":[],"advances":[],"amazing":false,"ejection":null}
+{"event_type":"InningEnd","number":4,"side":"Top"}
+{"event_type":"InningStart","number":4,"side":"Bottom","batting_team":{"emoji":"🧹","name":"Boston Street Sweepers"},"automatic_runner":null,"pitcher_status":{"Same":{"emoji":"🛸","name":"Angela Parrish"}}}
+{"event_type":"NowBatting","batter":"Eleanor Komatsu","stats":{"Stats":[{"stat":"HitsForAtBats","value":{"hits":0,"at_bats":1}},{"stat":"StrikeOuts","value":1}]}}
+{"event_type":"Foul","foul":"Ball","steals":[],"count":[0,1],"cheer":null,"aurora_photos":null,"door_prizes":[],"wither":null,"efflorescence":[]}
+{"event_type":"Ball","steals":[],"count":[1,1],"cheer":null,"aurora_photos":null,"ejection":null,"door_prizes":[],"wither":null,"efflorescence":[]}
+{"event_type":"Ball","steals":[],"count":[2,1],"cheer":null,"aurora_photos":null,"ejection":null,"door_prizes":[],"wither":null,"efflorescence":[]}
+{"event_type":"Foul","foul":"Ball","steals":[],"count":[2,2],"cheer":null,"aurora_photos":null,"door_prizes":[],"wither":null,"efflorescence":[]}
+{"event_type":"FairBall","batter":"Eleanor Komatsu","fair_ball_type":"FlyBall","destination":"LeftField","cheer":null,"aurora_photos":null,"door_prizes":[],"efflorescence":[]}
+{"event_type":"CaughtOut","batter":"Eleanor Komatsu","fair_ball_type":"FlyBall","caught_by":{"name":"Quinn Keogh","place":"LF"},"scores":[],"advances":[],"sacrifice":false,"perfect":false,"ejection":null}
+{"event_type":"NowBatting","batter":"Saki Thapa","stats":{"Stats":[{"stat":"HitsForAtBats","value":{"hits":1,"at_bats":1}},{"stat":"SecondBases","value":1}]}}
+{"event_type":"Ball","steals":[],"count":[1,0],"cheer":null,"aurora_photos":null,"ejection":null,"door_prizes":[],"wither":null,"efflorescence":[]}
+{"event_type":"Strike","strike":"Looking","steals":[],"count":[1,1],"cheer":null,"aurora_photos":null,"ejection":null,"door_prizes":[],"wither":null,"efflorescence":[]}
+{"event_type":"FairBall","batter":"Saki Thapa","fair_ball_type":"Popup","destination":"ShortStop","cheer":null,"aurora_photos":null,"door_prizes":[],"efflorescence":[]}
+{"event_type":"CaughtOut","batter":"Saki Thapa","fair_ball_type":"Popup","caught_by":{"name":"Jacob Taş","place":"SS"},"scores":[],"advances":[],"sacrifice":false,"perfect":false,"ejection":null}
+{"event_type":"NowBatting","batter":"Willie Coles","stats":{"Stats":[{"stat":"HitsForAtBats","value":{"hits":0,"at_bats":1}},{"stat":"ForceOuts","value":1}]}}
+{"event_type":"Foul","foul":"Ball","steals":[],"count":[0,1],"cheer":null,"aurora_photos":null,"door_prizes":[],"wither":null,"efflorescence":[]}
+{"event_type":"FairBall","batter":"Willie Coles","fair_ball_type":"GroundBall","destination":"ThirdBase","cheer":null,"aurora_photos":null,"door_prizes":[],"efflorescence":[]}
+{"event_type":"GroundedOut","batter":"Willie Coles","fielders":[{"name":"Matthew Denbigh","place":"3B"},{"name":"Graziela Flowers","place":"1B"}],"scores":[],"advances":[],"amazing":false,"ejection":null}
+{"event_type":"InningEnd","number":4,"side":"Bottom"}
+{"event_type":"InningStart","number":5,"side":"Top","batting_team":{"emoji":"🛸","name":"Roswell Weather Balloons"},"automatic_runner":null,"pitcher_status":{"Same":{"emoji":"🧹","name":"Elena Karapetyan"}}}
+{"event_type":"NowBatting","batter":"Matthew Denbigh","stats":{"Stats":[{"stat":"HitsForAtBats","value":{"hits":0,"at_bats":2}},{"stat":"PopOuts","value":1},{"stat":"ForceOuts","value":1}]}}
+{"event_type":"Ball","steals":[],"count":[1,0],"cheer":null,"aurora_photos":null,"ejection":null,"door_prizes":[],"wither":null,"efflorescence":[]}
+{"event_type":"FairBall","batter":"Matthew Denbigh","fair_ball_type":"FlyBall","destination":"LeftField","cheer":null,"aurora_photos":null,"door_prizes":[],"efflorescence":[]}
+{"event_type":"HomeRun","batter":"Matthew Denbigh","fair_ball_type":"FlyBall","destination":"LeftField","scores":[],"grand_slam":false,"ejection":null}
+{"event_type":"NowBatting","batter":"Axel Johns","stats":{"Stats":[{"stat":"HitsForAtBats","value":{"hits":1,"at_bats":2}},{"stat":"HomeRuns","value":1},{"stat":"StrikeOuts","value":1}]}}
+{"event_type":"Ball","steals":[],"count":[1,0],"cheer":null,"aurora_photos":null,"ejection":null,"door_prizes":[],"wither":null,"efflorescence":[]}
+{"event_type":"FairBall","batter":"Axel Johns","fair_ball_type":"Popup","destination":"ShortStop","cheer":null,"aurora_photos":null,"door_prizes":[],"efflorescence":[]}
+{"event_type":"CaughtOut","batter":"Axel Johns","fair_ball_type":"Popup","caught_by":{"name":"Mabel Hailu","place":"SS"},"scores":[],"advances":[],"sacrifice":false,"perfect":false,"ejection":null}
+{"event_type":"NowBatting","batter":"Lulu Vacation","stats":{"Stats":[{"stat":"HitsForAtBats","value":{"hits":0,"at_bats":2}},{"stat":"PopOuts","value":1},{"stat":"GroundOuts","value":1}]}}
+{"event_type":"Foul","foul":"Ball","steals":[],"count":[0,1],"cheer":null,"aurora_photos":null,"door_prizes":[],"wither":null,"efflorescence":[]}
+{"event_type":"Strike","strike":"Looking","steals":[],"count":[0,2],"cheer":null,"aurora_photos":null,"ejection":null,"door_prizes":[],"wither":null,"efflorescence":[]}
+{"event_type":"StrikeOut","foul":null,"batter":"Lulu Vacation","strike":"Swinging","steals":[],"cheer":null,"aurora_photos":null,"ejection":null,"wither":null}
+{"event_type":"NowBatting","batter":"Orlando Dempsey","stats":{"Stats":[{"stat":"HitsForAtBats","value":{"hits":2,"at_bats":2}},{"stat":"FirstBases","value":2}]}}
+{"event_type":"Foul","foul":"Ball","steals":[],"count":[0,1],"cheer":null,"aurora_photos":null,"door_prizes":[],"wither":null,"efflorescence":[]}
+{"event_type":"Ball","steals":[],"count":[1,1],"cheer":null,"aurora_photos":null,"ejection":null,"door_prizes":[],"wither":null,"efflorescence":[]}
+{"event_type":"FairBall","batter":"Orlando Dempsey","fair_ball_type":"LineDrive","destination":"CenterField","cheer":null,"aurora_photos":null,"door_prizes":[],"efflorescence":[]}
+{"event_type":"CaughtOut","batter":"Orlando Dempsey","fair_ball_type":"LineDrive","caught_by":{"name":"Doc Bowen","place":"CF"},"scores":[],"advances":[],"sacrifice":false,"perfect":false,"ejection":null}
+{"event_type":"InningEnd","number":5,"side":"Top"}
+{"event_type":"InningStart","number":5,"side":"Bottom","batting_team":{"emoji":"🧹","name":"Boston Street Sweepers"},"automatic_runner":null,"pitcher_status":{"Same":{"emoji":"🛸","name":"Angela Parrish"}}}
+{"event_type":"NowBatting","batter":"Bertha Rivera","stats":{"Stats":[{"stat":"HitsForAtBats","value":{"hits":0,"at_bats":1}},{"stat":"GroundOuts","value":1}]}}
+{"event_type":"FairBall","batter":"Bertha Rivera","fair_ball_type":"GroundBall","destination":"FirstBase","cheer":null,"aurora_photos":null,"door_prizes":[],"efflorescence":[]}
+{"event_type":"GroundedOut","batter":"Bertha Rivera","fielders":[{"name":"Graziela Flowers","place":"1B"}],"scores":[],"advances":[],"amazing":false,"ejection":null}
+{"event_type":"NowBatting","batter":"U. Livingston","stats":{"Stats":[{"stat":"HitsForAtBats","value":{"hits":0,"at_bats":1}},{"stat":"StrikeOuts","value":1}]}}
+{"event_type":"Strike","strike":"Looking","steals":[],"count":[0,1],"cheer":null,"aurora_photos":null,"ejection":null,"door_prizes":[],"wither":null,"efflorescence":[]}
+{"event_type":"Ball","steals":[],"count":[1,1],"cheer":null,"aurora_photos":null,"ejection":null,"door_prizes":[],"wither":null,"efflorescence":[]}
+{"event_type":"Strike","strike":"Looking","steals":[],"count":[1,2],"cheer":null,"aurora_photos":null,"ejection":null,"door_prizes":[],"wither":null,"efflorescence":[]}
+{"event_type":"Foul","foul":"Ball","steals":[],"count":[1,2],"cheer":null,"aurora_photos":null,"door_prizes":[],"wither":null,"efflorescence":[]}
+{"event_type":"Ball","steals":[],"count":[2,2],"cheer":null,"aurora_photos":null,"ejection":null,"door_prizes":[],"wither":null,"efflorescence":[]}
+{"event_type":"FairBall","batter":"U. Livingston","fair_ball_type":"GroundBall","destination":"LeftField","cheer":null,"aurora_photos":null,"door_prizes":[],"efflorescence":[]}
+{"event_type":"BatterToBase","batter":"U. Livingston","distance":"Double","fair_ball_type":"GroundBall","fielder":{"name":"Quinn Keogh","place":"LF"},"scores":[],"advances":[],"ejection":null}
+{"event_type":"NowBatting","batter":"Mabel Hailu","stats":{"Stats":[{"stat":"HitsForAtBats","value":{"hits":0,"at_bats":1}},{"stat":"StrikeOuts","value":1}]}}
+{"event_type":"Ball","steals":[],"count":[1,0],"cheer":null,"aurora_photos":null,"ejection":null,"door_prizes":[],"wither":null,"efflorescence":[]}
+{"event_type":"Foul","foul":"Ball","steals":[],"count":[1,1],"cheer":null,"aurora_photos":null,"door_prizes":[],"wither":null,"efflorescence":[]}
+{"event_type":"Strike","strike":"Looking","steals":[],"count":[1,2],"cheer":null,"aurora_photos":null,"ejection":null,"door_prizes":[],"wither":null,"efflorescence":[]}
+{"event_type":"Ball","steals":[{"runner":"U. Livingston","base":"Third","caught":false}],"count":[2,2],"cheer":null,"aurora_photos":null,"ejection":null,"door_prizes":[],"wither":null,"efflorescence":[]}
+{"event_type":"Ball","steals":[],"count":[3,2],"cheer":null,"aurora_photos":null,"ejection":null,"door_prizes":[],"wither":null,"efflorescence":[]}
+{"event_type":"StrikeOut","foul":null,"batter":"Mabel Hailu","strike":"Looking","steals":[],"cheer":null,"aurora_photos":null,"ejection":null,"wither":null}
+{"event_type":"NowBatting","batter":"Princess Injury","stats":{"Stats":[{"stat":"HitsForAtBats","value":{"hits":1,"at_bats":2}},{"stat":"ForceOuts","value":1},{"stat":"FirstBases","value":1}]}}
+{"event_type":"Strike","strike":"Swinging","steals":[],"count":[0,1],"cheer":null,"aurora_photos":null,"ejection":null,"door_prizes":[],"wither":null,"efflorescence":[]}
+{"event_type":"FairBall","batter":"Princess Injury","fair_ball_type":"LineDrive","destination":"RightField","cheer":null,"aurora_photos":null,"door_prizes":[],"efflorescence":[]}
+{"event_type":"BatterToBase","batter":"Princess Injury","distance":"Single","fair_ball_type":"LineDrive","fielder":{"name":"Axel Johns","place":"RF"},"scores":["U. Livingston"],"advances":[],"ejection":null}
+{"event_type":"NowBatting","batter":"Regina Mashaba","stats":{"Stats":[{"stat":"BaseOnBalls","value":2}]}}
+{"event_type":"Foul","foul":"Ball","steals":[],"count":[0,1],"cheer":null,"aurora_photos":null,"door_prizes":[],"wither":null,"efflorescence":[]}
+{"event_type":"Strike","strike":"Swinging","steals":[],"count":[0,2],"cheer":null,"aurora_photos":null,"ejection":null,"door_prizes":[],"wither":null,"efflorescence":[]}
+{"event_type":"StrikeOut","foul":null,"batter":"Regina Mashaba","strike":"Looking","steals":[],"cheer":null,"aurora_photos":null,"ejection":null,"wither":null}
+{"event_type":"InningEnd","number":5,"side":"Bottom"}
+{"event_type":"InningStart","number":6,"side":"Top","batting_team":{"emoji":"🛸","name":"Roswell Weather Balloons"},"automatic_runner":null,"pitcher_status":{"Same":{"emoji":"🧹","name":"Elena Karapetyan"}}}
+{"event_type":"NowBatting","batter":"Quinn Keogh","stats":{"Stats":[{"stat":"HitsForAtBats","value":{"hits":2,"at_bats":2}},{"stat":"FirstBases","value":2}]}}
+{"event_type":"Ball","steals":[],"count":[1,0],"cheer":null,"aurora_photos":null,"ejection":null,"door_prizes":[],"wither":null,"efflorescence":[]}
+{"event_type":"FairBall","batter":"Quinn Keogh","fair_ball_type":"GroundBall","destination":"SecondBase","cheer":null,"aurora_photos":null,"door_prizes":[],"efflorescence":[]}
+{"event_type":"GroundedOut","batter":"Quinn Keogh","fielders":[{"name":"Eleanor Komatsu","place":"2B"},{"name":"Willie Coles","place":"1B"}],"scores":[],"advances":[],"amazing":false,"ejection":null}
+{"event_type":"NowBatting","batter":"Jacob Taş","stats":{"Stats":[{"stat":"HitsForAtBats","value":{"hits":1,"at_bats":2}},{"stat":"StrikeOuts","value":1},{"stat":"FirstBases","value":1}]}}
+{"event_type":"FairBall","batter":"Jacob Taş","fair_ball_type":"FlyBall","destination":"CenterField","cheer":null,"aurora_photos":null,"door_prizes":[],"efflorescence":[]}
+{"event_type":"HomeRun","batter":"Jacob Taş","fair_ball_type":"FlyBall","destination":"CenterField","scores":[],"grand_slam":false,"ejection":null}
+{"event_type":"NowBatting","batter":"Christina Salminen","stats":{"Stats":[{"stat":"HitsForAtBats","value":{"hits":1,"at_bats":2}},{"stat":"GroundOuts","value":1},{"stat":"SecondBases","value":1}]}}
+{"event_type":"Foul","foul":"Ball","steals":[],"count":[0,1],"cheer":null,"aurora_photos":null,"door_prizes":[],"wither":null,"efflorescence":[]}
+{"event_type":"HitByPitch","batter":"Christina Salminen","scores":[],"advances":[],"cheer":null,"aurora_photos":null,"ejection":null,"door_prizes":[],"wither":null,"efflorescence":[]}
+{"event_type":"NowBatting","batter":"Graziela Flowers","stats":{"Stats":[{"stat":"HitsForAtBats","value":{"hits":0,"at_bats":2}},{"stat":"StrikeOuts","value":1},{"stat":"GroundOuts","value":1},{"stat":"SacrificeFlies","value":1}]}}
+{"event_type":"Ball","steals":[],"count":[1,0],"cheer":null,"aurora_photos":null,"ejection":null,"door_prizes":[],"wither":null,"efflorescence":[]}
+{"event_type":"Foul","foul":"Ball","steals":[],"count":[1,1],"cheer":null,"aurora_photos":null,"door_prizes":[],"wither":null,"efflorescence":[]}
+{"event_type":"Strike","strike":"Swinging","steals":[],"count":[1,2],"cheer":null,"aurora_photos":null,"ejection":null,"door_prizes":[],"wither":null,"efflorescence":[]}
+{"event_type":"Ball","steals":[],"count":[2,2],"cheer":null,"aurora_photos":null,"ejection":null,"door_prizes":[],"wither":null,"efflorescence":[]}
+{"event_type":"StrikeOut","foul":null,"batter":"Graziela Flowers","strike":"Looking","steals":[],"cheer":null,"aurora_photos":null,"ejection":null,"wither":null}
+{"event_type":"NowBatting","batter":"Viola de Jesus","stats":{"Stats":[{"stat":"HitsForAtBats","value":{"hits":1,"at_bats":3}},{"stat":"GroundOuts","value":2},{"stat":"SecondBases","value":1}]}}
+{"event_type":"Ball","steals":[{"runner":"Christina Salminen","base":"Second","caught":false}],"count":[1,0],"cheer":null,"aurora_photos":null,"ejection":null,"door_prizes":[],"wither":null,"efflorescence":[]}
+{"event_type":"Foul","foul":"Ball","steals":[],"count":[1,1],"cheer":null,"aurora_photos":null,"door_prizes":[],"wither":null,"efflorescence":[]}
+{"event_type":"Foul","foul":"Ball","steals":[],"count":[1,2],"cheer":null,"aurora_photos":null,"door_prizes":[],"wither":null,"efflorescence":[]}
+{"event_type":"StrikeOut","foul":null,"batter":"Viola de Jesus","strike":"Looking","steals":[],"cheer":null,"aurora_photos":null,"ejection":null,"wither":null}
+{"event_type":"InningEnd","number":6,"side":"Top"}
+{"event_type":"InningStart","number":6,"side":"Bottom","batting_team":{"emoji":"🧹","name":"Boston Street Sweepers"},"automatic_runner":null,"pitcher_status":{"Same":{"emoji":"🛸","name":"Angela Parrish"}}}
+{"event_type":"NowBatting","batter":"Doc Bowen","stats":{"Stats":[{"stat":"HitsForAtBats","value":{"hits":0,"at_bats":2}},{"stat":"LineOuts","value":1},{"stat":"StrikeOuts","value":1}]}}
+{"event_type":"Strike","strike":"Looking","steals":[],"count":[0,1],"cheer":null,"aurora_photos":null,"ejection":null,"door_prizes":[],"wither":null,"efflorescence":[]}
+{"event_type":"Strike","strike":"Looking","steals":[],"count":[0,2],"cheer":null,"aurora_photos":null,"ejection":null,"door_prizes":[],"wither":null,"efflorescence":[]}
+{"event_type":"Foul","foul":"Ball","steals":[],"count":[0,2],"cheer":null,"aurora_photos":null,"door_prizes":[],"wither":null,"efflorescence":[]}
+{"event_type":"StrikeOut","foul":null,"batter":"Doc Bowen","strike":"Looking","steals":[],"cheer":null,"aurora_photos":null,"ejection":null,"wither":null}
+{"event_type":"NowBatting","batter":"Eleanor Komatsu","stats":{"Stats":[{"stat":"HitsForAtBats","value":{"hits":0,"at_bats":2}},{"stat":"StrikeOuts","value":1},{"stat":"ForceOuts","value":1}]}}
+{"event_type":"Ball","steals":[],"count":[1,0],"cheer":null,"aurora_photos":null,"ejection":null,"door_prizes":[],"wither":null,"efflorescence":[]}
+{"event_type":"Ball","steals":[],"count":[2,0],"cheer":null,"aurora_photos":null,"ejection":null,"door_prizes":[],"wither":null,"efflorescence":[]}
+{"event_type":"Ball","steals":[],"count":[3,0],"cheer":null,"aurora_photos":null,"ejection":null,"door_prizes":[],"wither":null,"efflorescence":[]}
+{"event_type":"Strike","strike":"Looking","steals":[],"count":[3,1],"cheer":null,"aurora_photos":null,"ejection":null,"door_prizes":[],"wither":null,"efflorescence":[]}
+{"event_type":"Walk","batter":"Eleanor Komatsu","scores":[],"advances":[],"cheer":null,"aurora_photos":null,"ejection":null,"wither":null}
+{"event_type":"NowBatting","batter":"Saki Thapa","stats":{"Stats":[{"stat":"HitsForAtBats","value":{"hits":1,"at_bats":2}},{"stat":"SecondBases","value":1},{"stat":"PopOuts","value":1}]}}
+{"event_type":"Ball","steals":[],"count":[1,0],"cheer":null,"aurora_photos":null,"ejection":null,"door_prizes":[],"wither":null,"efflorescence":[]}
+{"event_type":"Foul","foul":"Ball","steals":[],"count":[1,1],"cheer":null,"aurora_photos":null,"door_prizes":[],"wither":null,"efflorescence":[]}
+{"event_type":"Strike","strike":"Looking","steals":[],"count":[1,2],"cheer":null,"aurora_photos":null,"ejection":null,"door_prizes":[],"wither":null,"efflorescence":[]}
+{"event_type":"Ball","steals":[],"count":[2,2],"cheer":null,"aurora_photos":null,"ejection":null,"door_prizes":[],"wither":null,"efflorescence":[]}
+{"event_type":"StrikeOut","foul":null,"batter":"Saki Thapa","strike":"Swinging","steals":[],"cheer":null,"aurora_photos":null,"ejection":null,"wither":null}
+{"event_type":"NowBatting","batter":"Willie Coles","stats":{"Stats":[{"stat":"HitsForAtBats","value":{"hits":0,"at_bats":2}},{"stat":"ForceOuts","value":1},{"stat":"GroundOuts","value":1}]}}
+{"event_type":"Foul","foul":"Ball","steals":[],"count":[0,1],"cheer":null,"aurora_photos":null,"door_prizes":[],"wither":null,"efflorescence":[]}
+{"event_type":"FairBall","batter":"Willie Coles","fair_ball_type":"FlyBall","destination":"RightField","cheer":null,"aurora_photos":null,"door_prizes":[],"efflorescence":[]}
+{"event_type":"CaughtOut","batter":"Willie Coles","fair_ball_type":"FlyBall","caught_by":{"name":"Axel Johns","place":"RF"},"scores":[],"advances":[],"sacrifice":false,"perfect":false,"ejection":null}
+{"event_type":"InningEnd","number":6,"side":"Bottom"}
+{"event_type":"InningStart","number":7,"side":"Top","batting_team":{"emoji":"🛸","name":"Roswell Weather Balloons"},"automatic_runner":null,"pitcher_status":{"Same":{"emoji":"🧹","name":"Elena Karapetyan"}}}
+{"event_type":"NowBatting","batter":"Matthew Denbigh","stats":{"Stats":[{"stat":"HitsForAtBats","value":{"hits":1,"at_bats":3}},{"stat":"PopOuts","value":1},{"stat":"ForceOuts","value":1},{"stat":"HomeRuns","value":1}]}}
+{"event_type":"Ball","steals":[],"count":[1,0],"cheer":null,"aurora_photos":null,"ejection":null,"door_prizes":[],"wither":null,"efflorescence":[]}
+{"event_type":"Strike","strike":"Looking","steals":[],"count":[1,1],"cheer":null,"aurora_photos":null,"ejection":null,"door_prizes":[],"wither":null,"efflorescence":[]}
+{"event_type":"FairBall","batter":"Matthew Denbigh","fair_ball_type":"GroundBall","destination":"ShortStop","cheer":null,"aurora_photos":null,"door_prizes":[],"efflorescence":[]}
+{"event_type":"GroundedOut","batter":"Matthew Denbigh","fielders":[{"name":"Mabel Hailu","place":"SS"},{"name":"Willie Coles","place":"1B"}],"scores":[],"advances":[],"amazing":false,"ejection":null}
+{"event_type":"NowBatting","batter":"Axel Johns","stats":{"Stats":[{"stat":"HitsForAtBats","value":{"hits":1,"at_bats":3}},{"stat":"HomeRuns","value":1},{"stat":"StrikeOuts","value":1},{"stat":"PopOuts","value":1}]}}
+{"event_type":"Foul","foul":"Ball","steals":[],"count":[0,1],"cheer":null,"aurora_photos":null,"door_prizes":[],"wither":null,"efflorescence":[]}
+{"event_type":"Ball","steals":[],"count":[1,1],"cheer":null,"aurora_photos":null,"ejection":null,"door_prizes":[],"wither":null,"efflorescence":[]}
+{"event_type":"FairBall","batter":"Axel Johns","fair_ball_type":"GroundBall","destination":"Pitcher","cheer":null,"aurora_photos":null,"door_prizes":[],"efflorescence":[]}
+{"event_type":"GroundedOut","batter":"Axel Johns","fielders":[{"name":"Elena Karapetyan","place":"P"},{"name":"Willie Coles","place":"1B"}],"scores":[],"advances":[],"amazing":false,"ejection":null}
+{"event_type":"NowBatting","batter":"Lulu Vacation","stats":{"Stats":[{"stat":"HitsForAtBats","value":{"hits":0,"at_bats":3}},{"stat":"PopOuts","value":1},{"stat":"GroundOuts","value":1},{"stat":"StrikeOuts","value":1}]}}
+{"event_type":"Ball","steals":[],"count":[1,0],"cheer":null,"aurora_photos":null,"ejection":null,"door_prizes":[],"wither":null,"efflorescence":[]}
+{"event_type":"Ball","steals":[],"count":[2,0],"cheer":null,"aurora_photos":null,"ejection":null,"door_prizes":[],"wither":null,"efflorescence":[]}
+{"event_type":"Ball","steals":[],"count":[3,0],"cheer":null,"aurora_photos":null,"ejection":null,"door_prizes":[],"wither":null,"efflorescence":[]}
+{"event_type":"Foul","foul":"Ball","steals":[],"count":[3,1],"cheer":null,"aurora_photos":null,"door_prizes":[],"wither":null,"efflorescence":[]}
+{"event_type":"Walk","batter":"Lulu Vacation","scores":[],"advances":[],"cheer":null,"aurora_photos":null,"ejection":null,"wither":null}
+{"event_type":"NowBatting","batter":"Orlando Dempsey","stats":{"Stats":[{"stat":"HitsForAtBats","value":{"hits":2,"at_bats":3}},{"stat":"FirstBases","value":2},{"stat":"LineOuts","value":1}]}}
+{"event_type":"Foul","foul":"Ball","steals":[],"count":[0,1],"cheer":null,"aurora_photos":null,"door_prizes":[],"wither":null,"efflorescence":[]}
+{"event_type":"FairBall","batter":"Orlando Dempsey","fair_ball_type":"GroundBall","destination":"CenterField","cheer":null,"aurora_photos":null,"door_prizes":[],"efflorescence":[]}
+{"event_type":"BatterToBase","batter":"Orlando Dempsey","distance":"Single","fair_ball_type":"GroundBall","fielder":{"name":"Doc Bowen","place":"CF"},"scores":[],"advances":[{"runner":"Lulu Vacation","base":"Second"}],"ejection":null}
+{"event_type":"NowBatting","batter":"Quinn Keogh","stats":{"Stats":[{"stat":"HitsForAtBats","value":{"hits":2,"at_bats":3}},{"stat":"FirstBases","value":2},{"stat":"GroundOuts","value":1}]}}
+{"event_type":"FairBall","batter":"Quinn Keogh","fair_ball_type":"FlyBall","destination":"RightField","cheer":null,"aurora_photos":null,"door_prizes":[],"efflorescence":[]}
+{"event_type":"CaughtOut","batter":"Quinn Keogh","fair_ball_type":"FlyBall","caught_by":{"name":"Bertha Rivera","place":"RF"},"scores":[],"advances":[],"sacrifice":false,"perfect":false,"ejection":null}
+{"event_type":"InningEnd","number":7,"side":"Top"}
+{"event_type":"InningStart","number":7,"side":"Bottom","batting_team":{"emoji":"🧹","name":"Boston Street Sweepers"},"automatic_runner":null,"pitcher_status":{"Same":{"emoji":"🛸","name":"Angela Parrish"}}}
+{"event_type":"NowBatting","batter":"Bertha Rivera","stats":{"Stats":[{"stat":"HitsForAtBats","value":{"hits":0,"at_bats":2}},{"stat":"GroundOuts","value":2}]}}
+{"event_type":"Ball","steals":[],"count":[1,0],"cheer":null,"aurora_photos":null,"ejection":null,"door_prizes":[],"wither":null,"efflorescence":[]}
+{"event_type":"Foul","foul":"Ball","steals":[],"count":[1,1],"cheer":null,"aurora_photos":null,"door_prizes":[],"wither":null,"efflorescence":[]}
+{"event_type":"Strike","strike":"Looking","steals":[],"count":[1,2],"cheer":null,"aurora_photos":null,"ejection":null,"door_prizes":[],"wither":null,"efflorescence":[]}
+{"event_type":"HitByPitch","batter":"Bertha Rivera","scores":[],"advances":[],"cheer":null,"aurora_photos":null,"ejection":null,"door_prizes":[],"wither":null,"efflorescence":[]}
+{"event_type":"NowBatting","batter":"U. Livingston","stats":{"Stats":[{"stat":"HitsForAtBats","value":{"hits":1,"at_bats":2}},{"stat":"StrikeOuts","value":1},{"stat":"SecondBases","value":1}]}}
+{"event_type":"Strike","strike":"Swinging","steals":[],"count":[0,1],"cheer":null,"aurora_photos":null,"ejection":null,"door_prizes":[],"wither":null,"efflorescence":[]}
+{"event_type":"Strike","strike":"Looking","steals":[{"runner":"Bertha Rivera","base":"Second","caught":false}],"count":[0,2],"cheer":null,"aurora_photos":null,"ejection":null,"door_prizes":[],"wither":null,"efflorescence":[]}
+{"event_type":"Ball","steals":[],"count":[1,2],"cheer":null,"aurora_photos":null,"ejection":null,"door_prizes":[],"wither":null,"efflorescence":[]}
+{"event_type":"StrikeOut","foul":null,"batter":"U. Livingston","strike":"Swinging","steals":[],"cheer":null,"aurora_photos":null,"ejection":null,"wither":null}
+{"event_type":"NowBatting","batter":"Mabel Hailu","stats":{"Stats":[{"stat":"HitsForAtBats","value":{"hits":0,"at_bats":2}},{"stat":"StrikeOuts","value":2}]}}
+{"event_type":"Ball","steals":[],"count":[1,0],"cheer":null,"aurora_photos":null,"ejection":null,"door_prizes":[],"wither":null,"efflorescence":[]}
+{"event_type":"Ball","steals":[],"count":[2,0],"cheer":null,"aurora_photos":null,"ejection":null,"door_prizes":[],"wither":null,"efflorescence":[]}
+{"event_type":"Ball","steals":[],"count":[3,0],"cheer":null,"aurora_photos":null,"ejection":null,"door_prizes":[],"wither":null,"efflorescence":[]}
+{"event_type":"Strike","strike":"Swinging","steals":[],"count":[3,1],"cheer":null,"aurora_photos":null,"ejection":null,"door_prizes":[],"wither":null,"efflorescence":[]}
+{"event_type":"Walk","batter":"Mabel Hailu","scores":[],"advances":[],"cheer":null,"aurora_photos":null,"ejection":null,"wither":null}
+{"event_type":"MoundVisit","team":{"emoji":"🛸","name":"Roswell Weather Balloons"},"mound_visit_type":"MoundVisit"}
+{"event_type":"PitcherSwap","leaving_pitcher_emoji":null,"leaving_pitcher":{"name":"Angela Parrish","place":"SP"},"arriving_pitcher_emoji":null,"arriving_pitcher_place":"RP","arriving_pitcher_name":"I. Larybird"}
+{"event_type":"NowBatting","batter":"Princess Injury","stats":{"Stats":[{"stat":"HitsForAtBats","value":{"hits":2,"at_bats":3}},{"stat":"ForceOuts","value":1},{"stat":"FirstBases","value":2}]}}
+{"event_type":"Ball","steals":[],"count":[1,0],"cheer":null,"aurora_photos":null,"ejection":null,"door_prizes":[],"wither":null,"efflorescence":[]}
+{"event_type":"Strike","strike":"Looking","steals":[],"count":[1,1],"cheer":null,"aurora_photos":null,"ejection":null,"door_prizes":[],"wither":null,"efflorescence":[]}
+{"event_type":"Foul","foul":"Ball","steals":[],"count":[1,2],"cheer":null,"aurora_photos":null,"door_prizes":[],"wither":null,"efflorescence":[]}
+{"event_type":"Foul","foul":"Ball","steals":[],"count":[1,2],"cheer":null,"aurora_photos":null,"door_prizes":[],"wither":null,"efflorescence":[]}
+{"event_type":"Ball","steals":[],"count":[2,2],"cheer":null,"aurora_photos":null,"ejection":null,"door_prizes":[],"wither":null,"efflorescence":[]}
+{"event_type":"FairBall","batter":"Princess Injury","fair_ball_type":"GroundBall","destination":"ShortStop","cheer":null,"aurora_photos":null,"door_prizes":[],"efflorescence":[]}
+{"event_type":"DoublePlayGrounded","batter":"Princess Injury","fielders":[{"name":"Jacob Taş","place":"SS"},{"name":"Christina Salminen","place":"2B"},{"name":"Graziela Flowers","place":"1B"}],"out_one":{"runner":"Mabel Hailu","base":"SecondBase"},"out_two":{"runner":"Princess Injury","base":"FirstBase"},"scores":[],"advances":[],"sacrifice":false,"ejection":null}
+{"event_type":"InningEnd","number":7,"side":"Bottom"}
+{"event_type":"InningStart","number":8,"side":"Top","batting_team":{"emoji":"🛸","name":"Roswell Weather Balloons"},"automatic_runner":null,"pitcher_status":{"Same":{"emoji":"🧹","name":"Elena Karapetyan"}}}
+{"event_type":"NowBatting","batter":"Jacob Taş","stats":{"Stats":[{"stat":"HitsForAtBats","value":{"hits":2,"at_bats":3}},{"stat":"StrikeOuts","value":1},{"stat":"FirstBases","value":1},{"stat":"HomeRuns","value":1}]}}
+{"event_type":"Ball","steals":[],"count":[1,0],"cheer":null,"aurora_photos":null,"ejection":null,"door_prizes":[],"wither":null,"efflorescence":[]}
+{"event_type":"Ball","steals":[],"count":[2,0],"cheer":null,"aurora_photos":null,"ejection":null,"door_prizes":[],"wither":null,"efflorescence":[]}
+{"event_type":"Ball","steals":[],"count":[3,0],"cheer":null,"aurora_photos":null,"ejection":null,"door_prizes":[],"wither":null,"efflorescence":[]}
+{"event_type":"Strike","strike":"Looking","steals":[],"count":[3,1],"cheer":null,"aurora_photos":null,"ejection":null,"door_prizes":[],"wither":null,"efflorescence":[]}
+{"event_type":"Walk","batter":"Jacob Taş","scores":[],"advances":[],"cheer":null,"aurora_photos":null,"ejection":null,"wither":null}
+{"event_type":"NowBatting","batter":"Christina Salminen","stats":{"Stats":[{"stat":"HitsForAtBats","value":{"hits":1,"at_bats":2}},{"stat":"GroundOuts","value":1},{"stat":"SecondBases","value":1},{"stat":"HitByPitchs","value":1}]}}
+{"event_type":"Foul","foul":"Ball","steals":[],"count":[0,1],"cheer":null,"aurora_photos":null,"door_prizes":[],"wither":null,"efflorescence":[]}
+{"event_type":"Foul","foul":"Ball","steals":[],"count":[0,2],"cheer":null,"aurora_photos":null,"door_prizes":[],"wither":null,"efflorescence":[]}
+{"event_type":"Foul","foul":"Ball","steals":[],"count":[0,2],"cheer":null,"aurora_photos":null,"door_prizes":[],"wither":null,"efflorescence":[]}
+{"event_type":"Ball","steals":[],"count":[1,2],"cheer":null,"aurora_photos":null,"ejection":null,"door_prizes":[],"wither":null,"efflorescence":[]}
+{"event_type":"Foul","foul":"Ball","steals":[],"count":[1,2],"cheer":null,"aurora_photos":null,"door_prizes":[],"wither":null,"efflorescence":[]}
+{"event_type":"Foul","foul":"Ball","steals":[],"count":[1,2],"cheer":null,"aurora_photos":null,"door_prizes":[],"wither":null,"efflorescence":[]}
+{"event_type":"FairBall","batter":"Christina Salminen","fair_ball_type":"GroundBall","destination":"FirstBase","cheer":null,"aurora_photos":null,"door_prizes":[],"efflorescence":[]}
+{"event_type":"GroundedOut","batter":"Christina Salminen","fielders":[{"name":"Willie Coles","place":"1B"}],"scores":[],"advances":[{"runner":"Jacob Taş","base":"Second"}],"amazing":false,"ejection":null}
+{"event_type":"NowBatting","batter":"Graziela Flowers","stats":{"Stats":[{"stat":"HitsForAtBats","value":{"hits":0,"at_bats":3}},{"stat":"StrikeOuts","value":2},{"stat":"GroundOuts","value":1},{"stat":"SacrificeFlies","value":1}]}}
+{"event_type":"Ball","steals":[],"count":[1,0],"cheer":null,"aurora_photos":null,"ejection":null,"door_prizes":[],"wither":null,"efflorescence":[]}
+{"event_type":"Foul","foul":"Tip","steals":[],"count":[1,1],"cheer":null,"aurora_photos":null,"door_prizes":[],"wither":null,"efflorescence":[]}
+{"event_type":"Strike","strike":"Swinging","steals":[],"count":[1,2],"cheer":null,"aurora_photos":null,"ejection":null,"door_prizes":[],"wither":null,"efflorescence":[]}
+{"event_type":"Ball","steals":[],"count":[2,2],"cheer":null,"aurora_photos":null,"ejection":null,"door_prizes":[],"wither":null,"efflorescence":[]}
+{"event_type":"Foul","foul":"Ball","steals":[],"count":[2,2],"cheer":null,"aurora_photos":null,"door_prizes":[],"wither":null,"efflorescence":[]}
+{"event_type":"StrikeOut","foul":null,"batter":"Graziela Flowers","strike":"Looking","steals":[],"cheer":null,"aurora_photos":null,"ejection":null,"wither":null}
+{"event_type":"MoundVisit","team":{"emoji":"🧹","name":"Boston Street Sweepers"},"mound_visit_type":"MoundVisit"}
+{"event_type":"PitcherSwap","leaving_pitcher_emoji":null,"leaving_pitcher":{"name":"Elena Karapetyan","place":"SP"},"arriving_pitcher_emoji":null,"arriving_pitcher_place":"RP","arriving_pitcher_name":"Lucas Travis"}
+{"event_type":"NowBatting","batter":"Viola de Jesus","stats":{"Stats":[{"stat":"HitsForAtBats","value":{"hits":1,"at_bats":4}},{"stat":"GroundOuts","value":2},{"stat":"SecondBases","value":1},{"stat":"StrikeOuts","value":1}]}}
+{"event_type":"FairBall","batter":"Viola de Jesus","fair_ball_type":"FlyBall","destination":"LeftField","cheer":null,"aurora_photos":null,"door_prizes":[],"efflorescence":[]}
+{"event_type":"CaughtOut","batter":"Viola de Jesus","fair_ball_type":"FlyBall","caught_by":{"name":"U. Livingston","place":"LF"},"scores":[],"advances":[],"sacrifice":false,"perfect":false,"ejection":null}
+{"event_type":"InningEnd","number":8,"side":"Top"}
+{"event_type":"InningStart","number":8,"side":"Bottom","batting_team":{"emoji":"🧹","name":"Boston Street Sweepers"},"automatic_runner":null,"pitcher_status":{"Same":{"emoji":"🛸","name":"I. Larybird"}}}
+{"event_type":"NowBatting","batter":"Regina Mashaba","stats":{"Stats":[{"stat":"HitsForAtBats","value":{"hits":0,"at_bats":1}},{"stat":"BaseOnBalls","value":2},{"stat":"StrikeOuts","value":1}]}}
+{"event_type":"Ball","steals":[],"count":[1,0],"cheer":null,"aurora_photos":null,"ejection":null,"door_prizes":[],"wither":null,"efflorescence":[]}
+{"event_type":"Foul","foul":"Ball","steals":[],"count":[1,1],"cheer":null,"aurora_photos":null,"door_prizes":[],"wither":null,"efflorescence":[]}
+{"event_type":"Foul","foul":"Ball","steals":[],"count":[1,2],"cheer":null,"aurora_photos":null,"door_prizes":[],"wither":null,"efflorescence":[]}
+{"event_type":"StrikeOut","foul":null,"batter":"Regina Mashaba","strike":"Swinging","steals":[],"cheer":null,"aurora_photos":null,"ejection":null,"wither":null}
+{"event_type":"NowBatting","batter":"Doc Bowen","stats":{"Stats":[{"stat":"HitsForAtBats","value":{"hits":0,"at_bats":3}},{"stat":"LineOuts","value":1},{"stat":"StrikeOuts","value":2}]}}
+{"event_type":"Strike","strike":"Looking","steals":[],"count":[0,1],"cheer":null,"aurora_photos":null,"ejection":null,"door_prizes":[],"wither":null,"efflorescence":[]}
+{"event_type":"Ball","steals":[],"count":[1,1],"cheer":null,"aurora_photos":null,"ejection":null,"door_prizes":[],"wither":null,"efflorescence":[]}
+{"event_type":"Strike","strike":"Looking","steals":[],"count":[1,2],"cheer":null,"aurora_photos":null,"ejection":null,"door_prizes":[],"wither":null,"efflorescence":[]}
+{"event_type":"FairBall","batter":"Doc Bowen","fair_ball_type":"LineDrive","destination":"LeftField","cheer":null,"aurora_photos":null,"door_prizes":[],"efflorescence":[]}
+{"event_type":"BatterToBase","batter":"Doc Bowen","distance":"Single","fair_ball_type":"LineDrive","fielder":{"name":"Quinn Keogh","place":"LF"},"scores":[],"advances":[],"ejection":null}
+{"event_type":"NowBatting","batter":"Eleanor Komatsu","stats":{"Stats":[{"stat":"HitsForAtBats","value":{"hits":0,"at_bats":2}},{"stat":"StrikeOuts","value":1},{"stat":"ForceOuts","value":1},{"stat":"BaseOnBalls","value":1}]}}
+{"event_type":"Foul","foul":"Ball","steals":[],"count":[0,1],"cheer":null,"aurora_photos":null,"door_prizes":[],"wither":null,"efflorescence":[]}
+{"event_type":"Foul","foul":"Ball","steals":[],"count":[0,2],"cheer":null,"aurora_photos":null,"door_prizes":[],"wither":null,"efflorescence":[]}
+{"event_type":"FairBall","batter":"Eleanor Komatsu","fair_ball_type":"FlyBall","destination":"LeftField","cheer":null,"aurora_photos":null,"door_prizes":[],"efflorescence":[]}
+{"event_type":"CaughtOut","batter":"Eleanor Komatsu","fair_ball_type":"FlyBall","caught_by":{"name":"Quinn Keogh","place":"LF"},"scores":[],"advances":[],"sacrifice":false,"perfect":false,"ejection":null}
+{"event_type":"NowBatting","batter":"Saki Thapa","stats":{"Stats":[{"stat":"HitsForAtBats","value":{"hits":1,"at_bats":3}},{"stat":"SecondBases","value":1},{"stat":"PopOuts","value":1},{"stat":"StrikeOuts","value":1}]}}
+{"event_type":"Ball","steals":[],"count":[1,0],"cheer":null,"aurora_photos":null,"ejection":null,"door_prizes":[],"wither":null,"efflorescence":[]}
+{"event_type":"Foul","foul":"Ball","steals":[],"count":[1,1],"cheer":null,"aurora_photos":null,"door_prizes":[],"wither":null,"efflorescence":[]}
+{"event_type":"FairBall","batter":"Saki Thapa","fair_ball_type":"GroundBall","destination":"LeftField","cheer":null,"aurora_photos":null,"door_prizes":[],"efflorescence":[]}
+{"event_type":"BatterToBase","batter":"Saki Thapa","distance":"Single","fair_ball_type":"GroundBall","fielder":{"name":"Quinn Keogh","place":"LF"},"scores":[],"advances":[{"runner":"Doc Bowen","base":"Second"}],"ejection":null}
+{"event_type":"NowBatting","batter":"Willie Coles","stats":{"Stats":[{"stat":"HitsForAtBats","value":{"hits":0,"at_bats":3}},{"stat":"ForceOuts","value":2},{"stat":"GroundOuts","value":1}]}}
+{"event_type":"Strike","strike":"Looking","steals":[],"count":[0,1],"cheer":null,"aurora_photos":null,"ejection":null,"door_prizes":[],"wither":null,"efflorescence":[]}
+{"event_type":"Foul","foul":"Ball","steals":[],"count":[0,2],"cheer":null,"aurora_photos":null,"door_prizes":[],"wither":null,"efflorescence":[]}
+{"event_type":"FairBall","batter":"Willie Coles","fair_ball_type":"FlyBall","destination":"LeftField","cheer":null,"aurora_photos":null,"door_prizes":[],"efflorescence":[]}
+{"event_type":"BatterToBase","batter":"Willie Coles","distance":"Double","fair_ball_type":"FlyBall","fielder":{"name":"Quinn Keogh","place":"LF"},"scores":["Doc Bowen","Saki Thapa"],"advances":[],"ejection":null}
+{"event_type":"NowBatting","batter":"Bertha Rivera","stats":{"Stats":[{"stat":"HitsForAtBats","value":{"hits":0,"at_bats":2}},{"stat":"GroundOuts","value":2},{"stat":"HitByPitchs","value":1}]}}
+{"event_type":"Strike","strike":"Looking","steals":[],"count":[0,1],"cheer":null,"aurora_photos":null,"ejection":null,"door_prizes":[],"wither":null,"efflorescence":[]}
+{"event_type":"Foul","foul":"Ball","steals":[],"count":[0,2],"cheer":null,"aurora_photos":null,"door_prizes":[],"wither":null,"efflorescence":[]}
+{"event_type":"StrikeOut","foul":null,"batter":"Bertha Rivera","strike":"Looking","steals":[],"cheer":null,"aurora_photos":null,"ejection":null,"wither":null}
+{"event_type":"InningEnd","number":8,"side":"Bottom"}
+{"event_type":"InningStart","number":9,"side":"Top","batting_team":{"emoji":"🛸","name":"Roswell Weather Balloons"},"automatic_runner":null,"pitcher_status":{"Same":{"emoji":"🧹","name":"Lucas Travis"}}}
+{"event_type":"NowBatting","batter":"Matthew Denbigh","stats":{"Stats":[{"stat":"HitsForAtBats","value":{"hits":1,"at_bats":4}},{"stat":"PopOuts","value":1},{"stat":"ForceOuts","value":1},{"stat":"HomeRuns","value":1},{"stat":"GroundOuts","value":1}]}}
+{"event_type":"FairBall","batter":"Matthew Denbigh","fair_ball_type":"FlyBall","destination":"CenterField","cheer":null,"aurora_photos":null,"door_prizes":[],"efflorescence":[]}
+{"event_type":"HomeRun","batter":"Matthew Denbigh","fair_ball_type":"FlyBall","destination":"CenterField","scores":[],"grand_slam":false,"ejection":null}
+{"event_type":"NowBatting","batter":"Axel Johns","stats":{"Stats":[{"stat":"HitsForAtBats","value":{"hits":1,"at_bats":4}},{"stat":"HomeRuns","value":1},{"stat":"StrikeOuts","value":1},{"stat":"PopOuts","value":1},{"stat":"GroundOuts","value":1}]}}
+{"event_type":"FairBall","batter":"Axel Johns","fair_ball_type":"GroundBall","destination":"ShortStop","cheer":null,"aurora_photos":null,"door_prizes":[],"efflorescence":[]}
+{"event_type":"GroundedOut","batter":"Axel Johns","fielders":[{"name":"Mabel Hailu","place":"SS"},{"name":"Willie Coles","place":"1B"}],"scores":[],"advances":[],"amazing":false,"ejection":null}
+{"event_type":"NowBatting","batter":"Lulu Vacation","stats":{"Stats":[{"stat":"HitsForAtBats","value":{"hits":0,"at_bats":3}},{"stat":"PopOuts","value":1},{"stat":"GroundOuts","value":1},{"stat":"StrikeOuts","value":1},{"stat":"BaseOnBalls","value":1}]}}
+{"event_type":"Ball","steals":[],"count":[1,0],"cheer":null,"aurora_photos":null,"ejection":null,"door_prizes":[],"wither":null,"efflorescence":[]}
+{"event_type":"Ball","steals":[],"count":[2,0],"cheer":null,"aurora_photos":null,"ejection":null,"door_prizes":[],"wither":null,"efflorescence":[]}
+{"event_type":"Strike","strike":"Swinging","steals":[],"count":[2,1],"cheer":null,"aurora_photos":null,"ejection":null,"door_prizes":[],"wither":null,"efflorescence":[]}
+{"event_type":"Foul","foul":"Ball","steals":[],"count":[2,2],"cheer":null,"aurora_photos":null,"door_prizes":[],"wither":null,"efflorescence":[]}
+{"event_type":"Foul","foul":"Ball","steals":[],"count":[2,2],"cheer":null,"aurora_photos":null,"door_prizes":[],"wither":null,"efflorescence":[]}
+{"event_type":"FairBall","batter":"Lulu Vacation","fair_ball_type":"Popup","destination":"ShortStop","cheer":null,"aurora_photos":null,"door_prizes":[],"efflorescence":[]}
+{"event_type":"CaughtOut","batter":"Lulu Vacation","fair_ball_type":"Popup","caught_by":{"name":"Mabel Hailu","place":"SS"},"scores":[],"advances":[],"sacrifice":false,"perfect":false,"ejection":null}
+{"event_type":"NowBatting","batter":"Orlando Dempsey","stats":{"Stats":[{"stat":"HitsForAtBats","value":{"hits":3,"at_bats":4}},{"stat":"FirstBases","value":3},{"stat":"LineOuts","value":1}]}}
+{"event_type":"Ball","steals":[],"count":[1,0],"cheer":null,"aurora_photos":null,"ejection":null,"door_prizes":[],"wither":null,"efflorescence":[]}
+{"event_type":"Ball","steals":[],"count":[2,0],"cheer":null,"aurora_photos":null,"ejection":null,"door_prizes":[],"wither":null,"efflorescence":[]}
+{"event_type":"Strike","strike":"Looking","steals":[],"count":[2,1],"cheer":null,"aurora_photos":null,"ejection":null,"door_prizes":[],"wither":null,"efflorescence":[]}
+{"event_type":"FairBall","batter":"Orlando Dempsey","fair_ball_type":"GroundBall","destination":"RightField","cheer":null,"aurora_photos":null,"door_prizes":[],"efflorescence":[]}
+{"event_type":"BatterToBase","batter":"Orlando Dempsey","distance":"Single","fair_ball_type":"GroundBall","fielder":{"name":"Bertha Rivera","place":"RF"},"scores":[],"advances":[],"ejection":null}
+{"event_type":"NowBatting","batter":"Quinn Keogh","stats":{"Stats":[{"stat":"HitsForAtBats","value":{"hits":2,"at_bats":4}},{"stat":"FirstBases","value":2},{"stat":"GroundOuts","value":1},{"stat":"ForceOuts","value":1}]}}
+{"event_type":"FairBall","batter":"Quinn Keogh","fair_ball_type":"GroundBall","destination":"Catcher","cheer":null,"aurora_photos":null,"door_prizes":[],"efflorescence":[]}
+{"event_type":"GroundedOut","batter":"Quinn Keogh","fielders":[{"name":"Saki Thapa","place":"C"},{"name":"Willie Coles","place":"1B"}],"scores":[],"advances":[],"amazing":false,"ejection":null}
+{"event_type":"InningEnd","number":9,"side":"Top"}
+{"event_type":"InningStart","number":9,"side":"Bottom","batting_team":{"emoji":"🧹","name":"Boston Street Sweepers"},"automatic_runner":null,"pitcher_status":{"Same":{"emoji":"🛸","name":"I. Larybird"}}}
+{"event_type":"NowBatting","batter":"U. Livingston","stats":{"Stats":[{"stat":"HitsForAtBats","value":{"hits":1,"at_bats":3}},{"stat":"StrikeOuts","value":2},{"stat":"SecondBases","value":1}]}}
+{"event_type":"Ball","steals":[],"count":[1,0],"cheer":null,"aurora_photos":null,"ejection":null,"door_prizes":[],"wither":null,"efflorescence":[]}
+{"event_type":"FairBall","batter":"U. Livingston","fair_ball_type":"FlyBall","destination":"LeftField","cheer":null,"aurora_photos":null,"door_prizes":[],"efflorescence":[]}
+{"event_type":"CaughtOut","batter":"U. Livingston","fair_ball_type":"FlyBall","caught_by":{"name":"Quinn Keogh","place":"LF"},"scores":[],"advances":[],"sacrifice":false,"perfect":false,"ejection":null}
+{"event_type":"NowBatting","batter":"Mabel Hailu","stats":{"Stats":[{"stat":"HitsForAtBats","value":{"hits":0,"at_bats":2}},{"stat":"StrikeOuts","value":2},{"stat":"BaseOnBalls","value":1}]}}
+{"event_type":"Ball","steals":[],"count":[1,0],"cheer":null,"aurora_photos":null,"ejection":null,"door_prizes":[],"wither":null,"efflorescence":[]}
+{"event_type":"FairBall","batter":"Mabel Hailu","fair_ball_type":"GroundBall","destination":"ShortStop","cheer":null,"aurora_photos":null,"door_prizes":[],"efflorescence":[]}
+{"event_type":"GroundedOut","batter":"Mabel Hailu","fielders":[{"name":"Jacob Taş","place":"SS"},{"name":"Graziela Flowers","place":"1B"}],"scores":[],"advances":[],"amazing":false,"ejection":null}
+{"event_type":"NowBatting","batter":"Princess Injury","stats":{"Stats":[{"stat":"HitsForAtBats","value":{"hits":2,"at_bats":4}},{"stat":"ForceOuts","value":1},{"stat":"FirstBases","value":2},{"stat":"GroundIntoDoublePlays","value":1},{"stat":"GroundOuts","value":1}]}}
+{"event_type":"Ball","steals":[],"count":[1,0],"cheer":null,"aurora_photos":null,"ejection":null,"door_prizes":[],"wither":null,"efflorescence":[]}
+{"event_type":"Foul","foul":"Ball","steals":[],"count":[1,1],"cheer":null,"aurora_photos":null,"door_prizes":[],"wither":null,"efflorescence":[]}
+{"event_type":"Ball","steals":[],"count":[2,1],"cheer":null,"aurora_photos":null,"ejection":null,"door_prizes":[],"wither":null,"efflorescence":[]}
+{"event_type":"FairBall","batter":"Princess Injury","fair_ball_type":"GroundBall","destination":"ThirdBase","cheer":null,"aurora_photos":null,"door_prizes":[],"efflorescence":[]}
+{"event_type":"GroundedOut","batter":"Princess Injury","fielders":[{"name":"Matthew Denbigh","place":"3B"},{"name":"Graziela Flowers","place":"1B"}],"scores":[],"advances":[],"amazing":false,"ejection":null}
+{"event_type":"InningEnd","number":9,"side":"Bottom"}
+{"event_type":"GameOver","message":"QuotedGAMEOVER"}
+{"event_type":"WeatherDelivery","delivery":{"Successful":{"team":{"emoji":"🛸","name":"Roswell Weather Balloons"},"player":"Graziela Flowers","item":{"item_emoji":"🧤","item":"Gloves","affixes":"None"},"equipped":false,"discarded":null}}}
+{"event_type":"Recordkeeping","winning_team":{"emoji":"🛸","name":"Roswell Weather Balloons"},"losing_team":{"emoji":"🧹","name":"Boston Street Sweepers"},"winning_score":7,"losing_score":3}

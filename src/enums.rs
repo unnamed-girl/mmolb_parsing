@@ -8,6 +8,7 @@ use nom::{
 };
 use serde::{de::Error, Deserialize, Deserializer, Serialize, Serializer};
 use serde_with::{DeserializeFromStr, SerializeDisplay};
+use thiserror::Error;
 use std::{
     convert::Infallible,
     fmt::{Debug, Display},
@@ -580,6 +581,41 @@ pub enum PitchType {
     #[strum(to_string = "Knuckle Curve")]
     KnuckleCurve,
     Splitter,
+}
+
+#[derive(Debug, Clone, Error)]
+#[error("{0} is not a pitch type acronym")]
+pub struct ParsePitchTypeAcronymError(String);
+
+impl PitchType {
+    pub fn acronym(&self) -> &'static str {
+        match self {
+            PitchType::Fastball => "FF",
+            PitchType::Sinker => "SI",
+            PitchType::Slider => "SL",
+            PitchType::Changeup => "CH",
+            PitchType::Curveball => "CU",
+            PitchType::Cutter => "FC",
+            PitchType::Sweeper => "ST",
+            PitchType::KnuckleCurve => "KC",
+            PitchType::Splitter => "FS",
+        }
+    }
+
+    pub fn from_acronym(acronym: &str) -> Result<Self, ParsePitchTypeAcronymError> {
+        match acronym {
+            "FF" => Ok(PitchType::Fastball),
+            "SL" => Ok(PitchType::Slider),
+            "CH" => Ok(PitchType::Changeup),
+            "SI" => Ok(PitchType::Sinker),
+            "KC" => Ok(PitchType::KnuckleCurve),
+            "FC" => Ok(PitchType::Cutter),
+            "CU" => Ok(PitchType::Curveball),
+            "FS" => Ok(PitchType::Splitter),
+            "ST" => Ok(PitchType::Sweeper),
+            other => Err(ParsePitchTypeAcronymError(other.to_string())),
+        }
+    }
 }
 
 /// ```
@@ -1675,7 +1711,7 @@ pub enum Attribute {
     Intuition,
 }
 
-#[derive(Debug, Clone, Copy, EnumIter, PartialEq, Eq, Hash)]
+#[derive(Debug, Clone, Copy, EnumIter, PartialEq, Eq, Hash, Serialize, Deserialize)]
 pub enum AttributeCategory {
     Batting,
     Pitching,
