@@ -8,7 +8,6 @@ use nom::{
 };
 use serde::{de::Error, Deserialize, Deserializer, Serialize, Serializer};
 use serde_with::{DeserializeFromStr, SerializeDisplay};
-use thiserror::Error;
 use std::{
     convert::Infallible,
     fmt::{Debug, Display},
@@ -18,6 +17,7 @@ use strum::{
     Display, EnumDiscriminants, EnumIter, EnumString, IntoDiscriminant, IntoEnumIterator,
     IntoStaticStr,
 };
+use thiserror::Error;
 
 use crate::nom_parsing::shared::IResult;
 
@@ -1711,19 +1711,35 @@ pub enum Attribute {
     Intuition,
 }
 
-#[derive(Debug, Clone, Copy, EnumIter, PartialEq, Eq, Hash, Serialize, Deserialize)]
+#[derive(
+    EnumString,
+    IntoStaticStr,
+    Display,
+    Debug,
+    SerializeDisplay,
+    DeserializeFromStr,
+    Clone,
+    Copy,
+    EnumIter,
+    PartialEq,
+    Eq,
+    Hash,
+)]
 pub enum AttributeCategory {
     Batting,
     Pitching,
     Defense,
     Baserunning,
-    Generic,
 }
 
-impl From<Attribute> for AttributeCategory {
-    fn from(value: Attribute) -> Self {
+#[derive(Debug, Clone, Copy, Error)]
+#[error("{0} doesn't have a category")]
+pub struct Uncategorized(pub Attribute);
+
+impl TryFrom<Attribute> for AttributeCategory {
+    type Error = Uncategorized;
+    fn try_from(value: Attribute) -> Result<Self, Self::Error> {
         match value {
-            Attribute::Priority | Attribute::Luck => AttributeCategory::Generic,
             Attribute::Aiming
             | Attribute::Contact
             | Attribute::Cunning
@@ -1736,9 +1752,9 @@ impl From<Attribute> for AttributeCategory {
             | Attribute::Selflessness
             | Attribute::Vision
             | Attribute::Wisdom
-            | Attribute::Intuition => AttributeCategory::Batting,
+            | Attribute::Intuition => Ok(AttributeCategory::Batting),
             Attribute::Greed | Attribute::Performance | Attribute::Speed | Attribute::Stealth => {
-                AttributeCategory::Baserunning
+                Ok(AttributeCategory::Baserunning)
             }
             Attribute::Accuracy
             | Attribute::Control
@@ -1752,13 +1768,15 @@ impl From<Attribute> for AttributeCategory {
             | Attribute::Velocity
             | Attribute::Acrobatics
             | Attribute::Agility
-            | Attribute::Deception => AttributeCategory::Pitching,
+            | Attribute::Deception => Ok(AttributeCategory::Pitching),
             Attribute::Arm
             | Attribute::Awareness
             | Attribute::Composure
             | Attribute::Dexterity
             | Attribute::Patience
-            | Attribute::Reaction => AttributeCategory::Defense,
+            | Attribute::Reaction
+            | Attribute::Luck => Ok(AttributeCategory::Defense),
+            Attribute::Priority => Err(Uncategorized(Attribute::Priority)),
         }
     }
 }

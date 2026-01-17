@@ -10,7 +10,10 @@ use crate::{
         ItemName, ItemPrefix, ItemSuffix, Position, PositionType, SeasonStatus, SpecialItemType,
     },
     feed_event::FeedEvent,
-    utils::{AddedLaterResult, MaybeRecognizedResult, RemovedLaterResult, StarHelper, PitchTypeAcronymHelper},
+    utils::{
+        AddedLaterResult, MaybeRecognizedResult, PitchTypeAcronymHelper, RemovedLaterResult,
+        StarHelper,
+    },
     EmptyArrayOr,
 };
 
@@ -80,7 +83,8 @@ pub struct Player {
         skip_serializing_if = "AddedLaterResult::is_err"
     )]
     #[serde_as(as = "SometimesMissingHelper<_>")]
-    pub attribute_stars: AddedLaterResult<HashMap<AttributeCategory, HashMap<Attribute, TalkStars>>>,
+    pub attribute_stars:
+        AddedLaterResult<HashMap<AttributeCategory, HashMap<Attribute, ComplexTalkStars>>>,
     #[serde(
         default = "SometimesMissingHelper::default_result",
         skip_serializing_if = "AddedLaterResult::is_err"
@@ -91,26 +95,27 @@ pub struct Player {
     #[serde(
         default = "SometimesMissingHelper::default_result",
         skip_serializing_if = "AddedLaterResult::is_err",
-        rename = "XP",
+        rename = "XP"
     )]
     #[serde_as(as = "SometimesMissingHelper<_>")]
     pub xp: AddedLaterResult<u32>,
+    /// E.g. "IV"
     #[serde(
         default = "SometimesMissingHelper::default_result",
-        skip_serializing_if = "AddedLaterResult::is_err",
+        skip_serializing_if = "AddedLaterResult::is_err"
     )]
     #[serde_as(as = "SometimesMissingHelper<_>")]
     pub suffix: AddedLaterResult<Option<String>>,
     /// This is less precise than BaseAttributes.pitch_selection
     #[serde(
         default = "SometimesMissingHelper::default_result",
-        skip_serializing_if = "AddedLaterResult::is_err",
+        skip_serializing_if = "AddedLaterResult::is_err"
     )]
     #[serde_as(as = "SometimesMissingHelper<_>")]
     pub pitch_selection: AddedLaterResult<Vec<f64>>,
     #[serde(
         default = "SometimesMissingHelper::default_result",
-        skip_serializing_if = "AddedLaterResult::is_err",
+        skip_serializing_if = "AddedLaterResult::is_err"
     )]
     #[serde_as(as = "SometimesMissingHelper<Vec<PitchTypeAcronymHelper>>")]
     pub pitch_types: AddedLaterResult<Vec<PitchType>>,
@@ -391,19 +396,7 @@ pub struct TalkCategory {
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
 #[serde(untagged)]
 pub enum TalkStars {
-    Complex {
-        attribute: String,
-        display: String,
-        regular: u8,
-        shiny: u8,
-        stars: u8,
-        total: f64,
-        base_display: String,
-        base_regular: u8,
-        base_shiny: u8,
-        base_stars: u8,
-        base_total: f64,
-    },
+    Complex(ComplexTalkStars),
     Intermediate {
         display: String,
         regular: u8,
@@ -412,6 +405,21 @@ pub enum TalkStars {
         total: f64,
     },
     Simple(#[serde_as(as = "StarHelper")] u8),
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
+pub struct ComplexTalkStars {
+    pub attribute: String,
+    pub display: String,
+    pub regular: u8,
+    pub shiny: u8,
+    pub stars: u8,
+    pub total: f64,
+    pub base_display: String,
+    pub base_regular: u8,
+    pub base_shiny: u8,
+    pub base_stars: u8,
+    pub base_total: f64,
 }
 
 /// In season 10, Lesser and Greater boons moved from Option<Modification> to Option<Vec<Modification>>

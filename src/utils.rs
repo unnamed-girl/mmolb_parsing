@@ -435,20 +435,18 @@ where
 
 pub struct PitchTypeAcronymHelper;
 
-impl<'de> DeserializeAs<'de, PitchType> for PitchTypeAcronymHelper
-{
+impl<'de> DeserializeAs<'de, PitchType> for PitchTypeAcronymHelper {
     fn deserialize_as<D>(deserializer: D) -> Result<PitchType, D::Error>
     where
         D: Deserializer<'de>,
     {
         let acronym = <&str>::deserialize(deserializer)?;
-        
+
         PitchType::from_acronym(acronym).map_err(D::Error::custom)
     }
 }
 
-impl SerializeAs<PitchType> for PitchTypeAcronymHelper
-{
+impl SerializeAs<PitchType> for PitchTypeAcronymHelper {
     fn serialize_as<S>(source: &PitchType, serializer: S) -> Result<S::Ok, S::Error>
     where
         S: Serializer,

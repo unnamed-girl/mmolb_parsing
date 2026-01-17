@@ -50,7 +50,8 @@ mod test {
             .lines()
             .enumerate()
             .map(|(i, line)| serde_json::from_str(line).map_err(|e| (i, e)))
-            .collect::<Result<Vec<_>, _>>().unwrap();
+            .collect::<Result<Vec<_>, _>>()
+            .unwrap();
 
         assert_eq!(
             game.event_log.len(),

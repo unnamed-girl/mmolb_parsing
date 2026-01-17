@@ -472,7 +472,12 @@ fn game_inner(
         }
 
         if let Some(f) = &mut output {
-            writeln!(f, "{}", serde_json::to_string(&parsed_event_message).unwrap()).unwrap();
+            writeln!(
+                f,
+                "{}",
+                serde_json::to_string(&parsed_event_message).unwrap()
+            )
+            .unwrap();
         }
 
         drop(_event_span_guard);
