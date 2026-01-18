@@ -409,7 +409,7 @@ pub enum TalkStars {
 
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
 pub struct ComplexTalkStars {
-    pub attribute: String,
+    pub attribute: Attribute,
     pub display: String,
     pub regular: u8,
     pub shiny: u8,
