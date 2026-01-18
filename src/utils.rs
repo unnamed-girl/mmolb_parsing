@@ -440,9 +440,22 @@ impl<'de> DeserializeAs<'de, PitchType> for PitchTypeAcronymHelper {
     where
         D: Deserializer<'de>,
     {
-        let acronym = <&str>::deserialize(deserializer)?;
+        struct Helper;
 
-        PitchType::from_acronym(acronym).map_err(D::Error::custom)
+        impl<'de> Visitor<'de> for Helper {
+            type Value = PitchType;
+            fn expecting(&self, formatter: &mut std::fmt::Formatter) -> std::fmt::Result {
+                write!(formatter, "A pitch type string")
+            }
+            fn visit_str<E>(self, v: &str) -> Result<Self::Value, E>
+            where
+                E: Error,
+            {
+                PitchType::from_acronym(v).map_err(E::custom)
+            }
+        }
+
+        deserializer.deserialize_str(Helper)
     }
 }
 
