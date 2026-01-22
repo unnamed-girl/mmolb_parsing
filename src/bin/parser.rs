@@ -1,5 +1,4 @@
 use clap::{Parser, ValueEnum};
-use futures::{Stream, StreamExt};
 use mmolb_parsing::{
     enums::FoulType,
     player::Player,
@@ -7,7 +6,7 @@ use mmolb_parsing::{
     process_event,
     team::Team,
     team_feed::{parse_team_feed_event, TeamFeed},
-    Game, ParsedEventMessage, UnparsingContext,
+    Game, ParsedEventMessage,
 };
 use serde::{de::IntoDeserializer, Deserialize, Serialize};
 use std::{
@@ -15,11 +14,10 @@ use std::{
     fs::File,
     io::{Read, Write},
     path::Path,
-    pin::pin,
 };
 
 use mmolb_parsing::parsed_event::{ContainResult, PartyDurabilityLoss, WitherResult};
-use reqwest::Client;
+use reqwest::blocking::Client;
 use strum::IntoDiscriminant;
 use tracing::{info, span::EnteredSpan, Level};
 use tracing_subscriber::{fmt::writer::MakeWriterExt, layer::SubscriberExt};
@@ -129,41 +127,78 @@ impl Kind {
     }
 }
 
-fn cashews_fetch_json<'a>(
+struct Fetch<'a> {
     client: &'a Client,
     endpoint: &'a str,
-    kind: Kind,
+    kind: &'static str,
     extra: String,
-    start_page: Option<String>,
-) -> impl Stream<Item = Vec<EntityResponse<Box<serde_json::value::RawValue>>>> + 'a {
-    let kind = kind.as_chron_kind();
-    async_stream::stream! {
-        let (mut url, mut page) = match start_page {
-            Some(page) => (format!("{endpoint}?kind={kind}{extra}&page={page}"), Some(page)),
-            None => (format!("{endpoint}?kind={kind}{extra}"), None)
-        };
-        loop {
-            info!("Fetching {kind}s from cashews page {page:?}");
-            let response = client.get(&url).send().await.unwrap();
-            info!("{response:?}");
-            let response = response.error_for_status().unwrap().json::<FreeCashewResponse<EntityResponse<Box<serde_json::value::RawValue>>>>().await.unwrap();
-            info!("{} {kind}s fetched from cashews page {page:?}", response.items.len());
-            page = response.next_page;
-            yield response.items;
+    next_page: Option<String>,
+    complete: bool,
+}
 
-            if let Some(page) = &page {
-                url = format!("{endpoint}?kind={kind}&page={page}{extra}");
-            } else {
-                break
-            }
+impl<'a> Fetch<'a> {
+    fn new(
+        client: &'a Client,
+        endpoint: &'a str,
+        kind: Kind,
+        extra: String,
+        start_page: Option<String>,
+    ) -> Self {
+        Self {
+            client,
+            endpoint,
+            kind: kind.as_chron_kind(),
+            extra,
+            next_page: start_page,
+            complete: false,
         }
+    }
+}
+
+impl Iterator for Fetch<'_> {
+    type Item = Vec<EntityResponse<Box<serde_json::value::RawValue>>>;
+    fn next(&mut self) -> Option<Self::Item> {
+        let Fetch {
+            client,
+            endpoint,
+            kind,
+            extra,
+            next_page,
+            complete,
+        } = self;
+        if *complete {
+            return None;
+        }
+        let url = match next_page {
+            Some(page) => format!("{endpoint}?kind={kind}{extra}&page={page}"),
+            None => format!("{endpoint}?kind={kind}{extra}"),
+        };
+
+        info!("Fetching {kind}s from cashews page {next_page:?}");
+        let response = client.get(url).send().unwrap().error_for_status().unwrap();
+        info!("{response:?}");
+        let response = serde_json::from_reader::<
+            _,
+            FreeCashewResponse<EntityResponse<Box<serde_json::value::RawValue>>>,
+        >(response)
+        .unwrap();
+        info!(
+            "{} {kind}s fetched from cashews page {next_page:?}",
+            response.items.len()
+        );
+
+        self.next_page = response.next_page;
+        if self.next_page.is_none() {
+            self.complete = true;
+        }
+
+        return Some(response.items);
     }
 }
 
 static mut EVENT_VARIANTS: Option<HashSet<String>> = None;
 
-#[tokio::main]
-async fn main() {
+fn main() {
     let args = Args::parse();
 
     let err_layer = tracing_subscriber::fmt::Layer::new()
@@ -215,15 +250,13 @@ async fn main() {
 
     if let Some(id) = &args.id {
         let kind = args.kind.as_chron_kind();
-        let client = Client::new();
+        let client = Client::builder().timeout(None).build().unwrap();
         let url = format!("{endpoint}?kind={kind}&id={id}");
         let entities = client
             .get(&url)
             .send()
-            .await
             .unwrap()
             .json::<FreeCashewResponse<EntityResponse<Box<serde_json::value::RawValue>>>>()
-            .await
             .unwrap()
             .items;
         for game in entities.into_iter() {
@@ -248,15 +281,15 @@ async fn main() {
 
     let client = Client::new();
 
-    let mut fetch = pin!(cashews_fetch_json(
+    let mut fetch = Fetch::new(
         &client,
         &endpoint,
         args.kind,
         extra,
-        args.start_page.clone()
-    ));
+        args.start_page.clone(),
+    );
 
-    while let Some(games) = fetch.next().await {
+    while let Some(games) = fetch.next() {
         let last = games.len().max(1) - 1;
         for (i, game) in games.into_iter().enumerate() {
             func(game, i == last)

@@ -1,7 +1,7 @@
 use std::marker::PhantomData;
 
-use serde::de::Visitor;
 use serde::de::value::MapAccessDeserializer;
+use serde::de::Visitor;
 use serde::{Deserialize, Deserializer, Serialize};
 use serde_with::serde_as;
 
@@ -48,9 +48,7 @@ pub struct EventPitcher<S> {
 }
 
 #[derive(Debug, Clone, PartialEq, Serialize)]
-#[serde(
-    untagged
-)]
+#[serde(untagged)]
 pub enum EventPitcherVersions<S> {
     New(EventPitcher<S>),
     Old(MaybePlayer<S>),
@@ -65,9 +63,7 @@ impl<S> EventPitcherVersions<S> {
     }
 }
 
-impl<'de, S: Deserialize<'de> + From<&'de str>> Deserialize<'de>
-    for EventPitcherVersions<S>
-{
+impl<'de, S: Deserialize<'de> + From<&'de str>> Deserialize<'de> for EventPitcherVersions<S> {
     fn deserialize<D>(deserializer: D) -> Result<Self, D::Error>
     where
         D: Deserializer<'de>,
@@ -88,8 +84,9 @@ impl<'de, S: Deserialize<'de> + From<&'de str>> Deserialize<'de>
             }
 
             fn visit_borrowed_str<E>(self, v: &'de str) -> Result<Self::Value, E>
-                where
-                    E: serde::de::Error, {
+            where
+                E: serde::de::Error,
+            {
                 if v == "" {
                     Ok(EventPitcherVersions::Old(MaybePlayer::EmptyString))
                 } else {
@@ -98,8 +95,9 @@ impl<'de, S: Deserialize<'de> + From<&'de str>> Deserialize<'de>
             }
 
             fn visit_map<A>(self, map: A) -> Result<Self::Value, A::Error>
-                where
-                    A: serde::de::MapAccess<'de>, {
+            where
+                A: serde::de::MapAccess<'de>,
+            {
                 let event_batter = EventPitcher::<S>::deserialize(MapAccessDeserializer::new(map))?;
                 Ok(EventPitcherVersions::New(event_batter))
             }
@@ -125,9 +123,7 @@ impl<S> EventBatterVersions<S> {
     }
 }
 
-impl<'de, S: Deserialize<'de> + From<&'de str>> Deserialize<'de>
-    for EventBatterVersions<S>
-{
+impl<'de, S: Deserialize<'de> + From<&'de str>> Deserialize<'de> for EventBatterVersions<S> {
     fn deserialize<D>(deserializer: D) -> Result<Self, D::Error>
     where
         D: Deserializer<'de>,
@@ -148,8 +144,9 @@ impl<'de, S: Deserialize<'de> + From<&'de str>> Deserialize<'de>
             }
 
             fn visit_borrowed_str<E>(self, v: &'de str) -> Result<Self::Value, E>
-                where
-                    E: serde::de::Error, {
+            where
+                E: serde::de::Error,
+            {
                 if v == "" {
                     Ok(EventBatterVersions::Old(MaybePlayer::EmptyString))
                 } else {
@@ -158,8 +155,9 @@ impl<'de, S: Deserialize<'de> + From<&'de str>> Deserialize<'de>
             }
 
             fn visit_map<A>(self, map: A) -> Result<Self::Value, A::Error>
-                where
-                    A: serde::de::MapAccess<'de>, {
+            where
+                A: serde::de::MapAccess<'de>,
+            {
                 let event_batter = EventBatter::<S>::deserialize(MapAccessDeserializer::new(map))?;
                 Ok(EventBatterVersions::New(event_batter))
             }
@@ -205,8 +203,9 @@ impl<'de, T: From<&'de str>> Deserialize<'de> for MaybePlayer<T> {
             }
 
             fn visit_borrowed_str<E>(self, v: &'de str) -> Result<Self::Value, E>
-                where
-                    E: serde::de::Error, {
+            where
+                E: serde::de::Error,
+            {
                 if v == "" {
                     Ok(MaybePlayer::EmptyString)
                 } else {
@@ -215,8 +214,9 @@ impl<'de, T: From<&'de str>> Deserialize<'de> for MaybePlayer<T> {
             }
 
             fn visit_unit<E>(self) -> Result<Self::Value, E>
-                where
-                    E: serde::de::Error, {
+            where
+                E: serde::de::Error,
+            {
                 Ok(MaybePlayer::Null)
             }
         }
