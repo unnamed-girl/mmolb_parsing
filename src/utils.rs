@@ -206,7 +206,7 @@ pub(crate) struct MaybeRecognizedHelper<T>(PhantomData<T>);
 
 pub(crate) fn maybe_recognized_from_str<T: FromStr>(value: &str) -> MaybeRecognizedResult<T> {
     T::from_str(value).map_err(|_| {
-        tracing::warn!("{value:?} not recognized as {}", type_name::<T>());
+        tracing::error!("{value:?} not recognized as {}", type_name::<T>());
         NotRecognized(serde_json::Value::String(value.to_string()))
     })
 }
@@ -238,7 +238,7 @@ where
         match Visitor::<T, U>::deserialize(deserializer) {
             Ok(Visitor::Recognized(t)) => Ok(Ok(t.into_inner())),
             Ok(Visitor::Other(s)) => {
-                tracing::warn!("{s:?} not recognized as {}", type_name::<T>());
+                tracing::error!("{s:?} not recognized as {}", type_name::<T>());
                 Ok(Err(NotRecognized(s)))
             }
             Err(e) => Err(e),

@@ -2481,6 +2481,42 @@ impl FoodName {
     }
 }
 
+#[derive(
+    Clone,
+    Copy,
+    EnumString,
+    IntoStaticStr,
+    Display,
+    Debug,
+    Serialize,
+    Deserialize,
+    PartialEq,
+    Eq,
+    Hash,
+    EnumIter,
+)]
+pub enum PitchCategory {
+    Breaking,
+    Fast,
+    Offspeed,
+}
+
+impl From<PitchType> for PitchCategory {
+    fn from(value: PitchType) -> Self {
+        match value {
+            PitchType::Fastball => PitchCategory::Fast,
+            PitchType::Cutter => PitchCategory::Fast,
+            PitchType::Sinker => PitchCategory::Fast,
+            PitchType::Curveball => PitchCategory::Breaking,
+            PitchType::KnuckleCurve => PitchCategory::Breaking,
+            PitchType::Slider => PitchCategory::Breaking,
+            PitchType::Sweeper => PitchCategory::Breaking,
+            PitchType::Changeup => PitchCategory::Offspeed,
+            PitchType::Splitter => PitchCategory::Offspeed,
+        }
+    }
+}
+
 #[cfg(test)]
 mod test {
     use std::fmt::Debug;

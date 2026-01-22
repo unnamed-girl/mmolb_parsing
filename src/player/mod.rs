@@ -2,7 +2,7 @@ pub use serde::{Deserialize, Serialize};
 use serde_with::serde_as;
 use std::collections::HashMap;
 
-use crate::enums::{AttributeCategory, PitchType};
+use crate::enums::{AttributeCategory, PitchCategory, PitchType};
 use crate::utils::{extra_fields_deserialize, MaybeRecognizedHelper, SometimesMissingHelper};
 use crate::{
     enums::{
@@ -99,6 +99,12 @@ pub struct Player {
     )]
     #[serde_as(as = "SometimesMissingHelper<_>")]
     pub xp: AddedLaterResult<u32>,
+    #[serde(
+        default = "SometimesMissingHelper::default_result",
+        skip_serializing_if = "AddedLaterResult::is_err",
+    )]
+    #[serde_as(as = "SometimesMissingHelper<_>")]
+    pub level: AddedLaterResult<u32>,
     /// E.g. "IV"
     #[serde(
         default = "SometimesMissingHelper::default_result",
@@ -117,8 +123,20 @@ pub struct Player {
         default = "SometimesMissingHelper::default_result",
         skip_serializing_if = "AddedLaterResult::is_err"
     )]
-    #[serde_as(as = "SometimesMissingHelper<Vec<PitchTypeAcronymHelper>>")]
-    pub pitch_types: AddedLaterResult<Vec<PitchType>>,
+    #[serde_as(as = "SometimesMissingHelper<Vec<MaybeRecognizedHelper<PitchTypeAcronymHelper>>>")]
+    pub pitch_types: AddedLaterResult<Vec<MaybeRecognizedResult<PitchType>>>,
+    #[serde(
+        default = "SometimesMissingHelper::default_result",
+        skip_serializing_if = "AddedLaterResult::is_err"
+    )]
+    #[serde_as(as = "SometimesMissingHelper<HashMap<MaybeRecognizedHelper<PitchTypeAcronymHelper>, _>>")]
+    pub pitch_type_bonuses: AddedLaterResult<HashMap<MaybeRecognizedResult<PitchType>, f64>>,
+    #[serde(
+        default = "SometimesMissingHelper::default_result",
+        skip_serializing_if = "AddedLaterResult::is_err"
+    )]
+    #[serde_as(as = "SometimesMissingHelper<HashMap<MaybeRecognizedHelper<_>, _>>")]
+    pub pitch_category_bonuses: AddedLaterResult<HashMap<MaybeRecognizedResult<PitchCategory>, f64>>,
 
     #[serde(flatten, deserialize_with = "extra_fields_deserialize")]
     pub extra_fields: serde_json::Map<String, serde_json::Value>,
@@ -550,8 +568,8 @@ impl<'a> IntoIterator for &'a mut BoonCollection {
 pub struct BaseAttributes {
     #[serde(flatten)]
     pub attributes: HashMap<Attribute, f64>,
-    #[serde_as(as = "Vec<PitchTypeAcronymHelper>")]
-    pub pitch_types: Vec<PitchType>,
+    #[serde_as(as = "Vec<MaybeRecognizedHelper<PitchTypeAcronymHelper>>")]
+    pub pitch_types: Vec<MaybeRecognizedResult<PitchType>>,
     pub pitch_selection: Vec<f64>,
 }
 
