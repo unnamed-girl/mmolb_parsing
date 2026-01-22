@@ -62,6 +62,9 @@ struct Args {
     #[clap(long, action)]
     no_round_trip: bool,
 
+    #[clap(long, action)]
+    no_path_to_error: bool,
+
     #[clap(short, long, action)]
     refetch: bool,
 
@@ -271,10 +274,16 @@ fn ingest<'de, T: for<'a> Deserialize<'a> + Serialize>(
     let _ingest_guard =
         tracing::span!(Level::INFO, "Entity Ingest", entity_id = response.entity_id).entered();
 
-    let des = response.data.as_ref().into_deserializer();
-    let entity: T = serde_path_to_error::deserialize(des)
-        .map_err(|e| format!("Failed to deserialize {}, {e}", response.entity_id))
-        .expect(&response.entity_id);
+    let entity: T = if !args.no_path_to_error {
+        let des = response.data.as_ref().into_deserializer();
+        serde_path_to_error::deserialize(des)
+            .map_err(|e| format!("Failed to deserialize {}, {e}", response.entity_id))
+            .expect(&response.entity_id)
+    } else {
+        T::deserialize(response.data.as_ref().into_deserializer())
+            .map_err(|e| format!("Failed to deserialize {}, {e:?}", response.entity_id))
+            .expect(&response.entity_id)
+    };
 
     let valid_from = response.valid_from.clone();
 

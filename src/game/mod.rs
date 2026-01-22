@@ -1,3 +1,7 @@
+use std::marker::PhantomData;
+
+use serde::de::Visitor;
+use serde::de::value::MapAccessDeserializer;
 use serde::{Deserialize, Deserializer, Serialize};
 use serde_with::serde_as;
 
@@ -17,7 +21,7 @@ pub use weather::Weather;
 
 #[serde_as]
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
-#[serde(bound(deserialize = "S: Deserialize<'de> + PartialEq<&'static str>"))]
+#[serde(bound(deserialize = "S: Deserialize<'de> + From<&'de str>"))]
 pub struct EventBatter<S> {
     pub id: S,
     pub pa: S,
@@ -31,7 +35,7 @@ pub struct EventBatter<S> {
 
 #[serde_as]
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
-#[serde(bound(deserialize = "S: Deserialize<'de> + PartialEq<&'static str>"))]
+#[serde(bound(deserialize = "S: Deserialize<'de> + From<&'de str>"))]
 pub struct EventPitcher<S> {
     pub id: S,
     pub pitches: u16,
@@ -43,10 +47,9 @@ pub struct EventPitcher<S> {
     pub extra_fields: serde_json::Map<String, serde_json::Value>,
 }
 
-#[derive(Debug, Clone, PartialEq, Deserialize, Serialize)]
+#[derive(Debug, Clone, PartialEq, Serialize)]
 #[serde(
-    untagged,
-    bound(deserialize = "S: Deserialize<'de> + PartialEq<&'static str>")
+    untagged
 )]
 pub enum EventPitcherVersions<S> {
     New(EventPitcher<S>),
@@ -62,11 +65,52 @@ impl<S> EventPitcherVersions<S> {
     }
 }
 
-#[derive(Debug, Clone, PartialEq, Deserialize, Serialize)]
-#[serde(
-    untagged,
-    bound(deserialize = "S: Deserialize<'de> + PartialEq<&'static str>")
-)]
+impl<'de, S: Deserialize<'de> + From<&'de str>> Deserialize<'de>
+    for EventPitcherVersions<S>
+{
+    fn deserialize<D>(deserializer: D) -> Result<Self, D::Error>
+    where
+        D: Deserializer<'de>,
+    {
+        struct Helper<S>(PhantomData<S>);
+
+        impl<'de, S: From<&'de str> + Deserialize<'de>> Visitor<'de> for Helper<S> {
+            type Value = EventPitcherVersions<S>;
+            fn expecting(&self, formatter: &mut std::fmt::Formatter) -> std::fmt::Result {
+                write!(formatter, "an event pitcher")
+            }
+
+            fn visit_unit<E>(self) -> Result<Self::Value, E>
+            where
+                E: serde::de::Error,
+            {
+                Ok(EventPitcherVersions::Old(MaybePlayer::Null))
+            }
+
+            fn visit_borrowed_str<E>(self, v: &'de str) -> Result<Self::Value, E>
+                where
+                    E: serde::de::Error, {
+                if v == "" {
+                    Ok(EventPitcherVersions::Old(MaybePlayer::EmptyString))
+                } else {
+                    Ok(EventPitcherVersions::Old(MaybePlayer::Player(S::from(v))))
+                }
+            }
+
+            fn visit_map<A>(self, map: A) -> Result<Self::Value, A::Error>
+                where
+                    A: serde::de::MapAccess<'de>, {
+                let event_batter = EventPitcher::<S>::deserialize(MapAccessDeserializer::new(map))?;
+                Ok(EventPitcherVersions::New(event_batter))
+            }
+        }
+
+        deserializer.deserialize_any(Helper(PhantomData))
+    }
+}
+
+#[derive(Debug, Clone, PartialEq, Serialize)]
+#[serde(untagged)]
 pub enum EventBatterVersions<S> {
     New(EventBatter<S>),
     Old(MaybePlayer<S>),
@@ -78,6 +122,50 @@ impl<S> EventBatterVersions<S> {
             EventBatterVersions::Old(p) => p,
             EventBatterVersions::New(p) => p.name,
         }
+    }
+}
+
+impl<'de, S: Deserialize<'de> + From<&'de str>> Deserialize<'de>
+    for EventBatterVersions<S>
+{
+    fn deserialize<D>(deserializer: D) -> Result<Self, D::Error>
+    where
+        D: Deserializer<'de>,
+    {
+        struct Helper<S>(PhantomData<S>);
+
+        impl<'de, S: From<&'de str> + Deserialize<'de>> Visitor<'de> for Helper<S> {
+            type Value = EventBatterVersions<S>;
+            fn expecting(&self, formatter: &mut std::fmt::Formatter) -> std::fmt::Result {
+                write!(formatter, "an event batter")
+            }
+
+            fn visit_unit<E>(self) -> Result<Self::Value, E>
+            where
+                E: serde::de::Error,
+            {
+                Ok(EventBatterVersions::Old(MaybePlayer::Null))
+            }
+
+            fn visit_borrowed_str<E>(self, v: &'de str) -> Result<Self::Value, E>
+                where
+                    E: serde::de::Error, {
+                if v == "" {
+                    Ok(EventBatterVersions::Old(MaybePlayer::EmptyString))
+                } else {
+                    Ok(EventBatterVersions::Old(MaybePlayer::Player(S::from(v))))
+                }
+            }
+
+            fn visit_map<A>(self, map: A) -> Result<Self::Value, A::Error>
+                where
+                    A: serde::de::MapAccess<'de>, {
+                let event_batter = EventBatter::<S>::deserialize(MapAccessDeserializer::new(map))?;
+                Ok(EventBatterVersions::New(event_batter))
+            }
+        }
+
+        deserializer.deserialize_any(Helper(PhantomData))
     }
 }
 
@@ -103,13 +191,37 @@ impl<T: Serialize> Serialize for MaybePlayer<T> {
         }
     }
 }
-impl<'de, T: Deserialize<'de> + PartialEq<&'static str>> Deserialize<'de> for MaybePlayer<T> {
+impl<'de, T: From<&'de str>> Deserialize<'de> for MaybePlayer<T> {
     fn deserialize<D>(deserializer: D) -> Result<Self, D::Error>
     where
         D: Deserializer<'de>,
     {
-        let t = Option::<T>::deserialize(deserializer)?;
-        Ok(MaybePlayer::from(t))
+        struct Helper<T>(PhantomData<T>);
+        impl<'de, T: From<&'de str>> Visitor<'de> for Helper<T> {
+            type Value = MaybePlayer<T>;
+
+            fn expecting(&self, formatter: &mut std::fmt::Formatter) -> std::fmt::Result {
+                write!(formatter, "a player's name, an empty string or null")
+            }
+
+            fn visit_borrowed_str<E>(self, v: &'de str) -> Result<Self::Value, E>
+                where
+                    E: serde::de::Error, {
+                if v == "" {
+                    Ok(MaybePlayer::EmptyString)
+                } else {
+                    Ok(MaybePlayer::Player(T::from(v)))
+                }
+            }
+
+            fn visit_unit<E>(self) -> Result<Self::Value, E>
+                where
+                    E: serde::de::Error, {
+                Ok(MaybePlayer::Null)
+            }
+        }
+
+        deserializer.deserialize_any(Helper(PhantomData))
     }
 }
 impl<S> MaybePlayer<S> {

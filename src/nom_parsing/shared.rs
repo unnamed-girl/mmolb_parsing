@@ -402,17 +402,20 @@ where
     F: Parser<&'output str, Output = O, Error = Error<'output>>,
 {
     move |input: &'output str| {
-        let mut i = 1usize;
-        let delimiter_len = delimiter.input_len();
+        let mut i = 0;
+        let delimiter_len = delimiter.len();
 
         loop {
-            let (remainder, parsed) =
-                recognize(count((take_until(delimiter), tag(delimiter)), i)).parse(input)?;
+            i += input[i..].find(delimiter).ok_or_else(|| {
+                nom::Err::Error(nom::error::make_error(
+                    &input[i..],
+                    nom::error::ErrorKind::Tag,
+                ))
+            })?;
+            let parsed = &input[..i];
+            let remainder = &input[i + delimiter_len..];
             if let Ok((remainder, o)) = f.parse(remainder) {
-                return Ok((
-                    remainder,
-                    (&parsed[..parsed.input_len() - delimiter_len], o),
-                )); // parsed ends in the delimiter so parsed.input_len() - delimiter_len is always >=0.
+                return Ok((remainder, (parsed, o)));
             }
             i += 1;
         }
