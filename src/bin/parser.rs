@@ -268,7 +268,7 @@ fn main() {
         .as_ref()
         .map(|before| format!("&before={before}"))
         .unwrap_or_default();
-    let desc = if args.desc {"&order=desc"} else { "" };
+    let desc = if args.desc { "&order=desc" } else { "" };
     let count = args.count.unwrap_or(1000);
     let extra = format!("{after}{before}{desc}&count={count}");
 
@@ -1010,9 +1010,7 @@ fn check<S>(event: &ParsedEventMessage<S>) -> String {
                 }
             )
         }
-        ParsedEventMessage::WeatherReflection { team: _ } => {
-            "()".to_string()
-        }
+        ParsedEventMessage::WeatherReflection { team: _ } => "()".to_string(),
         ParsedEventMessage::WeatherWither {
             team_emoji: _,
             player: _,
@@ -1037,9 +1035,7 @@ fn check<S>(event: &ParsedEventMessage<S>) -> String {
         ParsedEventMessage::LinealBeltTransfer {
             claimed_by: _,
             claimed_from: _,
-        } => {
-            "()".to_string()
-        }
+        } => "()".to_string(),
         _ => unimplemented!("add the new event here before trying this"),
     };
 

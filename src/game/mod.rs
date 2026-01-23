@@ -1,6 +1,9 @@
 use std::marker::PhantomData;
 
-use serde::de::value::MapAccessDeserializer;
+use serde::de::value::{
+    BorrowedStrDeserializer, MapAccessDeserializer, StrDeserializer, StringDeserializer,
+    UnitDeserializer,
+};
 use serde::de::Visitor;
 use serde::{Deserialize, Deserializer, Serialize};
 use serde_with::serde_as;
@@ -21,7 +24,7 @@ pub use weather::Weather;
 
 #[serde_as]
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
-#[serde(bound(deserialize = "S: Deserialize<'de> + From<&'de str>"))]
+#[serde(bound(deserialize = "S: Deserialize<'de>, MaybePlayer<S>: Deserialize<'de>"))]
 pub struct EventBatter<S> {
     pub id: S,
     pub pa: S,
@@ -35,7 +38,7 @@ pub struct EventBatter<S> {
 
 #[serde_as]
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
-#[serde(bound(deserialize = "S: Deserialize<'de> + From<&'de str>"))]
+#[serde(bound(deserialize = "S: Deserialize<'de>, MaybePlayer<S>: Deserialize<'de>"))]
 pub struct EventPitcher<S> {
     pub id: S,
     pub pitches: u16,
@@ -63,14 +66,22 @@ impl<S> EventPitcherVersions<S> {
     }
 }
 
-impl<'de, S: Deserialize<'de> + From<&'de str>> Deserialize<'de> for EventPitcherVersions<S> {
+impl<'de, S> Deserialize<'de> for EventPitcherVersions<S>
+where
+    S: Deserialize<'de>,
+    MaybePlayer<S>: Deserialize<'de>,
+{
     fn deserialize<D>(deserializer: D) -> Result<Self, D::Error>
     where
         D: Deserializer<'de>,
     {
         struct Helper<S>(PhantomData<S>);
 
-        impl<'de, S: From<&'de str> + Deserialize<'de>> Visitor<'de> for Helper<S> {
+        impl<'de, S> Visitor<'de> for Helper<S>
+        where
+            S: Deserialize<'de>,
+            MaybePlayer<S>: Deserialize<'de>,
+        {
             type Value = EventPitcherVersions<S>;
             fn expecting(&self, formatter: &mut std::fmt::Formatter) -> std::fmt::Result {
                 write!(formatter, "an event pitcher")
@@ -80,26 +91,44 @@ impl<'de, S: Deserialize<'de> + From<&'de str>> Deserialize<'de> for EventPitche
             where
                 E: serde::de::Error,
             {
-                Ok(EventPitcherVersions::Old(MaybePlayer::Null))
+                Ok(EventPitcherVersions::Old(MaybePlayer::deserialize(
+                    UnitDeserializer::new(),
+                )?))
+            }
+
+            fn visit_string<E>(self, v: String) -> Result<Self::Value, E>
+            where
+                E: serde::de::Error,
+            {
+                Ok(EventPitcherVersions::Old(MaybePlayer::deserialize(
+                    StringDeserializer::new(v),
+                )?))
+            }
+
+            fn visit_str<E>(self, v: &str) -> Result<Self::Value, E>
+            where
+                E: serde::de::Error,
+            {
+                Ok(EventPitcherVersions::Old(MaybePlayer::deserialize(
+                    StrDeserializer::new(v),
+                )?))
             }
 
             fn visit_borrowed_str<E>(self, v: &'de str) -> Result<Self::Value, E>
             where
                 E: serde::de::Error,
             {
-                if v.is_empty() {
-                    Ok(EventPitcherVersions::Old(MaybePlayer::EmptyString))
-                } else {
-                    Ok(EventPitcherVersions::Old(MaybePlayer::Player(S::from(v))))
-                }
+                Ok(EventPitcherVersions::Old(MaybePlayer::deserialize(
+                    BorrowedStrDeserializer::new(v),
+                )?))
             }
 
             fn visit_map<A>(self, map: A) -> Result<Self::Value, A::Error>
             where
                 A: serde::de::MapAccess<'de>,
             {
-                let event_batter = EventPitcher::<S>::deserialize(MapAccessDeserializer::new(map))?;
-                Ok(EventPitcherVersions::New(event_batter))
+                let event_pitcher = EventPitcher::deserialize(MapAccessDeserializer::new(map))?;
+                Ok(EventPitcherVersions::New(event_pitcher))
             }
         }
 
@@ -123,42 +152,68 @@ impl<S> EventBatterVersions<S> {
     }
 }
 
-impl<'de, S: Deserialize<'de> + From<&'de str>> Deserialize<'de> for EventBatterVersions<S> {
+impl<'de, S> Deserialize<'de> for EventBatterVersions<S>
+where
+    S: Deserialize<'de>,
+    MaybePlayer<S>: Deserialize<'de>,
+{
     fn deserialize<D>(deserializer: D) -> Result<Self, D::Error>
     where
         D: Deserializer<'de>,
     {
         struct Helper<S>(PhantomData<S>);
 
-        impl<'de, S: From<&'de str> + Deserialize<'de>> Visitor<'de> for Helper<S> {
+        impl<'de, S> Visitor<'de> for Helper<S>
+        where
+            S: Deserialize<'de>,
+            MaybePlayer<S>: Deserialize<'de>,
+        {
             type Value = EventBatterVersions<S>;
             fn expecting(&self, formatter: &mut std::fmt::Formatter) -> std::fmt::Result {
-                write!(formatter, "an event batter")
+                write!(formatter, "an event pitcher")
             }
 
             fn visit_unit<E>(self) -> Result<Self::Value, E>
             where
                 E: serde::de::Error,
             {
-                Ok(EventBatterVersions::Old(MaybePlayer::Null))
+                Ok(EventBatterVersions::Old(MaybePlayer::deserialize(
+                    UnitDeserializer::new(),
+                )?))
+            }
+
+            fn visit_string<E>(self, v: String) -> Result<Self::Value, E>
+            where
+                E: serde::de::Error,
+            {
+                Ok(EventBatterVersions::Old(MaybePlayer::deserialize(
+                    StringDeserializer::new(v),
+                )?))
+            }
+
+            fn visit_str<E>(self, v: &str) -> Result<Self::Value, E>
+            where
+                E: serde::de::Error,
+            {
+                Ok(EventBatterVersions::Old(MaybePlayer::deserialize(
+                    StrDeserializer::new(v),
+                )?))
             }
 
             fn visit_borrowed_str<E>(self, v: &'de str) -> Result<Self::Value, E>
             where
                 E: serde::de::Error,
             {
-                if v.is_empty() {
-                    Ok(EventBatterVersions::Old(MaybePlayer::EmptyString))
-                } else {
-                    Ok(EventBatterVersions::Old(MaybePlayer::Player(S::from(v))))
-                }
+                Ok(EventBatterVersions::Old(MaybePlayer::deserialize(
+                    BorrowedStrDeserializer::new(v),
+                )?))
             }
 
             fn visit_map<A>(self, map: A) -> Result<Self::Value, A::Error>
             where
                 A: serde::de::MapAccess<'de>,
             {
-                let event_batter = EventBatter::<S>::deserialize(MapAccessDeserializer::new(map))?;
+                let event_batter = EventBatter::deserialize(MapAccessDeserializer::new(map))?;
                 Ok(EventBatterVersions::New(event_batter))
             }
         }
@@ -189,27 +244,55 @@ impl<T: Serialize> Serialize for MaybePlayer<T> {
         }
     }
 }
-impl<'de, T: From<&'de str>> Deserialize<'de> for MaybePlayer<T> {
+impl<'de, S: Deserialize<'de>> Deserialize<'de> for MaybePlayer<S> {
     fn deserialize<D>(deserializer: D) -> Result<Self, D::Error>
     where
         D: Deserializer<'de>,
     {
-        struct Helper<T>(PhantomData<T>);
-        impl<'de, T: From<&'de str>> Visitor<'de> for Helper<T> {
-            type Value = MaybePlayer<T>;
+        struct Helper<S>(PhantomData<S>);
+        impl<'de, S: Deserialize<'de>> Visitor<'de> for Helper<S> {
+            type Value = MaybePlayer<S>;
 
             fn expecting(&self, formatter: &mut std::fmt::Formatter) -> std::fmt::Result {
                 write!(formatter, "a player's name, an empty string or null")
+            }
+
+            fn visit_string<E>(self, v: String) -> Result<Self::Value, E>
+            where
+                E: serde::de::Error,
+            {
+                if v == "" {
+                    Ok(MaybePlayer::EmptyString)
+                } else {
+                    Ok(MaybePlayer::Player(S::deserialize(
+                        StringDeserializer::new(v),
+                    )?))
+                }
+            }
+
+            fn visit_str<E>(self, v: &str) -> Result<Self::Value, E>
+            where
+                E: serde::de::Error,
+            {
+                if v == "" {
+                    Ok(MaybePlayer::EmptyString)
+                } else {
+                    Ok(MaybePlayer::Player(S::deserialize(StrDeserializer::new(
+                        v,
+                    ))?))
+                }
             }
 
             fn visit_borrowed_str<E>(self, v: &'de str) -> Result<Self::Value, E>
             where
                 E: serde::de::Error,
             {
-                if v.is_empty() {
+                if v == "" {
                     Ok(MaybePlayer::EmptyString)
                 } else {
-                    Ok(MaybePlayer::Player(T::from(v)))
+                    Ok(MaybePlayer::Player(S::deserialize(
+                        BorrowedStrDeserializer::new(v),
+                    )?))
                 }
             }
 
@@ -224,6 +307,7 @@ impl<'de, T: From<&'de str>> Deserialize<'de> for MaybePlayer<T> {
         deserializer.deserialize_any(Helper(PhantomData))
     }
 }
+
 impl<S> MaybePlayer<S> {
     pub fn player(self) -> Option<S> {
         match self {
@@ -251,6 +335,7 @@ impl<S: From<&'static str>> MaybePlayer<S> {
         }
     }
 }
+
 impl<S: PartialEq<&'static str>> From<Option<S>> for MaybePlayer<S> {
     fn from(value: Option<S>) -> Self {
         match value {
