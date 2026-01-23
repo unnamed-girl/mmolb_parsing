@@ -596,7 +596,7 @@ pub(super) fn item(input: &str) -> IResult<'_, &str, Item<&str>> {
                 preceded(tag(" "), try_from_words_m_n(1, 3)),
                 many0(preceded(tag(" "), try_from_words_m_n(2, 3))),
             ),
-            |(_, prefix, _, suffix)| prefix.len() > 0 || suffix.len() > 0,
+            |(_, prefix, _, suffix)| !prefix.is_empty() || !suffix.is_empty(),
         )
         .map(|(item_emoji, prefix, item, suffix)| Item {
             item_emoji,

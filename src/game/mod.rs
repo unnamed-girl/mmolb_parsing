@@ -87,7 +87,7 @@ impl<'de, S: Deserialize<'de> + From<&'de str>> Deserialize<'de> for EventPitche
             where
                 E: serde::de::Error,
             {
-                if v == "" {
+                if v.is_empty() {
                     Ok(EventPitcherVersions::Old(MaybePlayer::EmptyString))
                 } else {
                     Ok(EventPitcherVersions::Old(MaybePlayer::Player(S::from(v))))
@@ -147,7 +147,7 @@ impl<'de, S: Deserialize<'de> + From<&'de str>> Deserialize<'de> for EventBatter
             where
                 E: serde::de::Error,
             {
-                if v == "" {
+                if v.is_empty() {
                     Ok(EventBatterVersions::Old(MaybePlayer::EmptyString))
                 } else {
                     Ok(EventBatterVersions::Old(MaybePlayer::Player(S::from(v))))
@@ -206,7 +206,7 @@ impl<'de, T: From<&'de str>> Deserialize<'de> for MaybePlayer<T> {
             where
                 E: serde::de::Error,
             {
-                if v == "" {
+                if v.is_empty() {
                     Ok(MaybePlayer::EmptyString)
                 } else {
                     Ok(MaybePlayer::Player(T::from(v)))
