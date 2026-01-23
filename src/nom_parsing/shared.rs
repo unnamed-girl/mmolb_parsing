@@ -497,12 +497,9 @@ pub(super) fn verify_name(input: &str) -> IResult<'_, &str, &str> {
         name.input_len() >= 3 &&
         // These words should end in a period 
         name.split_whitespace().all(|word| !["Dr", "St", "Jr"].contains(&word)) &&
-        // The anti "U. Livingston" clause. Prevents "U"s from being parsed as a valid name on its own
-        // ignoring 0-length words, all words are 2 characters long and contain, except:
-        // - the I in "Stanley Demir I"
-        // - the 7 in the team name "Organiz. Nazionale Combattenti 7 Zombie Deer Revolution"
-        // - the à in the "à la Mode"
-        (name == "Stanley Demir I" || name.split_whitespace().all(|word| word.is_empty() || word.len() >= 2 || word == "à" || word.parse::<usize>().is_ok())) &&
+        // If the name contains a 1-length word, then there are at least 3 words.
+        // So that "Victor Rodriguez singles on a line drive to RF Bob E. Qurios V. V. Roussell V to third base." disambiguates correctly
+        ((!name.split_whitespace().any(|word| word.len() == 1)) || (name.split_whitespace().filter(|word| word.len() > 0)).count() >= 3) &&
         // Removed for now because of early season 1 bug where feed names didn't print their spaces
         // name.chars().any(|c| c == ' ') && // From the API, we know players have first/last name, so there should always be a space
         !name.chars().any(|c| [',', '(', ')', '<', '>', '\\', '\u{FE0F}'].contains(&c)) && // These characters should not be in names
