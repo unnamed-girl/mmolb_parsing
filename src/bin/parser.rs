@@ -192,11 +192,9 @@ impl Iterator for Fetch<'_> {
             self.complete = true;
         }
 
-        return Some(response.items);
+        Some(response.items)
     }
 }
-
-static mut EVENT_VARIANTS: Option<HashSet<String>> = None;
 
 fn main() {
     let args = Args::parse();
@@ -225,6 +223,8 @@ fn main() {
         format!("{endpoint}/entities")
     };
 
+    let mut event_variants: Option<HashSet<String>> = None;
+
     if let Some(f) = &args.export_event_variants {
         if Path::new(f).exists() {
             let mut text = String::new();
@@ -235,18 +235,11 @@ fn main() {
                 .map(|s| s.split("###").next().unwrap())
                 .map(str::to_string)
                 .collect();
-            unsafe { EVENT_VARIANTS = Some(variants) }
+            event_variants = Some(variants);
         }
     }
 
-    let func = |response, progress_report| match args.kind {
-        Kind::Game => ingest(response, &args, progress_report, game_inner),
-        Kind::Team => ingest(response, &args, progress_report, team_inner),
-        Kind::Player => ingest(response, &args, progress_report, player_inner),
-        Kind::PlayerFeed => ingest(response, &args, progress_report, player_feed_inner),
-        Kind::TeamFeed => ingest(response, &args, progress_report, team_feed_inner),
-        Kind::GameFeed => todo!(),
-    };
+    let func = get_func();
 
     if let Some(id) = &args.id {
         let kind = args.kind.as_chron_kind();
@@ -260,7 +253,7 @@ fn main() {
             .unwrap()
             .items;
         for game in entities.into_iter() {
-            func(game, true);
+            func(&args, game, true, event_variants.as_mut());
         }
         return;
     }
@@ -275,13 +268,13 @@ fn main() {
         .as_ref()
         .map(|before| format!("&before={before}"))
         .unwrap_or_default();
-    let desc = args.desc.then_some("&order=desc").unwrap_or_default();
+    let desc = if args.desc {"&order=desc"} else { "" };
     let count = args.count.unwrap_or(1000);
     let extra = format!("{after}{before}{desc}&count={count}");
 
     let client = Client::new();
 
-    let mut fetch = Fetch::new(
+    let fetch = Fetch::new(
         &client,
         &endpoint,
         args.kind,
@@ -289,20 +282,60 @@ fn main() {
         args.start_page.clone(),
     );
 
-    while let Some(games) = fetch.next() {
+    for games in fetch {
         let last = games.len().max(1) - 1;
         for (i, game) in games.into_iter().enumerate() {
-            func(game, i == last)
+            func(&args, game, i == last, event_variants.as_mut())
         }
     }
     drop(guard);
 }
 
-fn ingest<'de, T: for<'a> Deserialize<'a> + Serialize>(
+fn get_func<'a, 'b>() -> impl Fn(
+    &'a Args,
+    EntityResponse<Box<serde_json::value::RawValue>>,
+    bool,
+    Option<&'b mut HashSet<String>>,
+) + 'a {
+    |args: &Args, response, progress_report, event_variants| match args.kind {
+        Kind::Game => ingest(response, args, progress_report, event_variants, game_inner),
+        Kind::Team => ingest(response, args, progress_report, event_variants, team_inner),
+        Kind::Player => ingest(
+            response,
+            args,
+            progress_report,
+            event_variants,
+            player_inner,
+        ),
+        Kind::PlayerFeed => ingest(
+            response,
+            args,
+            progress_report,
+            event_variants,
+            player_feed_inner,
+        ),
+        Kind::TeamFeed => ingest(
+            response,
+            args,
+            progress_report,
+            event_variants,
+            team_feed_inner,
+        ),
+        Kind::GameFeed => todo!(),
+    }
+}
+
+fn ingest<T: for<'a> Deserialize<'a> + Serialize>(
     response: EntityResponse<Box<serde_json::value::RawValue>>,
     args: &Args,
     progress_report: bool,
-    inner_checks: impl Fn(T, EntityResponse<Box<serde_json::value::RawValue>>, &Args) -> EnteredSpan,
+    event_variants: Option<&mut HashSet<String>>,
+    inner_checks: impl Fn(
+        T,
+        EntityResponse<Box<serde_json::value::RawValue>>,
+        &Args,
+        Option<&mut HashSet<String>>,
+    ) -> EnteredSpan,
 ) {
     let _ingest_guard =
         tracing::span!(Level::INFO, "Entity Ingest", entity_id = response.entity_id).entered();
@@ -333,7 +366,7 @@ fn ingest<'de, T: for<'a> Deserialize<'a> + Serialize>(
         }
     }
 
-    let span = inner_checks(entity, response, args);
+    let span = inner_checks(entity, response, args, event_variants);
 
     if progress_report {
         tracing::info!("Reached {}", valid_from);
@@ -346,6 +379,7 @@ fn player_inner(
     player: Player,
     response: EntityResponse<Box<serde_json::value::RawValue>>,
     args: &Args,
+    _event_variants: Option<&mut HashSet<String>>,
 ) -> EnteredSpan {
     let _player_span_guard = tracing::span!(
         Level::INFO,
@@ -399,6 +433,7 @@ fn team_inner(
     team: Team,
     response: EntityResponse<Box<serde_json::value::RawValue>>,
     args: &Args,
+    _event_variants: Option<&mut HashSet<String>>,
 ) -> EnteredSpan {
     let _team_span_guard = tracing::span!(Level::INFO, "Team", name = team.name).entered();
     let mut output = args
@@ -448,6 +483,7 @@ fn game_inner(
     game: Game,
     response: EntityResponse<Box<serde_json::value::RawValue>>,
     args: &Args,
+    mut event_variants: Option<&mut HashSet<String>>,
 ) -> EnteredSpan {
     let _game_guard = tracing::span!(
         Level::INFO,
@@ -497,7 +533,7 @@ fn game_inner(
             let checked = check(&parsed_event_message);
             // SAFETY: we're single threaded and we later use `let _ = event_variants_ref` to stop holding onto the reference.
             // todo: do this literally any other way
-            let event_variants_ref = unsafe { EVENT_VARIANTS.as_mut().unwrap() };
+            let event_variants_ref = event_variants.as_mut().unwrap();
             if !event_variants_ref.contains(&checked) {
                 writeln!(
                     f,
@@ -531,6 +567,7 @@ fn player_feed_inner(
     feed: PlayerFeed,
     response: EntityResponse<Box<serde_json::value::RawValue>>,
     args: &Args,
+    _event_variants: Option<&mut HashSet<String>>,
 ) -> EnteredSpan {
     let _player_feed_span_guard = tracing::span!(Level::INFO, "Player Feed").entered();
     let mut output = args
@@ -579,6 +616,7 @@ fn team_feed_inner(
     feed: TeamFeed,
     response: EntityResponse<Box<serde_json::value::RawValue>>,
     args: &Args,
+    _event_variants: Option<&mut HashSet<String>>,
 ) -> EnteredSpan {
     let _team_feed_span_guard = tracing::span!(Level::INFO, "Team Feed").entered();
     let mut output = args
@@ -973,7 +1011,7 @@ fn check<S>(event: &ParsedEventMessage<S>) -> String {
             )
         }
         ParsedEventMessage::WeatherReflection { team: _ } => {
-            format!("()")
+            "()".to_string()
         }
         ParsedEventMessage::WeatherWither {
             team_emoji: _,
@@ -1000,7 +1038,7 @@ fn check<S>(event: &ParsedEventMessage<S>) -> String {
             claimed_by: _,
             claimed_from: _,
         } => {
-            format!("()")
+            "()".to_string()
         }
         _ => unimplemented!("add the new event here before trying this"),
     };
