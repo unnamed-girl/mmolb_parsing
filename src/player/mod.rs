@@ -478,6 +478,14 @@ impl BoonCollection {
             }
         }
     }
+
+    pub fn len(&self) -> usize {
+        match self {
+            BoonCollection::None => 0,
+            BoonCollection::Single(_modification) => 1,
+            BoonCollection::Many(modifications) => modifications.len(),
+        }
+    }
 }
 
 pub enum BoonCollectionIterator {
