@@ -101,7 +101,7 @@ pub struct Player {
     pub xp: AddedLaterResult<u32>,
     #[serde(
         default = "SometimesMissingHelper::default_result",
-        skip_serializing_if = "AddedLaterResult::is_err",
+        skip_serializing_if = "AddedLaterResult::is_err"
     )]
     #[serde_as(as = "SometimesMissingHelper<_>")]
     pub level: AddedLaterResult<u32>,
@@ -129,14 +129,17 @@ pub struct Player {
         default = "SometimesMissingHelper::default_result",
         skip_serializing_if = "AddedLaterResult::is_err"
     )]
-    #[serde_as(as = "SometimesMissingHelper<HashMap<MaybeRecognizedHelper<PitchTypeAcronymHelper>, _>>")]
+    #[serde_as(
+        as = "SometimesMissingHelper<HashMap<MaybeRecognizedHelper<PitchTypeAcronymHelper>, _>>"
+    )]
     pub pitch_type_bonuses: AddedLaterResult<HashMap<MaybeRecognizedResult<PitchType>, f64>>,
     #[serde(
         default = "SometimesMissingHelper::default_result",
         skip_serializing_if = "AddedLaterResult::is_err"
     )]
     #[serde_as(as = "SometimesMissingHelper<HashMap<MaybeRecognizedHelper<_>, _>>")]
-    pub pitch_category_bonuses: AddedLaterResult<HashMap<MaybeRecognizedResult<PitchCategory>, f64>>,
+    pub pitch_category_bonuses:
+        AddedLaterResult<HashMap<MaybeRecognizedResult<PitchCategory>, f64>>,
 
     #[serde(flatten, deserialize_with = "extra_fields_deserialize")]
     pub extra_fields: serde_json::Map<String, serde_json::Value>,

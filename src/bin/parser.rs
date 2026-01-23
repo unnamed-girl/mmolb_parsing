@@ -1,5 +1,4 @@
 use clap::{Parser, ValueEnum};
-use futures::{Stream, StreamExt};
 use mmolb_parsing::{
     enums::FoulType,
     player::Player,
@@ -7,7 +6,7 @@ use mmolb_parsing::{
     process_event,
     team::Team,
     team_feed::{parse_team_feed_event, TeamFeed},
-    Game, ParsedEventMessage, UnparsingContext,
+    Game, ParsedEventMessage,
 };
 use serde::{de::IntoDeserializer, Deserialize, Serialize};
 use std::{
@@ -15,11 +14,10 @@ use std::{
     fs::File,
     io::{Read, Write},
     path::Path,
-    pin::pin,
 };
 
 use mmolb_parsing::parsed_event::{ContainResult, PartyDurabilityLoss, WitherResult};
-use reqwest::Client;
+use reqwest::blocking::Client;
 use strum::IntoDiscriminant;
 use tracing::{info, span::EnteredSpan, Level};
 use tracing_subscriber::{fmt::writer::MakeWriterExt, layer::SubscriberExt};
@@ -61,6 +59,9 @@ struct Args {
 
     #[clap(long, action)]
     no_round_trip: bool,
+
+    #[clap(long, action)]
+    no_path_to_error: bool,
 
     #[clap(short, long, action)]
     refetch: bool,
@@ -126,41 +127,76 @@ impl Kind {
     }
 }
 
-fn cashews_fetch_json<'a>(
+struct Fetch<'a> {
     client: &'a Client,
     endpoint: &'a str,
-    kind: Kind,
+    kind: &'static str,
     extra: String,
-    start_page: Option<String>,
-) -> impl Stream<Item = Vec<EntityResponse<Box<serde_json::value::RawValue>>>> + 'a {
-    let kind = kind.as_chron_kind();
-    async_stream::stream! {
-        let (mut url, mut page) = match start_page {
-            Some(page) => (format!("{endpoint}?kind={kind}{extra}&page={page}"), Some(page)),
-            None => (format!("{endpoint}?kind={kind}{extra}"), None)
-        };
-        loop {
-            info!("Fetching {kind}s from cashews page {page:?}");
-            let response = client.get(&url).send().await.unwrap();
-            info!("{response:?}");
-            let response = response.error_for_status().unwrap().json::<FreeCashewResponse<EntityResponse<Box<serde_json::value::RawValue>>>>().await.unwrap();
-            info!("{} {kind}s fetched from cashews page {page:?}", response.items.len());
-            page = response.next_page;
-            yield response.items;
+    next_page: Option<String>,
+    complete: bool,
+}
 
-            if let Some(page) = &page {
-                url = format!("{endpoint}?kind={kind}&page={page}{extra}");
-            } else {
-                break
-            }
+impl<'a> Fetch<'a> {
+    fn new(
+        client: &'a Client,
+        endpoint: &'a str,
+        kind: Kind,
+        extra: String,
+        start_page: Option<String>,
+    ) -> Self {
+        Self {
+            client,
+            endpoint,
+            kind: kind.as_chron_kind(),
+            extra,
+            next_page: start_page,
+            complete: false,
         }
     }
 }
 
-static mut EVENT_VARIANTS: Option<HashSet<String>> = None;
+impl Iterator for Fetch<'_> {
+    type Item = Vec<EntityResponse<Box<serde_json::value::RawValue>>>;
+    fn next(&mut self) -> Option<Self::Item> {
+        let Fetch {
+            client,
+            endpoint,
+            kind,
+            extra,
+            next_page,
+            complete,
+        } = self;
+        if *complete {
+            return None;
+        }
+        let url = match next_page {
+            Some(page) => format!("{endpoint}?kind={kind}{extra}&page={page}"),
+            None => format!("{endpoint}?kind={kind}{extra}"),
+        };
 
-#[tokio::main]
-async fn main() {
+        info!("Fetching {kind}s from cashews page {next_page:?}");
+        let response = client.get(url).send().unwrap().error_for_status().unwrap();
+        info!("{response:?}");
+        let response = serde_json::from_reader::<
+            _,
+            FreeCashewResponse<EntityResponse<Box<serde_json::value::RawValue>>>,
+        >(response)
+        .unwrap();
+        info!(
+            "{} {kind}s fetched from cashews page {next_page:?}",
+            response.items.len()
+        );
+
+        self.next_page = response.next_page;
+        if self.next_page.is_none() {
+            self.complete = true;
+        }
+
+        Some(response.items)
+    }
+}
+
+fn main() {
     let args = Args::parse();
 
     let err_layer = tracing_subscriber::fmt::Layer::new()
@@ -187,6 +223,8 @@ async fn main() {
         format!("{endpoint}/entities")
     };
 
+    let mut event_variants: Option<HashSet<String>> = None;
+
     if let Some(f) = &args.export_event_variants {
         if Path::new(f).exists() {
             let mut text = String::new();
@@ -197,34 +235,25 @@ async fn main() {
                 .map(|s| s.split("###").next().unwrap())
                 .map(str::to_string)
                 .collect();
-            unsafe { EVENT_VARIANTS = Some(variants) }
+            event_variants = Some(variants);
         }
     }
 
-    let func = |response, progress_report| match args.kind {
-        Kind::Game => ingest(response, &args, progress_report, game_inner),
-        Kind::Team => ingest(response, &args, progress_report, team_inner),
-        Kind::Player => ingest(response, &args, progress_report, player_inner),
-        Kind::PlayerFeed => ingest(response, &args, progress_report, player_feed_inner),
-        Kind::TeamFeed => ingest(response, &args, progress_report, team_feed_inner),
-        Kind::GameFeed => todo!(),
-    };
+    let func = get_func();
 
     if let Some(id) = &args.id {
         let kind = args.kind.as_chron_kind();
-        let client = Client::new();
+        let client = Client::builder().timeout(None).build().unwrap();
         let url = format!("{endpoint}?kind={kind}&id={id}");
         let entities = client
             .get(&url)
             .send()
-            .await
             .unwrap()
             .json::<FreeCashewResponse<EntityResponse<Box<serde_json::value::RawValue>>>>()
-            .await
             .unwrap()
             .items;
         for game in entities.into_iter() {
-            func(game, true);
+            func(&args, game, true, event_variants.as_mut());
         }
         return;
     }
@@ -239,42 +268,88 @@ async fn main() {
         .as_ref()
         .map(|before| format!("&before={before}"))
         .unwrap_or_default();
-    let desc = args.desc.then_some("&order=desc").unwrap_or_default();
+    let desc = if args.desc { "&order=desc" } else { "" };
     let count = args.count.unwrap_or(1000);
     let extra = format!("{after}{before}{desc}&count={count}");
 
     let client = Client::new();
 
-    let mut fetch = pin!(cashews_fetch_json(
+    let fetch = Fetch::new(
         &client,
         &endpoint,
         args.kind,
         extra,
-        args.start_page.clone()
-    ));
+        args.start_page.clone(),
+    );
 
-    while let Some(games) = fetch.next().await {
+    for games in fetch {
         let last = games.len().max(1) - 1;
         for (i, game) in games.into_iter().enumerate() {
-            func(game, i == last)
+            func(&args, game, i == last, event_variants.as_mut())
         }
     }
     drop(guard);
 }
 
-fn ingest<'de, T: for<'a> Deserialize<'a> + Serialize>(
+fn get_func<'a, 'b>() -> impl Fn(
+    &'a Args,
+    EntityResponse<Box<serde_json::value::RawValue>>,
+    bool,
+    Option<&'b mut HashSet<String>>,
+) + 'a {
+    |args: &Args, response, progress_report, event_variants| match args.kind {
+        Kind::Game => ingest(response, args, progress_report, event_variants, game_inner),
+        Kind::Team => ingest(response, args, progress_report, event_variants, team_inner),
+        Kind::Player => ingest(
+            response,
+            args,
+            progress_report,
+            event_variants,
+            player_inner,
+        ),
+        Kind::PlayerFeed => ingest(
+            response,
+            args,
+            progress_report,
+            event_variants,
+            player_feed_inner,
+        ),
+        Kind::TeamFeed => ingest(
+            response,
+            args,
+            progress_report,
+            event_variants,
+            team_feed_inner,
+        ),
+        Kind::GameFeed => todo!(),
+    }
+}
+
+fn ingest<T: for<'a> Deserialize<'a> + Serialize>(
     response: EntityResponse<Box<serde_json::value::RawValue>>,
     args: &Args,
     progress_report: bool,
-    inner_checks: impl Fn(T, EntityResponse<Box<serde_json::value::RawValue>>, &Args) -> EnteredSpan,
+    event_variants: Option<&mut HashSet<String>>,
+    inner_checks: impl Fn(
+        T,
+        EntityResponse<Box<serde_json::value::RawValue>>,
+        &Args,
+        Option<&mut HashSet<String>>,
+    ) -> EnteredSpan,
 ) {
     let _ingest_guard =
         tracing::span!(Level::INFO, "Entity Ingest", entity_id = response.entity_id).entered();
 
-    let des = response.data.as_ref().into_deserializer();
-    let entity: T = serde_path_to_error::deserialize(des)
-        .map_err(|e| format!("Failed to deserialize {}, {e}", response.entity_id))
-        .expect(&response.entity_id);
+    let entity: T = if !args.no_path_to_error {
+        let des = response.data.as_ref().into_deserializer();
+        serde_path_to_error::deserialize(des)
+            .map_err(|e| format!("Failed to deserialize {}, {e}", response.entity_id))
+            .expect(&response.entity_id)
+    } else {
+        T::deserialize(response.data.as_ref().into_deserializer())
+            .map_err(|e| format!("Failed to deserialize {}, {e:?}", response.entity_id))
+            .expect(&response.entity_id)
+    };
 
     let valid_from = response.valid_from.clone();
 
@@ -291,7 +366,7 @@ fn ingest<'de, T: for<'a> Deserialize<'a> + Serialize>(
         }
     }
 
-    let span = inner_checks(entity, response, args);
+    let span = inner_checks(entity, response, args, event_variants);
 
     if progress_report {
         tracing::info!("Reached {}", valid_from);
@@ -304,6 +379,7 @@ fn player_inner(
     player: Player,
     response: EntityResponse<Box<serde_json::value::RawValue>>,
     args: &Args,
+    _event_variants: Option<&mut HashSet<String>>,
 ) -> EnteredSpan {
     let _player_span_guard = tracing::span!(
         Level::INFO,
@@ -357,6 +433,7 @@ fn team_inner(
     team: Team,
     response: EntityResponse<Box<serde_json::value::RawValue>>,
     args: &Args,
+    _event_variants: Option<&mut HashSet<String>>,
 ) -> EnteredSpan {
     let _team_span_guard = tracing::span!(Level::INFO, "Team", name = team.name).entered();
     let mut output = args
@@ -406,6 +483,7 @@ fn game_inner(
     game: Game,
     response: EntityResponse<Box<serde_json::value::RawValue>>,
     args: &Args,
+    mut event_variants: Option<&mut HashSet<String>>,
 ) -> EnteredSpan {
     let _game_guard = tracing::span!(
         Level::INFO,
@@ -455,7 +533,7 @@ fn game_inner(
             let checked = check(&parsed_event_message);
             // SAFETY: we're single threaded and we later use `let _ = event_variants_ref` to stop holding onto the reference.
             // todo: do this literally any other way
-            let event_variants_ref = unsafe { EVENT_VARIANTS.as_mut().unwrap() };
+            let event_variants_ref = event_variants.as_mut().unwrap();
             if !event_variants_ref.contains(&checked) {
                 writeln!(
                     f,
@@ -489,6 +567,7 @@ fn player_feed_inner(
     feed: PlayerFeed,
     response: EntityResponse<Box<serde_json::value::RawValue>>,
     args: &Args,
+    _event_variants: Option<&mut HashSet<String>>,
 ) -> EnteredSpan {
     let _player_feed_span_guard = tracing::span!(Level::INFO, "Player Feed").entered();
     let mut output = args
@@ -537,6 +616,7 @@ fn team_feed_inner(
     feed: TeamFeed,
     response: EntityResponse<Box<serde_json::value::RawValue>>,
     args: &Args,
+    _event_variants: Option<&mut HashSet<String>>,
 ) -> EnteredSpan {
     let _team_feed_span_guard = tracing::span!(Level::INFO, "Team Feed").entered();
     let mut output = args
@@ -930,9 +1010,7 @@ fn check<S>(event: &ParsedEventMessage<S>) -> String {
                 }
             )
         }
-        ParsedEventMessage::WeatherReflection { team: _ } => {
-            format!("()")
-        }
+        ParsedEventMessage::WeatherReflection { team: _ } => "()".to_string(),
         ParsedEventMessage::WeatherWither {
             team_emoji: _,
             player: _,
@@ -957,9 +1035,7 @@ fn check<S>(event: &ParsedEventMessage<S>) -> String {
         ParsedEventMessage::LinealBeltTransfer {
             claimed_by: _,
             claimed_from: _,
-        } => {
-            format!("()")
-        }
+        } => "()".to_string(),
         _ => unimplemented!("add the new event here before trying this"),
     };
 
