@@ -261,7 +261,7 @@ impl<'de, S: Deserialize<'de>> Deserialize<'de> for MaybePlayer<S> {
             where
                 E: serde::de::Error,
             {
-                if v == "" {
+                if v.is_empty() {
                     Ok(MaybePlayer::EmptyString)
                 } else {
                     Ok(MaybePlayer::Player(S::deserialize(
@@ -274,7 +274,7 @@ impl<'de, S: Deserialize<'de>> Deserialize<'de> for MaybePlayer<S> {
             where
                 E: serde::de::Error,
             {
-                if v == "" {
+                if v.is_empty() {
                     Ok(MaybePlayer::EmptyString)
                 } else {
                     Ok(MaybePlayer::Player(S::deserialize(StrDeserializer::new(
@@ -287,7 +287,7 @@ impl<'de, S: Deserialize<'de>> Deserialize<'de> for MaybePlayer<S> {
             where
                 E: serde::de::Error,
             {
-                if v == "" {
+                if v.is_empty() {
                     Ok(MaybePlayer::EmptyString)
                 } else {
                     Ok(MaybePlayer::Player(S::deserialize(

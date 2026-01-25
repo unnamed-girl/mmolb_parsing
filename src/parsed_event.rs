@@ -334,6 +334,13 @@ pub enum ParsedEventMessage<S> {
 
     // Season 9
     WeatherConsumption(WeatherConsumptionEvents<S>),
+
+    // Season 10
+    WeatherSimulacrum {
+        real_team: EmojiTeam<S>,
+        simulacrum_team: EmojiTeam<S>,
+        tokens_earnt: u32,
+    },
 }
 impl<S: Display> ParsedEventMessage<S> {
     /// Recreate the event message this ParsedEvent was built out of.
@@ -447,7 +454,7 @@ impl<S: Display> ParsedEventMessage<S> {
                         1 => format!("{number}st"),
                         2 => format!("{number}nd"),
                         3 => format!("{number}rd"),
-                        _ => format!("{number}th")
+                        _ => format!("{number}th"),
                     },
                 };
                 format!("End of the {side} of the {ordinal}.")
@@ -1133,6 +1140,13 @@ impl<S: Display> ParsedEventMessage<S> {
                 }
             }
             Self::WeatherConsumption(weather_consumption) => weather_consumption.unparse(),
+            Self::WeatherSimulacrum {
+                real_team,
+                simulacrum_team,
+                tokens_earnt,
+            } => {
+                format!("{real_team} were defeated by the {simulacrum_team} and earned {tokens_earnt} 🪙.")
+            }
         }
     }
 }

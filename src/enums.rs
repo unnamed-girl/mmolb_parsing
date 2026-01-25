@@ -107,6 +107,11 @@ pub enum EventType {
     #[strum(to_string = "Weather_Consumption")]
     #[serde(rename = "Weather_Consumption")]
     WeatherConsumption,
+
+    // Season 10
+    #[strum(to_string = "Weather_Simulacrum")]
+    #[serde(rename = "Weather_Simulacrum")]
+    WeatherSimulacrum,
 }
 
 /// Top or bottom of an inning.

@@ -499,7 +499,9 @@ pub(super) fn verify_name(input: &str) -> IResult<'_, &str, &str> {
         name.split_whitespace().all(|word| !["Dr", "St", "Jr"].contains(&word)) &&
         // If the name contains a 1-length word, then there are at least 3 words.
         // So that "Victor Rodriguez singles on a line drive to RF Bob E. Qurios V. V. Roussell V to third base." disambiguates correctly
-        ((!name.split_whitespace().any(|word| word.len() == 1)) || (name.split_whitespace().filter(|word| word.len() > 0)).count() >= 3) &&
+        //
+        // With the exception of Simulacra I
+        name == "Simulacra I" || ((!name.split_whitespace().any(|word| word.len() == 1)) || (name.split_whitespace().filter(|word| !word.is_empty())).count() >= 3) &&
         // Removed for now because of early season 1 bug where feed names didn't print their spaces
         // name.chars().any(|c| c == ' ') && // From the API, we know players have first/last name, so there should always be a space
         !name.chars().any(|c| [',', '(', ')', '<', '>', '\\', '\u{FE0F}'].contains(&c)) && // These characters should not be in names

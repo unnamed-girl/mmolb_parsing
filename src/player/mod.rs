@@ -486,6 +486,14 @@ impl BoonCollection {
             BoonCollection::Many(modifications) => modifications.len(),
         }
     }
+
+    pub fn is_empty(&self) -> bool {
+        match self {
+            BoonCollection::None => true,
+            BoonCollection::Single(..) => false,
+            BoonCollection::Many(modifications) => modifications.is_empty(),
+        }
+    }
 }
 
 pub enum BoonCollectionIterator {
