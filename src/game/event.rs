@@ -79,6 +79,7 @@ pub struct Event {
     pub pitcher: EventPitcherVersions<String>,
 
     pub pitch: Option<Pitch>,
+    pitch_info_is_some: bool,
     pub home_run_distance: Option<u32>,
 
     #[serde_as(as = "MaybeRecognizedHelper<_>")]
@@ -106,8 +107,7 @@ impl From<RawEvent> for Event {
             },
         };
 
-        // TODO This won't round-trip correctly because it represents None and Some("") both as
-        //   the same value
+        let pitch_info_is_some = value.pitch_info.is_some();
         let pitch_info = match value.pitch_info {
             Some(s) if s.is_empty() => None,
             Some(s) => Some(s),
@@ -122,6 +122,7 @@ impl From<RawEvent> for Event {
         Self {
             inning,
             pitch,
+            pitch_info_is_some,
             batter: value.batter,
             pitcher: value.pitcher,
             on_deck: value.on_deck,
@@ -162,11 +163,14 @@ impl From<Event> for RawEvent {
             .map(|(pitch, zone)| (pitch, Some(zone)))
             .unwrap_or(("".to_string(), None));
 
+        let pitch_info = value.pitch_info_is_some.then_some(pitch_info);
+        let zone = value.pitch_info_is_some.then_some(zone);
+
         Self {
             inning,
             inning_side,
-            pitch_info: Some(pitch_info),
-            zone: Some(zone),
+            pitch_info,
+            zone,
             event: value.event,
             batter: value.batter,
             on_deck: value.on_deck,
