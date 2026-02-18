@@ -1,5 +1,5 @@
 use crate::{
-    enums::FoodName,
+    enums::{FoodName, TopBottom},
     nom_parsing::shared::{
         door_prizes, either_team_emoji_player_eof, emoji, emoji_food, hit_by_pitch_text, item,
         strike_out_text, successful_ejection_tail,
@@ -7,7 +7,6 @@ use crate::{
     parsed_event::{EmojiPlayer, WeatherConsumptionEvents},
     time::is_superstar_game,
 };
-use nom::sequence::pair;
 use nom::{
     branch::alt,
     bytes::complete::{tag, take_until},
@@ -19,6 +18,7 @@ use nom::{
     Finish, Parser,
 };
 use nom::{bytes::complete::take_till, character::complete::u32, error::ErrorKind};
+use nom::{character::complete::space0, sequence::pair};
 use phf::phf_map;
 use std::str::FromStr;
 
@@ -1198,20 +1198,30 @@ fn inning_start<'parse, 'output: 'parse>(
                 },
             );
 
-        let mut start_inning = (
-            sentence((
-                preceded(tag("Start of the "), try_from_word),
-                delimited(tag(" of the "), u8, ordinal_suffix),
-            )),
-            sentence(parse_terminated(" batting").and_then(emoji_team_eof)),
-        );
+        let mut start_inning = |input| {
+            let (input, _) = space0(input)?;
+            let (input, _) = tag("Start of the ").parse(input)?;
+            let (input, top_bottom) = try_from_word::<TopBottom>(input)?;
+            let (input, _) = tag(" of the ").parse(input)?;
+            let (input, n) = u8(input)?;
+            let (input, _) = ordinal_suffix(input)?;
+            let (input, _) = tag(".").parse(input)?;
+
+            let (input, _) = space0(input)?;
+            let (input, emoji_team) = parse_terminated(" batting.").parse(input)?;
+            let (_, emoji_team) = emoji_team_eof(emoji_team)?;
+            Ok((input, (top_bottom, n, emoji_team)))
+        };
 
         let automatic_runner = sentence(parse_terminated(" starts the inning on second base"));
 
         let mut pitcher_status = alt((keep_pitcher, swap_pitcher));
 
-        if is_superstar_game(parsing_context.day) {
-            let (input, ((side, number), batting_team)) = start_inning.parse(input)?;
+        if is_superstar_game(parsing_context.day)
+            || parsing_context.home_emoji_team.name == "Simulacra I"
+            || parsing_context.away_emoji_team.name == "Simulacra I"
+        {
+            let (input, (side, number, batting_team)) = start_inning.parse(input)?;
             let (input, automatic_runner) = opt(automatic_runner).parse(input)?;
             let (input, pitcher_status) = opt(pitcher_status).parse(input)?;
 
@@ -1226,7 +1236,7 @@ fn inning_start<'parse, 'output: 'parse>(
                 },
             ))
         } else {
-            let (input, ((side, number), batting_team)) = start_inning.parse(input)?;
+            let (input, (side, number, batting_team)) = start_inning.parse(input)?;
             let (input, automatic_runner) = opt(automatic_runner).parse(input)?;
             let (input, pitcher_status) = pitcher_status.parse(input)?;
 
@@ -1704,6 +1714,14 @@ fn weather_consumption_end_contest_tie<'parse, 'output: 'parse>(
 fn weather_simulacrum<'parse, 'output: 'parse>(
 ) -> impl MyParser<'output, ParsedEventMessage<&'output str>> + 'parse {
     let f = |input| {
+        if let Ok((input, _)) = tag::<_, _, crate::nom_parsing::shared::Error>(
+            "The Simulacrum yields no tokens during the Offseason.",
+        )
+        .parse(input)
+        {
+            return Ok((input, ParsedEventMessage::WeatherSimulacrumOffseason));
+        }
+
         let (input, real_team) = parse_terminated(" were defeated by the ").parse(input)?;
         let (_, real_team) = emoji_team_eof(real_team)?;
 
