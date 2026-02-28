@@ -252,6 +252,9 @@ fn main() {
             .json::<FreeCashewResponse<EntityResponse<Box<serde_json::value::RawValue>>>>()
             .unwrap()
             .items;
+        if entities.is_empty() {
+            tracing::error!("Didn't find any entities");
+        }
         for game in entities.into_iter() {
             func(&args, game, true, event_variants.as_mut());
         }

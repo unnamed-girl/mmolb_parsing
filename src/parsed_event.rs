@@ -395,10 +395,15 @@ impl<S: Display> ParsedEventMessage<S> {
             } => {
                 let ordinal = match number {
                     0 => panic!("Should not have 0th innings"),
-                    1 => "1st".to_string(),
-                    2 => "2nd".to_string(),
-                    3 => "3rd".to_string(),
-                    4.. => format!("{number}th"),
+                    11 => "11th".to_string(),
+                    12 => "12th".to_string(),
+                    13 => "13th".to_string(),
+                    _ => match number % 10 {
+                        1 => format!("{number}st"),
+                        2 => format!("{number}nd"),
+                        3 => format!("{number}rd"),
+                        _ => format!("{number}th"),
+                    },
                 };
                 let pitcher_message = match pitcher_status {
                     Some(StartOfInningPitcher::Same { emoji, name }) => {
