@@ -112,7 +112,7 @@ pub fn parse_event<'parse, 'output: 'parse>(
             special_delivery(parsing_context).parse(&event.message)
         }
         EventType::WeatherProsperity => weather_prosperity(parsing_context).parse(&event.message),
-        EventType::Balk => balk().parse(&event.message),
+        EventType::Balk => balk(parsing_context).parse(&event.message),
         EventType::PhotoContest => photo_contest(parsing_context).parse(event.message.as_str()),
         EventType::Party => party(parsing_context).parse(event.message.as_str()),
         EventType::WeatherReflection => weather_reflection(parsing_context).parse(&event.message),
@@ -306,11 +306,18 @@ fn party<'parse, 'output: 'parse>(
     )
 }
 
-fn balk<'output>() -> impl MyParser<'output, ParsedEventMessage<&'output str>> {
+fn balk<'parse, 'output: 'parse>(
+    parsing_context: &'parse ParsingContext<'parse>,
+) -> impl MyParser<'output, ParsedEventMessage<&'output str>> {
+    let msg_parser = if parsing_context.after(Breakpoints::Season11) && parsing_context.before(Breakpoints::Season11BalkMessageFix) {
+        parse_terminated(" dropped the ball..")
+    } else {
+        parse_terminated(" dropped the ball.")
+    };
     context(
         "Balk",
         all_consuming((
-            preceded(tag("Balk. "), parse_terminated(" dropped the ball.")),
+            preceded(tag("Balk. "), msg_parser),
             scores_and_advances,
         )),
     )

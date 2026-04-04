@@ -996,7 +996,20 @@ impl<S: Display> ParsedEventMessage<S> {
                 advances,
             } => {
                 let scores_and_advances = unparse_scores_and_advances(scores, advances);
-                format!("Balk. {pitcher} dropped the ball.{scores_and_advances}")
+                let balk_msg = if Breakpoints::Season11.after(
+                    context.season,
+                    context.day,
+                    event_index,
+                ) && Breakpoints::Season11BalkMessageFix.before(
+                    context.season,
+                    context.day,
+                    event_index,
+                ) {
+                    "dropped the ball.."
+                } else {
+                    "dropped the ball."
+                };
+                format!("Balk. {pitcher} {balk_msg}{scores_and_advances}")
             }
             Self::KnownBug { bug } => format!("{bug}"),
             Self::WeatherProsperity {

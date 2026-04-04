@@ -145,6 +145,8 @@ pub enum Breakpoints {
     Season7SuccessfulContainPeriodFix,
     Season8ItemDiscardedMessageChange,
     Season10,
+    Season11,
+    Season11BalkMessageFix,
 }
 impl From<Breakpoints> for Time {
     fn from(value: Breakpoints) -> Self {
@@ -262,6 +264,14 @@ impl Breakpoints {
             Breakpoints::Season10 => Time {
                 season: 10,
                 ascending_days: vec![(DayEquivalent { day: 0, offset: 0 }, 0)],
+            },
+            Breakpoints::Season11 => Time {
+                season: 11,
+                ascending_days: vec![(DayEquivalent { day: 0, offset: 0 }, 0)],
+            },
+            Breakpoints::Season11BalkMessageFix => Time {
+                season: 11,
+                ascending_days: vec![(DayEquivalent { day: 5, offset: 0 }, 0)],
             },
         }
     }
