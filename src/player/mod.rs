@@ -1,7 +1,9 @@
 pub use serde::{Deserialize, Serialize};
 use serde_with::serde_as;
 use std::collections::HashMap;
-
+use chrono::{DateTime, Utc};
+use strum::{Display, EnumIter, EnumString, IntoStaticStr};
+use uuid::Uuid;
 use crate::enums::{AttributeCategory, PitchCategory, PitchType};
 use crate::utils::{extra_fields_deserialize, MaybeRecognizedHelper, SometimesMissingHelper};
 use crate::{
@@ -32,6 +34,13 @@ pub struct Player {
     )]
     #[serde_as(as = "SometimesMissingHelper<_>")]
     pub augments: RemovedLaterResult<u8>,
+    // Added in s11
+    #[serde(
+        default = "SometimesMissingHelper::default_result",
+        skip_serializing_if = "AddedLaterResult::is_err"
+    )]
+    #[serde_as(as = "SometimesMissingHelper<_>")]
+    pub applied_level_ups: AddedLaterResult<Vec<AppliedLevelUp>>,
 
     #[serde_as(as = "MaybeRecognizedHelper<_>")]
     pub bats: MaybeRecognizedResult<Handedness>,
@@ -158,6 +167,46 @@ pub struct Player {
 
     #[serde(flatten, deserialize_with = "extra_fields_deserialize")]
     pub extra_fields: serde_json::Map<String, serde_json::Value>,
+}
+
+#[derive(
+    Debug,
+    Serialize,
+    Deserialize,
+    Clone,
+    PartialEq,
+    IntoStaticStr,
+    Display,
+)]
+#[serde(rename_all = "snake_case", tag = "type")]
+pub enum LevelUpChoice {
+    Attribute {
+        id: Uuid,
+        label: String,
+        amount: f64,
+        attribute: Attribute,
+    },
+    LesserBoon {
+        id: Uuid,
+        boon: Modification,
+        name: String,
+        label: String,
+        description: String,
+    },
+}
+
+#[serde_as]
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
+pub struct AppliedLevelUpChoice {
+}
+
+#[serde_as]
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
+pub struct AppliedLevelUp {
+    id: Uuid,
+    level: u32,
+    choice: AppliedLevelUpChoice,
+    applied_at: DateTime<Utc>,
 }
 
 /// A player's equipment field can be described by `HashMap<Result<EquipmentSlot, NotRecognized>, Option<PlayerEquipment>>`
