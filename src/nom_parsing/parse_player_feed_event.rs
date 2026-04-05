@@ -1,8 +1,4 @@
-use super::shared::{
-    falling_star, feed_event_contained, feed_event_door_prize, feed_event_equipped_door_prize,
-    feed_event_party, feed_event_wither, grow, player_moved, player_positions_swapped,
-    player_relegated, purified, Error, IResult,
-};
+use super::shared::{falling_star, feed_event_contained, feed_event_door_prize, feed_event_efflorescence_growth, feed_event_equipped_door_prize, feed_event_party, feed_event_wither, grow, player_moved, player_positions_swapped, player_relegated, purified, Error, IResult};
 use crate::feed_event::PlayerGreaterAugment;
 use crate::{
     enums::{FeedEventType, ModificationType},
@@ -23,6 +19,7 @@ use nom::{
     sequence::{delimited, preceded, separated_pair, terminated},
     Finish, Parser,
 };
+use crate::team_feed::ParsedTeamFeedEventText;
 
 trait PlayerFeedEventParser<'output>:
     Parser<&'output str, Output = ParsedPlayerFeedEventText<&'output str>, Error = Error<'output>>
@@ -119,6 +116,12 @@ fn game<'output>(event: &'output FeedEvent) -> impl PlayerFeedEventParser<'outpu
                 ParsedPlayerFeedEventText::PlayerContained {
                     contained_player_name,
                     container_player_name,
+                }
+            }),
+            feed_event_efflorescence_growth.map(|(player_name, growths)| {
+                ParsedPlayerFeedEventText::PlayerGrewInEfflorescence {
+                    player_name,
+                    growths,
                 }
             }),
             fail(),

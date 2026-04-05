@@ -15,6 +15,7 @@ use crate::{
     time::{Breakpoints, Timestamp},
     utils::extra_fields_deserialize,
 };
+use crate::parsed_event::GrowAttributeChange;
 
 #[serde_as]
 #[derive(Serialize, Deserialize, Debug, Clone)]
@@ -115,6 +116,10 @@ pub enum ParsedPlayerFeedEventText<S> {
     PlayerContained {
         contained_player_name: S,
         container_player_name: S,
+    },
+    PlayerGrewInEfflorescence {
+        player_name: S,
+        growths: [GrowAttributeChange; 2],
     },
     PlayerPositionsSwapped {
         swap: PositionSwap<S>,
@@ -238,6 +243,9 @@ impl<S: Display> ParsedPlayerFeedEventText<S> {
                     "{contained_player_name} was contained by {container_player_name} during the \
                     🥀 Wither.",
                 )
+            }
+            ParsedPlayerFeedEventText::PlayerGrewInEfflorescence { player_name, growths: [grow_1, grow_2] } => {
+                format!("{player_name} grew in the 🌹 Efflorescence: {grow_1}, {grow_2}.")
             }
             ParsedPlayerFeedEventText::PlayerPositionsSwapped { swap } => {
                 format!("{swap}")
