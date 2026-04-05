@@ -1233,6 +1233,15 @@ pub(super) fn feed_event_party(input: &str) -> IResult<'_, &str, FeedEventParty<
     ))
 }
 
+pub(super) fn feed_event_delivery_discarded(
+    input: &str,
+) -> IResult<'_, &str, Item<&str>> {
+    let (input, item_str) = parse_terminated(" is discarded as no player can use it.").parse(input)?;
+    let (_, item) = item.parse(item_str)?;
+
+    Ok((input, item))
+}
+
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
 pub struct FeedEventDoorPrize<S> {
     pub player_name: S,

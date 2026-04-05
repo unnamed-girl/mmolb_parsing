@@ -61,6 +61,9 @@ pub enum ParsedTeamFeedEventText<S> {
         home_score: u8,
         away_score: u8,
     },
+    DeliveryDiscarded {
+        item: Item<S>,
+    },
     Delivery {
         delivery: FeedDelivery<S>,
     },
@@ -219,6 +222,9 @@ impl<S: Display> ParsedTeamFeedEventText<S> {
             ParsedTeamFeedEventText::GameResult { home_team, away_team, home_score, away_score } => {
                 format!("{} vs. {} - FINAL {}-{}", away_team, home_team, away_score, home_score)
             }
+            ParsedTeamFeedEventText::DeliveryDiscarded { item } => {
+                format!("{item} is discarded as no player can use it.")
+            }
             ParsedTeamFeedEventText::Delivery { delivery } => delivery.unparse(event, "Delivery"),
             ParsedTeamFeedEventText::Shipment { delivery } => delivery.unparse(event, "Shipment"),
             ParsedTeamFeedEventText::SpecialDelivery { delivery } => delivery.unparse(event, "Special Delivery"),
@@ -234,7 +240,7 @@ impl<S: Display> ParsedTeamFeedEventText<S> {
                 } else {
                     format!("{team} received 🪙 {earned_coins}{and_item} from a Consumption Contest.")
                 }
-            },  
+            },
             ParsedTeamFeedEventText::PhotoContest { player, earned_coins } => {
                 match player {
                     None => format!("Earned {earned_coins} 🪙 in the Photo Contest."),
