@@ -4,8 +4,8 @@ use itertools::Itertools;
 use serde::{Deserialize, Serialize};
 use serde_with::serde_as;
 
-use crate::enums::{Position, Slot, WithNumberSign};
-use crate::feed_event::{AttributeChange, GreaterAugment, ParsedFeedEventText};
+use crate::enums::{Slot, WithNumberSign};
+use crate::feed_event::{AttributeChange, GreaterAugment};
 pub use crate::nom_parsing::parse_team_feed_event::parse_team_feed_event;
 use crate::nom_parsing::shared::{FeedEventDoorPrize, FeedEventParty, Grow, PositionSwap};
 use crate::parsed_event::{EmojiPlayer, EmojiTeam, GrowAttributeChange, Item};

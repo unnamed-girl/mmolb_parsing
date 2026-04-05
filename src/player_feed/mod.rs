@@ -6,7 +6,7 @@ use serde_with::serde_as;
 use crate::feed_event::PlayerGreaterAugment;
 pub use crate::nom_parsing::parse_player_feed_event::parse_player_feed_event;
 use crate::nom_parsing::shared::{FeedEventDoorPrize, FeedEventParty, Grow, PositionSwap};
-use crate::team_feed::{ParsedTeamFeedEventText, PurifiedOutcome};
+use crate::team_feed::PurifiedOutcome;
 use crate::{
     enums::{Attribute, FeedEventType, ModificationType},
     feed_event::{

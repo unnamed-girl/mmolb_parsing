@@ -15,14 +15,14 @@ use nom::{
 use nom_language::error::VerboseError;
 use std::fmt::{Display, Formatter};
 use std::{fmt::Debug, str::FromStr};
-use crate::enums::{Attribute, BenchSlot, CelestialEnergyTier, FoodName, FullSlot, ModificationType, Position, Slot};
+use crate::enums::{Attribute, BenchSlot, CelestialEnergyTier, FoodName, FullSlot, ModificationType, Slot};
 use crate::feed_event::FeedFallingStarOutcome;
 use crate::parsed_event::{
     Efflorescence, EfflorescenceOutcome, EjectionReplacement, EmojiFood, EmojiPlayer, ItemEquip,
     ItemPrize, WitherStruggle,
 };
 use crate::player::{Deserialize, Serialize};
-use crate::team_feed::{ParsedTeamFeedEventText, PurifiedOutcome};
+use crate::team_feed::PurifiedOutcome;
 use crate::{
     enums::{
         Base, BatterStat, Day, FairBallDestination, FairBallType, HomeAway, NowBattingStats, Place,

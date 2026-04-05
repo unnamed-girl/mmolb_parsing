@@ -7,7 +7,7 @@ use crate::nom_parsing::shared::{
 use crate::parsed_event::{EmojiPlayer, EmojiTeam};
 use crate::{enums::{FeedEventType, ModificationType}, feed_event::{FeedEvent, FeedEventParseError}, nom_parsing::shared::{
     emojiless_item, feed_delivery, parse_terminated, sentence_eof, try_from_word, verify_name,
-}, team_feed::ParsedTeamFeedEventText, time::{Breakpoints, Timestamp}, MaybeRecognizedResult};
+}, team_feed::ParsedTeamFeedEventText, time::{Breakpoints, Timestamp}};
 use nom::bytes::complete::take_while;
 use nom::combinator::{eof, verify};
 use nom::multi::{many1, separated_list1};
@@ -20,7 +20,6 @@ use nom::{
     sequence::{delimited, preceded, separated_pair, terminated},
     Finish, Parser,
 };
-use crate::enums::Day;
 
 trait TeamFeedEventParser<'output>:
     Parser<&'output str, Output = ParsedTeamFeedEventText<&'output str>, Error = Error<'output>>
