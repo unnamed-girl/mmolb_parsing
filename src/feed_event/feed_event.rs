@@ -9,6 +9,34 @@ use chrono::{DateTime, Utc};
 use serde::{Deserialize, Serialize};
 use serde_with::serde_as;
 use std::fmt::Display;
+use strum::{Display, EnumIter, EnumString, IntoStaticStr};
+
+#[derive(
+    Debug,
+    Serialize,
+    Deserialize,
+    Clone,
+    Copy,
+    EnumIter,
+    PartialEq,
+    Eq,
+    Hash,
+    EnumString,
+    IntoStaticStr,
+    Display,
+)]
+#[serde(rename_all = "snake_case")]
+pub enum FeedEventCollection {
+    Player,
+    Team,
+}
+
+#[serde_as]
+#[derive(Clone, Debug, Serialize, Deserialize, PartialEq)]
+pub struct FeedEventLegacySource {
+    collection: FeedEventCollection,
+    source_id: String,
+}
 
 #[serde_as]
 #[derive(Clone, Debug, Serialize, Deserialize, PartialEq)]
@@ -29,6 +57,11 @@ pub struct FeedEvent {
     pub event_type: MaybeRecognizedResult<FeedEventType>,
 
     pub links: Vec<Link>,
+
+    // Added in s11
+    pub _id: String,
+    pub legacy_event_key: String,
+    pub legacy_source: FeedEventLegacySource,
 
     #[serde(flatten, deserialize_with = "extra_fields_deserialize")]
     pub extra_fields: serde_json::Map<String, serde_json::Value>,
