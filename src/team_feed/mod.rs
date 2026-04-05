@@ -401,6 +401,7 @@ impl<S: Display> ParsedTeamFeedEventText<S> {
                     GreaterAugment::Headliners => "Headliners, improving the three Batters at the top of their Lineup.",
                     GreaterAugment::Plating => "Reinforced Plating, granting their Players +10 to all Defense Attributes.",
                     GreaterAugment::LuckyDelivery => "TODO Insert the lucky delivery text here",
+                    GreaterAugment::RestoreBackupRoster => "Restore Backup: Roster to call up Corrupted Bench Players.",
                 })
             }
             ParsedTeamFeedEventText::PlayerGrewInEfflorescence { player_name, growths: [grow_1, grow_2] } => {

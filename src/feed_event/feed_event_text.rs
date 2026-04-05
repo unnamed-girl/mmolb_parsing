@@ -280,6 +280,7 @@ pub enum GreaterAugment {
     StartSmall,
     Plating,
     LuckyDelivery,
+    RestoreBackupRoster,
 }
 
 #[derive(Clone, Debug, Serialize, Deserialize, PartialEq)]

@@ -407,6 +407,7 @@ fn greater_augment(input: &str) -> IResult<'_, &str, ParsedTeamFeedEventText<&st
         tag("Reinforced Plating, granting their Players +10 to all Defense Attributes.")
             .map(|_| GreaterAugment::Plating),
         tag("TODO Insert the lucky delivery text here").map(|_| GreaterAugment::LuckyDelivery),
+        tag("Restore Backup: Roster to call up Corrupted Bench Players.").map(|_| GreaterAugment::RestoreBackupRoster),
     ))
     .parse(input)?;
 
