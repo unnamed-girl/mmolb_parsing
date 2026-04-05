@@ -100,7 +100,23 @@ pub struct Player {
     pub home: String,
 
     pub greater_boon: BoonCollection,
+    // In s11 there is both a greater_boon (singular) and greater_boons (plural)
+    // field. I have elected not to try to merge them in deserialization, and
+    // to leave that up to user code.
+    #[serde(
+        default = "SometimesMissingHelper::default_result",
+        skip_serializing_if = "AddedLaterResult::is_err"
+    )]
+    #[serde_as(as = "SometimesMissingHelper<_>")]
+    pub greater_boons: AddedLaterResult<Vec<Modification>>,
     pub lesser_boon: BoonCollection,
+    // See comment on `greater_boons`
+    #[serde(
+        default = "SometimesMissingHelper::default_result",
+        skip_serializing_if = "AddedLaterResult::is_err"
+    )]
+    #[serde_as(as = "SometimesMissingHelper<_>")]
+    pub lesser_boons: AddedLaterResult<Vec<Modification>>,
     pub modifications: Vec<Modification>,
 
     pub likes: String,
