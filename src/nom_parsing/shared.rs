@@ -15,9 +15,7 @@ use nom::{
 use nom_language::error::VerboseError;
 use std::fmt::{Display, Formatter};
 use std::{fmt::Debug, str::FromStr};
-use crate::enums::{
-    Attribute, BenchSlot, CelestialEnergyTier, FoodName, FullSlot, ModificationType, Slot,
-};
+use crate::enums::{Attribute, BenchSlot, CelestialEnergyTier, FoodName, FullSlot, ModificationType, Position, Slot};
 use crate::feed_event::FeedFallingStarOutcome;
 use crate::parsed_event::{
     Efflorescence, EfflorescenceOutcome, EjectionReplacement, EmojiFood, EmojiPlayer, ItemEquip,
@@ -1503,6 +1501,14 @@ pub(super) fn player_positions_swapped(input: &str) -> IResult<'_, &str, Positio
             second_player_new_slot,
         },
     ))
+}
+
+pub(super) fn players_swapped(input: &str) -> IResult<'_, &str, ([&str; 2], Slot)> {
+    let (input, first_player_name) = parse_terminated(" swapped with ").parse(input)?;
+    let (input, second_player_name) = parse_terminated(" in ").parse(input)?;
+    let (input, position) = active_slot.parse(input)?;
+
+    Ok((input, ([first_player_name, second_player_name], position)))
 }
 
 #[derive(Clone, Copy, Debug, Serialize, Deserialize, PartialEq)]

@@ -4,7 +4,7 @@ use itertools::Itertools;
 use serde::{Deserialize, Serialize};
 use serde_with::serde_as;
 
-use crate::enums::Slot;
+use crate::enums::{Position, Slot};
 use crate::feed_event::{AttributeChange, GreaterAugment, ParsedFeedEventText};
 pub use crate::nom_parsing::parse_team_feed_event::parse_team_feed_event;
 use crate::nom_parsing::shared::{FeedEventDoorPrize, FeedEventParty, Grow, PositionSwap};
@@ -171,6 +171,10 @@ pub enum ParsedTeamFeedEventText<S> {
     },
     PlayerPositionsSwapped {
         swap: PositionSwap<S>,
+    },
+    PlayersSwapped {
+        players: [S; 2],
+        slot: Slot,
     },
     PlayerContained {
         contained_player_name: S,
@@ -364,6 +368,9 @@ impl<S: Display> ParsedTeamFeedEventText<S> {
             },
             ParsedTeamFeedEventText::PlayerPositionsSwapped { swap } => {
                 format!("{swap}")
+            },
+            ParsedTeamFeedEventText::PlayersSwapped { players: [player_one, player_two], slot } => {
+                format!("{player_one} swapped with {player_two} in {slot}.")
             },
             ParsedTeamFeedEventText::PlayerContained { contained_player_name, container_player_name } => {
                 format!(
