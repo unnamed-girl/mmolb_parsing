@@ -13,6 +13,7 @@ use std::{
     fmt::{Debug, Display},
     str::FromStr,
 };
+use std::fmt::Formatter;
 use strum::{
     Display, EnumDiscriminants, EnumIter, EnumString, IntoDiscriminant, IntoEnumIterator,
     IntoStaticStr,
@@ -1655,6 +1656,17 @@ impl Display for FullSlot {
         match self {
             FullSlot::Bench(slot) => write!(f, "{}", slot),
             FullSlot::Active(slot) => write!(f, "{}", slot),
+        }
+    }
+}
+
+pub struct WithNumberSign(pub BenchSlot);
+
+impl Display for WithNumberSign {
+    fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
+        match self.0 {
+            BenchSlot::Batter(num) => write!(f, "Bench Batter #{}", num),
+            BenchSlot::Pitcher(num) => write!(f, "Bench Pitcher #{}", num),
         }
     }
 }

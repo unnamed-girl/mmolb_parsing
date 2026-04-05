@@ -1448,6 +1448,22 @@ fn full_slot(input: &str) -> IResult<'_, &str, FullSlot> {
     .parse(input)
 }
 
+fn bench_slot_with_num(input: &str) -> IResult<'_, &str, BenchSlot> {
+    alt((
+        preceded(tag("Bench Batter #"), u8).map(BenchSlot::Batter),
+        preceded(tag("Bench Pitcher #"), u8).map(BenchSlot::Pitcher),
+    ))
+        .parse(input)
+}
+
+pub fn training(input: &str) -> IResult<'_, &str, BenchSlot> {
+    // Might need a new full_slot_with_num
+    let (input, slot) = bench_slot_with_num.parse(input)?;
+    let (input, _) = tag(" Training.").parse(input)?;
+
+    Ok((input, slot))
+}
+
 #[derive(Clone, Debug, Serialize, Deserialize, PartialEq)]
 pub struct PositionSwap<S> {
     first_player_name: S,

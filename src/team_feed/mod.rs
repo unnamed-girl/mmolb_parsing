@@ -4,7 +4,7 @@ use itertools::Itertools;
 use serde::{Deserialize, Serialize};
 use serde_with::serde_as;
 
-use crate::enums::{Position, Slot};
+use crate::enums::{Position, Slot, WithNumberSign};
 use crate::feed_event::{AttributeChange, GreaterAugment, ParsedFeedEventText};
 pub use crate::nom_parsing::parse_team_feed_event::parse_team_feed_event;
 use crate::nom_parsing::shared::{FeedEventDoorPrize, FeedEventParty, Grow, PositionSwap};
@@ -399,13 +399,17 @@ impl<S: Display> ParsedTeamFeedEventText<S> {
                 )
             }
             ParsedTeamFeedEventText::GreaterAugment { team, greater_augment } => {
-                format!("{team} selected {}", match greater_augment {
-                    GreaterAugment::StartSmall => "Start Small, improving their Starting Pitchers.",
-                    GreaterAugment::Headliners => "Headliners, improving the three Batters at the top of their Lineup.",
-                    GreaterAugment::Plating => "Reinforced Plating, granting their Players +10 to all Defense Attributes.",
-                    GreaterAugment::LuckyDelivery => "TODO Insert the lucky delivery text here",
-                    GreaterAugment::RestoreBackupRoster => "Restore Backup: Roster to call up Corrupted Bench Players.",
-                })
+                match greater_augment {
+                    GreaterAugment::StartSmall => format!("{team} selected Start Small, improving their Starting Pitchers."),
+                    GreaterAugment::Headliners => format!("{team} selected Headliners, improving the three Batters at the top of their Lineup."),
+                    GreaterAugment::Plating => format!("{team} selected Reinforced Plating, granting their Players +10 to all Defense Attributes."),
+                    GreaterAugment::LuckyDelivery => format!("{team} selected TODO Insert the lucky delivery text here"),
+                    GreaterAugment::RestoreBackupRoster => format!("{team} selected Restore Backup: Roster to call up Corrupted Bench Players."),
+                    GreaterAugment::Training(slot) => {
+                        let slot = WithNumberSign(*slot);
+                        format!("{team} selected {slot} Training.")
+                    },
+                }
             }
             ParsedTeamFeedEventText::PlayerGrewInEfflorescence { player_name, growths: [grow_1, grow_2] } => {
                 format!("{player_name} grew in the 🌹 Efflorescence: {grow_1}, {grow_2}.")

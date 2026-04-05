@@ -3,6 +3,7 @@ use std::fmt::Display;
 use serde::{Deserialize, Serialize};
 use thiserror::Error;
 
+use crate::enums::BenchSlot;
 use crate::{
     enums::{
         Attribute, CelestialEnergyTier, FeedEventSource, FeedEventType, ItemName, ItemPrefix,
@@ -281,6 +282,7 @@ pub enum GreaterAugment {
     Plating,
     LuckyDelivery,
     RestoreBackupRoster,
+    Training(BenchSlot),
 }
 
 #[derive(Clone, Debug, Serialize, Deserialize, PartialEq)]

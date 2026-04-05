@@ -1,4 +1,4 @@
-use super::shared::{emoji, emoji_team_eof, emoji_team_eof_maybe_no_space, feed_event_consumption_contest_with_item_and_coin, feed_event_contained, feed_event_delivery_discarded, feed_event_door_prize, feed_event_equipped_door_prize, feed_event_party, feed_event_wither, parse_until_period_eof, player_positions_swapped, players_election_swapped, purified, team_election_purified, Error, IResult};
+use super::shared::{emoji, emoji_team_eof, emoji_team_eof_maybe_no_space, feed_event_consumption_contest_with_item_and_coin, feed_event_contained, feed_event_delivery_discarded, feed_event_door_prize, feed_event_equipped_door_prize, feed_event_party, feed_event_wither, parse_until_period_eof, player_positions_swapped, players_election_swapped, purified, team_election_purified, training, Error, IResult};
 use crate::feed_event::{AttributeChange, GreaterAugment};
 use crate::nom_parsing::shared::{
     active_slot, falling_star, feed_event_effloresce, feed_event_efflorescence_growth, grow,
@@ -405,6 +405,7 @@ fn greater_augment(input: &str) -> IResult<'_, &str, ParsedTeamFeedEventText<&st
             .map(|_| GreaterAugment::Plating),
         tag("TODO Insert the lucky delivery text here").map(|_| GreaterAugment::LuckyDelivery),
         tag("Restore Backup: Roster to call up Corrupted Bench Players.").map(|_| GreaterAugment::RestoreBackupRoster),
+        training.map(GreaterAugment::Training),
     ))
     .parse(input)?;
 
