@@ -70,7 +70,7 @@ pub struct Player {
         skip_serializing_if = "AddedLaterResult::is_err"
     )]
     #[serde_as(as = "SometimesMissingHelper<_>")]
-    pub augment_history: AddedLaterResult<Vec<()>>, // TODO type
+    pub augment_history: AddedLaterResult<Vec<AppliedAugment>>,
 
     // Added in s11
     #[serde(
@@ -318,6 +318,16 @@ pub struct FoodBuff {
     #[serde_as(as = "TimestampHelper")]
     pub applied_at: DateTime<Utc>,
     pub instance_id: Uuid,
+}
+
+#[serde_as]
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
+pub struct AppliedAugment {
+    pub amount: f64,
+    pub attribute: Attribute,
+    #[serde_as(as = "TimestampHelper")]
+    pub timestamp: DateTime<Utc>,
+    pub augment_name: String,
 }
 
 #[serde_as]
