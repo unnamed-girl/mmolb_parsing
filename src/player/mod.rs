@@ -79,6 +79,20 @@ pub struct Player {
     )]
     #[serde_as(as = "SometimesMissingHelper<_>")]
     pub durability: RemovedLaterResult<f64>,
+    // Added in s11
+    #[serde(
+        default = "SometimesMissingHelper::default_result",
+        skip_serializing_if = "AddedLaterResult::is_err"
+    )]
+    #[serde_as(as = "SometimesMissingHelper<_>")]
+    pub lesser_durability: AddedLaterResult<u32>,
+    // Added in s11
+    #[serde(
+        default = "SometimesMissingHelper::default_result",
+        skip_serializing_if = "AddedLaterResult::is_err"
+    )]
+    #[serde_as(as = "SometimesMissingHelper<_>")]
+    pub greater_durability: AddedLaterResult<u32>,
 
     /// Not present on old, deleted players
     #[serde(
