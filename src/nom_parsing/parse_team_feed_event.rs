@@ -111,8 +111,8 @@ fn game(event: &FeedEvent) -> impl TeamFeedEventParser<'_> {
             feed_delivery("the Consumption Contest")
                 .map(|delivery| ParsedTeamFeedEventText::ConsumptionContestToPlayer { delivery }),
             feed_event_consumption_contest_with_item_and_coin
-                .map(|(team, earned_coins, item)|
-                    ParsedTeamFeedEventText::ConsumptionContestToTeam { team, earned_coins, item }),
+                .map(|(tied, team, earned_coins, item)|
+                    ParsedTeamFeedEventText::ConsumptionContestToTeam { tied, team, earned_coins, item }),
             photo_contest(),
             falling_star(event).map(|(player_name, outcome)| {
                 ParsedTeamFeedEventText::FallingStarOutcome {

@@ -74,6 +74,13 @@ pub enum ParsedTeamFeedEventText<S> {
         delivery: FeedDelivery<S>,
     },
     ConsumptionContestToTeam {
+        /// `None` indicates no tie. `Some` indicates a tie with the score being
+        /// the contained value.
+        ///
+        /// As of this writing the score is always equal to earned_coins, but
+        /// I've been through too many economy rebalances to assume that will
+        /// always be the case.
+        tied: Option<u32 /* score */>,
         team: EmojiTeam<S>,
         earned_coins: u32,
         item: Option<Item<S>>,
@@ -216,18 +223,18 @@ impl<S: Display> ParsedTeamFeedEventText<S> {
             ParsedTeamFeedEventText::Shipment { delivery } => delivery.unparse(event, "Shipment"),
             ParsedTeamFeedEventText::SpecialDelivery { delivery } => delivery.unparse(event, "Special Delivery"),
             ParsedTeamFeedEventText::ConsumptionContestToPlayer { delivery } => delivery.unparse(event, "the Consumption Contest"),
-            ParsedTeamFeedEventText::ConsumptionContestToTeam { team, earned_coins, item } => {
-                // let discarded = discarded.as_ref().map_or_else(
-                //     String::new,
-                //     |d| format!(" They discard their {d}."),
-                // );
+            ParsedTeamFeedEventText::ConsumptionContestToTeam { team, earned_coins, item, tied } => {
                 let and_item = item.as_ref().map_or_else(
                     String::new,
                     |i| format!(" and a {}", i),
                 );
 
-                format!("{team} received 🪙 {earned_coins}{and_item} from a Consumption Contest.")
-            },
+                if let Some(score) = tied {
+                    format!("{team} tied the Consumption Contest with {score} and received 🪙 {earned_coins}{and_item}.")
+                } else {
+                    format!("{team} received 🪙 {earned_coins}{and_item} from a Consumption Contest.")
+                }
+            },  
             ParsedTeamFeedEventText::PhotoContest { player, earned_coins } => {
                 match player {
                     None => format!("Earned {earned_coins} 🪙 in the Photo Contest."),
