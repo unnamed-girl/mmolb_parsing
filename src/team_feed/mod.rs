@@ -213,7 +213,6 @@ pub enum ParsedTeamFeedEventText<S> {
         team: EmojiTeam<S>,
         new_belt_holder_team: EmojiTeam<S>,
     },
-    // TODO Delete any of these that are still unused when parsing is up to date
     Released {
         team: S,
     },
@@ -221,6 +220,10 @@ pub enum ParsedTeamFeedEventText<S> {
         previous: S,
         new: Option<S>,
     },
+    ElectionAppliedLevelUps {
+        player_name: S,
+        num_level_ups: u32,
+    }
 }
 
 impl<S: Display> ParsedTeamFeedEventText<S> {
@@ -425,6 +428,9 @@ impl<S: Display> ParsedTeamFeedEventText<S> {
                     "➰ Lineal Belt"
                 };
                 format!("{team} lost the {belt} to {new_belt_holder_team}.")
+            }
+            ParsedTeamFeedEventText::ElectionAppliedLevelUps { player_name, num_level_ups } => {
+                format!("{player_name} applied {num_level_ups} pending level up(s).")
             }
         }
     }

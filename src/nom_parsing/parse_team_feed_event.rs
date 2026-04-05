@@ -139,7 +139,7 @@ fn game(event: &FeedEvent) -> impl TeamFeedEventParser<'_> {
             claimed_lineal_belt(event.season),
             lost_lineal_belt,
             fail(),
-        )),
+        ))
     )
 }
 
@@ -336,6 +336,8 @@ fn election<'output>() -> impl TeamFeedEventParser<'output> {
             .map(|(players, slot)| ParsedTeamFeedEventText::PlayersSwapped { players, slot }),
         team_election_purified
             .map(|(team, num_players_purified)| ParsedTeamFeedEventText::PlayersPurified { team, num_players_purified }),
+        election_applied_level_ups
+            .map(|(player_name, num_level_ups)| ParsedTeamFeedEventText::ElectionAppliedLevelUps { player_name, num_level_ups }),
 
     )))
 }
@@ -769,4 +771,11 @@ fn lost_lineal_belt(input: &str) -> IResult<'_, &str, ParsedTeamFeedEventText<&s
             new_belt_holder_team,
         },
     ))
+}
+
+pub(super) fn election_applied_level_ups(input: &str) -> IResult<'_, &str, (&str, u32)> {
+    let (input, player_name) = parse_terminated(" applied ").parse(input)?;
+    let (input, num_level_ups) = u32.parse(input)?;
+    let (input, _) = tag(" pending level up(s).").parse(input)?;
+    Ok((input, (player_name, num_level_ups)))
 }
