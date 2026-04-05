@@ -183,6 +183,10 @@ pub enum ParsedTeamFeedEventText<S> {
     PlayerGrow {
         grow: Grow<S>,
     },
+    PlayersPurified {
+        team: EmojiTeam<S>,
+        num_players_purified: u32,
+    },
     Callup {
         lesser_league_team: EmojiTeam<S>,
         greater_league_team: EmojiTeam<S>,
@@ -380,6 +384,9 @@ impl<S: Display> ParsedTeamFeedEventText<S> {
             },
             ParsedTeamFeedEventText::PlayerGrow { grow } => {
                 format!("{grow}")
+            },
+            ParsedTeamFeedEventText::PlayersPurified { team, num_players_purified } => {
+                format!("{team} Purified their roster, cleansing {num_players_purified} player(s) of Corruption.")
             },
             ParsedTeamFeedEventText::Callup { lesser_league_team, greater_league_team, slot, promoted_player_name, demoted_player_name } => {
                 format!(

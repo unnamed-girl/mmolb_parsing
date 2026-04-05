@@ -1512,6 +1512,16 @@ pub(super) fn players_election_swapped(input: &str) -> IResult<'_, &str, ([&str;
     Ok((input, ([first_player_name, second_player_name], position)))
 }
 
+pub(super) fn team_election_purified(input: &str) -> IResult<'_, &str, (EmojiTeam<&str>, u32)> {
+    let (input, emoji_team) = parse_terminated(" Purified their roster, cleansing ").parse(input)?;
+    let (_, team) = emoji_team_eof.parse(emoji_team)?;
+
+    let (input, players_cleansed) = u32.parse(input)?;
+    let (input, _) = tag(" player(s) of Corruption.").parse(input)?;
+
+    Ok((input, (team, players_cleansed)))
+}
+
 #[derive(Clone, Copy, Debug, Serialize, Deserialize, PartialEq)]
 pub struct GrowAttributeChange {
     pub attribute: Attribute,
