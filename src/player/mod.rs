@@ -5,7 +5,7 @@ use chrono::{DateTime, Utc};
 use strum::{Display, EnumIter, EnumString, IntoStaticStr};
 use uuid::Uuid;
 use crate::enums::{AttributeCategory, PitchCategory, PitchType};
-use crate::utils::{extra_fields_deserialize, MaybeRecognizedHelper, SometimesMissingHelper};
+use crate::utils::{extra_fields_deserialize, MaybeRecognizedHelper, SometimesMissingHelper, TimestampHelper};
 use crate::{
     enums::{
         Attribute, Day, EquipmentEffectType, EquipmentRarity, EquipmentSlot, GameStat, Handedness,
@@ -56,7 +56,15 @@ pub struct Player {
         skip_serializing_if = "AddedLaterResult::is_err"
     )]
     #[serde_as(as = "SometimesMissingHelper<_>")]
-    pub base_attribute_bonuses: AddedLaterResult<Vec<AttributeBonus>>, // TODO type
+    pub base_attribute_bonuses: AddedLaterResult<Vec<AttributeBonus>>,
+
+    // Added in s11
+    #[serde(
+        default = "SometimesMissingHelper::default_result",
+        skip_serializing_if = "AddedLaterResult::is_err"
+    )]
+    #[serde_as(as = "SometimesMissingHelper<_>")]
+    pub food_buffs: AddedLaterResult<Vec<FoodBuff>>,
 
     #[serde_as(as = "MaybeRecognizedHelper<_>")]
     pub bats: MaybeRecognizedResult<Handedness>,
@@ -243,10 +251,22 @@ pub struct AttributeBonus {
 
 #[serde_as]
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
+pub struct FoodBuff {
+    name: String,
+    emoji: String,
+    attribute: Attribute,
+    #[serde_as(as = "TimestampHelper")]
+    applied_at: DateTime<Utc>,
+    instance_id: Uuid,
+}
+
+#[serde_as]
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
 pub struct AppliedLevelUp {
     id: Uuid,
     level: u32,
     choice: LevelUpChoice,
+    #[serde_as(as = "TimestampHelper")]
     applied_at: DateTime<Utc>,
 }
 
