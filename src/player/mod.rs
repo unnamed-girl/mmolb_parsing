@@ -304,40 +304,40 @@ pub enum AttributeBonusSource {
 #[serde_as]
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
 pub struct AttributeBonus {
-    amount: f64,
-    source: AttributeBonusSource,
-    attribute: Attribute,
+    pub amount: f64,
+    pub source: AttributeBonusSource,
+    pub attribute: Attribute,
 }
 
 #[serde_as]
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
 pub struct FoodBuff {
-    name: String,
-    emoji: String,
-    attribute: Attribute,
+    pub name: String,
+    pub emoji: String,
+    pub attribute: Attribute,
     #[serde_as(as = "TimestampHelper")]
-    applied_at: DateTime<Utc>,
-    instance_id: Uuid,
+    pub applied_at: DateTime<Utc>,
+    pub instance_id: Uuid,
 }
 
 #[serde_as]
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
 pub struct AppliedLevelUp {
-    id: Uuid,
-    level: u32,
-    choice: LevelUpChoice,
+    pub id: Uuid,
+    pub level: u32,
+    pub choice: LevelUpChoice,
     #[serde_as(as = "TimestampHelper")]
-    applied_at: DateTime<Utc>,
+    pub applied_at: DateTime<Utc>,
 }
 
 #[serde_as]
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
 pub struct ScheduledLevelUp {
-    id: Uuid,
-    level: u32,
-    choice: LevelUpChoice,
+    pub id: Uuid,
+    pub level: u32,
+    pub choice: LevelUpChoice,
     #[serde_as(as = "TimestampHelper")]
-    scheduled_at: DateTime<Utc>,
+    pub scheduled_at: DateTime<Utc>,
 }
 
 /// A player's equipment field can be described by `HashMap<Result<EquipmentSlot, NotRecognized>, Option<PlayerEquipment>>`
