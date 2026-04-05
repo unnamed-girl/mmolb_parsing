@@ -25,13 +25,28 @@ pub struct Player {
     #[serde(rename = "_id", skip_serializing_if = "Option::is_none")]
     _id: Option<String>,
 
-    pub augments: u8,
+    // Removed in s11
+    #[serde(
+        default = "SometimesMissingHelper::default_result",
+        skip_serializing_if = "RemovedLaterResult::is_err"
+    )]
+    #[serde_as(as = "SometimesMissingHelper<_>")]
+    pub augments: RemovedLaterResult<u8>,
+
     #[serde_as(as = "MaybeRecognizedHelper<_>")]
     pub bats: MaybeRecognizedResult<Handedness>,
     #[serde_as(as = "MaybeRecognizedHelper<_>")]
     pub birthday: MaybeRecognizedResult<Day>,
     pub birthseason: u16,
-    pub durability: f64,
+
+    // Removed in s11
+    #[serde(
+        default = "SometimesMissingHelper::default_result",
+        skip_serializing_if = "RemovedLaterResult::is_err"
+    )]
+    #[serde_as(as = "SometimesMissingHelper<_>")]
+    pub durability: RemovedLaterResult<f64>,
+
     /// Not present on old, deleted players
     #[serde(
         default = "SometimesMissingHelper::default_result",
