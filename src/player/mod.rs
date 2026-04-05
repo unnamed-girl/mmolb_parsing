@@ -42,6 +42,22 @@ pub struct Player {
     #[serde_as(as = "SometimesMissingHelper<_>")]
     pub applied_level_ups: AddedLaterResult<Vec<AppliedLevelUp>>,
 
+    // Added in s11
+    #[serde(
+        default = "SometimesMissingHelper::default_result",
+        skip_serializing_if = "AddedLaterResult::is_err"
+    )]
+    #[serde_as(as = "SometimesMissingHelper<_>")]
+    pub augment_history: AddedLaterResult<Vec<()>>, // TODO type
+
+    // Added in s11
+    #[serde(
+        default = "SometimesMissingHelper::default_result",
+        skip_serializing_if = "AddedLaterResult::is_err"
+    )]
+    #[serde_as(as = "SometimesMissingHelper<_>")]
+    pub base_attribute_bonuses: AddedLaterResult<Vec<AttributeBonus>>, // TODO type
+
     #[serde_as(as = "MaybeRecognizedHelper<_>")]
     pub bats: MaybeRecognizedResult<Handedness>,
     #[serde_as(as = "MaybeRecognizedHelper<_>")]
@@ -195,9 +211,34 @@ pub enum LevelUpChoice {
     },
 }
 
+#[derive(
+    Debug,
+    Clone,
+    Serialize,
+    Deserialize,
+    EnumString,
+    IntoStaticStr,
+    Display,
+    PartialEq,
+    Eq,
+    Hash,
+    EnumIter,
+)]
+#[serde(rename_all = "snake_case")]
+pub enum AttributeBonusSource {
+    GenerationPitching,
+    GenerationBattingBaserunning,
+    GenerationDefense,
+    GenerationLuck,
+    LevelUp,
+}
+
 #[serde_as]
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
-pub struct AppliedLevelUpChoice {
+pub struct AttributeBonus {
+    amount: f64,
+    source: AttributeBonusSource,
+    attribute: Attribute,
 }
 
 #[serde_as]
@@ -205,7 +246,7 @@ pub struct AppliedLevelUpChoice {
 pub struct AppliedLevelUp {
     id: Uuid,
     level: u32,
-    choice: AppliedLevelUpChoice,
+    choice: LevelUpChoice,
     applied_at: DateTime<Utc>,
 }
 
