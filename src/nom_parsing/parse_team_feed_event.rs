@@ -755,7 +755,7 @@ fn lost_lineal_belt(input: &str) -> IResult<'_, &str, ParsedTeamFeedEventText<&s
     let (input, team_emoji_name) = alt((
        parse_terminated(" lost the Lineal Belt to "),
        // Emoji was added later
-       parse_terminated(" lost the ➰Lineal Belt to "),
+       parse_terminated(" lost the ➰ Lineal Belt to "),
     )).parse(input)?;
     let (_, team) = emoji_team_eof.parse(team_emoji_name)?;
 
