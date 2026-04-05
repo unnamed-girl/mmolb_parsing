@@ -5,15 +5,9 @@ use crate::nom_parsing::shared::{
     parse_until_exclamation_point_eof, player_moved, player_relegated,
 };
 use crate::parsed_event::{EmojiPlayer, EmojiTeam};
-use crate::{
-    enums::{FeedEventType, ModificationType},
-    feed_event::{FeedEvent, FeedEventParseError},
-    nom_parsing::shared::{
-        emojiless_item, feed_delivery, parse_terminated, sentence_eof, try_from_word, verify_name,
-    },
-    team_feed::ParsedTeamFeedEventText,
-    time::{Breakpoints, Timestamp},
-};
+use crate::{enums::{FeedEventType, ModificationType}, feed_event::{FeedEvent, FeedEventParseError}, nom_parsing::shared::{
+    emojiless_item, feed_delivery, parse_terminated, sentence_eof, try_from_word, verify_name,
+}, team_feed::ParsedTeamFeedEventText, time::{Breakpoints, Timestamp}, MaybeRecognizedResult};
 use nom::bytes::complete::take_while;
 use nom::combinator::{eof, verify};
 use nom::multi::{many1, separated_list1};
@@ -26,6 +20,7 @@ use nom::{
     sequence::{delimited, preceded, separated_pair, terminated},
     Finish, Parser,
 };
+use crate::enums::Day;
 
 trait TeamFeedEventParser<'output>:
     Parser<&'output str, Output = ParsedTeamFeedEventText<&'output str>, Error = Error<'output>>
@@ -141,7 +136,7 @@ fn game(event: &FeedEvent) -> impl TeamFeedEventParser<'_> {
             }),
             feed_event_effloresce
                 .map(|player_name| ParsedTeamFeedEventText::PlayerEffloresce { player_name }),
-            claimed_lineal_belt,
+            claimed_lineal_belt(event.season),
             lost_lineal_belt,
             fail(),
         )),
@@ -732,22 +727,28 @@ fn retirement<'output>(emoji: bool) -> impl TeamFeedEventParser<'output> {
         })
 }
 
-fn claimed_lineal_belt(input: &str) -> IResult<'_, &str, ParsedTeamFeedEventText<&str>> {
-    let (input, team_emoji_name) =
-        parse_terminated(" claimed the Lineal Belt from ").parse(input)?;
-    let (_, team) = emoji_team_eof.parse(team_emoji_name)?;
+fn claimed_lineal_belt(season: u8) -> impl Fn(&str) -> IResult<'_, &str, ParsedTeamFeedEventText<&str>> {
+    move |input| {
+        let (input, team_emoji_name) = if season < 10 {
+            parse_terminated(" claimed the Lineal Belt from ").parse(input)?
+        } else {
+            parse_terminated(" claimed the ➰ Lineal Belt from ").parse(input)?
+        };
+        let (_, team) = emoji_team_eof.parse(team_emoji_name)?;
 
-    let (input, old_belt_holder_team_emoji_name) =
-        parse_until_exclamation_point_eof.parse(input)?;
-    let (_, old_belt_holder_team) = emoji_team_eof.parse(old_belt_holder_team_emoji_name)?;
+        let (input, old_belt_holder_team_emoji_name) =
+            parse_until_exclamation_point_eof.parse(input)?;
+        let (_, old_belt_holder_team) = emoji_team_eof.parse(old_belt_holder_team_emoji_name)?;
 
-    Ok((
-        input,
-        ParsedTeamFeedEventText::ClaimedLinealBelt {
-            team,
-            old_belt_holder_team,
-        },
-    ))
+        Ok((
+            input,
+            ParsedTeamFeedEventText::ClaimedLinealBelt {
+                team,
+                old_belt_holder_team,
+            },
+        ))
+
+    }
 }
 
 fn lost_lineal_belt(input: &str) -> IResult<'_, &str, ParsedTeamFeedEventText<&str>> {

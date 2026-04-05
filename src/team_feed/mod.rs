@@ -411,10 +411,20 @@ impl<S: Display> ParsedTeamFeedEventText<S> {
                 format!("{player_name} is Efflorescing and sheds their Corruption!")
             }
             ParsedTeamFeedEventText::ClaimedLinealBelt { team, old_belt_holder_team} => {
-                format!("{team} claimed the Lineal Belt from {old_belt_holder_team}!")
+                let belt = if Breakpoints::Season10.before(event.season as u32, event.day.as_ref().ok().copied(), None) {
+                    "Lineal Belt"
+                } else {
+                    "➰ Lineal Belt"
+                };
+                format!("{team} claimed the {belt} from {old_belt_holder_team}!")
             }
             ParsedTeamFeedEventText::LostLinealBelt { team, new_belt_holder_team } => {
-                format!("{team} lost the Lineal Belt to {new_belt_holder_team}.")
+                let belt = if Breakpoints::Season10.before(event.season as u32, event.day.as_ref().ok().copied(), None) {
+                    "Lineal Belt"
+                } else {
+                    "➰ Lineal Belt"
+                };
+                format!("{team} lost the {belt} to {new_belt_holder_team}.")
             }
         }
     }
