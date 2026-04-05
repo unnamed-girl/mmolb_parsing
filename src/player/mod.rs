@@ -47,7 +47,7 @@ pub struct Player {
         skip_serializing_if = "AddedLaterResult::is_err"
     )]
     #[serde_as(as = "SometimesMissingHelper<_>")]
-    pub pending_level_ups: AddedLaterResult<Vec<()>>, // TODO type
+    pub pending_level_ups: AddedLaterResult<Vec<PendingLevelUp>>,
     // Added in s11
     #[serde(
         default = "SometimesMissingHelper::default_result",
@@ -338,6 +338,16 @@ pub struct ScheduledLevelUp {
     pub choice: LevelUpChoice,
     #[serde_as(as = "TimestampHelper")]
     pub scheduled_at: DateTime<Utc>,
+}
+
+#[serde_as]
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
+pub struct PendingLevelUp {
+    pub id: Uuid,
+    pub level: u32,
+    #[serde_as(as = "Option<TimestampHelper>")]
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub earned_at: Option<DateTime<Utc>>,
 }
 
 /// A player's equipment field can be described by `HashMap<Result<EquipmentSlot, NotRecognized>, Option<PlayerEquipment>>`
