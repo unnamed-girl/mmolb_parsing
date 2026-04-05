@@ -41,6 +41,28 @@ pub struct Player {
     )]
     #[serde_as(as = "SometimesMissingHelper<_>")]
     pub applied_level_ups: AddedLaterResult<Vec<AppliedLevelUp>>,
+    // Added in s11
+    #[serde(
+        default = "SometimesMissingHelper::default_result",
+        skip_serializing_if = "AddedLaterResult::is_err"
+    )]
+    #[serde_as(as = "SometimesMissingHelper<_>")]
+    pub pending_level_ups: AddedLaterResult<Vec<()>>, // TODO type
+    // Added in s11
+    #[serde(
+        default = "SometimesMissingHelper::default_result",
+        skip_serializing_if = "AddedLaterResult::is_err"
+    )]
+    #[serde_as(as = "SometimesMissingHelper<_>")]
+    pub scheduled_level_ups: AddedLaterResult<Vec<ScheduledLevelUp>>, // TODO type
+
+    // Added in s11
+    #[serde(
+        default = "SometimesMissingHelper::default_result",
+        skip_serializing_if = "AddedLaterResult::is_err"
+    )]
+    #[serde_as(as = "SometimesMissingHelper<_>")]
+    pub last_season_level_grant_day: AddedLaterResult<u32>,
 
     // Added in s11
     #[serde(
@@ -65,6 +87,14 @@ pub struct Player {
     )]
     #[serde_as(as = "SometimesMissingHelper<_>")]
     pub food_buffs: AddedLaterResult<Vec<FoodBuff>>,
+
+    // Added in s11 (I think)
+    #[serde(
+        default = "SometimesMissingHelper::default_result",
+        skip_serializing_if = "AddedLaterResult::is_err"
+    )]
+    #[serde_as(as = "SometimesMissingHelper<_>")]
+    pub priority: AddedLaterResult<f64>,
 
     #[serde_as(as = "MaybeRecognizedHelper<_>")]
     pub bats: MaybeRecognizedResult<Handedness>,
@@ -298,6 +328,16 @@ pub struct AppliedLevelUp {
     choice: LevelUpChoice,
     #[serde_as(as = "TimestampHelper")]
     applied_at: DateTime<Utc>,
+}
+
+#[serde_as]
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
+pub struct ScheduledLevelUp {
+    id: Uuid,
+    level: u32,
+    choice: LevelUpChoice,
+    #[serde_as(as = "TimestampHelper")]
+    scheduled_at: DateTime<Utc>,
 }
 
 /// A player's equipment field can be described by `HashMap<Result<EquipmentSlot, NotRecognized>, Option<PlayerEquipment>>`
