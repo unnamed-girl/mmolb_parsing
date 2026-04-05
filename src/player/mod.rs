@@ -313,6 +313,12 @@ pub enum LevelUpChoice {
         pitch_type: PitchType,
         bonus: f64,
     },
+    PitchForget {
+        id: Uuid,
+        label: String,
+        #[serde_as(as = "PitchTypeFromAcronym")]
+        old_pitch: PitchType,
+    },
 }
 
 #[derive(
