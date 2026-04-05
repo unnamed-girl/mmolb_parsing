@@ -5,7 +5,7 @@ use serde::{Deserialize, Serialize};
 use serde_with::serde_as;
 
 use crate::enums::Slot;
-use crate::feed_event::{AttributeChange, GreaterAugment};
+use crate::feed_event::{AttributeChange, GreaterAugment, ParsedFeedEventText};
 pub use crate::nom_parsing::parse_team_feed_event::parse_team_feed_event;
 use crate::nom_parsing::shared::{FeedEventDoorPrize, FeedEventParty, Grow, PositionSwap};
 use crate::parsed_event::{EmojiPlayer, EmojiTeam, GrowAttributeChange};
@@ -68,6 +68,9 @@ pub enum ParsedTeamFeedEventText<S> {
         delivery: FeedDelivery<S>,
     },
     SpecialDelivery {
+        delivery: FeedDelivery<S>,
+    },
+    ConsumptionContest {
         delivery: FeedDelivery<S>,
     },
     PhotoContest {
@@ -205,6 +208,7 @@ impl<S: Display> ParsedTeamFeedEventText<S> {
             ParsedTeamFeedEventText::Delivery { delivery } => delivery.unparse(event, "Delivery"),
             ParsedTeamFeedEventText::Shipment { delivery } => delivery.unparse(event, "Shipment"),
             ParsedTeamFeedEventText::SpecialDelivery { delivery } => delivery.unparse(event, "Special Delivery"),
+            ParsedTeamFeedEventText::ConsumptionContest { delivery } => delivery.unparse(event, "the Consumption Contest"),
             ParsedTeamFeedEventText::PhotoContest { player, earned_coins } => {
                 match player {
                     None => format!("Earned {earned_coins} 🪙 in the Photo Contest."),
