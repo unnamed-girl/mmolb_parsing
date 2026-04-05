@@ -19,7 +19,6 @@ use nom::{
     sequence::{delimited, preceded, separated_pair, terminated},
     Finish, Parser,
 };
-use crate::team_feed::ParsedTeamFeedEventText;
 
 trait PlayerFeedEventParser<'output>:
     Parser<&'output str, Output = ParsedPlayerFeedEventText<&'output str>, Error = Error<'output>>

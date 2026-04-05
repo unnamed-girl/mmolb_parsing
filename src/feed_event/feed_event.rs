@@ -1,10 +1,8 @@
+use crate::utils::SometimesMissingHelper;
 use crate::time::Breakpoints;
-use crate::{
-    enums::{CelestialEnergyTier, Day, FeedEventType, LinkType, SeasonStatus},
-    utils::{
-        extra_fields_deserialize, MaybeRecognizedHelper, MaybeRecognizedResult, TimestampHelper,
-    },
-};
+use crate::{enums::{CelestialEnergyTier, Day, FeedEventType, LinkType, SeasonStatus}, utils::{
+    extra_fields_deserialize, MaybeRecognizedHelper, MaybeRecognizedResult, TimestampHelper,
+}, AddedLaterResult};
 use chrono::{DateTime, Utc};
 use serde::{Deserialize, Serialize};
 use serde_with::serde_as;
@@ -59,9 +57,24 @@ pub struct FeedEvent {
     pub links: Vec<Link>,
 
     // Added in s11
-    pub _id: String,
-    pub legacy_event_key: String,
-    pub legacy_source: FeedEventLegacySource,
+    #[serde_as(as = "SometimesMissingHelper<_>")]
+    #[serde(
+        default = "SometimesMissingHelper::default_result",
+        skip_serializing_if = "AddedLaterResult::is_err"
+    )]
+    pub _id: AddedLaterResult<String>,
+    #[serde_as(as = "SometimesMissingHelper<_>")]
+    #[serde(
+        default = "SometimesMissingHelper::default_result",
+        skip_serializing_if = "AddedLaterResult::is_err"
+    )]
+    pub legacy_event_key: AddedLaterResult<String>,
+    #[serde_as(as = "SometimesMissingHelper<_>")]
+    #[serde(
+        default = "SometimesMissingHelper::default_result",
+        skip_serializing_if = "AddedLaterResult::is_err"
+    )]
+    pub legacy_source: AddedLaterResult<FeedEventLegacySource>,
 
     #[serde(flatten, deserialize_with = "extra_fields_deserialize")]
     pub extra_fields: serde_json::Map<String, serde_json::Value>,
