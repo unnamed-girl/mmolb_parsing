@@ -1,3 +1,4 @@
+use crate::utils::PitchTypeFromAcronym;
 pub use serde::{Deserialize, Serialize};
 use serde_with::serde_as;
 use std::collections::HashMap;
@@ -253,6 +254,7 @@ pub struct Player {
     pub extra_fields: serde_json::Map<String, serde_json::Value>,
 }
 
+#[serde_as]
 #[derive(
     Debug,
     Serialize,
@@ -276,6 +278,18 @@ pub enum LevelUpChoice {
         name: String,
         label: String,
         description: String,
+    },
+    PitchLearn {
+        id: Uuid,
+        label: String,
+        #[serde_as(as = "PitchTypeFromAcronym")]
+        pitch_type: PitchType,
+    },
+    PitchCategoryBonus {
+        id: Uuid,
+        label: String,
+        category: PitchCategory,
+        bonus: f64,
     },
 }
 
@@ -346,8 +360,15 @@ pub struct ScheduledLevelUp {
     pub id: Uuid,
     pub level: u32,
     pub choice: LevelUpChoice,
-    #[serde_as(as = "TimestampHelper")]
-    pub scheduled_at: DateTime<Utc>,
+    #[serde_as(as = "Option<TimestampHelper>")]
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub scheduled_at: Option<DateTime<Utc>>,
+    #[serde_as(as = "Option<TimestampHelper>")]
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub applied_at: Option<DateTime<Utc>>,
+    #[serde_as(as = "Option<TimestampHelper>")]
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub effective_at: Option<DateTime<Utc>>,
 }
 
 #[serde_as]

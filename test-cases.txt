@@ -42,6 +42,8 @@ Team feeds:
 
 Players:
 - 68fd2a4244251994ca067564
+- 6847088df9e52e5b4416fbc5
+- 6963b9a0f7a88c84da1977d1
 
 Player feeds:
 - 6841bf728d67c531e89fe525

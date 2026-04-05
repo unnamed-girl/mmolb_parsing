@@ -1,6 +1,6 @@
 use std::{any::type_name, fmt::Debug, marker::PhantomData, str::FromStr};
 
-use chrono::{DateTime, NaiveDateTime, Utc};
+use chrono::{DateTime, NaiveDateTime, Timelike, Utc};
 use serde::{
     de::{Error, Visitor},
     Deserialize, Deserializer, Serialize, Serializer,
@@ -306,6 +306,7 @@ impl SerializeAs<u8> for StarHelper {
 
 pub(crate) struct TimestampHelper;
 const FORMAT: &str = "%Y-%m-%dT%H:%M:%S%.6f+00:00";
+const ROUND_FORMAT: &str = "%Y-%m-%dT%H:%M:%S+00:00";
 
 impl<'de> DeserializeAs<'de, DateTime<Utc>> for TimestampHelper {
     fn deserialize_as<D>(deserializer: D) -> Result<DateTime<Utc>, D::Error>
@@ -323,8 +324,34 @@ impl SerializeAs<DateTime<Utc>> for TimestampHelper {
     where
         S: Serializer,
     {
-        let s = format!("{}", date.format(FORMAT));
+        let s = if date.nanosecond() == 0 {
+            format!("{}", date.format(ROUND_FORMAT))
+        } else {
+            format!("{}", date.format(FORMAT))
+        };
         serializer.serialize_str(&s)
+    }
+}
+
+pub(crate) struct PitchTypeFromAcronym;
+
+impl<'de> DeserializeAs<'de, PitchType> for PitchTypeFromAcronym {
+    fn deserialize_as<D>(deserializer: D) -> Result<PitchType, D::Error>
+    where
+        D: Deserializer<'de>,
+    {
+        let s = String::deserialize(deserializer)?;
+        PitchType::from_acronym(&s).map_err(serde::de::Error::custom)
+    }
+}
+
+impl SerializeAs<PitchType> for PitchTypeFromAcronym {
+    fn serialize_as<S>(pitch_type: &PitchType, serializer: S) -> Result<S::Ok, S::Error>
+    where
+        S: Serializer,
+    {
+        let s = pitch_type.acronym();
+        serializer.serialize_str(s)
     }
 }
 
