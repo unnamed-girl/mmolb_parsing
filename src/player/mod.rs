@@ -279,6 +279,13 @@ pub enum LevelUpChoice {
         label: String,
         description: String,
     },
+    GreaterBoon {
+        id: Uuid,
+        boon: Modification,
+        name: String,
+        label: String,
+        description: String,
+    },
     PitchLearn {
         id: Uuid,
         label: String,
@@ -289,6 +296,21 @@ pub enum LevelUpChoice {
         id: Uuid,
         label: String,
         category: PitchCategory,
+        bonus: f64,
+    },
+    PitchReplace {
+        id: Uuid,
+        label: String,
+        #[serde_as(as = "PitchTypeFromAcronym")]
+        old_pitch: PitchType,
+        #[serde_as(as = "PitchTypeFromAcronym")]
+        new_pitch: PitchType,
+    },
+    PitchTypeBonus {
+        id: Uuid,
+        label: String,
+        #[serde_as(as = "PitchTypeFromAcronym")]
+        pitch_type: PitchType,
         bonus: f64,
     },
 }
