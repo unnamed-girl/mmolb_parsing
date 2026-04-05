@@ -8,7 +8,7 @@ use crate::enums::Slot;
 use crate::feed_event::{AttributeChange, GreaterAugment, ParsedFeedEventText};
 pub use crate::nom_parsing::parse_team_feed_event::parse_team_feed_event;
 use crate::nom_parsing::shared::{FeedEventDoorPrize, FeedEventParty, Grow, PositionSwap};
-use crate::parsed_event::{EmojiPlayer, EmojiTeam, GrowAttributeChange};
+use crate::parsed_event::{EmojiPlayer, EmojiTeam, GrowAttributeChange, Item};
 use crate::{
     enums::{Attribute, FeedEventType, ModificationType},
     feed_event::{
@@ -70,8 +70,15 @@ pub enum ParsedTeamFeedEventText<S> {
     SpecialDelivery {
         delivery: FeedDelivery<S>,
     },
-    ConsumptionContest {
+    ConsumptionContestToPlayer {
         delivery: FeedDelivery<S>,
+    },
+    ConsumptionContestToTeam {
+        team: EmojiTeam<S>,
+        earned_coins: u32,
+        item: Option<Item<S>>,
+        // TODO Delete this commented-out field if it's not necessary
+        // discarded: Option<Item<S>>,
     },
     PhotoContest {
         player: Option<EmojiPlayer<S>>,
@@ -208,7 +215,19 @@ impl<S: Display> ParsedTeamFeedEventText<S> {
             ParsedTeamFeedEventText::Delivery { delivery } => delivery.unparse(event, "Delivery"),
             ParsedTeamFeedEventText::Shipment { delivery } => delivery.unparse(event, "Shipment"),
             ParsedTeamFeedEventText::SpecialDelivery { delivery } => delivery.unparse(event, "Special Delivery"),
-            ParsedTeamFeedEventText::ConsumptionContest { delivery } => delivery.unparse(event, "the Consumption Contest"),
+            ParsedTeamFeedEventText::ConsumptionContestToPlayer { delivery } => delivery.unparse(event, "the Consumption Contest"),
+            ParsedTeamFeedEventText::ConsumptionContestToTeam { team, earned_coins, item } => {
+                // let discarded = discarded.as_ref().map_or_else(
+                //     String::new,
+                //     |d| format!(" They discard their {d}."),
+                // );
+                let and_item = item.as_ref().map_or_else(
+                    String::new,
+                    |i| format!(" and a {}", i),
+                );
+
+                format!("{team} received 🪙 {earned_coins}{and_item} from a Consumption Contest.")
+            },
             ParsedTeamFeedEventText::PhotoContest { player, earned_coins } => {
                 match player {
                     None => format!("Earned {earned_coins} 🪙 in the Photo Contest."),

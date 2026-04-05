@@ -1,8 +1,4 @@
-use super::shared::{
-    emoji, emoji_team_eof, emoji_team_eof_maybe_no_space, feed_event_contained,
-    feed_event_door_prize, feed_event_equipped_door_prize, feed_event_party, feed_event_wither,
-    parse_until_period_eof, player_positions_swapped, purified, Error, IResult,
-};
+use super::shared::{emoji, emoji_team_eof, emoji_team_eof_maybe_no_space, feed_event_consumption_contest_with_item_and_coin, feed_event_contained, feed_event_door_prize, feed_event_equipped_door_prize, feed_event_party, feed_event_wither, parse_until_period_eof, player_positions_swapped, purified, Error, IResult};
 use crate::feed_event::{AttributeChange, GreaterAugment};
 use crate::nom_parsing::shared::{
     active_slot, falling_star, feed_event_effloresce, feed_event_efflorescence_growth, grow,
@@ -113,7 +109,10 @@ fn game(event: &FeedEvent) -> impl TeamFeedEventParser<'_> {
             feed_delivery("Special Delivery")
                 .map(|delivery| ParsedTeamFeedEventText::SpecialDelivery { delivery }),
             feed_delivery("the Consumption Contest")
-                .map(|delivery| ParsedTeamFeedEventText::ConsumptionContest { delivery }),
+                .map(|delivery| ParsedTeamFeedEventText::ConsumptionContestToPlayer { delivery }),
+            feed_event_consumption_contest_with_item_and_coin
+                .map(|(team, earned_coins, item)|
+                    ParsedTeamFeedEventText::ConsumptionContestToTeam { team, earned_coins, item }),
             photo_contest(),
             falling_star(event).map(|(player_name, outcome)| {
                 ParsedTeamFeedEventText::FallingStarOutcome {

@@ -15,7 +15,6 @@ use nom::{
 use nom_language::error::VerboseError;
 use std::fmt::{Display, Formatter};
 use std::{fmt::Debug, str::FromStr};
-
 use crate::enums::{
     Attribute, BenchSlot, CelestialEnergyTier, FoodName, FullSlot, ModificationType, Slot,
 };
@@ -25,7 +24,7 @@ use crate::parsed_event::{
     ItemPrize, WitherStruggle,
 };
 use crate::player::{Deserialize, Serialize};
-use crate::team_feed::PurifiedOutcome;
+use crate::team_feed::{ParsedTeamFeedEventText, PurifiedOutcome};
 use crate::{
     enums::{
         Base, BatterStat, Day, FairBallDestination, FairBallType, HomeAway, NowBattingStats, Place,
@@ -1358,6 +1357,28 @@ pub(super) fn feed_event_efflorescence_growth(
 
 pub(super) fn feed_event_effloresce(input: &str) -> IResult<'_, &str, &str> {
     parse_terminated(" is Efflorescing and sheds their Corruption!").parse(input)
+}
+
+pub(super) fn feed_event_consumption_contest_with_item_and_coin(input: &str) -> IResult<'_, &str, (EmojiTeam<&str>, u32, Option<Item<&str>>)> {
+    let (input, team_emoji_name) = parse_terminated(" received 🪙 ").parse(input)?;
+    let (_, team) = emoji_team_eof.parse(team_emoji_name)?;
+
+    let (input, coins_received) = u32.parse(input)?;
+    let (input, item) = opt(and_item).parse(input)?;
+
+    let (input, _) = tag(" from a Consumption Contest").parse(input)?;
+    // let (input, discarded) = opt(discarded_item()).parse(input)?;
+    let (input, _) = tag(".").parse(input)?;
+
+    Ok((input, (team, coins_received, item)))
+}
+
+pub(super) fn and_item(input: &str) -> IResult<'_, &str, Item<&str>> {
+    let (input, _) = tag(" and a ").parse(input)?;
+
+    let (input, item) = item.parse(input)?;
+    
+    Ok((input, item))
 }
 
 fn bench_slot(input: &str) -> IResult<'_, &str, BenchSlot> {
