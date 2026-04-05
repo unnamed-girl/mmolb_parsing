@@ -6,7 +6,7 @@ use serde_with::serde_as;
 use crate::feed_event::PlayerGreaterAugment;
 pub use crate::nom_parsing::parse_player_feed_event::parse_player_feed_event;
 use crate::nom_parsing::shared::{FeedEventDoorPrize, FeedEventParty, Grow, PositionSwap};
-use crate::team_feed::PurifiedOutcome;
+use crate::team_feed::{ParsedTeamFeedEventText, PurifiedOutcome};
 use crate::{
     enums::{Attribute, FeedEventType, ModificationType},
     feed_event::{
@@ -120,6 +120,9 @@ pub enum ParsedPlayerFeedEventText<S> {
     PlayerGrewInEfflorescence {
         player_name: S,
         growths: [GrowAttributeChange; 2],
+    },
+    PlayerEffloresce {
+        player_name: S,
     },
     PlayerPositionsSwapped {
         swap: PositionSwap<S>,
@@ -246,6 +249,9 @@ impl<S: Display> ParsedPlayerFeedEventText<S> {
             }
             ParsedPlayerFeedEventText::PlayerGrewInEfflorescence { player_name, growths: [grow_1, grow_2] } => {
                 format!("{player_name} grew in the 🌹 Efflorescence: {grow_1}, {grow_2}.")
+            }
+            ParsedPlayerFeedEventText::PlayerEffloresce { player_name} => {
+                format!("{player_name} is Efflorescing and sheds their Corruption!")
             }
             ParsedPlayerFeedEventText::PlayerPositionsSwapped { swap } => {
                 format!("{swap}")
