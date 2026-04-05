@@ -1503,10 +1503,11 @@ pub(super) fn player_positions_swapped(input: &str) -> IResult<'_, &str, Positio
     ))
 }
 
-pub(super) fn players_swapped(input: &str) -> IResult<'_, &str, ([&str; 2], Slot)> {
+pub(super) fn players_election_swapped(input: &str) -> IResult<'_, &str, ([&str; 2], Slot)> {
     let (input, first_player_name) = parse_terminated(" swapped with ").parse(input)?;
     let (input, second_player_name) = parse_terminated(" in ").parse(input)?;
     let (input, position) = active_slot.parse(input)?;
+    let (input, _) = tag(".").parse(input)?;
 
     Ok((input, ([first_player_name, second_player_name], position)))
 }

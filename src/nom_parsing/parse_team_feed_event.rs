@@ -1,4 +1,4 @@
-use super::shared::{emoji, emoji_team_eof, emoji_team_eof_maybe_no_space, feed_event_consumption_contest_with_item_and_coin, feed_event_contained, feed_event_delivery_discarded, feed_event_door_prize, feed_event_equipped_door_prize, feed_event_party, feed_event_wither, parse_until_period_eof, player_positions_swapped, players_swapped, purified, Error, IResult};
+use super::shared::{emoji, emoji_team_eof, emoji_team_eof_maybe_no_space, feed_event_consumption_contest_with_item_and_coin, feed_event_contained, feed_event_delivery_discarded, feed_event_door_prize, feed_event_equipped_door_prize, feed_event_party, feed_event_wither, parse_until_period_eof, player_positions_swapped, players_election_swapped, purified, Error, IResult};
 use crate::feed_event::{AttributeChange, GreaterAugment};
 use crate::nom_parsing::shared::{
     active_slot, falling_star, feed_event_effloresce, feed_event_efflorescence_growth, grow,
@@ -169,8 +169,6 @@ fn augment(event: &FeedEvent) -> impl TeamFeedEventParser<'_> {
             }),
             player_positions_swapped
                 .map(|swap| ParsedTeamFeedEventText::PlayerPositionsSwapped { swap }),
-            players_swapped
-                .map(|(players, slot)| ParsedTeamFeedEventText::PlayersSwapped { players, slot }),
             grow.map(|grow| ParsedTeamFeedEventText::PlayerGrow { grow }),
             fail(),
         )),
@@ -336,7 +334,13 @@ fn roster<'output>() -> impl TeamFeedEventParser<'output> {
 }
 
 fn election<'output>() -> impl TeamFeedEventParser<'output> {
-    context("Election Feed Event", alt((callup, greater_augment)))
+    context("Election Feed Event", alt((
+        callup,
+        greater_augment,
+        players_election_swapped
+            .map(|(players, slot)| ParsedTeamFeedEventText::PlayersSwapped { players, slot }),
+
+    )))
 }
 
 fn callup(input: &str) -> IResult<'_, &str, ParsedTeamFeedEventText<&str>> {
@@ -744,7 +748,11 @@ fn claimed_lineal_belt(input: &str) -> IResult<'_, &str, ParsedTeamFeedEventText
 }
 
 fn lost_lineal_belt(input: &str) -> IResult<'_, &str, ParsedTeamFeedEventText<&str>> {
-    let (input, team_emoji_name) = parse_terminated(" lost the Lineal Belt to ").parse(input)?;
+    let (input, team_emoji_name) = alt((
+       parse_terminated(" lost the Lineal Belt to "),
+       // Emoji was added later
+       parse_terminated(" lost the ➰Lineal Belt to "),
+    )).parse(input)?;
     let (_, team) = emoji_team_eof.parse(team_emoji_name)?;
 
     let (input, new_belt_holder_team_emoji_name) = parse_until_period_eof.parse(input)?;
