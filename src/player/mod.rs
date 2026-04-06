@@ -20,6 +20,11 @@ use crate::{
     EmptyArrayOr,
 };
 
+// Needed for skip_serializing_if
+fn is_false(b: &bool) -> bool {
+    *b == false
+}
+
 #[serde_as]
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
 #[serde(rename_all = "PascalCase")]
@@ -201,6 +206,11 @@ pub struct Player {
     #[serde_as(as = "SometimesMissingHelper<_>")]
     pub base_attributes: AddedLaterResult<BaseAttributes>,
 
+    // Added in s11, but isn't on all players. I think it's always `true` if
+    // it's present
+    #[serde(default, skip_serializing_if = "is_false")]
+    pub legacy: bool,
+
     #[serde(
         default = "SometimesMissingHelper::default_result",
         skip_serializing_if = "AddedLaterResult::is_err",
@@ -341,6 +351,7 @@ pub enum AttributeBonusSource {
     GenerationDefense,
     GenerationLuck,
     LevelUp,
+    LegacyAttributeMigration,
 }
 
 #[serde_as]
