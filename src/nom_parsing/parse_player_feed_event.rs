@@ -527,6 +527,13 @@ fn election<'output>(_event: &'output FeedEvent) -> impl PlayerFeedEventParser<'
             player_greater_augment_result,
             player_retracted_greater_augment_result,
             player_retroactive_greater_augment_result,
+            // Copy of the same event under augment
+            purified.map(
+                |(player_name, outcome)| ParsedPlayerFeedEventText::Purified {
+                    player_name,
+                    outcome,
+                },
+            ),
         )),
     )
 }
