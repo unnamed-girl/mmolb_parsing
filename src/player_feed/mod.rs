@@ -6,7 +6,7 @@ use serde_with::serde_as;
 use crate::feed_event::PlayerGreaterAugment;
 pub use crate::nom_parsing::parse_player_feed_event::parse_player_feed_event;
 use crate::nom_parsing::shared::{FeedEventDoorPrize, FeedEventParty, Grow, PositionSwap};
-use crate::team_feed::PurifiedOutcome;
+use crate::team_feed::{ParsedTeamFeedEventText, PurifiedOutcome};
 use crate::{
     enums::{Attribute, FeedEventType, ModificationType},
     feed_event::{
@@ -154,6 +154,16 @@ pub enum ParsedPlayerFeedEventText<S> {
         team_emoji: S,
         player_name: S,
     },
+    Restyle {
+        old_name: S,
+        new_name: S,
+    },
+    // This only happens for s10-and-later augments
+    Augment {
+        player_name: S,
+        attribute: Attribute,
+        amount: u32,
+    }
 }
 
 impl<S: Display> ParsedPlayerFeedEventText<S> {
@@ -288,6 +298,12 @@ impl<S: Display> ParsedPlayerFeedEventText<S> {
             },
             ParsedPlayerFeedEventText::PlayerMoved { team_emoji, player_name } => {
                 format!("{team_emoji} {player_name} was moved to the Bench.")
+            },
+            ParsedPlayerFeedEventText::Restyle { old_name, new_name } => {
+                format!("{old_name} visited the Restylist Salon and emerged as {new_name} with fresh tastes.")
+            }
+            ParsedPlayerFeedEventText::Augment { player_name, amount, attribute } => {
+                format!("{player_name} was Augmented with +{amount} {attribute}.")
             }
         }
     }

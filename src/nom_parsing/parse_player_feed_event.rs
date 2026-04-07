@@ -1,4 +1,4 @@
-use super::shared::{falling_star, feed_event_contained, feed_event_door_prize, feed_event_effloresce, feed_event_efflorescence_growth, feed_event_equipped_door_prize, feed_event_party, feed_event_wither, grow, player_moved, player_positions_swapped, player_relegated, purified, Error, IResult};
+use super::shared::{augment_event, falling_star, feed_event_contained, feed_event_door_prize, feed_event_effloresce, feed_event_efflorescence_growth, feed_event_equipped_door_prize, feed_event_party, feed_event_wither, grow, player_moved, player_positions_swapped, player_relegated, purified, restyle, Error, IResult};
 use crate::feed_event::PlayerGreaterAugment;
 use crate::{
     enums::{FeedEventType, ModificationType},
@@ -19,6 +19,7 @@ use nom::{
     sequence::{delimited, preceded, separated_pair, terminated},
     Finish, Parser,
 };
+use crate::team_feed::ParsedTeamFeedEventText;
 
 trait PlayerFeedEventParser<'output>:
     Parser<&'output str, Output = ParsedPlayerFeedEventText<&'output str>, Error = Error<'output>>
@@ -155,6 +156,8 @@ fn augment<'output>(event: &'output FeedEvent) -> impl PlayerFeedEventParser<'ou
             player_positions_swapped
                 .map(|swap| ParsedPlayerFeedEventText::PlayerPositionsSwapped { swap }),
             grow.map(|grow| ParsedPlayerFeedEventText::PlayerGrow { grow }),
+            restyle.map(|(old_name, new_name)| ParsedPlayerFeedEventText::Restyle { old_name, new_name }),
+            augment_event.map(|(player_name, amount, attribute)| ParsedPlayerFeedEventText::Augment { player_name, amount, attribute }),
             fail(),
         )),
     )
