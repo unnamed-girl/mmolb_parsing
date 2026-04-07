@@ -191,6 +191,11 @@ pub enum ParsedPlayerFeedEventText<S> {
         // TODO Delete this commented-out field if it's not necessary
         // discarded: Option<Item<S>>,
     },
+    PlayerReflected {
+        new_name: String,
+        old_name: String,
+        replacement_name: String,
+    }
 }
 
 impl<S: Display> ParsedPlayerFeedEventText<S> {
@@ -357,6 +362,9 @@ impl<S: Display> ParsedPlayerFeedEventText<S> {
                     panic!("ConsumptionContestToTeam needs either earned coins or an item");
                 }
             },
+            ParsedPlayerFeedEventText::PlayerReflected { new_name, old_name, replacement_name } => {
+                format!("{new_name} was Reflected from {old_name} to replace {replacement_name}.")
+            }
         }
     }
 }
