@@ -237,6 +237,11 @@ pub enum ParsedTeamFeedEventText<S> {
     BulkImmunized {
         team: EmojiTeam<S>,
         num_players: u32,
+    },
+    PlayerReflected {
+        new_name: String,
+        old_name: String,
+        replacement_name: String,
     }
 }
 
@@ -466,6 +471,9 @@ impl<S: Display> ParsedTeamFeedEventText<S> {
             }
             ParsedTeamFeedEventText::BulkImmunized { team, num_players } => {
                 format!("{team} Immunized {num_players} player(s), cleansing Corruption and Efflorescence.")
+            }
+            ParsedTeamFeedEventText::PlayerReflected { new_name, old_name, replacement_name } => {
+                format!("{new_name} was Reflected from {old_name} to replace {replacement_name}.")
             }
         }
     }

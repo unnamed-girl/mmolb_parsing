@@ -1757,6 +1757,14 @@ pub(super) fn bulk_immunized(input: &str) -> IResult<'_, &str, (EmojiTeam<&str>,
     Ok((input, (team, num_players)))
 }
 
+pub(super) fn player_reflected(input: &str) -> IResult<'_, &str, (&str, &str, &str)> {
+    let (input, new_name) = parse_terminated(" was Reflected from ").parse(input)?;
+    let (input, old_name) = parse_terminated(" to replace ").parse(input)?;
+    let (input, replacement_name) = parse_until_period_eof.parse(input)?;
+
+    Ok((input, (new_name, old_name, replacement_name)))
+}
+
 pub(super) fn boon_recombobulated(input: &str) -> IResult<'_, &str, (&str, ModificationType, ModificationType)> {
     let (input, player_name) = parse_terminated(" used the Boon Recombobulator. ").parse(input)?;
     let (input, old_boon_name) = parse_terminated(" was swapped for ").parse(input)?;
