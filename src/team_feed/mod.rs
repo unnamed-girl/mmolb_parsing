@@ -426,6 +426,7 @@ impl<S: Display> ParsedTeamFeedEventText<S> {
                     GreaterAugment::LuckyDelivery => format!("{team} selected TODO Insert the lucky delivery text here"),
                     GreaterAugment::RestoreBackupRoster => format!("{team} selected Restore Backup: Roster to call up Corrupted Bench Players."),
                     GreaterAugment::RestoreBackupPitching => format!("{team} selected Restore Backup: Pitching to swap Corrupted Bench Pitchers into the rotation."),
+                    GreaterAugment::RestoreBackupBatting => format!("{team} selected Restore Backup: Batting to swap Corrupted Bench Batters into the lineup."),
                     GreaterAugment::Training(slot) => {
                         let slot = WithNumberSign(*slot);
                         format!("{team} selected {slot} Training.")
