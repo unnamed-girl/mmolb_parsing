@@ -1,4 +1,4 @@
-use super::shared::{emoji, emoji_team_eof, emoji_team_eof_maybe_no_space, feed_event_consumption_contest_with_item_and_coin, feed_event_contained, feed_event_delivery_discarded, feed_event_door_prize, feed_event_equipped_door_prize, feed_event_party, feed_event_wither, parse_until_period_eof, player_positions_swapped, players_election_swapped, purified, team_election_purified, training, Error, IResult};
+use super::shared::{augment_event, emoji, emoji_team_eof, emoji_team_eof_maybe_no_space, feed_event_consumption_contest_with_item_and_coin, feed_event_contained, feed_event_delivery_discarded, feed_event_door_prize, feed_event_equipped_door_prize, feed_event_party, feed_event_wither, parse_until_period_eof, player_positions_swapped, players_election_swapped, purified, restyle, team_election_purified, training, Error, IResult};
 use crate::feed_event::{AttributeChange, GreaterAugment};
 use crate::nom_parsing::shared::{
     active_slot, falling_star, feed_event_effloresce, feed_event_efflorescence_growth, grow,
@@ -164,6 +164,8 @@ fn augment(event: &FeedEvent) -> impl TeamFeedEventParser<'_> {
             player_positions_swapped
                 .map(|swap| ParsedTeamFeedEventText::PlayerPositionsSwapped { swap }),
             grow.map(|grow| ParsedTeamFeedEventText::PlayerGrow { grow }),
+            restyle.map(|(old_name, new_name)| ParsedTeamFeedEventText::Restyle { old_name, new_name }),
+            augment_event.map(|(player_name, amount, attribute)| ParsedTeamFeedEventText::Augment { player_name, amount, attribute }),
             fail(),
         )),
     )

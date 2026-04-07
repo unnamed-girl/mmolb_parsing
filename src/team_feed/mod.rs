@@ -223,6 +223,16 @@ pub enum ParsedTeamFeedEventText<S> {
     ElectionAppliedLevelUps {
         player_name: S,
         num_level_ups: u32,
+    },
+    Restyle {
+        old_name: S,
+        new_name: S,
+    },
+    // This only happens for s10-and-later augments
+    Augment {
+        player_name: S,
+        attribute: Attribute,
+        amount: u32,
     }
 }
 
@@ -435,6 +445,12 @@ impl<S: Display> ParsedTeamFeedEventText<S> {
             }
             ParsedTeamFeedEventText::ElectionAppliedLevelUps { player_name, num_level_ups } => {
                 format!("{player_name} applied {num_level_ups} pending level up(s).")
+            }
+            ParsedTeamFeedEventText::Restyle { old_name, new_name } => {
+                format!("{old_name} visited the Restylist Salon and emerged as {new_name} with fresh tastes.")
+            }
+            ParsedTeamFeedEventText::Augment { player_name, amount, attribute } => {
+                format!("{player_name} was Augmented with +{amount} {attribute}.")
             }
         }
     }

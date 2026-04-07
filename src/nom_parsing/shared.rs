@@ -1717,6 +1717,23 @@ fn deflected_falling_star_harmlessly(input: &str) -> IResult<'_, &str, &str> {
     Ok((input, player_name))
 }
 
+pub(super) fn restyle(input: &str) -> IResult<'_, &str, (&str, &str)> {
+    let (input, former_name) = parse_terminated(" visited the Restylist Salon and emerged as ").parse(input)?;
+    let (input, new_name) = parse_terminated(" with fresh tastes.").parse(input)?;
+
+    Ok((input, (former_name, new_name)))
+}
+
+pub(super) fn augment_event(input: &str) -> IResult<'_, &str, (&str, u32, Attribute)> {
+    let (input, player_name) = parse_terminated(" was Augmented with +").parse(input)?;
+    let (input, amount) = u32.parse(input)?;
+    let (input, _) = tag(" ").parse(input)?;
+    let (input, attribute) = try_from_word.parse(input)?;
+    let (input, _) = tag(".").parse(input)?;
+
+    Ok((input, (player_name, amount, attribute)))
+}
+
 pub(super) fn player_relegated(input: &str) -> IResult<'_, &str, &str> {
     // This might be team emoji, not sure
     let (input, _) = tag("🧳 ").parse(input)?;
