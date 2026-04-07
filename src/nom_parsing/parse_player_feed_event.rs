@@ -127,6 +127,8 @@ fn game<'output>(event: &'output FeedEvent) -> impl PlayerFeedEventParser<'outpu
             feed_event_effloresce
                 .map(|player_name| ParsedPlayerFeedEventText::PlayerEffloresce { player_name }),
 
+            feed_delivery("the Consumption Contest")
+                .map(|delivery| ParsedPlayerFeedEventText::ConsumptionContestToPlayer { delivery }),
             fail(),
         )),
     )

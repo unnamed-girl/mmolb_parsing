@@ -6,7 +6,7 @@ use serde_with::serde_as;
 use crate::feed_event::PlayerGreaterAugment;
 pub use crate::nom_parsing::parse_player_feed_event::parse_player_feed_event;
 use crate::nom_parsing::shared::{FeedEventDoorPrize, FeedEventParty, Grow, PositionSwap};
-use crate::team_feed::PurifiedOutcome;
+use crate::team_feed::{ParsedTeamFeedEventText, PurifiedOutcome};
 use crate::{
     enums::{Attribute, FeedEventType, ModificationType},
     feed_event::{
@@ -16,7 +16,7 @@ use crate::{
     utils::extra_fields_deserialize,
 };
 use crate::enums::Slot;
-use crate::parsed_event::GrowAttributeChange;
+use crate::parsed_event::{EmojiTeam, GrowAttributeChange, Item};
 
 #[serde_as]
 #[derive(Serialize, Deserialize, Debug, Clone)]
@@ -174,6 +174,23 @@ pub enum ParsedPlayerFeedEventText<S> {
         players: [S; 2],
         slot: Slot,
     },
+    ConsumptionContestToPlayer {
+        delivery: FeedDelivery<S>,
+    },
+    ConsumptionContestToTeam {
+        /// `None` indicates no tie. `Some` indicates a tie with the score being
+        /// the contained value.
+        ///
+        /// As of this writing the score is always equal to earned_coins, but
+        /// I've been through too many economy rebalances to assume that will
+        /// always be the case.
+        tied: Option<u32 /* score */>,
+        team: EmojiTeam<S>,
+        earned_coins: Option<u32>,
+        item: Option<Item<S>>,
+        // TODO Delete this commented-out field if it's not necessary
+        // discarded: Option<Item<S>>,
+    },
 }
 
 impl<S: Display> ParsedPlayerFeedEventText<S> {
@@ -320,6 +337,25 @@ impl<S: Display> ParsedPlayerFeedEventText<S> {
             }
             ParsedPlayerFeedEventText::PlayersSwapped { players: [player_one, player_two], slot } => {
                 format!("{player_one} swapped with {player_two} in {slot}.")
+            },
+            ParsedPlayerFeedEventText::ConsumptionContestToPlayer { delivery } => delivery.unparse(event, "the Consumption Contest"),
+            ParsedPlayerFeedEventText::ConsumptionContestToTeam { team, earned_coins, item, tied } => {
+                let and_item = item.as_ref().map_or_else(
+                    String::new,
+                    |i| format!(" and a {}", i),
+                );
+
+                if let Some(earned_coins) = earned_coins {
+                    if let Some(score) = tied {
+                        format!("{team} tied the Consumption Contest with {score} and received 🪙 {earned_coins}{and_item}.")
+                    } else {
+                        format!("{team} received 🪙 {earned_coins}{and_item} from a Consumption Contest.")
+                    }
+                } else if let Some(item) = item {
+                    format!("{team} win a {item} from the Consumption Contest.")
+                } else {
+                    panic!("ConsumptionContestToTeam needs either earned coins or an item");
+                }
             },
         }
     }
