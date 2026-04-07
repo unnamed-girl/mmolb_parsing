@@ -2320,6 +2320,8 @@ pub enum ModificationType {
     AllKnowing,
     Underdog,
     Immovable,
+    Striker,
+    Bulwark,
 
     #[strum(default)]
     #[serde(untagged)]

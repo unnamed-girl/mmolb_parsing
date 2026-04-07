@@ -6,7 +6,7 @@ use serde_with::serde_as;
 use crate::feed_event::PlayerGreaterAugment;
 pub use crate::nom_parsing::parse_player_feed_event::parse_player_feed_event;
 use crate::nom_parsing::shared::{FeedEventDoorPrize, FeedEventParty, Grow, PositionSwap};
-use crate::team_feed::{ParsedTeamFeedEventText, PurifiedOutcome};
+use crate::team_feed::PurifiedOutcome;
 use crate::{
     enums::{Attribute, FeedEventType, ModificationType},
     feed_event::{
@@ -163,6 +163,11 @@ pub enum ParsedPlayerFeedEventText<S> {
         player_name: S,
         attribute: Attribute,
         amount: u32,
+    },
+    BoonRecombobulated {
+        player_name: S,
+        old_mod: ModificationType,
+        new_mod: ModificationType,
     }
 }
 
@@ -304,6 +309,9 @@ impl<S: Display> ParsedPlayerFeedEventText<S> {
             }
             ParsedPlayerFeedEventText::Augment { player_name, amount, attribute } => {
                 format!("{player_name} was Augmented with +{amount} {attribute}.")
+            }
+            ParsedPlayerFeedEventText::BoonRecombobulated { player_name, old_mod, new_mod} => {
+                format!("{player_name} used the Boon Recombobulator. {old_mod} was swapped for {new_mod}.")
             }
         }
     }

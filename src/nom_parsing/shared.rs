@@ -15,6 +15,7 @@ use nom::{
 use nom_language::error::VerboseError;
 use std::fmt::{Display, Formatter};
 use std::{fmt::Debug, str::FromStr};
+use strum::IntoEnumIterator;
 use crate::enums::{Attribute, BenchSlot, CelestialEnergyTier, FoodName, FullSlot, ModificationType, Slot};
 use crate::feed_event::FeedFallingStarOutcome;
 use crate::parsed_event::{
@@ -1732,6 +1733,21 @@ pub(super) fn augment_event(input: &str) -> IResult<'_, &str, (&str, u32, Attrib
     let (input, _) = tag(".").parse(input)?;
 
     Ok((input, (player_name, amount, attribute)))
+}
+
+pub(super) fn boon_recombobulated(input: &str) -> IResult<'_, &str, (&str, ModificationType, ModificationType)> {
+    let (input, player_name) = parse_terminated(" used the Boon Recombobulator. ").parse(input)?;
+    let (input, old_boon_name) = parse_terminated(" was swapped for ").parse(input)?;
+    let old_boon = ModificationType::new(old_boon_name);
+    assert!(
+        !ModificationType::iter().any(|mt| mt.to_string().contains(".")),
+        "If any boon includes a period, the following parse_terminated breaks",
+    );
+
+    let (input, new_boon_name) = parse_terminated(".").parse(input)?;
+    let new_boon = ModificationType::new(new_boon_name);
+
+    Ok((input, (player_name, old_boon, new_boon)))
 }
 
 pub(super) fn player_relegated(input: &str) -> IResult<'_, &str, &str> {
