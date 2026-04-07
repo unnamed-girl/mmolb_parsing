@@ -282,6 +282,7 @@ pub enum GreaterAugment {
     Plating,
     LuckyDelivery,
     RestoreBackupRoster,
+    RestoreBackupPitching,
     Training(BenchSlot),
 }
 

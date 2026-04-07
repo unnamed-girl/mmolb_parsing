@@ -406,6 +406,7 @@ fn greater_augment(input: &str) -> IResult<'_, &str, ParsedTeamFeedEventText<&st
             .map(|_| GreaterAugment::Plating),
         tag("TODO Insert the lucky delivery text here").map(|_| GreaterAugment::LuckyDelivery),
         tag("Restore Backup: Roster to call up Corrupted Bench Players.").map(|_| GreaterAugment::RestoreBackupRoster),
+        tag("Restore Backup: Pitching to swap Corrupted Bench Pitchers into the rotation.").map(|_| GreaterAugment::RestoreBackupPitching),
         training.map(GreaterAugment::Training),
     ))
     .parse(input)?;
