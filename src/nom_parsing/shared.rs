@@ -1367,12 +1367,14 @@ pub(super) fn feed_event_effloresce(input: &str) -> IResult<'_, &str, &str> {
     parse_terminated(" is Efflorescing and sheds their Corruption!").parse(input)
 }
 
-pub(super) fn feed_event_consumption_contest_with_item_and_coin(input: &str) -> IResult<'_, &str, (Option<u32>, EmojiTeam<&str>, u32, Option<Item<&str>>)> {
+pub(super) fn feed_event_consumption_contest_specific(input: &str) -> IResult<'_, &str, (Option<u32>, EmojiTeam<&str>, Option<u32>, Option<Item<&str>>)> {
     alt((
+        feed_event_won_consumption_contest
+            .map(|(t, i)| (None, t, None, Some(i))),
         feed_event_consumption_contest_with_item_and_coin_tied
-            .map(|(s, t, c, i)| (Some(s), t, c, i)),
+            .map(|(s, t, c, i)| (Some(s), t, Some(c), i)),
         feed_event_consumption_contest_with_item_and_coin_outright
-            .map(|(t, c, i)| (None, t, c, i)),
+            .map(|(t, c, i)| (None, t, Some(c), i)),
     )).parse(input)
 }
 
@@ -1388,6 +1390,17 @@ pub(super) fn feed_event_consumption_contest_with_item_and_coin_outright(input: 
     let (input, _) = tag(".").parse(input)?;
 
     Ok((input, (team, coins_received, item)))
+}
+
+pub(super) fn feed_event_won_consumption_contest(input: &str) -> IResult<'_, &str, (EmojiTeam<&str>, Item<&str>)> {
+    let (input, team_emoji_name) = parse_terminated(" win a ").parse(input)?;
+    let (_, team) = emoji_team_eof.parse(team_emoji_name)?;
+
+    let (input, item) = item.parse(input)?;
+
+    let (input, _) = tag(" from the Consumption Contest.").parse(input)?;
+
+    Ok((input, (team, item)))
 }
 
 pub(super) fn feed_event_consumption_contest_with_item_and_coin_tied(input: &str) -> IResult<'_, &str, (u32, EmojiTeam<&str>, u32, Option<Item<&str>>)> {

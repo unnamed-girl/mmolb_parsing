@@ -2322,6 +2322,7 @@ pub enum ModificationType {
     Immovable,
     Striker,
     Bulwark,
+    Charger,
 
     #[strum(default)]
     #[serde(untagged)]

@@ -85,7 +85,7 @@ pub enum ParsedTeamFeedEventText<S> {
         /// always be the case.
         tied: Option<u32 /* score */>,
         team: EmojiTeam<S>,
-        earned_coins: u32,
+        earned_coins: Option<u32>,
         item: Option<Item<S>>,
         // TODO Delete this commented-out field if it's not necessary
         // discarded: Option<Item<S>>,
@@ -256,10 +256,16 @@ impl<S: Display> ParsedTeamFeedEventText<S> {
                     |i| format!(" and a {}", i),
                 );
 
-                if let Some(score) = tied {
-                    format!("{team} tied the Consumption Contest with {score} and received 🪙 {earned_coins}{and_item}.")
+                if let Some(earned_coins) = earned_coins {
+                    if let Some(score) = tied {
+                        format!("{team} tied the Consumption Contest with {score} and received 🪙 {earned_coins}{and_item}.")
+                    } else {
+                        format!("{team} received 🪙 {earned_coins}{and_item} from a Consumption Contest.")
+                    }
+                } else if let Some(item) = item {
+                    format!("{team} win a {item} from the Consumption Contest.")
                 } else {
-                    format!("{team} received 🪙 {earned_coins}{and_item} from a Consumption Contest.")
+                    panic!("ConsumptionContestToTeam needs either earned coins or an item");
                 }
             },
             ParsedTeamFeedEventText::PhotoContest { player, earned_coins } => {
