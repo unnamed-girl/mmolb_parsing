@@ -284,6 +284,7 @@ pub enum GreaterAugment {
     RestoreBackupRoster,
     RestoreBackupPitching,
     RestoreBackupBatting,
+    RestoreBackupNullBatter,
     Training(BenchSlot),
 }
 

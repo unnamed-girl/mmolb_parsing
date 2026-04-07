@@ -414,6 +414,7 @@ fn greater_augment(input: &str) -> IResult<'_, &str, ParsedTeamFeedEventText<&st
         tag("Restore Backup: Roster to call up Corrupted Bench Players.").map(|_| GreaterAugment::RestoreBackupRoster),
         tag("Restore Backup: Pitching to swap Corrupted Bench Pitchers into the rotation.").map(|_| GreaterAugment::RestoreBackupPitching),
         tag("Restore Backup: Batting to swap Corrupted Bench Batters into the lineup.").map(|_| GreaterAugment::RestoreBackupBatting),
+        tag("Restore Backup: Null Batter to Reflect their strongest Batter.").map(|_| GreaterAugment::RestoreBackupNullBatter),
         training.map(GreaterAugment::Training),
     ))
     .parse(input)?;
