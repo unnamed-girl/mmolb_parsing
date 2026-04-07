@@ -1,4 +1,4 @@
-use super::shared::{augment_event, emoji, emoji_team_eof, emoji_team_eof_maybe_no_space, feed_event_consumption_contest_specific, feed_event_contained, feed_event_delivery_discarded, feed_event_door_prize, feed_event_equipped_door_prize, feed_event_party, feed_event_wither, parse_until_period_eof, player_positions_swapped, players_election_swapped, purified, restyle, team_election_purified, training, Error, IResult};
+use super::shared::{augment_event, bulk_immunized, emoji, emoji_team_eof, emoji_team_eof_maybe_no_space, feed_event_consumption_contest_specific, feed_event_contained, feed_event_delivery_discarded, feed_event_door_prize, feed_event_equipped_door_prize, feed_event_party, feed_event_wither, parse_until_period_eof, player_positions_swapped, players_election_swapped, purified, restyle, team_election_purified, training, Error, IResult};
 use crate::feed_event::{AttributeChange, GreaterAugment};
 use crate::nom_parsing::shared::{
     active_slot, falling_star, feed_event_effloresce, feed_event_efflorescence_growth, grow,
@@ -339,7 +339,7 @@ fn election<'output>() -> impl TeamFeedEventParser<'output> {
             .map(|(team, num_players_purified)| ParsedTeamFeedEventText::PlayersPurified { team, num_players_purified }),
         election_applied_level_ups
             .map(|(player_name, num_level_ups)| ParsedTeamFeedEventText::ElectionAppliedLevelUps { player_name, num_level_ups }),
-
+        bulk_immunized.map(|(team, num_players)| ParsedTeamFeedEventText::BulkImmunized { team, num_players }),
     )))
 }
 

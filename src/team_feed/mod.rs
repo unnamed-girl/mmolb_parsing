@@ -233,6 +233,10 @@ pub enum ParsedTeamFeedEventText<S> {
         player_name: S,
         attribute: Attribute,
         amount: u32,
+    },
+    BulkImmunized {
+        team: EmojiTeam<S>,
+        num_players: u32,
     }
 }
 
@@ -457,6 +461,9 @@ impl<S: Display> ParsedTeamFeedEventText<S> {
             }
             ParsedTeamFeedEventText::Augment { player_name, amount, attribute } => {
                 format!("{player_name} was Augmented with +{amount} {attribute}.")
+            }
+            ParsedTeamFeedEventText::BulkImmunized { team, num_players } => {
+                format!("{team} Immunized {num_players} player(s), cleansing Corruption and Efflorescence.")
             }
         }
     }

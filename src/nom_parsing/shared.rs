@@ -1748,6 +1748,15 @@ pub(super) fn augment_event(input: &str) -> IResult<'_, &str, (&str, u32, Attrib
     Ok((input, (player_name, amount, attribute)))
 }
 
+pub(super) fn bulk_immunized(input: &str) -> IResult<'_, &str, (EmojiTeam<&str>, u32)> {
+    let (input, team_emoji_name) = parse_terminated(" Immunized ").parse(input)?;
+    let (_, team) = emoji_team_eof.parse(team_emoji_name)?;
+    let (input, num_players) = u32.parse(input)?;
+    let (input, _) = tag(" player(s), cleansing Corruption and Efflorescence.").parse(input)?;
+
+    Ok((input, (team, num_players)))
+}
+
 pub(super) fn boon_recombobulated(input: &str) -> IResult<'_, &str, (&str, ModificationType, ModificationType)> {
     let (input, player_name) = parse_terminated(" used the Boon Recombobulator. ").parse(input)?;
     let (input, old_boon_name) = parse_terminated(" was swapped for ").parse(input)?;
