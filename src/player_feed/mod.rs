@@ -15,6 +15,7 @@ use crate::{
     time::{Breakpoints, Timestamp},
     utils::extra_fields_deserialize,
 };
+use crate::enums::Slot;
 use crate::parsed_event::GrowAttributeChange;
 
 #[serde_as]
@@ -168,7 +169,11 @@ pub enum ParsedPlayerFeedEventText<S> {
         player_name: S,
         old_mod: ModificationType,
         new_mod: ModificationType,
-    }
+    },
+    PlayersSwapped {
+        players: [S; 2],
+        slot: Slot,
+    },
 }
 
 impl<S: Display> ParsedPlayerFeedEventText<S> {
@@ -313,6 +318,9 @@ impl<S: Display> ParsedPlayerFeedEventText<S> {
             ParsedPlayerFeedEventText::BoonRecombobulated { player_name, old_mod, new_mod} => {
                 format!("{player_name} used the Boon Recombobulator. {old_mod} was swapped for {new_mod}.")
             }
+            ParsedPlayerFeedEventText::PlayersSwapped { players: [player_one, player_two], slot } => {
+                format!("{player_one} swapped with {player_two} in {slot}.")
+            },
         }
     }
 }

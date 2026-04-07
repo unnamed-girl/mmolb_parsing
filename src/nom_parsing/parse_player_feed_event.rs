@@ -1,4 +1,4 @@
-use super::shared::{augment_event, boon_recombobulated, falling_star, feed_event_contained, feed_event_door_prize, feed_event_effloresce, feed_event_efflorescence_growth, feed_event_equipped_door_prize, feed_event_party, feed_event_wither, grow, player_moved, player_positions_swapped, player_relegated, purified, restyle, Error, IResult};
+use super::shared::{augment_event, boon_recombobulated, falling_star, feed_event_contained, feed_event_door_prize, feed_event_effloresce, feed_event_efflorescence_growth, feed_event_equipped_door_prize, feed_event_party, feed_event_wither, grow, player_moved, player_positions_swapped, player_relegated, players_election_swapped, purified, restyle, Error, IResult};
 use crate::feed_event::PlayerGreaterAugment;
 use crate::{
     enums::{FeedEventType, ModificationType},
@@ -19,6 +19,7 @@ use nom::{
     sequence::{delimited, preceded, separated_pair, terminated},
     Finish, Parser,
 };
+use crate::team_feed::ParsedTeamFeedEventText;
 
 trait PlayerFeedEventParser<'output>:
     Parser<&'output str, Output = ParsedPlayerFeedEventText<&'output str>, Error = Error<'output>>
@@ -527,6 +528,8 @@ fn election<'output>(_event: &'output FeedEvent) -> impl PlayerFeedEventParser<'
             player_greater_augment_result,
             player_retracted_greater_augment_result,
             player_retroactive_greater_augment_result,
+            players_election_swapped
+                .map(|(players, slot)| ParsedPlayerFeedEventText::PlayersSwapped { players, slot }),
             // Copy of the same event under augment
             purified.map(
                 |(player_name, outcome)| ParsedPlayerFeedEventText::Purified {
