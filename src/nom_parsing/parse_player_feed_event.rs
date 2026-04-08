@@ -1,4 +1,4 @@
-use super::shared::{augment_event, boon_recombobulated, falling_star, feed_event_contained, feed_event_door_prize, feed_event_effloresce, feed_event_efflorescence_growth, feed_event_equipped_door_prize, feed_event_party, feed_event_wither, grow, player_moved, player_positions_swapped, player_reflected, player_relegated, players_election_swapped, purified, restyle, Error, IResult};
+use super::shared::{augment_event, boon_recombobulated, falling_star, feed_event_contained, feed_event_door_prize, feed_event_effloresce, feed_event_efflorescence_growth, feed_event_equipped_door_prize, feed_event_party, feed_event_wither, grow, player_moved, player_positions_swapped, player_reflected, player_relegated, players_election_swapped, purified, restyle, election_applied_level_ups, Error, IResult};
 use crate::feed_event::PlayerGreaterAugment;
 use crate::{
     enums::{FeedEventType, ModificationType},
@@ -544,6 +544,9 @@ fn election<'output>(_event: &'output FeedEvent) -> impl PlayerFeedEventParser<'
                     old_name: old_name.to_string(),
                     replacement_name: replacement_name.to_string(),
                 }),
+            election_applied_level_ups
+                .map(|(player_name, num_level_ups)| ParsedPlayerFeedEventText::ElectionAppliedLevelUps { player_name, num_level_ups }),
+
         )),
     )
 }

@@ -1,3 +1,4 @@
+use crate::nom_parsing::shared::election_applied_level_ups;
 use super::shared::{augment_event, bulk_immunized, emoji, emoji_team_eof, emoji_team_eof_maybe_no_space, feed_event_consumption_contest_specific, feed_event_contained, feed_event_delivery_discarded, feed_event_door_prize, feed_event_equipped_door_prize, feed_event_party, feed_event_wither, parse_until_period_eof, player_positions_swapped, player_reflected, players_election_swapped, purified, restyle, team_election_purified, training, Error, IResult};
 use crate::feed_event::{AttributeChange, GreaterAugment};
 use crate::nom_parsing::shared::{
@@ -790,14 +791,6 @@ fn lost_lineal_belt(input: &str) -> IResult<'_, &str, ParsedTeamFeedEventText<&s
         },
     ))
 }
-
-pub(super) fn election_applied_level_ups(input: &str) -> IResult<'_, &str, (&str, u32)> {
-    let (input, player_name) = parse_terminated(" applied ").parse(input)?;
-    let (input, num_level_ups) = u32.parse(input)?;
-    let (input, _) = tag(" pending level up(s).").parse(input)?;
-    Ok((input, (player_name, num_level_ups)))
-}
-
 
 pub(super) fn simulacrum_payout(input: &str) -> IResult<'_, &str, (EmojiTeam<&str>, u32)> {
     let (input, team_emoji_name) = parse_terminated(" earned ").parse(input)?;

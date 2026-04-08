@@ -195,7 +195,11 @@ pub enum ParsedPlayerFeedEventText<S> {
         new_name: String,
         old_name: String,
         replacement_name: String,
-    }
+    },
+    ElectionAppliedLevelUps {
+        player_name: S,
+        num_level_ups: u32,
+    },
 }
 
 impl<S: Display> ParsedPlayerFeedEventText<S> {
@@ -305,16 +309,16 @@ impl<S: Display> ParsedPlayerFeedEventText<S> {
                 match greater_augment {
                     PlayerGreaterAugment::Headliners { attribute } => format!("{player_name} gained +75 {attribute}."),
                     PlayerGreaterAugment::StartSmall { attribute } => format!("{player_name} gained +50 {attribute}."),
-                    PlayerGreaterAugment::Plating => format!("{player_name} gained +10 to all Defense Attributes"),
-                    PlayerGreaterAugment::LuckyDelivery => format!("{player_name} gained +10 to all Defense Attributes"),
+                    PlayerGreaterAugment::Plating => format!("{player_name} gained +10 to all Defense Attributes."),
+                    PlayerGreaterAugment::LuckyDelivery => format!("{player_name} gained +10 to all Defense Attributes."),
                 }
             }
             ParsedPlayerFeedEventText::RetractedGreaterAugment { player_name, greater_augment } => {
                 match greater_augment {
                     PlayerGreaterAugment::Headliners { attribute } => format!("{player_name} lost 0.75 from {attribute}."),
                     PlayerGreaterAugment::StartSmall { attribute } => format!("{player_name} lost 0.5 from {attribute}."),
-                    PlayerGreaterAugment::Plating => format!("{player_name} lost 0.1 to all Defense Attributes"),
-                    PlayerGreaterAugment::LuckyDelivery => format!("{player_name} lost 0.1 to all Defense Attributes"),
+                    PlayerGreaterAugment::Plating => format!("{player_name} lost 0.1 to all Defense Attributes."),
+                    PlayerGreaterAugment::LuckyDelivery => format!("{player_name} lost 0.1 to all Defense Attributes."),
                 }
             }
             ParsedPlayerFeedEventText::RetroactiveGreaterAugment { player_name, greater_augment } => {
@@ -364,6 +368,9 @@ impl<S: Display> ParsedPlayerFeedEventText<S> {
             },
             ParsedPlayerFeedEventText::PlayerReflected { new_name, old_name, replacement_name } => {
                 format!("{new_name} was Reflected from {old_name} to replace {replacement_name}.")
+            },
+            ParsedPlayerFeedEventText::ElectionAppliedLevelUps { player_name, num_level_ups } => {
+                format!("{player_name} applied {num_level_ups} pending level up(s).")
             }
         }
     }

@@ -1797,6 +1797,13 @@ pub(super) fn player_moved(input: &str) -> IResult<'_, &str, (&str, &str)> {
     Ok((input, (team_emoji, player_name)))
 }
 
+pub(super) fn election_applied_level_ups(input: &str) -> IResult<'_, &str, (&str, u32)> {
+    let (input, player_name) = parse_terminated(" applied ").parse(input)?;
+    let (input, num_level_ups) = u32.parse(input)?;
+    let (input, _) = tag(" pending level up(s).").parse(input)?;
+    Ok((input, (player_name, num_level_ups)))
+}
+
 pub(super) fn team_emoji<'parse, 'output>(
     side: HomeAway,
     parsing_context: &ParsingContext<'parse>,
