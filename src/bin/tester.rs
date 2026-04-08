@@ -63,38 +63,42 @@ impl GlobalOpts {
 
 #[derive(Debug, Subcommand)]
 enum Command {
-    /// Sync answers with freecashe.ws
-    Sync(SyncArgs),
+    /// Fetch raw from freecashe.ws
+    Fetch(FetchArgs),
     RoundTrip(RoundTripArgs),
 }
 
 #[derive(Debug, Args)]
-struct SyncArgs {
+struct FetchArgs {
     /// Fetch from cheapcashe.ws instead
     #[clap(long, action)]
     beiju: bool,
 
-    /// Only sync certain kinds
+    /// Only fetch certain kinds
     #[clap(long)]
-    only_sync_kind: Vec<Kind>,
+    only_fetch_kind: Vec<Kind>,
+
+    /// Refetch
+    #[clap(long)]
+    refetch: bool,
 }
 
-impl SyncArgs {
-    fn sync_kind(&self, kind: Kind) -> bool {
-        self.only_sync_kind.is_empty() || self.only_sync_kind.contains(&kind)
+impl FetchArgs {
+    fn fetch_kind(&self, kind: Kind) -> bool {
+        self.only_fetch_kind.is_empty() || self.only_fetch_kind.contains(&kind)
     }
 }
 
 #[derive(Debug, Args)]
 struct RoundTripArgs {
-    /// Only sync certain kinds
+    /// Only test certain kinds
     #[clap(long)]
-    only_sync_kind: Vec<Kind>,
+    only_test_kind: Vec<Kind>,
 }
 
 impl RoundTripArgs {
-    fn sync_kind(&self, kind: Kind) -> bool {
-        self.only_sync_kind.is_empty() || self.only_sync_kind.contains(&kind)
+    fn test_kind(&self, kind: Kind) -> bool {
+        self.only_test_kind.is_empty() || self.only_test_kind.contains(&kind)
     }
 }
 
@@ -147,10 +151,10 @@ fn main() {
         .with(err_layer)
         .with(stdout_layer);
 
-    let guard = tracing::subscriber::set_global_default(collector).unwrap();
+    let _guard = tracing::subscriber::set_global_default(collector).unwrap();
 
     match args.command {
-        Command::Sync(sync_args) => sync(args.global_opts, sync_args),
+        Command::Fetch(fetch_args) => fetch(args.global_opts, fetch_args),
         Command::RoundTrip(round_trip_args) => round_trip(args.global_opts, round_trip_args),
     }
 }
@@ -223,16 +227,16 @@ pub struct EntityResponse<T> {
     pub data: T,
 }
 
-fn sync(global: GlobalOpts, sync_args: SyncArgs) {
+fn fetch(global: GlobalOpts, fetch_args: FetchArgs) {
     let test_cases = global.read_test_cases();
     let client = Client::builder().timeout(None).build().unwrap();
-    let endpoint = if sync_args.beiju {
+    let endpoint = if fetch_args.beiju {
         "https://cheapcashews.beiju.me/chron/v0/entities"
     } else {
         "https://freecashe.ws/api/chron/v0/entities"
     };
     let guard = info_span!("Fetching").entered();
-    if sync_args.sync_kind(Kind::Game) {
+    if fetch_args.fetch_kind(Kind::Game) {
         tracing::info!("Fetching games");
         for game in test_cases.games {
             let _guard = info_span!("Game", id = game.id).entered();
@@ -242,11 +246,12 @@ fn sync(global: GlobalOpts, sync_args: SyncArgs) {
                 endpoint,
                 "game",
                 &game.id,
+                fetch_args.refetch
             );
         }
     }
 
-    if sync_args.sync_kind(Kind::Team) {
+    if fetch_args.fetch_kind(Kind::Team) {
         tracing::info!("Fetching teams");
         for team in test_cases.teams {
             let _guard = info_span!("Team", id = team.id).entered();
@@ -256,11 +261,12 @@ fn sync(global: GlobalOpts, sync_args: SyncArgs) {
                 endpoint,
                 "team",
                 &team.id,
+                fetch_args.refetch
             );
         }
     }
 
-    if sync_args.sync_kind(Kind::Game) {
+    if fetch_args.fetch_kind(Kind::Game) {
         tracing::info!("Fetching players");
         for player in test_cases.players {
             let _guard = info_span!("Player", id = player.id).entered();
@@ -270,10 +276,11 @@ fn sync(global: GlobalOpts, sync_args: SyncArgs) {
                 endpoint,
                 "player",
                 &player.id,
+                fetch_args.refetch
             );
         }
     }
-    if sync_args.sync_kind(Kind::PlayerFeed) {
+    if fetch_args.fetch_kind(Kind::PlayerFeed) {
         tracing::info!("Fetching player feeds");
         for player_feed in test_cases.player_feeds {
             let _guard = info_span!("Player Feed", id = player_feed.id).entered();
@@ -283,11 +290,12 @@ fn sync(global: GlobalOpts, sync_args: SyncArgs) {
                 endpoint,
                 "player_feed",
                 &player_feed.id,
+                fetch_args.refetch
             );
         }
     }
 
-    if sync_args.sync_kind(Kind::TeamFeed) {
+    if fetch_args.fetch_kind(Kind::TeamFeed) {
         tracing::info!("Fetching team feeds");
         for team_feed in test_cases.team_feeds {
             let _guard = info_span!("Team feed", id = team_feed.id).entered();
@@ -297,13 +305,24 @@ fn sync(global: GlobalOpts, sync_args: SyncArgs) {
                 endpoint,
                 "team_feed",
                 &team_feed.id,
+                fetch_args.refetch
             );
         }
     }
     drop(guard);
 }
 
-fn fetch_save(test_data_folder: &Path, client: &Client, endpoint: &str, kind: &str, id: &str) {
+fn fetch_save(test_data_folder: &Path, client: &Client, endpoint: &str, kind: &str, id: &str, refetch: bool) {
+    let path = test_data_folder
+        .join("raw")
+        .join(kind)
+        .join(id)
+        .with_extension("json");
+
+    if !refetch && path.exists() {
+        return;
+    }
+
     let url = format!("{endpoint}?kind={kind}&id={id}");
     let entities = client
         .get(&url)
@@ -321,18 +340,13 @@ fn fetch_save(test_data_folder: &Path, client: &Client, endpoint: &str, kind: &s
         return;
     }
 
-    let path = test_data_folder
-        .join("raw")
-        .join(kind)
-        .join(id)
-        .with_extension("json");
     let mut f = File::create(path).unwrap();
     write!(f, "{}", entities[0].data).unwrap();
 }
 
 fn round_trip(global_opts: GlobalOpts, round_trip_args: RoundTripArgs) {
     let test_cases = global_opts.read_test_cases();
-    if round_trip_args.sync_kind(Kind::Game) {
+    if round_trip_args.test_kind(Kind::Game) {
         tracing::info!("Testing games");
         for game in test_cases.games {
             let _guard = info_span!("Game", id = game.id).entered();
@@ -345,7 +359,7 @@ fn round_trip(global_opts: GlobalOpts, round_trip_args: RoundTripArgs) {
         }
     }
 
-    if round_trip_args.sync_kind(Kind::Team) {
+    if round_trip_args.test_kind(Kind::Team) {
         tracing::info!("Testing teams");
         for team in test_cases.teams {
             let _guard = info_span!("Team", id = team.id).entered();
@@ -358,8 +372,8 @@ fn round_trip(global_opts: GlobalOpts, round_trip_args: RoundTripArgs) {
         }
     }
 
-    if round_trip_args.sync_kind(Kind::Game) {
-        tracing::info!("Fetching players");
+    if round_trip_args.test_kind(Kind::Game) {
+        tracing::info!("Testing players");
         for player in test_cases.players {
             let _guard = info_span!("Player", id = player.id).entered();
             _round_trip::<Player>(
@@ -370,8 +384,8 @@ fn round_trip(global_opts: GlobalOpts, round_trip_args: RoundTripArgs) {
             );
         }
     }
-    if round_trip_args.sync_kind(Kind::PlayerFeed) {
-        tracing::info!("Fetching player feeds");
+    if round_trip_args.test_kind(Kind::PlayerFeed) {
+        tracing::info!("Testing player feeds");
         for player_feed in test_cases.player_feeds {
             let _guard = info_span!("Player Feed", id = player_feed.id).entered();
             _round_trip::<PlayerFeed>(
@@ -383,8 +397,8 @@ fn round_trip(global_opts: GlobalOpts, round_trip_args: RoundTripArgs) {
         }
     }
 
-    if round_trip_args.sync_kind(Kind::TeamFeed) {
-        tracing::info!("Fetching team feeds");
+    if round_trip_args.test_kind(Kind::TeamFeed) {
+        tracing::info!("Testing team feeds");
         for team_feed in test_cases.team_feeds {
             let _guard = info_span!("Team feed", id = team_feed.id).entered();
             _round_trip::<TeamFeed>(
