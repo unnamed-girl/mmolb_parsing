@@ -102,8 +102,8 @@ fn main() -> Result<(), Box<dyn Error>> {
     let mut badness = 0;
     let mut goodness = 0;
 
-    for player in team.players {
-        let slot = player.slot?;
+    for player in Vec::from(team.players) {
+        let slot = player.slot??;
 
         let player = mmolb_fetch::<Player>(&client, &player.player_id)?;
 
