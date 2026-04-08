@@ -92,52 +92,59 @@ fn game(event: &FeedEvent) -> impl TeamFeedEventParser<'_> {
     context(
         "Game Feed Event",
         alt((
-            game_result(),
-            feed_event_door_prize.map(|prize| ParsedTeamFeedEventText::DoorPrize { prize }),
-            feed_event_delivery_discarded
-                .map(|item| ParsedTeamFeedEventText::DeliveryDiscarded { item }),
-            feed_event_equipped_door_prize
-                .map(|prize| ParsedTeamFeedEventText::DoorPrize { prize }),
-            feed_delivery("Delivery")
-                .map(|delivery| ParsedTeamFeedEventText::Delivery { delivery }),
-            feed_delivery("Shipment")
-                .map(|delivery| ParsedTeamFeedEventText::Shipment { delivery }),
-            feed_delivery("Special Delivery")
-                .map(|delivery| ParsedTeamFeedEventText::SpecialDelivery { delivery }),
-            feed_delivery("the Consumption Contest")
-                .map(|delivery| ParsedTeamFeedEventText::ConsumptionContestToPlayer { delivery }),
-            photo_contest(),
-            falling_star(event).map(|(player_name, outcome)| {
-                ParsedTeamFeedEventText::FallingStarOutcome {
-                    player_name,
-                    outcome,
-                }
-            }),
-            feed_event_party.map(|party| ParsedTeamFeedEventText::Party { party }),
-            prosperous(),
-            retirement(true),
-            feed_event_wither
-                .map(|player_name| ParsedTeamFeedEventText::CorruptedByWither { player_name }),
-            feed_event_contained.map(|(contained_player_name, container_player_name)| {
-                ParsedTeamFeedEventText::PlayerContained {
-                    contained_player_name,
-                    container_player_name,
-                }
-            }),
-            feed_event_efflorescence_growth.map(|(player_name, growths)| {
-                ParsedTeamFeedEventText::PlayerGrewInEfflorescence {
-                    player_name,
-                    growths,
-                }
-            }),
-            feed_event_effloresce
-                .map(|player_name| ParsedTeamFeedEventText::PlayerEffloresce { player_name }),
-            claimed_lineal_belt(event.season),
-            lost_lineal_belt,
-            feed_event_consumption_contest_specific
-                .map(|(tied, team, earned_coins, item)|
-                    ParsedTeamFeedEventText::ConsumptionContestToTeam { tied, team, earned_coins, item }),
-            fail(),
+            alt((
+                game_result(),
+                feed_event_door_prize.map(|prize| ParsedTeamFeedEventText::DoorPrize { prize }),
+                feed_event_delivery_discarded
+                    .map(|item| ParsedTeamFeedEventText::DeliveryDiscarded { item }),
+                feed_event_equipped_door_prize
+                    .map(|prize| ParsedTeamFeedEventText::DoorPrize { prize }),
+                feed_delivery("Delivery")
+                    .map(|delivery| ParsedTeamFeedEventText::Delivery { delivery }),
+                feed_delivery("Shipment")
+                    .map(|delivery| ParsedTeamFeedEventText::Shipment { delivery }),
+                feed_delivery("Special Delivery")
+                    .map(|delivery| ParsedTeamFeedEventText::SpecialDelivery { delivery }),
+                feed_delivery("the Consumption Contest")
+                    .map(|delivery| ParsedTeamFeedEventText::ConsumptionContestToPlayer { delivery }),
+                photo_contest(),
+                falling_star(event).map(|(player_name, outcome)| {
+                    ParsedTeamFeedEventText::FallingStarOutcome {
+                        player_name,
+                        outcome,
+                    }
+                }),
+                feed_event_party.map(|party| ParsedTeamFeedEventText::Party { party }),
+                prosperous(),
+                retirement(true),
+                feed_event_wither
+                    .map(|player_name| ParsedTeamFeedEventText::CorruptedByWither { player_name }),
+                feed_event_contained.map(|(contained_player_name, container_player_name)| {
+                    ParsedTeamFeedEventText::PlayerContained {
+                        contained_player_name,
+                        container_player_name,
+                    }
+                }),
+                feed_event_efflorescence_growth.map(|(player_name, growths)| {
+                    ParsedTeamFeedEventText::PlayerGrewInEfflorescence {
+                        player_name,
+                        growths,
+                    }
+                }),
+                feed_event_effloresce
+                    .map(|player_name| ParsedTeamFeedEventText::PlayerEffloresce { player_name }),
+                claimed_lineal_belt(event.season),
+                lost_lineal_belt,
+                feed_event_consumption_contest_specific
+                    .map(|(tied, team, earned_coins, item)|
+                        ParsedTeamFeedEventText::ConsumptionContestToTeam { tied, team, earned_coins, item }),
+            )),
+            alt((
+                simulacrum_payout
+                    .map(|(team, earned_coins)|
+                        ParsedTeamFeedEventText::SimulacrumPayout { team, earned_coins }),
+                fail(),
+            )),
         ))
     )
 }
@@ -789,4 +796,14 @@ pub(super) fn election_applied_level_ups(input: &str) -> IResult<'_, &str, (&str
     let (input, num_level_ups) = u32.parse(input)?;
     let (input, _) = tag(" pending level up(s).").parse(input)?;
     Ok((input, (player_name, num_level_ups)))
+}
+
+
+pub(super) fn simulacrum_payout(input: &str) -> IResult<'_, &str, (EmojiTeam<&str>, u32)> {
+    let (input, team_emoji_name) = parse_terminated(" earned ").parse(input)?;
+    let (_, team) = emoji_team_eof.parse(team_emoji_name)?;
+
+    let (input, num_level_ups) = u32.parse(input)?;
+    let (input, _) = tag(" 🪙 from Simulacrum.").parse(input)?;
+    Ok((input, (team, num_level_ups)))
 }

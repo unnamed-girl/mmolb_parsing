@@ -242,6 +242,10 @@ pub enum ParsedTeamFeedEventText<S> {
         new_name: String,
         old_name: String,
         replacement_name: String,
+    },
+    SimulacrumPayout {
+        team: EmojiTeam<S>,
+        earned_coins: u32,
     }
 }
 
@@ -475,6 +479,9 @@ impl<S: Display> ParsedTeamFeedEventText<S> {
             }
             ParsedTeamFeedEventText::PlayerReflected { new_name, old_name, replacement_name } => {
                 format!("{new_name} was Reflected from {old_name} to replace {replacement_name}.")
+            }
+            ParsedTeamFeedEventText::SimulacrumPayout { team, earned_coins } => {
+                format!("{team} earned {earned_coins} 🪙 from Simulacrum.")
             }
         }
     }

@@ -2323,6 +2323,8 @@ pub enum ModificationType {
     Striker,
     Bulwark,
     Charger,
+    Marathoner,
+    Snowperson,
 
     #[strum(default)]
     #[serde(untagged)]
