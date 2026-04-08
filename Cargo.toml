@@ -9,7 +9,7 @@ name = "parser"
 required-features = ["bin"]
 
 [[bin]]
-name = "item_linter"
+name = "tester"
 required-features = ["bin"]
 
 [features]

@@ -1,9 +1,8 @@
-This is a super informal file of some select entity ids to test. TODO make this, like, way better.
-
+// This is a super informal file of some select entity ids to test.
+// Comments have to be their own line because the parser isn't complicated
 Teams:
 - 680afe271d2800e67a866dce
 - 68099f24fe955c9361b71854
-
 Games:
 - 68e741a732bd78c53550ce8d
 - 68e779bfd030aef77a777d8d
@@ -24,8 +23,7 @@ Games:
 - 690c0f340d411ebcb8dafe5f
 - 6925c47374e997103b33d2d1
 - 69283d7858ef3a953b529432
-
-Team feeds:
+Team Feeds:
 - 680830e55859fc1c88efd232
 - 6806ee0fee9f269dec724d24
 - 6805db0cac48194de3cd40a2
@@ -39,14 +37,13 @@ Team feeds:
 - 6805db0cac48194de3cd40ee
 - 6805db0dac48194de3cd413a
 - 6805f2d34277d0dcecdd3b2e
-
 Players:
 - 68fd2a4244251994ca067564
-
-Player feeds:
+Player Feeds:
 - 6841bf728d67c531e89fe525
 - 6805db0cac48194de3cd4045
 - 6805db0cac48194de3cd405a
+// Doesn't exist?
 - 6921354564cedcf3010b9a59
 - 6842fbaf8d67c531e89fe687
 - 6887d4b018e81770515bfcc5
