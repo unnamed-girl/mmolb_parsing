@@ -1285,6 +1285,7 @@ pub enum FeedEventType {
     Maintenance,
     Roster,
     Election,
+    Boon,
 }
 
 #[derive(
@@ -2351,6 +2352,7 @@ pub enum ModificationType {
     Tireless,
     Courier,
     Granite,
+    Satellite,
 
     #[strum(default)]
     #[serde(untagged)]

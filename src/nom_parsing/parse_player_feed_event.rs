@@ -54,6 +54,7 @@ pub fn parse_player_feed_event(event: &FeedEvent) -> ParsedPlayerFeedEventText<&
         FeedEventType::Season => season(event).parse(event.text.as_str()),
         FeedEventType::Election => election(event).parse(&event.text),
         FeedEventType::Roster => roster(event).parse(event.text.as_str()),
+        FeedEventType::Boon => boon(event).parse(event.text.as_str()),
         // TODO More descriptive error message
         FeedEventType::Lottery => fail().parse(event.text.as_str()),
         FeedEventType::Maintenance => fail().parse(event.text.as_str()),
@@ -644,6 +645,16 @@ fn roster<'output>(_event: &'output FeedEvent) -> impl PlayerFeedEventParser<'ou
                     player_name,
                 },
             ),
+        )),
+    )
+}
+
+fn boon<'output>(_event: &'output FeedEvent) -> impl PlayerFeedEventParser<'output> {
+    context(
+        "Boon Feed Event",
+        alt((
+            boon_recombobulated.map(|(player_name, old_mod, new_mod)| ParsedPlayerFeedEventText::BoonRecombobulated { player_name, old_mod, new_mod }),
+            fail(),
         )),
     )
 }

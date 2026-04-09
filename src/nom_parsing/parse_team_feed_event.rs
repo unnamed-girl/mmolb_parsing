@@ -58,6 +58,7 @@ pub fn parse_team_feed_event(event: &FeedEvent) -> ParsedTeamFeedEventText<&str>
         FeedEventType::Maintenance => maintenance().parse(event.text.as_str()),
         FeedEventType::Roster => roster().parse(event.text.as_str()),
         FeedEventType::Election => election().parse(event.text.as_str()),
+        FeedEventType::Boon => boon().parse(event.text.as_str()),
     };
     match result.finish() {
         Ok(("", output)) => output,
@@ -799,4 +800,13 @@ pub(super) fn simulacrum_payout(input: &str) -> IResult<'_, &str, (EmojiTeam<&st
     let (input, num_level_ups) = u32.parse(input)?;
     let (input, _) = tag(" 🪙 from Simulacrum.").parse(input)?;
     Ok((input, (team, num_level_ups)))
+}
+
+fn boon<'output>() -> impl TeamFeedEventParser<'output> {
+    context(
+        "Boon Feed Event",
+        alt((
+            fail(),
+        )),
+    )
 }
