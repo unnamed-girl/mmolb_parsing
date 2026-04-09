@@ -541,9 +541,9 @@ fn election<'output>(_event: &'output FeedEvent) -> impl PlayerFeedEventParser<'
             ),
             player_reflected
                 .map(|(new_name, old_name, replacement_name)| ParsedPlayerFeedEventText::PlayerReflected {
-                    new_name: new_name.to_string(),
-                    old_name: old_name.to_string(),
-                    replacement_name: replacement_name.to_string(),
+                    new_name,
+                    old_name,
+                    replacement_name,
                 }),
             election_applied_level_ups
                 .map(|(player_name, num_level_ups)| ParsedPlayerFeedEventText::ElectionAppliedLevelUps { player_name, num_level_ups }),

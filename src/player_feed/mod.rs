@@ -6,7 +6,7 @@ use serde_with::serde_as;
 use crate::feed_event::PlayerGreaterAugment;
 pub use crate::nom_parsing::parse_player_feed_event::parse_player_feed_event;
 use crate::nom_parsing::shared::{FeedEventDoorPrize, FeedEventParty, Grow, PositionSwap};
-use crate::team_feed::{ParsedTeamFeedEventText, PurifiedOutcome};
+use crate::team_feed::PurifiedOutcome;
 use crate::{
     enums::{Attribute, FeedEventType, ModificationType},
     feed_event::{
@@ -192,9 +192,9 @@ pub enum ParsedPlayerFeedEventText<S> {
         // discarded: Option<Item<S>>,
     },
     PlayerReflected {
-        new_name: String,
-        old_name: String,
-        replacement_name: String,
+        new_name: S,
+        old_name: S,
+        replacement_name: S,
     },
     ElectionAppliedLevelUps {
         player_name: S,
