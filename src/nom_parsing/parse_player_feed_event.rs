@@ -159,7 +159,7 @@ fn augment<'output>(event: &'output FeedEvent) -> impl PlayerFeedEventParser<'ou
                 .map(|swap| ParsedPlayerFeedEventText::PlayerPositionsSwapped { swap }),
             grow.map(|grow| ParsedPlayerFeedEventText::PlayerGrow { grow }),
             restyle.map(|(old_name, new_name)| ParsedPlayerFeedEventText::Restyle { old_name, new_name }),
-            augment_event.map(|(player_name, amount, attribute)| ParsedPlayerFeedEventText::Augment { player_name, amount, attribute }),
+            augment_event.map(|(player_name, amount, attribute, a_previous_augment_faded)| ParsedPlayerFeedEventText::Augment { player_name, amount, attribute, a_previous_augment_faded }),
             boon_recombobulated.map(|(player_name, old_mod, new_mod)| ParsedPlayerFeedEventText::BoonRecombobulated { player_name, old_mod, new_mod }),
             fail(),
         )),

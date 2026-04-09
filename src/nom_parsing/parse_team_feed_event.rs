@@ -174,7 +174,7 @@ fn augment(event: &FeedEvent) -> impl TeamFeedEventParser<'_> {
                 .map(|swap| ParsedTeamFeedEventText::PlayerPositionsSwapped { swap }),
             grow.map(|grow| ParsedTeamFeedEventText::PlayerGrow { grow }),
             restyle.map(|(old_name, new_name)| ParsedTeamFeedEventText::Restyle { old_name, new_name }),
-            augment_event.map(|(player_name, amount, attribute)| ParsedTeamFeedEventText::Augment { player_name, amount, attribute }),
+            augment_event.map(|(player_name, amount, attribute, a_previous_augment_faded)| ParsedTeamFeedEventText::Augment { player_name, amount, attribute, a_previous_augment_faded }),
             fail(),
         )),
     )

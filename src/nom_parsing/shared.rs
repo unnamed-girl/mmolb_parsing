@@ -1738,14 +1738,17 @@ pub(super) fn restyle(input: &str) -> IResult<'_, &str, (&str, &str)> {
     Ok((input, (former_name, new_name)))
 }
 
-pub(super) fn augment_event(input: &str) -> IResult<'_, &str, (&str, u32, Attribute)> {
+pub(super) fn augment_event(input: &str) -> IResult<'_, &str, (&str, u32, Attribute, bool)> {
     let (input, player_name) = parse_terminated(" was Augmented with +").parse(input)?;
     let (input, amount) = u32.parse(input)?;
     let (input, _) = tag(" ").parse(input)?;
     let (input, attribute) = try_from_word.parse(input)?;
     let (input, _) = tag(".").parse(input)?;
 
-    Ok((input, (player_name, amount, attribute)))
+    let (input, faded) = opt(tag(" A previous augment faded away.")).parse(input)?;
+    let faded = faded.is_some();
+
+    Ok((input, (player_name, amount, attribute, faded)))
 }
 
 pub(super) fn bulk_immunized(input: &str) -> IResult<'_, &str, (EmojiTeam<&str>, u32)> {

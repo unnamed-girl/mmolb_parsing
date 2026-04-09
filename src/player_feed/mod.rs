@@ -164,6 +164,7 @@ pub enum ParsedPlayerFeedEventText<S> {
         player_name: S,
         attribute: Attribute,
         amount: u32,
+        a_previous_augment_faded: bool,
     },
     BoonRecombobulated {
         player_name: S,
@@ -343,8 +344,9 @@ impl<S: Display> ParsedPlayerFeedEventText<S> {
             ParsedPlayerFeedEventText::Restyle { old_name, new_name } => {
                 format!("{old_name} visited the Restylist Salon and emerged as {new_name} with fresh tastes.")
             }
-            ParsedPlayerFeedEventText::Augment { player_name, amount, attribute } => {
-                format!("{player_name} was Augmented with +{amount} {attribute}.")
+            ParsedPlayerFeedEventText::Augment { player_name, amount, attribute, a_previous_augment_faded} => {
+                let faded = if *a_previous_augment_faded { " A previous augment faded away." } else { "" };
+                format!("{player_name} was Augmented with +{amount} {attribute}.{faded}")
             }
             ParsedPlayerFeedEventText::BoonRecombobulated { player_name, old_mod, new_mod} => {
                 format!("{player_name} used the Boon Recombobulator. {old_mod} was swapped for {new_mod}.")

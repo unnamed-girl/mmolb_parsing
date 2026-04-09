@@ -233,6 +233,7 @@ pub enum ParsedTeamFeedEventText<S> {
         player_name: S,
         attribute: Attribute,
         amount: u32,
+        a_previous_augment_faded: bool,
     },
     BulkImmunized {
         team: EmojiTeam<S>,
@@ -471,8 +472,9 @@ impl<S: Display> ParsedTeamFeedEventText<S> {
             ParsedTeamFeedEventText::Restyle { old_name, new_name } => {
                 format!("{old_name} visited the Restylist Salon and emerged as {new_name} with fresh tastes.")
             }
-            ParsedTeamFeedEventText::Augment { player_name, amount, attribute } => {
-                format!("{player_name} was Augmented with +{amount} {attribute}.")
+            ParsedTeamFeedEventText::Augment { player_name, amount, attribute, a_previous_augment_faded } => {
+                let faded = if *a_previous_augment_faded { " A previous augment faded away." } else { "" };
+                format!("{player_name} was Augmented with +{amount} {attribute}.{faded}")
             }
             ParsedTeamFeedEventText::BulkImmunized { team, num_players } => {
                 format!("{team} Immunized {num_players} player(s), cleansing Corruption and Efflorescence.")
