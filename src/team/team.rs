@@ -4,6 +4,7 @@ use serde::{Deserialize, Serialize};
 use serde_with::serde_as;
 
 use super::raw_team::RawTeamPlayer;
+use crate::enums::BenchRole;
 use crate::utils::{maybe_recognized_from_str, MaybeRecognizedHelper, SometimesMissingHelper};
 use crate::{
     enums::{BallparkSuffix, GameStat, Position, PositionType, RecordType, Slot},
@@ -179,6 +180,19 @@ pub struct Team {
     #[serde(skip_serializing_if = "Option::is_none", default)]
     pub fund: Option<i32>,
 
+    #[serde(
+        default = "SometimesMissingHelper::default_result",
+        skip_serializing_if = "AddedLaterResult::is_err"
+    )]
+    #[serde_as(as = "SometimesMissingHelper<_>")]
+    pub away_games: AddedLaterResult<u32>,
+    #[serde(
+        default = "SometimesMissingHelper::default_result",
+        skip_serializing_if = "AddedLaterResult::is_err"
+    )]
+    #[serde_as(as = "SometimesMissingHelper<_>")]
+    pub bench: AddedLaterResult<Bench>,
+
     #[serde(flatten, deserialize_with = "extra_fields_deserialize")]
     pub extra_fields: serde_json::Map<String, serde_json::Value>,
 }
@@ -210,6 +224,18 @@ pub struct TeamPlayer {
 
     pub stats: AddedLaterResult<HashMap<MaybeRecognizedResult<GameStat>, i32>>,
 
+    pub bench_index: AddedLaterResult<Option<u32>>,
+    pub bench_role: AddedLaterResult<Option<BenchRole>>,
+
+    #[serde(flatten, deserialize_with = "extra_fields_deserialize")]
+    pub extra_fields: serde_json::Map<String, serde_json::Value>,
+}
+
+#[derive(Serialize, Deserialize, Clone, Debug)]
+#[serde(rename_all = "PascalCase")]
+pub struct Bench {
+    pub batters: Vec<TeamPlayer>,
+    pub pitchers: Vec<TeamPlayer>,
     #[serde(flatten, deserialize_with = "extra_fields_deserialize")]
     pub extra_fields: serde_json::Map<String, serde_json::Value>,
 }

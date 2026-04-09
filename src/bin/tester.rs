@@ -24,7 +24,7 @@ use nom_language::error::VerboseError;
 use reqwest::blocking::Client;
 use serde::{de::DeserializeOwned, Deserialize, Serialize};
 use tracing::{info_span, Level};
-use tracing_subscriber::{fmt::writer::MakeWriterExt, layer::SubscriberExt, util::SubscriberInitExt};
+use tracing_subscriber::{fmt::writer::MakeWriterExt, layer::SubscriberExt};
 
 type IResult<'a, O> = nom::IResult<&'a str, O, VerboseError<&'a str>>;
 
@@ -144,8 +144,9 @@ fn main() {
         .with_ansi(false)
         .with_writer(std::io::stderr.with_max_level(Level::ERROR));
 
-    let stdout_layer = tracing_subscriber::fmt::Layer::new()
-        .with_writer(std::io::stdout.with_max_level(args.global_opts.with_max_log_level.unwrap_or(Level::INFO)));
+    let stdout_layer = tracing_subscriber::fmt::Layer::new().with_writer(
+        std::io::stdout.with_max_level(args.global_opts.with_max_log_level.unwrap_or(Level::INFO)),
+    );
 
     let collector = tracing_subscriber::registry()
         .with(err_layer)
@@ -246,7 +247,7 @@ fn fetch(global: GlobalOpts, fetch_args: FetchArgs) {
                 endpoint,
                 "game",
                 &game.id,
-                fetch_args.refetch
+                fetch_args.refetch,
             );
         }
     }
@@ -261,7 +262,7 @@ fn fetch(global: GlobalOpts, fetch_args: FetchArgs) {
                 endpoint,
                 "team",
                 &team.id,
-                fetch_args.refetch
+                fetch_args.refetch,
             );
         }
     }
@@ -276,7 +277,7 @@ fn fetch(global: GlobalOpts, fetch_args: FetchArgs) {
                 endpoint,
                 "player",
                 &player.id,
-                fetch_args.refetch
+                fetch_args.refetch,
             );
         }
     }
@@ -290,7 +291,7 @@ fn fetch(global: GlobalOpts, fetch_args: FetchArgs) {
                 endpoint,
                 "player_feed",
                 &player_feed.id,
-                fetch_args.refetch
+                fetch_args.refetch,
             );
         }
     }
@@ -305,14 +306,21 @@ fn fetch(global: GlobalOpts, fetch_args: FetchArgs) {
                 endpoint,
                 "team_feed",
                 &team_feed.id,
-                fetch_args.refetch
+                fetch_args.refetch,
             );
         }
     }
     drop(guard);
 }
 
-fn fetch_save(test_data_folder: &Path, client: &Client, endpoint: &str, kind: &str, id: &str, refetch: bool) {
+fn fetch_save(
+    test_data_folder: &Path,
+    client: &Client,
+    endpoint: &str,
+    kind: &str,
+    id: &str,
+    refetch: bool,
+) {
     let path = test_data_folder
         .join("raw")
         .join(kind)
@@ -426,17 +434,17 @@ fn _round_trip<T: DeserializeOwned + Serialize>(
         Ok(f) => f,
         Err(e) => {
             tracing::error!("{e}");
-            return;  
-        },
+            return;
+        }
     };
-    let value =
-        serde_json::Value::deserialize(&mut serde_json::Deserializer::from_reader(f)).unwrap();
+    let value: serde_json::Value =
+        serde_path_to_error::deserialize(&mut serde_json::Deserializer::from_reader(f)).unwrap();
     let t: T = match serde_json::from_value(value.clone()) {
         Ok(t) => t,
         Err(e) => {
             tracing::error!("{e}");
             return;
-        },
+        }
     };
     let round_tripped = serde_json::to_value(&t).unwrap();
     let diff = serde_json_diff::values(value, round_tripped);

@@ -8,12 +8,12 @@ use nom::{
 };
 use serde::{de::Error, Deserialize, Deserializer, Serialize, Serializer};
 use serde_with::{DeserializeFromStr, SerializeDisplay};
+use std::fmt::Formatter;
 use std::{
     convert::Infallible,
     fmt::{Debug, Display},
     str::FromStr,
 };
-use std::fmt::Formatter;
 use strum::{
     Display, EnumDiscriminants, EnumIter, EnumString, IntoDiscriminant, IntoEnumIterator,
     IntoStaticStr,
@@ -1520,6 +1520,24 @@ impl Display for RecordType {
 pub enum PositionType {
     Pitcher,
     Batter,
+}
+
+#[derive(
+    Debug,
+    Clone,
+    Serialize,
+    Deserialize,
+    EnumString,
+    IntoStaticStr,
+    Display,
+    PartialEq,
+    Eq,
+    Hash,
+    EnumIter,
+)]
+pub enum BenchRole {
+    Pitchers,
+    Batters,
 }
 
 #[derive(

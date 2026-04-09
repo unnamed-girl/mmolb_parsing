@@ -4,6 +4,7 @@ use serde::{Deserialize, Serialize};
 use serde_with::serde_as;
 
 use super::team::TeamPlayer;
+use crate::enums::BenchRole;
 use crate::utils::{MaybeRecognizedHelper, SometimesMissingHelper};
 use crate::{
     enums::{GameStat, PositionType, Slot},
@@ -43,6 +44,18 @@ pub(crate) struct RawTeamPlayer {
         skip_serializing_if = "AddedLaterResult::is_err"
     )]
     pub stats: AddedLaterResult<HashMap<MaybeRecognizedResult<GameStat>, i32>>,
+    #[serde(
+        default = "SometimesMissingHelper::default_result",
+        skip_serializing_if = "AddedLaterResult::is_err"
+    )]
+    #[serde_as(as = "SometimesMissingHelper<_>")]
+    pub bench_index: AddedLaterResult<Option<u32>>,
+    #[serde(
+        default = "SometimesMissingHelper::default_result",
+        skip_serializing_if = "AddedLaterResult::is_err"
+    )]
+    #[serde_as(as = "SometimesMissingHelper<_>")]
+    pub bench_role: AddedLaterResult<Option<BenchRole>>,
 
     #[serde(flatten, deserialize_with = "extra_fields_deserialize")]
     pub extra_fields: serde_json::Map<String, serde_json::Value>,
@@ -61,6 +74,8 @@ impl From<RawTeamPlayer> for TeamPlayer {
             position_type,
             stats,
             extra_fields,
+            bench_index,
+            bench_role,
         } = value;
 
         // Undrafted player's positions are deeply unreliable
@@ -77,6 +92,8 @@ impl From<RawTeamPlayer> for TeamPlayer {
             slot,
             position_type,
             stats,
+            bench_index,
+            bench_role,
             extra_fields,
         }
     }
@@ -96,6 +113,8 @@ impl From<TeamPlayer> for RawTeamPlayer {
             position_type,
             stats,
             extra_fields,
+            bench_index,
+            bench_role,
         } = value;
 
         RawTeamPlayer {
@@ -108,6 +127,8 @@ impl From<TeamPlayer> for RawTeamPlayer {
             slot,
             position_type,
             stats,
+            bench_index,
+            bench_role,
             extra_fields,
         }
     }
