@@ -1,4 +1,4 @@
-use super::shared::{augment_event, boon_recombobulated, falling_star, feed_event_contained, feed_event_door_prize, feed_event_effloresce, feed_event_efflorescence_growth, feed_event_equipped_door_prize, feed_event_party, feed_event_wither, grow, player_moved, player_positions_swapped, player_reflected, player_relegated, players_election_swapped, purified, restyle, election_applied_level_ups, Error, IResult};
+use super::shared::{augment_event, lesser_boon, boon_recombobulated, falling_star, feed_event_contained, feed_event_door_prize, feed_event_effloresce, feed_event_efflorescence_growth, feed_event_equipped_door_prize, feed_event_party, feed_event_wither, grow, player_moved, player_positions_swapped, player_reflected, player_relegated, players_election_swapped, purified, restyle, election_applied_level_ups, Error, IResult};
 use crate::feed_event::PlayerGreaterAugment;
 use crate::{
     enums::{FeedEventType, ModificationType},
@@ -653,6 +653,7 @@ fn boon<'output>(_event: &'output FeedEvent) -> impl PlayerFeedEventParser<'outp
     context(
         "Boon Feed Event",
         alt((
+            lesser_boon.map(|(player_name, boon_emoji, boon)| ParsedPlayerFeedEventText::LesserBoon { player_name, boon_emoji, boon }),
             boon_recombobulated.map(|(player_name, old_mod, new_mod)| ParsedPlayerFeedEventText::BoonRecombobulated { player_name, old_mod, new_mod }),
             fail(),
         )),

@@ -1908,6 +1908,16 @@ pub(super) fn either_team_emoji_player_eof<'parse, 'output>(
     }
 }
 
+pub(super) fn lesser_boon(input: &str) -> IResult<'_, &str, (&str, &str, ModificationType)> {
+    let (input, player_name) = parse_terminated(" was granted the ").parse(input)?;
+    let (input, emoji_boon) = parse_terminated(" Lesser Boon.").parse(input)?;
+    let (boon_name, emoji) = emoji(emoji_boon)?;
+    let (boon_name, _) = tag(" ")(boon_name)?;
+    let boon = ModificationType::new(boon_name);
+
+    Ok((input, (player_name, emoji, boon)))
+}
+
 #[cfg(test)]
 mod test {
     use crate::{

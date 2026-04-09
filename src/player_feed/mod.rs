@@ -200,6 +200,11 @@ pub enum ParsedPlayerFeedEventText<S> {
         player_name: S,
         num_level_ups: u32,
     },
+    LesserBoon {
+        player_name: S,
+        boon_emoji: S,
+        boon: ModificationType,
+    }
 }
 
 impl<S: Display> ParsedPlayerFeedEventText<S> {
@@ -371,6 +376,9 @@ impl<S: Display> ParsedPlayerFeedEventText<S> {
             },
             ParsedPlayerFeedEventText::ElectionAppliedLevelUps { player_name, num_level_ups } => {
                 format!("{player_name} applied {num_level_ups} pending level up(s).")
+            },
+            ParsedPlayerFeedEventText::LesserBoon { player_name, boon_emoji, boon } => {
+                format!("{player_name} was granted the {boon_emoji} {boon} Lesser Boon.")
             }
         }
     }
