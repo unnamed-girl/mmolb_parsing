@@ -317,8 +317,8 @@ impl<S: Display> ParsedPlayerFeedEventText<S> {
                 match greater_augment {
                     PlayerGreaterAugment::Headliners { attribute } => format!("{player_name} lost 0.75 from {attribute}."),
                     PlayerGreaterAugment::StartSmall { attribute } => format!("{player_name} lost 0.5 from {attribute}."),
-                    PlayerGreaterAugment::Plating => format!("{player_name} lost 0.1 to all Defense Attributes."),
-                    PlayerGreaterAugment::LuckyDelivery => format!("{player_name} lost 0.1 to all Defense Attributes."),
+                    PlayerGreaterAugment::Plating => format!("{player_name} lost 0.1 from all Defense Attributes."),
+                    PlayerGreaterAugment::LuckyDelivery => format!("{player_name} lost 0.1 from all Defense Attributes."),
                 }
             }
             ParsedPlayerFeedEventText::RetroactiveGreaterAugment { player_name, greater_augment } => {

@@ -2325,6 +2325,14 @@ pub enum ModificationType {
     Charger,
     Marathoner,
     Snowperson,
+    Thoroughbred,
+    Sneaky,
+    Majestic,
+    Weaver,
+    Spotlight,
+    Tireless,
+    Courier,
+    Granite,
 
     #[strum(default)]
     #[serde(untagged)]
