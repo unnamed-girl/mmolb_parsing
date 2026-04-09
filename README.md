@@ -20,3 +20,11 @@ New, will be very volatile for the next while.
 
 `mmolb_parsing::feed_event::parse_feed_event`
 - takes `&mmolb_parsing::feed_event::FeedEvent` as input and outputs a `ParsedFeedEventText<&str>`
+
+# Testing
+After updating test-cases.txt, run `cargo run --features=bin --bin=tester -- fetch`.
+- use `--beiju` for cheapcashe.ws
+- use `--refetch` if the api has changed.
+- `--refetch --only-fetch-kind player` might be useful if a specific api has changed
+
+To test all cases in test-cases.txt `cargo run --features=bin --bin=tester -- round-trip`
