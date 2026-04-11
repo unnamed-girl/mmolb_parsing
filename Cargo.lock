@@ -1255,7 +1255,7 @@ dependencies = [
 
 [[package]]
 name = "mmolb_parsing"
-version = "0.61.0"
+version = "0.62.0"
 dependencies = [
  "chrono",
  "clap",
