@@ -1745,43 +1745,42 @@ impl TryFrom<Attribute> for AttributeCategory {
     type Error = Uncategorized;
     fn try_from(value: Attribute) -> Result<Self, Self::Error> {
         match value {
-            Attribute::Aiming
+            Attribute::Discipline
+            | Attribute::Vision
+            | Attribute::Intimidation
+            | Attribute::Muscle
             | Attribute::Contact
             | Attribute::Cunning
-            | Attribute::Determination
-            | Attribute::Discipline
-            | Attribute::Insight
-            | Attribute::Intimidation
-            | Attribute::Lift
-            | Attribute::Muscle
             | Attribute::Selflessness
-            | Attribute::Vision
-            | Attribute::Wisdom
-            | Attribute::Intuition => Ok(AttributeCategory::Batting),
-            Attribute::Greed | Attribute::Performance | Attribute::Speed | Attribute::Stealth => {
+            | Attribute::Determination
+            | Attribute::Wisdom 
+            | Attribute::Insight
+            | Attribute::Aiming
+            | Attribute::Lift => Ok(AttributeCategory::Batting),
+            Attribute::Performance | Attribute::Speed | Attribute::Greed |  Attribute::Stealth => {
                 Ok(AttributeCategory::Baserunning)
             }
-            Attribute::Accuracy
-            | Attribute::Control
-            | Attribute::Defiance
-            | Attribute::Guts
+            Attribute::Control
+            | Attribute::Velocity
+            | Attribute::Rotation
+            | Attribute::Stuff
+            | Attribute::Deception
+            | Attribute::Intuition
             | Attribute::Persuasion
             | Attribute::Presence
-            | Attribute::Rotation
+            | Attribute::Defiance
+            | Attribute::Accuracy
             | Attribute::Stamina
-            | Attribute::Stuff
-            | Attribute::Velocity
+            | Attribute::Guts => Ok(AttributeCategory::Pitching),
+            Attribute::Arm
+            | Attribute::Dexterity
+            | Attribute::Reaction
             | Attribute::Acrobatics
             | Attribute::Agility
-            | Attribute::Deception => Ok(AttributeCategory::Pitching),
-            Attribute::Arm
-            | Attribute::Awareness
-            | Attribute::Composure
-            | Attribute::Dexterity
             | Attribute::Patience
-            | Attribute::Reaction
-            | Attribute::Luck => Ok(AttributeCategory::Defense),
-            Attribute::Priority => Err(Uncategorized(Attribute::Priority)),
+            | Attribute::Awareness
+            | Attribute::Composure => Ok(AttributeCategory::Defense),
+            Attribute::Priority | Attribute::Luck => Err(Uncategorized(value)),
         }
     }
 }
