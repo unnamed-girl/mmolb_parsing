@@ -1932,6 +1932,13 @@ impl Cheer {
         r
     }
 
+    pub fn as_str(&self) -> &str {
+        match self {
+            Self::Unknown(unknown) => unknown,
+            _ => self.into(),
+        }
+    }
+
     pub fn unparse<'a>(
         &self,
         context: impl Into<UnparsingContext<'a>>,
@@ -2608,7 +2615,7 @@ mod test {
 
     use serde::Deserialize;
 
-    use crate::{process_game, utils::no_tracing_errs, Game};
+    use crate::{parsed_event::Cheer, process_game, utils::no_tracing_errs, Game};
 
     //https://freecashe.ws/api/chron/v0/entities?kind=game&id=6851bb34f419fdc04f9d0ed5,685b744530d8d1ac659c30de,68611cb61e65f5fb52cb618f,68611cb61e65f5fb52cb61d6,68799d0621c82ae41451ca4f,68782f7d206bc4d2a2003b05,6879f14e21c82ae41451e785,6893c2899361d52a6890a9f0
     #[test]
@@ -2635,5 +2642,18 @@ mod test {
 
         drop(no_tracing_errors);
         Ok(())
+    }
+
+    #[test]
+    fn cheer_as_str() {
+        assert_eq!(
+            Cheer::AChantGrowsLouderAndLouder.as_str(),
+            "A chant grows louder and louder"
+        );
+    }
+
+    #[test]
+    fn cheer_unknown() {
+        assert_eq!(Cheer::Unknown("Example".to_string()).as_str(), "Example");
     }
 }
