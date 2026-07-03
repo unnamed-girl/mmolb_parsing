@@ -11,7 +11,7 @@ use crate::nom_parsing::shared::{assassination, double_trouble, efflorescences, 
 use crate::parsed_event::{
     BasicPitcherSwap, ContainResult, PartyDurabilityLoss, PlacedPlayer, WitherResult,
 };
-use crate::{enums::Place, nom_parsing::shared::try_splits};
+use crate::{enums::Place, nom_parsing::shared::try_all_consuming_splits};
 use crate::{
     enums::{EventType, GameOverMessage, HomeAway, MoundVisitType, NowBattingStats},
     game::Event,
@@ -726,43 +726,49 @@ fn field<'parse, 'output: 'parse>(
         },
     );
 
-    let caught_out = try_splits(&['.', '!'], |sentence, _, rest| {
-        let (sentence, (batter, fair_ball_type)) =
-            parse_and(fly_ball_type_verb_name, " ").parse(sentence)?;
-        let (sentence, _) = tag(" out ").parse(sentence)?;
-        let (sentence, sacrifice) = opt(tag("on a sacrifice fly ")).parse(sentence)?;
-        let sacrifice = sacrifice.is_some();
-        let (sentence, _) = tag("to ").parse(sentence)?;
-        let (sentence, jetpack) = match sentence.strip_suffix(" flying a 🚀 Jetpack") {
-            Some(sentence) => (sentence, true),
-            None => (sentence, false),
-        };
-        let (sentence, caught_by) = placed_player_eof(sentence)?;
+    let caught_out = try_all_consuming_splits(
+        &['.', '!'],
+        |sentence| {
+            let (sentence, (batter, fair_ball_type)) =
+                parse_and(fly_ball_type_verb_name, " ").parse(sentence)?;
+            let (sentence, _) = tag(" out ").parse(sentence)?;
+            let (sentence, sacrifice) = opt(tag("on a sacrifice fly ")).parse(sentence)?;
+            let sacrifice = sacrifice.is_some();
+            let (sentence, _) = tag("to ").parse(sentence)?;
+            let (sentence, jetpack) = match sentence.strip_suffix(" flying a 🚀 Jetpack") {
+                Some(sentence) => (sentence, true),
+                None => (sentence, false),
+            };
+            let (sentence, caught_by) = placed_player_eof(sentence)?;
 
-        if sentence != "" {
-            tracing::error!("'{sentence}' leftover in caught_out try_splits");
-        }
+            Ok((
+                sentence,
+                (batter, fair_ball_type, sacrifice, jetpack, caught_by),
+            ))
+        },
+        |(batter, fair_ball_type, sacrifice, jetpack, caught_by), remainder| {
+            let (remainder, (scores, advances)) = scores_and_advances.parse(remainder)?;
+            let (remainder, perfect) =
+                opt(bold(exclamation(tag("Perfect catch")))).parse(remainder)?;
+            let perfect = perfect.is_some();
+            let (remainder, ejection) = opt(ejection(parsing_context)).parse(remainder)?;
 
-        let (rest, (scores, advances)) = scores_and_advances.parse(rest)?;
-        let (rest, perfect) = opt(bold(exclamation(tag("Perfect catch")))).parse(rest)?;
-        let perfect = perfect.is_some();
-        let (rest, ejection) = opt(ejection(parsing_context)).parse(rest)?;
-
-        Ok((
-            rest,
-            ParsedEventMessage::CaughtOut {
-                batter,
-                fair_ball_type,
-                caught_by,
-                sacrifice,
-                scores,
-                advances,
-                perfect,
-                ejection,
-                jetpack,
-            },
-        ))
-    });
+            Ok((
+                remainder,
+                ParsedEventMessage::CaughtOut {
+                    batter,
+                    fair_ball_type,
+                    caught_by,
+                    sacrifice,
+                    scores,
+                    advances,
+                    perfect,
+                    ejection,
+                    jetpack,
+                },
+            ))
+        },
+    );
 
     let grounded_out = all_consuming_sentence_and(
         (

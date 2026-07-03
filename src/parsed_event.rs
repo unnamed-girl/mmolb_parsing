@@ -1408,7 +1408,11 @@ impl<S: Display> ParsedEventMessage<S> {
                     String::new()
                 };
 
-                let catcher_suffix = if *jetpack { " flying a 🚀 Jetpack!" } else { "." };
+                let catcher_suffix = if *jetpack {
+                    " flying a 🚀 Jetpack!"
+                } else {
+                    "."
+                };
 
                 format!("{batter} {fair_ball_type} out {sacrifice}to {catcher}{catcher_suffix}{scores_and_advances}{perfect}{ejection}")
             }

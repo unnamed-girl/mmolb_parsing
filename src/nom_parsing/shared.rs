@@ -425,22 +425,32 @@ pub(super) fn all_consuming_sentence_and<
     }
 }
 
-/// At each of the given delimiters, will split the input into (before, delimiter, after),
-/// which will be passed into the given function.
+/// At each of the given delimiters, will attempt to split the input.
 ///
-/// The first time f returns Ok(), this function returns Ok(), else it returns Err()
-pub(super) fn try_splits<'parse, 'output, F, O: Debug>(
+/// Effectively calls all_consuming(f) on the first half, then all_consuming(f2) on f's result and the second half.
+///
+/// The first time f2 returns Ok(), this function returns Ok(), else it returns Err()
+pub(super) fn try_all_consuming_splits<'parse, 'output, F, F2, O, O2>(
     delimiters: &'parse [char],
     f: F,
-) -> impl Parser<&'output str, Output = O, Error = Error<'output>> + use<'parse, 'output, F, O>
+    f2: F2,
+) -> impl Parser<&'output str, Output = O2, Error = Error<'output>> + use<'parse, 'output, F, F2, O, O2>
 where
-    F: Fn(&'output str, &'output str, &'output str) -> IResult<'output, &'output str, O>,
+    F: Fn(&'output str) -> IResult<'output, &'output str, O>,
+    F2: Fn(O, &'output str) -> IResult<'output, &'output str, O2>,
 {
     move |input: &'output str| {
         input
             .match_indices(delimiters)
-            .map(|(i, d)| f(&input[..i], d, &input[i + 1..]))
-            .filter(|r| r.is_ok())
+            .filter_map(|(i, _)| match f(&input[..i]) {
+                // Effectively all_consuming
+                Ok(("", r)) => match f2(r, &input[i + 1..]) {
+                    // Effectively all_consuming
+                    Ok(("", r2)) => Some(Ok(("", r2))),
+                    _ => None,
+                },
+                _ => None,
+            })
             .next()
             .unwrap_or_else(|| {
                 IResult::Err(nom::Err::Error(VerboseError::from_error_kind(
