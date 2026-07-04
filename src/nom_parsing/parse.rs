@@ -770,27 +770,30 @@ fn field<'parse, 'output: 'parse>(
         },
     );
 
-    let grounded_out = all_consuming_sentence_and(
-        (
-            parse_terminated(" grounds out").and_then(verify_name),
-            alt((
-                preceded(tag(" to "), placed_player_eof).map(|fielder| vec![fielder]),
-                preceded(tag(", "), fielders_eof),
-            )),
-        ),
-        (
-            scores_and_advances,
-            opt(ejection(parsing_context)),
-            opt(bold(exclamation(tag(if parsing_context.season < 5 {
-                "Perfect catch"
-            } else {
-                "Amazing throw"
-            }))))
-            .map(|perfect| perfect.is_some()),
-        ),
+    let grounded_out = (
+        many0(assassination),
+        all_consuming_sentence_and(
+            (
+                parse_terminated(" grounds out").and_then(verify_name),
+                alt((
+                    preceded(tag(" to "), placed_player_eof).map(|fielder| vec![fielder]),
+                    preceded(tag(", "), fielders_eof),
+                )),
+            ),
+            (
+                scores_and_advances,
+                opt(ejection(parsing_context)),
+                opt(bold(exclamation(tag(if parsing_context.season < 5 {
+                    "Perfect catch"
+                } else {
+                    "Amazing throw"
+                }))))
+                .map(|perfect| perfect.is_some()),
+            ),
+        )
     )
     .map(
-        |((batter, fielders), ((scores, advances), ejection, amazing))| {
+        |(assassinations, ((batter, fielders), ((scores, advances), ejection, amazing)))| {
             ParsedEventMessage::GroundedOut {
                 batter,
                 fielders,
@@ -798,6 +801,7 @@ fn field<'parse, 'output: 'parse>(
                 advances,
                 amazing,
                 ejection,
+                assassinations,
             }
         },
     );

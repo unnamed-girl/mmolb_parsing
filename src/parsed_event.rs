@@ -227,6 +227,7 @@ pub enum ParsedEventMessage<S> {
         advances: Vec<RunnerAdvance<S>>,
         amazing: bool,
         ejection: Option<Ejection<S>>,
+        assassinations: Vec<Assassination<S>>,
     },
     ForceOut {
         batter: S,
@@ -1435,7 +1436,12 @@ impl<S: Display> ParsedEventMessage<S> {
                 advances,
                 amazing,
                 ejection,
+                assassinations,
             } => {
+                let assassinations = assassinations.iter()
+                    .map(|ass| ass.unparse())
+                    .chain(once(String::new()))
+                    .join(" ");
                 let scores_and_advances = unparse_scores_and_advances(scores, advances);
                 let fielders = unparse_fielders(fielders);
                 let perfect = if *amazing {
@@ -1452,7 +1458,7 @@ impl<S: Display> ParsedEventMessage<S> {
                 } else {
                     String::new()
                 };
-                format!("{batter} grounds out{fielders}.{scores_and_advances}{perfect}{ejection}")
+                format!("{assassinations}{batter} grounds out{fielders}.{scores_and_advances}{perfect}{ejection}")
             }
             Self::ForceOut {
                 batter,

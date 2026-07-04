@@ -951,13 +951,15 @@ fn check<S>(event: &ParsedEventMessage<S>) -> String {
             advances,
             amazing,
             ejection,
+            assassinations,
         } => {
             format!(
-                "fielders: {}, amazing: {amazing}, scores: {}, advances: {}, ejection: {}",
+                "fielders: {}, amazing: {amazing}, scores: {}, advances: {}, ejection: {}, assassinations: {}",
                 fielders.len(),
                 scores.len(),
                 advances.len(),
-                ejection.is_some()
+                ejection.is_some(),
+                assassinations.len(),
             )
         }
         ParsedEventMessage::ForceOut {
