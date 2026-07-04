@@ -876,8 +876,16 @@ fn check<S>(event: &ParsedEventMessage<S>) -> String {
             aurora_photos,
             door_prizes,
             efflorescence,
+            assassinations,
         } => {
-            format!("fair_ball_type: {fair_ball_type}, destination: {destination}, cheer: {}, aurora_photos: {}, door_prizes: {}, efflorescence: {}", cheer.is_some(), aurora_photos.is_some(), door_prizes.len(), efflorescence.len())
+            format!(
+                "fair_ball_type: {fair_ball_type}, destination: {destination}, cheer: {}, aurora_photos: {}, door_prizes: {}, efflorescence: {}, assassinations: {}",
+                cheer.is_some(),
+                aurora_photos.is_some(),
+                door_prizes.len(),
+                efflorescence.len(),
+                assassinations.len(),
+            )
         }
         ParsedEventMessage::StrikeOut {
             foul,

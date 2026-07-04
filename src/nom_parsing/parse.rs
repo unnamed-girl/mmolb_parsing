@@ -1019,6 +1019,7 @@ fn pitch<'parse, 'output: 'parse>(
     parsing_context: &'parse ParsingContext<'parse>,
 ) -> impl MyParser<'output, ParsedEventMessage<&'output str>> + 'parse {
     let fair_ball = (
+        many0(assassination),
         sentence((
             parse_terminated(" hits a "),
             try_from_words_m_n(1, 2),
@@ -1031,6 +1032,7 @@ fn pitch<'parse, 'output: 'parse>(
     )
         .map(
             |(
+                assassinations,
                 (batter, fair_ball_type, destination),
                 aurora_photos,
                 cheer,
@@ -1044,6 +1046,7 @@ fn pitch<'parse, 'output: 'parse>(
                 aurora_photos,
                 door_prizes,
                 efflorescence,
+                assassinations,
             },
         );
 

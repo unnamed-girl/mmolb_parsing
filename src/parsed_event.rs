@@ -135,7 +135,7 @@ pub enum ParsedEventMessage<S> {
         wither: Option<WitherStruggle<S>>,
         efflorescence: Vec<Efflorescence<S>>,
         surprise_strike: bool,
-        assassinations: Vec<Assassination<S>>
+        assassinations: Vec<Assassination<S>>,
     },
     Foul {
         foul: FoulType,
@@ -176,6 +176,7 @@ pub enum ParsedEventMessage<S> {
         aurora_photos: Option<SnappedPhotos<S>>,
         door_prizes: Vec<DoorPrize<S>>,
         efflorescence: Vec<Efflorescence<S>>,
+        assassinations: Vec<Assassination<S>>,
     },
     StrikeOut {
         foul: Option<FoulType>,
@@ -1282,7 +1283,12 @@ impl<S: Display> ParsedEventMessage<S> {
                 aurora_photos,
                 door_prizes,
                 efflorescence,
+                assassinations,
             } => {
+                let assassinations = assassinations.iter()
+                    .map(|ass| ass.unparse())
+                    .chain(once(String::new()))
+                    .join(" ");
                 let space = old_space(context, event_index);
 
                 let cheer = cheer
@@ -1302,7 +1308,7 @@ impl<S: Display> ParsedEventMessage<S> {
                     .collect::<Vec<_>>()
                     .join("<br>🌹 ");
 
-                format!("{space}{batter} hits a {fair_ball_type} to {destination}.{aurora_photos}{cheer}{door_prizes}{efflorescence}")
+                format!("{assassinations}{space}{batter} hits a {fair_ball_type} to {destination}.{aurora_photos}{cheer}{door_prizes}{efflorescence}")
             }
             Self::StrikeOut {
                 foul,
