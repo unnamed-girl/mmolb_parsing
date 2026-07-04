@@ -1136,7 +1136,8 @@ fn pitch<'parse, 'output: 'parse>(
         },
     );
 
-    let ball = (preceded(sentence(tag("Ball")), sentence(score_update)))
+    let ball = many0(assassination)
+        .and(preceded(sentence(tag("Ball")), sentence(score_update)))
         .and(many0(base_steal_sentence))
         .and(opt(preceded(tag(" "), aurora(parsing_context))))
         .and(opt(preceded(tag(" "), cheer(parsing_context))))
@@ -1146,7 +1147,7 @@ fn pitch<'parse, 'output: 'parse>(
         .and(efflorescences)
         .map(
             |(
-                ((((((count, steals), aurora_photos), cheer), ejection), door_prizes), wither),
+                (((((((assassinations, count), steals), aurora_photos), cheer), ejection), door_prizes), wither),
                 efflorescence,
             )| ParsedEventMessage::Ball {
                 steals,
@@ -1157,6 +1158,7 @@ fn pitch<'parse, 'output: 'parse>(
                 door_prizes,
                 wither,
                 efflorescence,
+                assassinations,
             },
         );
 

@@ -786,8 +786,19 @@ fn check<S>(event: &ParsedEventMessage<S>) -> String {
             door_prizes,
             wither,
             efflorescence,
+            assassinations,
         } => {
-            format!("steals: {}, cheer: {}, aurora_photos: {}, ejection: {}, door_prizes: {}, wither: {}, efflorescence: {}", steals.len(), cheer.is_some(), aurora_photos.is_some(), ejection.is_some(), door_prizes.len(), wither.is_some(), efflorescence.len())
+            format!(
+                "steals: {}, cheer: {}, aurora_photos: {}, ejection: {}, door_prizes: {}, wither: {}, efflorescence: {}, assassinations: {}",
+                steals.len(),
+                cheer.is_some(),
+                aurora_photos.is_some(),
+                ejection.is_some(),
+                door_prizes.len(),
+                wither.is_some(),
+                efflorescence.len(),
+                assassinations.len(),
+            )
         }
         ParsedEventMessage::Strike {
             strike,

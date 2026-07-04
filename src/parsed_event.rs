@@ -123,6 +123,7 @@ pub enum ParsedEventMessage<S> {
         door_prizes: Vec<DoorPrize<S>>,
         wither: Option<WitherStruggle<S>>,
         efflorescence: Vec<Efflorescence<S>>,
+        assassinations: Vec<Assassination<S>>,
     },
     Strike {
         strike: StrikeType,
@@ -1087,7 +1088,12 @@ impl<S: Display> ParsedEventMessage<S> {
                 door_prizes,
                 wither,
                 efflorescence,
+                assassinations,
             } => {
+                let assassinations = assassinations.iter()
+                    .map(|ass| ass.unparse())
+                    .chain(once(String::new()))
+                    .join(" ");
                 let steals = once(String::new())
                     .chain(steals.iter().map(BaseSteal::to_string))
                     .collect::<Vec<String>>()
@@ -1115,7 +1121,7 @@ impl<S: Display> ParsedEventMessage<S> {
                     .collect::<Vec<_>>()
                     .join("<br>🌹 ");
 
-                format!("{space}Ball. {}-{}.{steals}{aurora_photos}{ejection}{cheer}{door_prizes}{wither}{efflorescence}", count.0, count.1)
+                format!("{assassinations}{space}Ball. {}-{}.{steals}{aurora_photos}{ejection}{cheer}{door_prizes}{wither}{efflorescence}", count.0, count.1)
             }
             Self::Strike {
                 strike,
