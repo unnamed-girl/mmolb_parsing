@@ -2064,6 +2064,17 @@ pub(super) fn players_became_friends(input: &str) -> IResult<'_, &str, [&str; 2]
     Ok((input, [player1_name, player2_name]))
 }
 
+pub(super) fn player_trained(input: &str) -> IResult<'_, &str, (&str, BenchSlot)> {
+    let (input, player_name) = parse_terminated(" was rerolled and trained to Level 30 for ").parse(input)?;
+    let (input, bench_slot) = alt((
+        preceded(tag("Bench Batter #"), u8).map(BenchSlot::Batter),
+        preceded(tag("Bench Pitcher #"), u8).map(BenchSlot::Batter),
+    )).parse(input)?;
+    let (input, _) = tag(".").parse(input)?;
+
+    Ok((input, (player_name, bench_slot)))
+}
+
 #[cfg(test)]
 mod test {
     use crate::{

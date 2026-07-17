@@ -1,12 +1,4 @@
-use super::shared::{
-    augment_event, boon_recombobulated, election_applied_level_ups, falling_star,
-    feed_event_contained, feed_event_door_prize, feed_event_effloresce,
-    feed_event_efflorescence_growth, feed_event_equipped_door_prize, feed_event_party,
-    feed_event_resumed_processing, feed_event_wither, grow, lesser_boon,
-    player_greater_augment_mod, player_moved, player_positions_swapped, player_reflected,
-    player_relegated, players_became_friends, players_election_swapped, purified, restyle, Error,
-    IResult,
-};
+use super::shared::{augment_event, boon_recombobulated, election_applied_level_ups, falling_star, feed_event_contained, feed_event_door_prize, feed_event_effloresce, feed_event_efflorescence_growth, feed_event_equipped_door_prize, feed_event_party, feed_event_resumed_processing, feed_event_wither, grow, lesser_boon, player_greater_augment_mod, player_moved, player_positions_swapped, player_reflected, player_relegated, player_trained, players_became_friends, players_election_swapped, purified, restyle, Error, IResult};
 use crate::enums::DurabilityType;
 use crate::feed_event::PlayerGreaterAugment;
 use crate::{
@@ -571,7 +563,7 @@ fn seasonal_durability_loss_blocked(
     ))
 }
 
-fn election<'output>(_event: &'output FeedEvent) -> impl PlayerFeedEventParser<'output> {
+fn election(_event: &'_ FeedEvent) -> impl PlayerFeedEventParser<'_> {
     context(
         "Election Feed Event",
         alt((
@@ -613,6 +605,12 @@ fn election<'output>(_event: &'output FeedEvent) -> impl PlayerFeedEventParser<'
                     augment_name,
                 }
             }),
+            player_trained.map(|(player_name, bench_slot)| {
+                ParsedPlayerFeedEventText::Trained {
+                    player_name,
+                    bench_slot,
+                }
+            })
         )),
     )
 }

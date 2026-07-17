@@ -4,7 +4,7 @@ use std::fmt::Display;
 use serde::{Deserialize, Serialize};
 use serde_with::serde_as;
 
-use crate::enums::{Day, DurabilityType, Slot};
+use crate::enums::{BenchSlot, Day, DurabilityType, Slot};
 use crate::feed_event::PlayerGreaterAugment;
 pub use crate::nom_parsing::parse_player_feed_event::parse_player_feed_event;
 use crate::nom_parsing::shared::{FeedEventDoorPrize, FeedEventParty, Grow, PositionSwap};
@@ -222,6 +222,10 @@ pub enum ParsedPlayerFeedEventText<S> {
     PlayersBecameFriends {
         player_names: [S; 2],
     },
+    Trained {
+        player_name: S,
+        bench_slot: BenchSlot,
+    }
 }
 
 impl<S: Display> ParsedPlayerFeedEventText<S> {
@@ -419,6 +423,12 @@ impl<S: Display> ParsedPlayerFeedEventText<S> {
             },
             ParsedPlayerFeedEventText::PlayersBecameFriends { player_names: [player1, player2] } => {
                 format!("{player1} became Friends with {player2}.")
+            },
+            ParsedPlayerFeedEventText::Trained { player_name, bench_slot } => {
+                format!("{player_name} was rerolled and trained to Level 30 for {}.", match bench_slot {
+                    BenchSlot::Batter(n) => format!("Bench Batter #{n}"),
+                    BenchSlot::Pitcher(n) => format!("Bench Pitcher #{n}"),
+                })
             }
         }
     }
