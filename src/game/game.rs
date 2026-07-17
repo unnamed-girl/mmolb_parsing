@@ -39,6 +39,13 @@ pub struct Game {
     #[serde_as(as = "SometimesMissingHelper<_>")]
     pub hype_active: AddedLaterResult<bool>,
 
+    #[serde(
+        default = "SometimesMissingHelper::default_result",
+        skip_serializing_if = "Result::is_err"
+    )]
+    #[serde_as(as = "SometimesMissingHelper<_>")]
+    pub half_inning_errors: AddedLaterResult<u8>,
+
     pub season: u32,
     #[serde_as(as = "MaybeRecognizedHelper<_>")]
     pub day: MaybeRecognizedResult<Day>,
