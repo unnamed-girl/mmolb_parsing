@@ -2515,6 +2515,12 @@ pub enum ModificationType {
     #[serde(rename = "Surprise Strike")]
     SurpriseStrike,
     Assassin,
+    Meteor,
+    Accountant,
+    Gambit,
+    Venomous,
+    Elvish,
+    Clockwork,
 
     #[strum(default)]
     #[serde(untagged)]
