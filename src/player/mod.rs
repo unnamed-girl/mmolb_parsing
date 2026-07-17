@@ -1,7 +1,5 @@
-use crate::enums::{
-    AttributeCategory, EquipmentEffectPhase, ImplicitEquipmentEffectSource, PitchCategory,
-    PitchType,
-};
+use crate::utils::PositionOrSlotHelper;
+use crate::enums::{AttributeCategory, EquipmentEffectPhase, ImplicitEquipmentEffectSource, PitchCategory, PitchType, Slot};
 use crate::utils::PitchTypeFromAcronym;
 use crate::utils::{
     extra_fields_deserialize, MaybeRecognizedHelper, SometimesMissingHelper, TimestampHelper,
@@ -22,6 +20,7 @@ use chrono::{DateTime, Utc};
 pub use serde::{Deserialize, Serialize};
 use serde_with::serde_as;
 use std::collections::HashMap;
+use itertools::Either;
 use strum::{Display, EnumIter, EnumString, IntoStaticStr};
 use uuid::Uuid;
 
@@ -178,8 +177,11 @@ pub struct Player {
     pub dislikes: String,
 
     pub number: u8,
-    #[serde_as(as = "MaybeRecognizedHelper<_>")]
-    pub position: MaybeRecognizedResult<Position>,
+
+    // As a result of the s13 elections, some player versions were created
+    // with Slots for positions
+    #[serde_as(as = "MaybeRecognizedHelper<PositionOrSlotHelper>")]
+    pub position: MaybeRecognizedResult<Either<Position, Slot>>,
     #[serde_as(as = "MaybeRecognizedHelper<_>")]
     pub position_type: MaybeRecognizedResult<PositionType>,
 
