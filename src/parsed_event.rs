@@ -157,6 +157,7 @@ pub enum ParsedEventMessage<S> {
         aurora_photos: Option<SnappedPhotos<S>>,
         ejection: Option<Ejection<S>>,
         wither: Option<WitherStruggle<S>>,
+        assassinations: Vec<Assassination<S>>,
     },
     HitByPitch {
         batter: S,
@@ -1226,7 +1227,12 @@ impl<S: Display> ParsedEventMessage<S> {
                 aurora_photos,
                 ejection,
                 wither,
+                assassinations,
             } => {
+                let assassinations = assassinations.iter()
+                    .map(|ass| ass.unparse())
+                    .chain(once(String::new()))
+                    .join(" ");
                 let scores_and_advances = unparse_scores_and_advances(scores, advances);
                 let space = old_space(context, event_index);
 
@@ -1244,7 +1250,7 @@ impl<S: Display> ParsedEventMessage<S> {
                     .map_or_else(String::new, |wither| format!(" {}", wither));
 
                 // Proof cheer is before ejection: https://mmolb.com/watch/6887e503f142e23550fc1254?event=369
-                format!("{space}Ball 4. {batter} walks.{scores_and_advances}{aurora_photos}{cheer}{ejection}{wither}")
+                format!("{assassinations}{space}Ball 4. {batter} walks.{scores_and_advances}{aurora_photos}{cheer}{ejection}{wither}")
             }
             Self::HitByPitch {
                 batter,

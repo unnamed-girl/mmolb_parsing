@@ -856,14 +856,16 @@ fn check<S>(event: &ParsedEventMessage<S>) -> String {
             aurora_photos,
             ejection,
             wither,
+            assassinations,
         } => {
             format!(
-                "scores: {}, cheer: {}, aurora_photos: {}, ejection: {}, wither: {}",
+                "scores: {}, cheer: {}, aurora_photos: {}, ejection: {}, wither: {}, assassinations: {}",
                 scores.len(),
                 cheer.is_some(),
                 aurora_photos.is_some(),
                 ejection.is_some(),
-                wither.is_some()
+                wither.is_some(),
+                assassinations.len(),
             )
         }
         ParsedEventMessage::HitByPitch {

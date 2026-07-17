@@ -1119,17 +1119,18 @@ fn pitch<'parse, 'output: 'parse>(
         },
     );
 
-    let walks = preceded(
+    let walks = many0(assassination)
+    .and(preceded(
         sentence(tag("Ball 4")),
         sentence(parse_terminated(" walks")),
-    )
+    ))
     .and(scores_and_advances)
     .and(opt(preceded(tag(" "), aurora(parsing_context))))
     .and(opt(preceded(tag(" "), cheer(parsing_context))))
     .and(opt(ejection(parsing_context)))
     .and(opt(wither(parsing_context)))
     .map(
-        |(((((batter, (scores, advances)), aurora_photos), cheer), ejection), wither)| {
+        |((((((assassinations, batter), (scores, advances)), aurora_photos), cheer), ejection), wither)| {
             ParsedEventMessage::Walk {
                 batter,
                 scores,
@@ -1138,6 +1139,7 @@ fn pitch<'parse, 'output: 'parse>(
                 aurora_photos,
                 ejection,
                 wither,
+                assassinations,
             }
         },
     );
