@@ -434,10 +434,16 @@ impl<S: Display> ParsedTeamFeedEventText<S> {
                 format!("{team} Purified their roster, cleansing {num_players_purified} player(s) of Corruption.")
             },
             ParsedTeamFeedEventText::Callup { lesser_league_team, greater_league_team, slot, promoted_player_name, demoted_player_name } => {
+                let in_the_slot = if event.season < 13 {
+                    String::new()
+                } else {
+                    format!(" in the {slot} slot")
+                };
+                
                 format!(
                     "{lesser_league_team} {slot} {promoted_player_name} was called up to replace \
                     {greater_league_team} {slot} {demoted_player_name}. {demoted_player_name} \
-                    joined the {}.", lesser_league_team.name
+                    joined the {}{in_the_slot}.", lesser_league_team.name
                 )
             }
             ParsedTeamFeedEventText::GreaterAugment { team, greater_augment } => {

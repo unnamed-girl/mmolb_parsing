@@ -5,7 +5,7 @@ use super::shared::{
     parse_until_period_eof, player_positions_swapped, player_reflected, players_election_swapped,
     purified, restyle, team_election_purified, training, Error, IResult,
 };
-use crate::enums::PositionType;
+use crate::enums::{PositionType, Slot};
 use crate::feed_event::{AttributeChange, GreaterAugment};
 use crate::nom_parsing::shared::{
     active_slot, falling_star, feed_event_effloresce, feed_event_efflorescence_growth, grow,
@@ -442,13 +442,26 @@ fn election<'output>() -> impl TeamFeedEventParser<'output> {
     )
 }
 
+fn callup_terminus_with_slot(input: &str) -> IResult<'_, &str, (&str, Slot)> {
+    let (input, team_name_with_space) = parse_terminated(" in the ").parse(input)?;
+    let (input, slot) = active_slot.parse(input)?;
+    let (input, _) = tag(" slot.").parse(input)?;
+
+    Ok((input, (team_name_with_space, slot)))
+}
+
 fn callup(input: &str) -> IResult<'_, &str, ParsedTeamFeedEventText<&str>> {
     // First, look ahead for an easier-to-parse version of the team name
     // `input` is intentionally second here, and yes that is weird
     // Oh and to add to the weird, I'm including the leading space so it can
     // be more conveniently used as a tag in the next step
     let (rest, input) = parse_terminated(" joined the").parse(input)?;
-    let (rest, lesser_team_name_with_space) = parse_until_period_eof.parse(rest)?;
+    // TODO How to make sure this matches the `slot` from later?
+    let (rest, (lesser_team_name_with_space, _terminus_slot)) = alt((
+        // Order matters here
+        callup_terminus_with_slot.map(|(team_name_with_space, slot)| (team_name_with_space, Some(slot))),
+        parse_until_period_eof.map(|team_name_with_space| (team_name_with_space, None)),
+    )).parse(rest)?;
     let lesser_team_name = &lesser_team_name_with_space[1..];
 
     let (input, lesser_team_emoji) = parse_terminated(lesser_team_name_with_space).parse(input)?;
