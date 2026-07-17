@@ -1,10 +1,4 @@
-use super::shared::{
-    augment_event, bulk_immunized, emoji, emoji_team_eof, emoji_team_eof_maybe_no_space,
-    feed_event_consumption_contest_specific, feed_event_contained, feed_event_delivery_discarded,
-    feed_event_door_prize, feed_event_equipped_door_prize, feed_event_party, feed_event_wither,
-    parse_until_period_eof, player_positions_swapped, player_reflected, players_election_swapped,
-    purified, restyle, team_election_purified, training, Error, IResult,
-};
+use super::shared::{augment_event, bulk_immunized, emoji, emoji_team_eof, emoji_team_eof_maybe_no_space, feed_event_consumption_contest_specific, feed_event_contained, feed_event_delivery_discarded, feed_event_door_prize, feed_event_equipped_door_prize, feed_event_party, feed_event_wither, parse_until_period_eof, player_positions_swapped, player_reflected, player_trained, players_election_swapped, purified, restyle, team_election_purified, training, Error, IResult};
 use crate::enums::{PositionType, Slot};
 use crate::feed_event::{AttributeChange, GreaterAugment};
 use crate::nom_parsing::shared::{
@@ -438,6 +432,13 @@ fn election<'output>() -> impl TeamFeedEventParser<'output> {
                     augment_name,
                 }
             }),
+            player_trained.map(|(player_name, bench_slot)| {
+                ParsedTeamFeedEventText::PlayerTrained {
+                    player_name,
+                    bench_slot,
+                }
+            }),
+            manager_replaced,
         )),
     )
 }
@@ -923,6 +924,19 @@ pub(super) fn golden_player_replacement_failed(
     let (input, position_type) = parse_position_type.parse(input)?;
     let (input, _) = tag(".").parse(input)?;
     Ok((input, (position_type, team)))
+}
+
+pub(super) fn manager_replaced(input: &str) -> IResult<'_, &str, ParsedTeamFeedEventText<&str>> {
+    let (input, team_emoji_name) = parse_terminated(" Manager ").parse(input)?;
+    let (_, team) = emoji_team_eof.parse(team_emoji_name)?;
+    let (input, outgoing_manager_name) = parse_terminated(" was fired and replaced by ").parse(input)?;
+    let (input, replacement_manager_name) = parse_until_period_eof.parse(input)?;
+
+    Ok((input, ParsedTeamFeedEventText::ManagerReplaced {
+        team,
+        outgoing_manager_name,
+        replacement_manager_name,
+    }))
 }
 
 pub(super) fn end_game_income(input: &str) -> IResult<'_, &str, (EmojiTeam<&str>, u32)> {

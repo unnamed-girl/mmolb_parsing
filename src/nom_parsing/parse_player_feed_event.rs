@@ -607,7 +607,7 @@ fn election(_event: &'_ FeedEvent) -> impl PlayerFeedEventParser<'_> {
                 }
             }),
             player_trained.map(|(player_name, bench_slot)| {
-                ParsedPlayerFeedEventText::Trained {
+                ParsedPlayerFeedEventText::PlayerTrained {
                     player_name,
                     bench_slot,
                 }

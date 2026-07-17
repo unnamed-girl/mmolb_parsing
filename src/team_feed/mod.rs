@@ -4,7 +4,7 @@ use itertools::Itertools;
 use serde::{Deserialize, Serialize};
 use serde_with::serde_as;
 
-use crate::enums::{PositionType, Slot, WithNumberSign};
+use crate::enums::{BenchSlot, PositionType, Slot, WithNumberSign};
 use crate::feed_event::{AttributeChange, GreaterAugment};
 pub use crate::nom_parsing::parse_team_feed_event::parse_team_feed_event;
 use crate::nom_parsing::shared::{
@@ -260,6 +260,18 @@ pub enum ParsedTeamFeedEventText<S> {
     PlayersBecameFriends {
         player_names: [S; 2],
     },
+    PlayerTrained {
+        player_name: S,
+        bench_slot: BenchSlot,
+    },
+    // As of mid-s14, only counts greater league teams whose manager was
+    // replaced during the election (because they were the worst in their
+    // division), not voluntary lesser league manager replacements
+    ManagerReplaced {
+        team: EmojiTeam<S>,
+        outgoing_manager_name: S,
+        replacement_manager_name: S,
+    }
 }
 
 impl<S: Display> ParsedTeamFeedEventText<S> {
@@ -439,7 +451,7 @@ impl<S: Display> ParsedTeamFeedEventText<S> {
                 } else {
                     format!(" in the {slot} slot")
                 };
-                
+
                 format!(
                     "{lesser_league_team} {slot} {promoted_player_name} was called up to replace \
                     {greater_league_team} {slot} {demoted_player_name}. {demoted_player_name} \
@@ -523,6 +535,15 @@ impl<S: Display> ParsedTeamFeedEventText<S> {
             }
             ParsedTeamFeedEventText::PlayersBecameFriends { player_names: [player1, player2] } => {
                 format!("{player1} became Friends with {player2}.")
+            }
+            ParsedTeamFeedEventText::PlayerTrained { player_name, bench_slot } => {
+                format!("{player_name} was rerolled and trained to Level 30 for {}.", match bench_slot {
+                    BenchSlot::Batter(n) => format!("Bench Batter #{n}"),
+                    BenchSlot::Pitcher(n) => format!("Bench Pitcher #{n}"),
+                })
+            },
+            ParsedTeamFeedEventText::ManagerReplaced { team, outgoing_manager_name, replacement_manager_name } => {
+                format!("{team} Manager {outgoing_manager_name} was fired and replaced by {replacement_manager_name}.")
             }
         }
     }
