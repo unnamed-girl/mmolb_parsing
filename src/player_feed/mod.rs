@@ -4,7 +4,7 @@ use std::fmt::Display;
 use serde::{Deserialize, Serialize};
 use serde_with::serde_as;
 
-use crate::enums::{DurabilityType, Slot};
+use crate::enums::{Day, DurabilityType, Slot};
 use crate::feed_event::PlayerGreaterAugment;
 pub use crate::nom_parsing::parse_player_feed_event::parse_player_feed_event;
 use crate::nom_parsing::shared::{FeedEventDoorPrize, FeedEventParty, Grow, PositionSwap};
@@ -301,8 +301,13 @@ impl<S: Display> ParsedPlayerFeedEventText<S> {
                     Some(DurabilityType::Greater) if event.season < 13 => "GreaterDurability in the Greater League",
                     Some(DurabilityType::Greater) => "Greater Durability in the Greater League",
                 };
+                let durability_why = if event.season < 14 && event.day == Ok(Day::Preseason) {
+                    "for playing in Season"
+                } else {
+                    "for being on the roster in Season"
+                };
                 if let Some(durability_lost) = durability_lost {
-                    format!("{player_name} lost {durability_lost} {durability_str} for playing in Season {season}.")
+                    format!("{player_name} lost {durability_lost} {durability_str} {durability_why} {season}.")
                 } else {
                     format!("{player_name}'s Prolific Greater Boon resisted {durability_str} loss for Season {season}.")
                 }

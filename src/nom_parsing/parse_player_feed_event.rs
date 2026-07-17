@@ -520,15 +520,21 @@ fn seasonal_durability_loss_happened(
     let (input, player_name) = parse_terminated(" lost ").parse(input)?;
     let (input, durability_lost) = u32.parse(input)?;
     let (input, durability_type) = alt((
-        tag(" durability for playing in Season ").map(|_| None),
-        tag(" LesserDurability in the Lesser League for playing in Season ")
+        tag(" durability ").map(|_| None),
+        tag(" LesserDurability in the Lesser League ")
             .map(|_| Some(DurabilityType::Lesser)),
-        tag(" Lesser Durability in the Lesser League for playing in Season ")
+        tag(" Lesser Durability in the Lesser League ")
             .map(|_| Some(DurabilityType::Lesser)),
-        tag(" GreaterDurability in the Greater League for playing in Season ")
+        tag(" GreaterDurability in the Greater League ")
             .map(|_| Some(DurabilityType::Greater)),
-        tag(" Greater Durability in the Greater League for playing in Season ")
+        tag(" Greater Durability in the Greater League ")
             .map(|_| Some(DurabilityType::Greater)),
+    ))
+    .parse(input)?;
+    // This can be disambiguated by season
+    let (input, _) = alt((
+        tag("for playing in Season "),
+        tag("for being on the roster in Season "),
     ))
     .parse(input)?;
     let (input, season) = u32.parse(input)?;
