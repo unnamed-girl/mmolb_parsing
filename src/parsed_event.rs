@@ -188,6 +188,7 @@ pub enum ParsedEventMessage<S> {
         aurora_photos: Option<SnappedPhotos<S>>,
         ejection: Option<Ejection<S>>,
         wither: Option<WitherStruggle<S>>,
+        assassinations: Vec<Assassination<S>>,
     },
 
     // Field
@@ -1326,7 +1327,12 @@ impl<S: Display> ParsedEventMessage<S> {
                 aurora_photos,
                 ejection,
                 wither,
+                assassinations,
             } => {
+                let assassinations = assassinations.iter()
+                    .map(|ass| ass.unparse())
+                    .chain(once(String::new()))
+                    .join(" ");
                 let foul = match foul {
                     Some(foul) => format!("Foul {foul}. "),
                     None => String::new(),
@@ -1353,7 +1359,7 @@ impl<S: Display> ParsedEventMessage<S> {
                 // I do have proof that cheer is before ejection at least on this event
                 // (game 6887e4f9f142e23550fc1134 event 265)
                 let strike_out_text = strike_out_text(context.season, context.day, event_index);
-                format!("{space}{foul}{batter}{strike_out_text}{strike}.{steals}{aurora_photos}{cheer}{ejection}{wither}")
+                format!("{assassinations}{space}{foul}{batter}{strike_out_text}{strike}.{steals}{aurora_photos}{cheer}{ejection}{wither}")
             }
             Self::BatterToBase {
                 batter,

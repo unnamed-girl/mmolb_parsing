@@ -1055,6 +1055,7 @@ fn pitch<'parse, 'output: 'parse>(
         );
 
     let struck_out = (
+        many0(assassination),
         opt(sentence(preceded(tag("Foul "), try_from_word))),
         sentence((
             parse_terminated(strike_out_text(
@@ -1071,7 +1072,7 @@ fn pitch<'parse, 'output: 'parse>(
         .and(opt(ejection(parsing_context)))
         .and(opt(wither(parsing_context)))
         .map(
-            |((((((foul, (batter, strike)), steals), aurora_photos), cheer), ejection), wither)| {
+            |((((((assassinations, foul, (batter, strike)), steals), aurora_photos), cheer), ejection), wither)| {
                 ParsedEventMessage::StrikeOut {
                     foul,
                     batter,
@@ -1081,6 +1082,7 @@ fn pitch<'parse, 'output: 'parse>(
                     aurora_photos,
                     ejection,
                     wither,
+                    assassinations,
                 }
             },
         );

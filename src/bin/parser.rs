@@ -907,8 +907,18 @@ fn check<S>(event: &ParsedEventMessage<S>) -> String {
             aurora_photos,
             ejection,
             wither,
+            assassinations,
         } => {
-            format!("foul: {}, strike: {strike}, steals: {}, cheer: {}, aurora_photos: {}, ejection: {}, wither: {}", foul.as_ref().map(FoulType::to_string).unwrap_or_else(|| "False".to_string()), steals.len(), cheer.is_some(), aurora_photos.is_some(), ejection.is_some(), wither.is_some())
+            format!(
+                "foul: {}, strike: {strike}, steals: {}, cheer: {}, aurora_photos: {}, ejection: {}, wither: {}, assassinations: {}",
+                foul.as_ref().map(FoulType::to_string).unwrap_or_else(|| "False".to_string()),
+                steals.len(),
+                cheer.is_some(),
+                aurora_photos.is_some(),
+                ejection.is_some(),
+                wither.is_some(),
+                assassinations.len(),
+            )
         }
         ParsedEventMessage::BatterToBase {
             batter: _,
