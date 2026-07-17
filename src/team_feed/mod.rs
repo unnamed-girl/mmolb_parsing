@@ -199,7 +199,7 @@ pub enum ParsedTeamFeedEventText<S> {
     Released {
         team: S,
     },
-    Retirement {
+    OldRetirement {
         previous: S,
         new: Option<S>,
     },
@@ -271,6 +271,9 @@ pub enum ParsedTeamFeedEventText<S> {
         team: EmojiTeam<S>,
         outgoing_manager_name: S,
         replacement_manager_name: S,
+    },
+    NewRetirement {
+        player_name: S,
     }
 }
 
@@ -407,7 +410,7 @@ impl<S: Display> ParsedTeamFeedEventText<S> {
                     None => format!("{team_name} gained the {modification} Modification.")
                 }
             },
-            ParsedTeamFeedEventText::Retirement { previous, new } => {
+            ParsedTeamFeedEventText::OldRetirement { previous, new } => {
                 let new = new.as_ref().map(|new| format!(" {new} was called up to take their place.")).unwrap_or_default();
                 let emoji = (matches!(event.event_type, Ok(FeedEventType::Game))).then_some("😇 ").unwrap_or_default();
                 format!("{emoji}{previous} retired from MMOLB!{new}")
@@ -541,9 +544,12 @@ impl<S: Display> ParsedTeamFeedEventText<S> {
                     BenchSlot::Batter(n) => format!("Bench Batter #{n}"),
                     BenchSlot::Pitcher(n) => format!("Bench Pitcher #{n}"),
                 })
-            },
+            }
             ParsedTeamFeedEventText::ManagerReplaced { team, outgoing_manager_name, replacement_manager_name } => {
                 format!("{team} Manager {outgoing_manager_name} was fired and replaced by {replacement_manager_name}.")
+            }
+            ParsedTeamFeedEventText::NewRetirement { player_name } => {
+                format!("{player_name} retired from MMOLB!")
             }
         }
     }
