@@ -1,4 +1,4 @@
-use super::shared::{augment_event, boon_recombobulated, election_applied_level_ups, falling_star, feed_event_contained, feed_event_door_prize, feed_event_effloresce, feed_event_efflorescence_growth, feed_event_equipped_door_prize, feed_event_party, feed_event_resumed_processing, feed_event_wither, grow, lesser_boon, player_greater_augment_mod, player_moved, player_positions_swapped, player_reflected, player_relegated, player_trained, players_became_friends, players_election_swapped, purified, restyle, Error, IResult};
+use super::shared::{augment_event, boon_recombobulated, election_applied_level_ups, falling_star, feed_event_contained, feed_event_door_prize, feed_event_effloresce, feed_event_efflorescence_growth, feed_event_equipped_door_prize, feed_event_party, feed_event_resumed_processing, feed_event_wither, grow, lesser_boon, player_greater_augment_mod, player_moved, player_positions_swapped, player_reflected, player_relegated, player_retired, player_trained, players_became_friends, players_election_swapped, purified, restyle, Error, IResult};
 use crate::enums::DurabilityType;
 use crate::feed_event::PlayerGreaterAugment;
 use crate::{
@@ -56,6 +56,7 @@ pub fn parse_player_feed_event(event: &FeedEvent) -> ParsedPlayerFeedEventText<&
         FeedEventType::Election => election(event).parse(&event.text),
         FeedEventType::Roster => roster(event).parse(event.text.as_str()),
         FeedEventType::Boon => boon(event).parse(event.text.as_str()),
+        FeedEventType::Retirement => retirement(event).parse(event.text.as_str()),
         // TODO More descriptive error message
         FeedEventType::Lottery => fail().parse(event.text.as_str()),
         FeedEventType::Maintenance => fail().parse(event.text.as_str()),
@@ -109,7 +110,7 @@ fn game(event: &'_ FeedEvent) -> impl PlayerFeedEventParser<'_> {
                     outcome,
                 }
             }),
-            retirement(true),
+            pre_s13_retirement(true),
             feed_event_wither
                 .map(|player_name| ParsedPlayerFeedEventText::CorruptedByWither { player_name }),
             feed_event_party.map(|party| ParsedPlayerFeedEventText::Party { party }),
@@ -200,7 +201,7 @@ fn release<'output>(_event: &'output FeedEvent) -> impl PlayerFeedEventParser<'o
 fn season<'output>(_event: &'output FeedEvent) -> impl PlayerFeedEventParser<'output> {
     context(
         "Season Feed Event",
-        alt((retirement(false), seasonal_durability_loss)),
+        alt((pre_s13_retirement(false), seasonal_durability_loss)),
     )
 }
 
@@ -480,7 +481,7 @@ fn modification<'output>() -> impl PlayerFeedEventParser<'output> {
     }
 }
 
-fn retirement<'output>(emoji: bool) -> impl PlayerFeedEventParser<'output> {
+fn pre_s13_retirement<'output>(emoji: bool) -> impl PlayerFeedEventParser<'output> {
     (
         preceded(
             cond(emoji, tag("😇 ")),
@@ -491,7 +492,7 @@ fn retirement<'output>(emoji: bool) -> impl PlayerFeedEventParser<'output> {
             parse_terminated(" was called up to take their place.").and_then(verify_name),
         )),
     )
-        .map(|(original, new)| ParsedPlayerFeedEventText::Retirement {
+        .map(|(original, new)| ParsedPlayerFeedEventText::OldRetirement {
             previous: original,
             new,
         })
@@ -729,6 +730,18 @@ fn boon<'output>(_event: &'output FeedEvent) -> impl PlayerFeedEventParser<'outp
                     old_mod,
                     new_mod,
                 }
+            }),
+            fail(),
+        )),
+    )
+}
+
+fn retirement(_event: &'_ FeedEvent) -> impl PlayerFeedEventParser<'_> {
+    context(
+        "Retirement Feed Event",
+        alt((
+            player_retired.map(|player_name| {
+                ParsedPlayerFeedEventText::NewRetirement { player_name }
             }),
             fail(),
         )),

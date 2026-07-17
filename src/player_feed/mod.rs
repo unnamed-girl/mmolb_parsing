@@ -89,7 +89,8 @@ pub enum ParsedPlayerFeedEventText<S> {
     Released {
         team: S,
     },
-    Retirement {
+    // This type of retirement has a replacement player
+    OldRetirement {
         previous: S,
         new: Option<S>,
     },
@@ -225,6 +226,9 @@ pub enum ParsedPlayerFeedEventText<S> {
     Trained {
         player_name: S,
         bench_slot: BenchSlot,
+    },
+    NewRetirement {
+        player_name: S,
     }
 }
 
@@ -291,7 +295,7 @@ impl<S: Display> ParsedPlayerFeedEventText<S> {
                     None => format!("{player_name} gained the {modification} Modification.")
                 }
             },
-            ParsedPlayerFeedEventText::Retirement { previous, new } => {
+            ParsedPlayerFeedEventText::OldRetirement { previous, new } => {
                 let new = new.as_ref().map(|new| format!(" {new} was called up to take their place.")).unwrap_or_default();
                 let emoji = (matches!(event.event_type, Ok(FeedEventType::Game))).then_some("😇 ").unwrap_or_default();
                 format!("{emoji}{previous} retired from MMOLB!{new}")
@@ -429,6 +433,9 @@ impl<S: Display> ParsedPlayerFeedEventText<S> {
                     BenchSlot::Batter(n) => format!("Bench Batter #{n}"),
                     BenchSlot::Pitcher(n) => format!("Bench Pitcher #{n}"),
                 })
+            },
+            ParsedPlayerFeedEventText::NewRetirement { player_name } => {
+                format!("{player_name} retired from MMOLB!")
             }
         }
     }

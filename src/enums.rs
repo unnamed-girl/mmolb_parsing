@@ -1303,6 +1303,7 @@ pub enum FeedEventType {
     Roster,
     Election,
     Boon,
+    Retirement,
 }
 
 #[derive(
@@ -2521,6 +2522,7 @@ pub enum ModificationType {
     Venomous,
     Elvish,
     Clockwork,
+    Director,
 
     #[strum(default)]
     #[serde(untagged)]

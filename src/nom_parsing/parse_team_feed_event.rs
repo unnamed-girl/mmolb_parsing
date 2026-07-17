@@ -75,6 +75,8 @@ pub fn parse_team_feed_event(event: &FeedEvent) -> ParsedTeamFeedEventText<&str>
         FeedEventType::Roster => roster().parse(event.text.as_str()),
         FeedEventType::Election => election().parse(event.text.as_str()),
         FeedEventType::Boon => boon().parse(event.text.as_str()),
+        // TODO More descriptive error
+        FeedEventType::Retirement => fail().parse(event.text.as_str()),
     };
     match result.finish() {
         Ok(("", output)) => output,

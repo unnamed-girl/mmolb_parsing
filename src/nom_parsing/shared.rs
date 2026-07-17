@@ -2075,6 +2075,12 @@ pub(super) fn player_trained(input: &str) -> IResult<'_, &str, (&str, BenchSlot)
     Ok((input, (player_name, bench_slot)))
 }
 
+pub(super) fn player_retired(input: &str) -> IResult<'_, &str, &str> {
+    let (input, player_name) = parse_terminated(" retired from MMOLB!").parse(input)?;
+
+    Ok((input, player_name))
+}
+
 #[cfg(test)]
 mod test {
     use crate::{
