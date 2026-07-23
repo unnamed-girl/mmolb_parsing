@@ -466,11 +466,30 @@ fn callup(input: &str) -> IResult<'_, &str, ParsedTeamFeedEventText<&str>> {
 
     let (input, lesser_team_emoji) = parse_terminated(lesser_team_name_with_space).parse(input)?;
     let (input, _) = tag(" ").parse(input)?;
-    let (input, slot) = active_slot.parse(input)?;
+    let (input, lesser_league_slot) = active_slot.parse(input)?;
     let (input, _) = tag(" ").parse(input)?;
     let (input, promoted_player_name) =
         parse_terminated(" was called up to replace ").parse(input)?;
-    let (input, greater_team_emoji_name) = parse_terminated(&format!(" {slot} ")).parse(input)?;
+    let (input, (greater_team_emoji_name, greater_league_slot)) = alt((
+        parse_terminated(" C ").map(|n| (n, Slot::Catcher)),
+        parse_terminated(" 1B ").map(|n| (n, Slot::FirstBaseman)),
+        parse_terminated(" 2B ").map(|n| (n, Slot::SecondBaseman)),
+        parse_terminated(" 3B ").map(|n| (n, Slot::ThirdBaseman)),
+        parse_terminated(" SS ").map(|n| (n, Slot::ShortStop)),
+        parse_terminated(" LF ").map(|n| (n, Slot::LeftField)),
+        parse_terminated(" RF ").map(|n| (n, Slot::CenterField)),
+        parse_terminated(" CF ").map(|n| (n, Slot::RightField)),
+        parse_terminated(" SP1 ").map(|n| (n, Slot::StartingPitcher(1))),
+        parse_terminated(" SP2 ").map(|n| (n, Slot::StartingPitcher(2))),
+        parse_terminated(" SP3 ").map(|n| (n, Slot::StartingPitcher(3))),
+        parse_terminated(" SP4 ").map(|n| (n, Slot::StartingPitcher(4))),
+        parse_terminated(" SP5 ").map(|n| (n, Slot::StartingPitcher(5))),
+        parse_terminated(" RP1 ").map(|n| (n, Slot::ReliefPitcher(1))),
+        parse_terminated(" RP2 ").map(|n| (n, Slot::ReliefPitcher(2))),
+        parse_terminated(" RP3 ").map(|n| (n, Slot::ReliefPitcher(3))),
+        parse_terminated(" CL ").map(|n| (n, Slot::Closer)),
+        parse_terminated(" DH ").map(|n| (n, Slot::DesignatedHitter)),
+    )).parse(input)?;
     let (_, greater_league_team) = emoji_team_eof.parse(greater_team_emoji_name)?;
 
     // At this point, `input` should only contain "{player_name}. {player_name}".
@@ -497,7 +516,8 @@ fn callup(input: &str) -> IResult<'_, &str, ParsedTeamFeedEventText<&str>> {
                 name: lesser_team_name,
             },
             greater_league_team,
-            slot,
+            lesser_league_slot,
+            greater_league_slot,
             promoted_player_name,
             demoted_player_name,
         },
