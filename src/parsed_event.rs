@@ -17,7 +17,7 @@ use crate::{
     enums::{
         Base, BaseNameVariant, BatterStat, Distance, EventType, FairBallDestination, FairBallType,
         FieldingErrorType, FoulType, GameOverMessage, HomeAway, ItemName, ItemPrefix, ItemSuffix,
-        MoundVisitType, NowBattingStats, Place, StrikeType, TopBottom,
+        MoundVisitType, NowBattingStats, Place, StrikeType, TopBottom, PollenCount,
     },
     nom_parsing::shared::{hit_by_pitch_text, strike_out_text},
     time::Breakpoints,
@@ -55,6 +55,7 @@ pub enum ParsedEventMessage<S> {
         away_team: EmojiTeam<S>,
         home_team: EmojiTeam<S>,
         stadium: Option<S>,
+        weather: Option<AugmentedWeather<S>>,
     },
     PitchingMatchup {
         away_team: EmojiTeam<S>,
@@ -890,9 +891,15 @@ impl<S: Display> ParsedEventMessage<S> {
                 away_team,
                 home_team,
                 stadium,
-            } => match stadium {
-                Some(stadium) => format!("{} vs {} @ {}", away_team, home_team, stadium),
-                None => format!("{} @ {}", away_team, home_team),
+                weather,
+            } => match (stadium, weather) {
+                (None, None) => format!("{} @ {}", away_team, home_team),
+                (Some(stadium), None) => format!("{} vs {} @ {}", away_team, home_team, stadium),
+                (None, Some(weather)) => format!("{} @ {} (Weather: {})", away_team, home_team, weather),
+                (Some(stadium), Some(weather)) => {
+                    // This format is a guess, since no known event has stadium and weather
+                    format!("{} vs {} @ {} (Weather: {})", away_team, home_team, stadium, weather)
+                }
             },
             Self::PitchingMatchup {
                 away_team,
@@ -3321,6 +3328,27 @@ impl<S: AsRef<str>> WeatherConsumptionEvents<S> {
                 pitching_team_tokens: *pitching_team_tokens,
                 pitching_team_prize: pitching_team_prize.to_ref(),
             },
+        }
+    }
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
+pub enum AugmentedWeather<S> {
+    Pollen {
+        pollen_count: PollenCount,
+    },
+    WeatherName(S)
+}
+
+impl<S: Display> Display for AugmentedWeather<S> {
+    fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
+        match self {
+            AugmentedWeather::Pollen { pollen_count } => {
+                write!(f, "Pollen - Pollen Count: {pollen_count}", )
+            }
+            AugmentedWeather::WeatherName(name) => {
+                write!(f, "{}", name)
+            }
         }
     }
 }

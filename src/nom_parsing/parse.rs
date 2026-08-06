@@ -8,9 +8,7 @@ use super::{
     ParsingContext,
 };
 use crate::nom_parsing::shared::{assassination, double_trouble, efflorescences, either_team_emoji, failed_ejection_tail, parse_until_exclamation_point_eof, parse_until_period_eof, side_team, swept_away, wither, IResult};
-use crate::parsed_event::{
-    BasicPitcherSwap, ContainResult, PartyDurabilityLoss, PlacedPlayer, WitherResult,
-};
+use crate::parsed_event::{AugmentedWeather, BasicPitcherSwap, ContainResult, PartyDurabilityLoss, PlacedPlayer, WitherResult};
 use crate::{enums::Place, nom_parsing::shared::try_all_consuming_splits};
 use crate::{
     enums::{EventType, GameOverMessage, HomeAway, MoundVisitType, NowBattingStats},
@@ -47,6 +45,7 @@ use nom::{bytes::complete::take_till, character::complete::u32, error::ErrorKind
 use nom::{character::complete::space0, sequence::pair};
 use phf::phf_map;
 use std::str::FromStr;
+use crate::enums::PollenCount;
 
 const OVERRIDES: phf::Map<&'static str, phf::Map<u16, ParsedEventMessage<&'static str>>> =
     phf_map!();
@@ -1563,7 +1562,19 @@ fn live_now<'parse, 'output: 'parse>(
     parsing_context: &'parse ParsingContext<'parse>,
 ) -> impl MyParser<'output, ParsedEventMessage<&'output str>> + 'parse {
     let time_options = |input: &'output str| {
-        if parsing_context.after(Breakpoints::Season3) {
+        if parsing_context.before(Breakpoints::Season3) {
+            (
+                parse_terminated(" @ ").and_then(emoji_team_eof),
+                emoji_team_eof,
+            )
+                .map(|(away_team, home_team)| ParsedEventMessage::LiveNow {
+                    away_team,
+                    home_team,
+                    stadium: None,
+                    weather: None,
+                })
+                .parse(input)
+        } else if parsing_context.before(Breakpoints::Season15) {
             (
                 parse_terminated(" vs ").and_then(emoji_team_eof),
                 parse_terminated(" @ ").and_then(emoji_team_eof),
@@ -1574,20 +1585,29 @@ fn live_now<'parse, 'output: 'parse>(
                         away_team,
                         home_team,
                         stadium: Some(stadium),
+                        weather: None,
                     },
                 )
                 .parse(input)
         } else {
-            (
-                parse_terminated(" @ ").and_then(emoji_team_eof),
-                emoji_team_eof,
-            )
-                .map(|(away_team, home_team)| ParsedEventMessage::LiveNow {
-                    away_team,
-                    home_team,
-                    stadium: None,
-                })
-                .parse(input)
+            let (input, away_team) = parse_terminated(" @ ").and_then(emoji_team_eof).parse(input)?;
+            let (input, home_team) = parse_terminated(" (Weather: ").and_then(emoji_team_eof).parse(input)?;
+            let (input, weather) = alt((
+                preceded(tag("Pollen - Pollen Count: "), alt((
+                    tag("LOW)").map(|_| AugmentedWeather::Pollen { pollen_count: PollenCount::Low }),
+                    tag("MEDIUM)").map(|_| AugmentedWeather::Pollen { pollen_count: PollenCount::Medium }),
+                    tag("HIGH)").map(|_| AugmentedWeather::Pollen { pollen_count: PollenCount::High }),
+                    tag("EXTREME)").map(|_| AugmentedWeather::Pollen { pollen_count: PollenCount::Extreme }),
+                ))),
+                parse_terminated(")").map(AugmentedWeather::WeatherName)
+            )).parse(input)?;
+
+            Ok((input, ParsedEventMessage::LiveNow {
+                away_team,
+                home_team,
+                stadium: None,
+                weather: Some(weather),
+            }))
         }
     };
 
@@ -2187,7 +2207,8 @@ mod test {
                 ParsedEventMessage::LiveNow {
                     away_team: parsing_context.away_emoji_team,
                     home_team: parsing_context.home_emoji_team,
-                    stadium: Some("A Big Pile of Dirt")
+                    stadium: Some("A Big Pile of Dirt"),
+                    weather: None,
                 }
             ))
         );

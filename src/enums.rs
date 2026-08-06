@@ -2776,6 +2776,35 @@ pub enum ImplicitEquipmentEffectSource {
     CorruptingOrb,
 }
 
+#[derive(
+    Debug,
+    Clone,
+    Copy,
+    Serialize,
+    Deserialize,
+    PartialEq,
+    Eq,
+    Hash,
+    EnumString,
+    IntoStaticStr,
+    Display,
+    EnumIter,
+)]
+pub enum PollenCount {
+    #[strum(to_string = "LOW")]
+    #[serde(rename = "LOW")]
+    Low,
+    #[strum(to_string = "MEDIUM")]
+    #[serde(rename = "MEDIUM")]
+    Medium,
+    #[strum(to_string = "HIGH")]
+    #[serde(rename = "HIGH")]
+    High,
+    #[strum(to_string = "EXTREME")]
+    #[serde(rename = "EXTREME")]
+    Extreme,
+}
+
 #[cfg(test)]
 mod test {
     use std::fmt::Debug;
