@@ -120,6 +120,11 @@ pub enum EventType {
 
     // Season 13
     EndGameTokens,
+
+    // Season 15
+    #[strum(to_string = "Weather_Pollen")]
+    #[serde(rename = "Weather_Pollen")]
+    WeatherPollen,
 }
 
 /// Top or bottom of an inning.
