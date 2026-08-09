@@ -2093,6 +2093,13 @@ pub(super) fn player_retired(input: &str) -> IResult<'_, &str, &str> {
     Ok((input, player_name))
 }
 
+pub(super) fn sweet_relief(input: &str) -> IResult<'_, &str, [&str; 2]> {
+    let (input, player_name_1) = parse_terminated(" swapped with ").parse(input)?;
+    let (input, player_name_2) = parse_terminated(" via Sweet Relief.").parse(input)?;
+
+    Ok((input, [player_name_1, player_name_2]))
+}
+
 #[cfg(test)]
 mod test {
     use crate::{

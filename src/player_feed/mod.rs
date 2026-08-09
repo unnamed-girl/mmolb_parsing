@@ -229,6 +229,9 @@ pub enum ParsedPlayerFeedEventText<S> {
     },
     NewRetirement {
         player_name: S,
+    },
+    SweetRelief {
+        player_names: [S; 2],
     }
 }
 
@@ -436,6 +439,9 @@ impl<S: Display> ParsedPlayerFeedEventText<S> {
             },
             ParsedPlayerFeedEventText::NewRetirement { player_name } => {
                 format!("{player_name} retired from MMOLB!")
+            },
+            ParsedPlayerFeedEventText::SweetRelief { player_names: [player1, player2] } => {
+                format!("{player1} swapped with {player2} via Sweet Relief.")
             }
         }
     }

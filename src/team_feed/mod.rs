@@ -280,6 +280,9 @@ pub enum ParsedTeamFeedEventText<S> {
         team: EmojiTeam<S>,
         pollen: u32,
     },
+    SweetRelief {
+        player_names: [S; 2],
+    }
 }
 
 impl<S: Display> ParsedTeamFeedEventText<S> {
@@ -560,6 +563,9 @@ impl<S: Display> ParsedTeamFeedEventText<S> {
             }
             ParsedTeamFeedEventText::EndGamePollen { team, pollen } => {
                 format!("{team} earned {pollen} 🏵️.")
+            }
+            ParsedTeamFeedEventText::SweetRelief { player_names: [player1, player2] } => {
+                format!("{player1} swapped with {player2} via Sweet Relief.")
             }
         }
     }
