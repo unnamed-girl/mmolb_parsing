@@ -3382,7 +3382,7 @@ impl<S: AsRef<str>> AugmentedWeather<S> {
     pub fn name(&self) -> &str {
         match self {
             AugmentedWeather::Pollen { .. } => { "Pollen" }
-            AugmentedWeather::WeatherName(name) => name,
+            AugmentedWeather::WeatherName(name) => name.as_ref(),
         }
     }
 }
