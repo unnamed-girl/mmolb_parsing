@@ -551,6 +551,7 @@ fn greater_augment(input: &str) -> IResult<'_, &str, ParsedTeamFeedEventText<&st
         training.map(GreaterAugment::Training),
         augmented_roster_group("Infield").map(GreaterAugment::AugmentedInfield),
         augmented_roster_group("Relief").map(GreaterAugment::AugmentedRelief),
+        augmented_roster_group("Start").map(GreaterAugment::AugmentedStart),
     ))
     .parse(input)?;
 

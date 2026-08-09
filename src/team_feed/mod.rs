@@ -485,6 +485,7 @@ impl<S: Display> ParsedTeamFeedEventText<S> {
                     },
                     GreaterAugment::AugmentedInfield(num_augments) => format!("{team} selected Augmented Infield, applying {num_augments} Augment(s)."),
                     GreaterAugment::AugmentedRelief(num_augments) => format!("{team} selected Augmented Relief, applying {num_augments} Augment(s)."),
+                    GreaterAugment::AugmentedStart(num_augments) => format!("{team} selected Augmented Start, applying {num_augments} Augment(s)."),
                 }
             }
             ParsedTeamFeedEventText::PlayerGrewInEfflorescence { player_name, growths: [grow_1, grow_2] } => {

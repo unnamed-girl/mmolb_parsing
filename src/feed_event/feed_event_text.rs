@@ -288,6 +288,7 @@ pub enum GreaterAugment {
     Training(BenchSlot),
     AugmentedInfield(i32),
     AugmentedRelief(i32),
+    AugmentedStart(i32),
 }
 
 #[derive(Clone, Debug, Serialize, Deserialize, PartialEq)]
