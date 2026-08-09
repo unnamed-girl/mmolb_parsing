@@ -289,6 +289,7 @@ pub enum GreaterAugment {
     AugmentedInfield(i32),
     AugmentedRelief(i32),
     AugmentedStart(i32),
+    AugmentedOutfield(i32),
 }
 
 #[derive(Clone, Debug, Serialize, Deserialize, PartialEq)]
