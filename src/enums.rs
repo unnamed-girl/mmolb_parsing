@@ -2528,6 +2528,10 @@ pub enum ModificationType {
     Elvish,
     Clockwork,
     Director,
+    Headliner,
+    Shopper,
+    Hardy,
+    Lionheart,
 
     #[strum(default)]
     #[serde(untagged)]
