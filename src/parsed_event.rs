@@ -3378,6 +3378,15 @@ impl<S: Display> Display for AugmentedWeather<S> {
     }
 }
 
+impl<S: AsRef<str>> AugmentedWeather<S> {
+    pub fn name(&self) -> &str {
+        match self {
+            AugmentedWeather::Pollen { .. } => { "Pollen" }
+            AugmentedWeather::WeatherName(name) => name,
+        }
+    }
+}
+
 #[cfg(test)]
 mod test {
     use std::fs::File;
