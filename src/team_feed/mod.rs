@@ -275,7 +275,11 @@ pub enum ParsedTeamFeedEventText<S> {
     },
     NewRetirement {
         player_name: S,
-    }
+    },
+    EndGamePollen {
+        team: EmojiTeam<S>,
+        pollen: u32,
+    },
 }
 
 impl<S: Display> ParsedTeamFeedEventText<S> {
@@ -552,6 +556,9 @@ impl<S: Display> ParsedTeamFeedEventText<S> {
             }
             ParsedTeamFeedEventText::NewRetirement { player_name } => {
                 format!("{player_name} retired from MMOLB!")
+            }
+            ParsedTeamFeedEventText::EndGamePollen { team, pollen } => {
+                format!("{team} earned {pollen} 🏵️.")
             }
         }
     }

@@ -165,11 +165,13 @@ fn game(event: &FeedEvent) -> impl TeamFeedEventParser<'_> {
                 gilded_umpires_payout.map(|(team, earned_coins)| {
                     ParsedTeamFeedEventText::GildedUmpiresPayout { team, earned_coins }
                 }),
-                end_game_income
+                end_game_earnings("🪙")
                     .map(|(team, tokens)| ParsedTeamFeedEventText::EndGameIncome { team, tokens }),
                 players_became_friends.map(|player_names| {
                     ParsedTeamFeedEventText::PlayersBecameFriends { player_names }
                 }),
+                end_game_earnings("🏵️")
+                    .map(|(team, pollen)| ParsedTeamFeedEventText::EndGamePollen { team, pollen }),
                 fail(),
             )),
         )),
@@ -959,12 +961,16 @@ pub(super) fn manager_replaced(input: &str) -> IResult<'_, &str, ParsedTeamFeedE
     }))
 }
 
-pub(super) fn end_game_income(input: &str) -> IResult<'_, &str, (EmojiTeam<&str>, u32)> {
-    let (input, team_emoji_name) = parse_terminated(" earned ").parse(input)?;
-    let (_, team) = emoji_team_eof.parse(team_emoji_name)?;
-    let (input, earned_tokens) = u32.parse(input)?;
-    let (input, _) = tag(" 🪙.").parse(input)?;
-    Ok((input, (team, earned_tokens)))
+pub(super) fn end_game_earnings(earnings_emoji: &str) -> impl Parser<&str, Output=(EmojiTeam<&str>, u32), Error=Error<'_>> {
+    move |input| {
+        let (input, team_emoji_name) = parse_terminated(" earned ").parse(input)?;
+        let (_, team) = emoji_team_eof.parse(team_emoji_name)?;
+        let (input, earned_tokens) = u32.parse(input)?;
+        let (input, _) = tag(" ").parse(input)?;
+        let (input, _) = tag(earnings_emoji).parse(input)?;
+        let (input, _) = tag(".").parse(input)?;
+        Ok((input, (team, earned_tokens)))
+    }
 }
 
 pub(super) fn parse_position_type(input: &str) -> IResult<'_, &str, PositionType> {
