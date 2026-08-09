@@ -1577,12 +1577,16 @@ pub fn training(input: &str) -> IResult<'_, &str, BenchSlot> {
     Ok((input, slot))
 }
 
-pub fn augmented_infield(input: &str) -> IResult<'_, &str, i32> {
-    let (input, _) = tag("Augmented Infield, applying ").parse(input)?;
-    let (input, num_augments) = i32.parse(input)?;
-    let (input, _) = tag(" Augment(s).").parse(input)?;
+pub fn augmented_roster_group(roster_group: &str) -> impl Fn(&str) -> IResult<'_, &str, i32> + use<'_> {
+    move |input| {
+        let (input, _) = tag("Augmented ").parse(input)?;
+        let (input, _) = tag(roster_group).parse(input)?;
+        let (input, _) = tag(", applying ").parse(input)?;
+        let (input, num_augments) = i32.parse(input)?;
+        let (input, _) = tag(" Augment(s).").parse(input)?;
 
-    Ok((input, num_augments))
+        Ok((input, num_augments))
+    }
 }
 
 #[derive(Clone, Debug, Serialize, Deserialize, PartialEq)]

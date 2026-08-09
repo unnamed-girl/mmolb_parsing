@@ -287,6 +287,7 @@ pub enum GreaterAugment {
     RestoreBackupNullBatter,
     Training(BenchSlot),
     AugmentedInfield(i32),
+    AugmentedRelief(i32),
 }
 
 #[derive(Clone, Debug, Serialize, Deserialize, PartialEq)]
