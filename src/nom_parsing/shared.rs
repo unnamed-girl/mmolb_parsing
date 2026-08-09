@@ -20,7 +20,7 @@ use crate::{
     Game,
 };
 use nom::bytes::complete::is_not;
-use nom::character::complete::u32;
+use nom::character::complete::{i32, u32};
 use nom::combinator::eof;
 use nom::number::double;
 use nom::{
@@ -1575,6 +1575,14 @@ pub fn training(input: &str) -> IResult<'_, &str, BenchSlot> {
     let (input, _) = tag(" Training.").parse(input)?;
 
     Ok((input, slot))
+}
+
+pub fn augmented_infield(input: &str) -> IResult<'_, &str, i32> {
+    let (input, _) = tag("Augmented Infield, applying ").parse(input)?;
+    let (input, num_augments) = i32.parse(input)?;
+    let (input, _) = tag(" Augment(s).").parse(input)?;
+
+    Ok((input, num_augments))
 }
 
 #[derive(Clone, Debug, Serialize, Deserialize, PartialEq)]

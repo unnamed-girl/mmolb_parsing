@@ -476,6 +476,7 @@ impl<S: Display> ParsedTeamFeedEventText<S> {
                         let slot = WithNumberSign(*slot);
                         format!("{team} selected {slot} Training.")
                     },
+                    GreaterAugment::AugmentedInfield(num_augments) => format!("{team} selected Augmented Infield, applying {num_augments} Augment(s)."),
                 }
             }
             ParsedTeamFeedEventText::PlayerGrewInEfflorescence { player_name, growths: [grow_1, grow_2] } => {
