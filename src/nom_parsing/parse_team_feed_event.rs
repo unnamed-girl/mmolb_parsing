@@ -1,4 +1,4 @@
-use super::shared::{augment_event, augmented_roster_group, bulk_immunized, emoji, emoji_team_eof, emoji_team_eof_maybe_no_space, feed_event_consumption_contest_specific, feed_event_contained, feed_event_delivery_discarded, feed_event_door_prize, feed_event_equipped_door_prize, feed_event_party, feed_event_wither, parse_until_period_eof, player_positions_swapped, player_reflected, player_retired, player_trained, players_election_swapped, purified, restyle, sweet_relief, team_election_purified, training, Error, IResult};
+use super::shared::{augment_event, augmented_roster_group, bulk_immunized, emoji, emoji_team_eof, emoji_team_eof_maybe_no_space, feed_event_consumption_contest_specific, feed_event_contained, feed_event_delivery_discarded, feed_event_door_prize, feed_event_equipped_door_prize, feed_event_party, feed_event_wither, parse_until_period_eof, player_positions_swapped, player_reflected, player_retired, player_trained, players_election_swapped, purified, restyle, named_greater_swap, team_election_purified, training, Error, IResult};
 use crate::enums::{PositionType, Slot};
 use crate::feed_event::{AttributeChange, GreaterAugment};
 use crate::nom_parsing::shared::{
@@ -440,7 +440,8 @@ fn election<'output>() -> impl TeamFeedEventParser<'output> {
                 }
             }),
             manager_replaced,
-            sweet_relief.map(|player_names| ParsedTeamFeedEventText::SweetRelief { player_names }),
+            named_greater_swap("Sweet Relief").map(|player_names| ParsedTeamFeedEventText::SweetRelief { player_names }),
+            named_greater_swap("Defensive Shift").map(|player_names| ParsedTeamFeedEventText::DefensiveShift { player_names }),
         )),
     )
 }

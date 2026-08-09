@@ -282,6 +282,9 @@ pub enum ParsedTeamFeedEventText<S> {
     },
     SweetRelief {
         player_names: [S; 2],
+    },
+    DefensiveShift {
+        player_names: [S; 2],
     }
 }
 
@@ -567,6 +570,9 @@ impl<S: Display> ParsedTeamFeedEventText<S> {
             }
             ParsedTeamFeedEventText::SweetRelief { player_names: [player1, player2] } => {
                 format!("{player1} swapped with {player2} via Sweet Relief.")
+            }
+            ParsedTeamFeedEventText::DefensiveShift { player_names: [player1, player2] } => {
+                format!("{player1} swapped with {player2} via Defensive Shift.")
             }
         }
     }
