@@ -1,4 +1,12 @@
-use super::shared::{augment_event, boon_recombobulated, election_applied_level_ups, falling_star, feed_event_contained, feed_event_door_prize, feed_event_effloresce, feed_event_efflorescence_growth, feed_event_equipped_door_prize, feed_event_party, feed_event_resumed_processing, feed_event_wither, grow, lesser_boon, player_greater_augment_mod, player_moved, player_positions_swapped, player_reflected, player_relegated, player_retired, player_trained, players_became_friends, players_election_swapped, purified, restyle, named_greater_swap, Error, IResult};
+use super::shared::{
+    augment_event, boon_recombobulated, election_applied_level_ups, falling_star,
+    feed_event_contained, feed_event_door_prize, feed_event_effloresce,
+    feed_event_efflorescence_growth, feed_event_equipped_door_prize, feed_event_party,
+    feed_event_resumed_processing, feed_event_wither, grow, lesser_boon, named_greater_swap,
+    player_greater_augment_mod, player_moved, player_positions_swapped, player_reflected,
+    player_relegated, player_retired, player_trained, players_became_friends,
+    players_election_swapped, purified, restyle, Error, IResult,
+};
 use crate::enums::DurabilityType;
 use crate::feed_event::PlayerGreaterAugment;
 use crate::{
@@ -514,14 +522,10 @@ fn seasonal_durability_loss_happened(
     let (input, durability_lost) = u32.parse(input)?;
     let (input, durability_type) = alt((
         tag(" durability ").map(|_| None),
-        tag(" LesserDurability in the Lesser League ")
-            .map(|_| Some(DurabilityType::Lesser)),
-        tag(" Lesser Durability in the Lesser League ")
-            .map(|_| Some(DurabilityType::Lesser)),
-        tag(" GreaterDurability in the Greater League ")
-            .map(|_| Some(DurabilityType::Greater)),
-        tag(" Greater Durability in the Greater League ")
-            .map(|_| Some(DurabilityType::Greater)),
+        tag(" LesserDurability in the Lesser League ").map(|_| Some(DurabilityType::Lesser)),
+        tag(" Lesser Durability in the Lesser League ").map(|_| Some(DurabilityType::Lesser)),
+        tag(" GreaterDurability in the Greater League ").map(|_| Some(DurabilityType::Greater)),
+        tag(" Greater Durability in the Greater League ").map(|_| Some(DurabilityType::Greater)),
     ))
     .parse(input)?;
     // This can be disambiguated by season
@@ -612,8 +616,10 @@ fn election(_event: &'_ FeedEvent) -> impl PlayerFeedEventParser<'_> {
                     bench_slot,
                 }
             }),
-            named_greater_swap("Sweet Relief").map(|player_names| ParsedPlayerFeedEventText::SweetRelief { player_names }),
-            named_greater_swap("Defensive Shift").map(|player_names| ParsedPlayerFeedEventText::DefensiveShift { player_names }),
+            named_greater_swap("Sweet Relief")
+                .map(|player_names| ParsedPlayerFeedEventText::SweetRelief { player_names }),
+            named_greater_swap("Defensive Shift")
+                .map(|player_names| ParsedPlayerFeedEventText::DefensiveShift { player_names }),
         )),
     )
 }
@@ -742,9 +748,8 @@ fn retirement(_event: &'_ FeedEvent) -> impl PlayerFeedEventParser<'_> {
     context(
         "Retirement Feed Event",
         alt((
-            player_retired.map(|player_name| {
-                ParsedPlayerFeedEventText::NewRetirement { player_name }
-            }),
+            player_retired
+                .map(|player_name| ParsedPlayerFeedEventText::NewRetirement { player_name }),
             fail(),
         )),
     )

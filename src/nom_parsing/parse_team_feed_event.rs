@@ -1,4 +1,11 @@
-use super::shared::{augment_event, augmented_roster_group, bulk_immunized, emoji, emoji_team_eof, emoji_team_eof_maybe_no_space, feed_event_consumption_contest_specific, feed_event_contained, feed_event_delivery_discarded, feed_event_door_prize, feed_event_equipped_door_prize, feed_event_party, feed_event_wither, parse_until_period_eof, player_positions_swapped, player_reflected, player_retired, player_trained, players_election_swapped, purified, restyle, named_greater_swap, team_election_purified, training, Error, IResult};
+use super::shared::{
+    augment_event, augmented_roster_group, bulk_immunized, emoji, emoji_team_eof,
+    emoji_team_eof_maybe_no_space, feed_event_consumption_contest_specific, feed_event_contained,
+    feed_event_delivery_discarded, feed_event_door_prize, feed_event_equipped_door_prize,
+    feed_event_party, feed_event_wither, named_greater_swap, parse_until_period_eof,
+    player_positions_swapped, player_reflected, player_retired, player_trained,
+    players_election_swapped, purified, restyle, team_election_purified, training, Error, IResult,
+};
 use crate::enums::{PositionType, Slot};
 use crate::feed_event::{AttributeChange, GreaterAugment};
 use crate::nom_parsing::shared::{
@@ -440,8 +447,10 @@ fn election<'output>() -> impl TeamFeedEventParser<'output> {
                 }
             }),
             manager_replaced,
-            named_greater_swap("Sweet Relief").map(|player_names| ParsedTeamFeedEventText::SweetRelief { player_names }),
-            named_greater_swap("Defensive Shift").map(|player_names| ParsedTeamFeedEventText::DefensiveShift { player_names }),
+            named_greater_swap("Sweet Relief")
+                .map(|player_names| ParsedTeamFeedEventText::SweetRelief { player_names }),
+            named_greater_swap("Defensive Shift")
+                .map(|player_names| ParsedTeamFeedEventText::DefensiveShift { player_names }),
         )),
     )
 }
@@ -463,9 +472,11 @@ fn callup(input: &str) -> IResult<'_, &str, ParsedTeamFeedEventText<&str>> {
     // TODO How to make sure this matches the `slot` from later?
     let (rest, (lesser_team_name_with_space, _terminus_slot)) = alt((
         // Order matters here
-        callup_terminus_with_slot.map(|(team_name_with_space, slot)| (team_name_with_space, Some(slot))),
+        callup_terminus_with_slot
+            .map(|(team_name_with_space, slot)| (team_name_with_space, Some(slot))),
         parse_until_period_eof.map(|team_name_with_space| (team_name_with_space, None)),
-    )).parse(rest)?;
+    ))
+    .parse(rest)?;
     let lesser_team_name = &lesser_team_name_with_space[1..];
 
     let (input, lesser_team_emoji) = parse_terminated(lesser_team_name_with_space).parse(input)?;
@@ -493,7 +504,8 @@ fn callup(input: &str) -> IResult<'_, &str, ParsedTeamFeedEventText<&str>> {
         parse_terminated(" RP3 ").map(|n| (n, Slot::ReliefPitcher(3))),
         parse_terminated(" CL ").map(|n| (n, Slot::Closer)),
         parse_terminated(" DH ").map(|n| (n, Slot::DesignatedHitter)),
-    )).parse(input)?;
+    ))
+    .parse(input)?;
     let (_, greater_league_team) = emoji_team_eof.parse(greater_team_emoji_name)?;
 
     // At this point, `input` should only contain "{player_name}. {player_name}".
@@ -956,17 +968,23 @@ pub(super) fn golden_player_replacement_failed(
 pub(super) fn manager_replaced(input: &str) -> IResult<'_, &str, ParsedTeamFeedEventText<&str>> {
     let (input, team_emoji_name) = parse_terminated(" Manager ").parse(input)?;
     let (_, team) = emoji_team_eof.parse(team_emoji_name)?;
-    let (input, outgoing_manager_name) = parse_terminated(" was fired and replaced by ").parse(input)?;
+    let (input, outgoing_manager_name) =
+        parse_terminated(" was fired and replaced by ").parse(input)?;
     let (input, replacement_manager_name) = parse_until_period_eof.parse(input)?;
 
-    Ok((input, ParsedTeamFeedEventText::ManagerReplaced {
-        team,
-        outgoing_manager_name,
-        replacement_manager_name,
-    }))
+    Ok((
+        input,
+        ParsedTeamFeedEventText::ManagerReplaced {
+            team,
+            outgoing_manager_name,
+            replacement_manager_name,
+        },
+    ))
 }
 
-pub(super) fn end_game_earnings(earnings_emoji: &str) -> impl Parser<&str, Output=(EmojiTeam<&str>, u32), Error=Error<'_>> {
+pub(super) fn end_game_earnings(
+    earnings_emoji: &str,
+) -> impl Parser<&str, Output = (EmojiTeam<&str>, u32), Error = Error<'_>> {
     move |input| {
         let (input, team_emoji_name) = parse_terminated(" earned ").parse(input)?;
         let (_, team) = emoji_team_eof.parse(team_emoji_name)?;
@@ -1003,9 +1021,8 @@ fn retirement<'output>() -> impl TeamFeedEventParser<'output> {
     context(
         "Retirement Feed Event",
         alt((
-            player_retired.map(|player_name| {
-                ParsedTeamFeedEventText::NewRetirement { player_name }
-            }),
+            player_retired
+                .map(|player_name| ParsedTeamFeedEventText::NewRetirement { player_name }),
             fail(),
         )),
     )

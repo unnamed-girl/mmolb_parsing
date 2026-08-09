@@ -334,7 +334,6 @@ impl SerializeAs<DateTime<Utc>> for TimestampHelper {
     }
 }
 
-
 pub(crate) struct PitchTypeFromAcronym;
 
 impl<'de> DeserializeAs<'de, PitchType> for PitchTypeFromAcronym {
@@ -369,7 +368,7 @@ pub(crate) struct PositionOrSlotHelper;
 impl<'de> DeserializeAs<'de, Either<Position, Slot>> for PositionOrSlotHelper {
     fn deserialize_as<D>(deserializer: D) -> Result<Either<Position, Slot>, D::Error>
     where
-        D: Deserializer<'de>
+        D: Deserializer<'de>,
     {
         let s = String::deserialize(deserializer)?;
         match Position::from_str(&s) {
@@ -387,7 +386,7 @@ impl<'de> DeserializeAs<'de, Either<Position, Slot>> for PositionOrSlotHelper {
 impl SerializeAs<Either<Position, Slot>> for PositionOrSlotHelper {
     fn serialize_as<S>(source: &Either<Position, Slot>, serializer: S) -> Result<S::Ok, S::Error>
     where
-        S: Serializer
+        S: Serializer,
     {
         match source {
             Either::Left(p) => serializer.serialize_str(&p.to_string()),

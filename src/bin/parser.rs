@@ -696,7 +696,11 @@ fn check<S>(event: &ParsedEventMessage<S>) -> String {
             stadium,
             weather,
         } => {
-            format!("Stadium: {}, weather: {}", stadium.is_some(), weather.is_some())
+            format!(
+                "Stadium: {}, weather: {}",
+                stadium.is_some(),
+                weather.is_some()
+            )
         }
         ParsedEventMessage::PitchingMatchup {
             away_team: _,

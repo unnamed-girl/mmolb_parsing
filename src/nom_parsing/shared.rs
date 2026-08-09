@@ -4,7 +4,10 @@ use crate::enums::{
 };
 use crate::feed_event::FeedFallingStarOutcome;
 use crate::game::EventPitcherVersions;
-use crate::parsed_event::{Assassination, Efflorescence, EfflorescenceOutcome, EjectionReplacement, EmojiFood, EmojiPlayer, ItemEquip, ItemPrize, WitherStruggle};
+use crate::parsed_event::{
+    Assassination, Efflorescence, EfflorescenceOutcome, EjectionReplacement, EmojiFood,
+    EmojiPlayer, ItemEquip, ItemPrize, WitherStruggle,
+};
 use crate::player::{Deserialize, Serialize};
 use crate::{
     enums::{
@@ -367,10 +370,20 @@ pub(super) fn base_steal_sentence(input: &str) -> IResult<'_, &str, BaseSteal<&s
 }
 
 pub(super) fn assassination(input: &str) -> IResult<'_, &str, Assassination<&str>> {
-    let (input, victim_name) = parse_terminated(" was 🗡️ Assassinated by ").and_then(verify_name).parse(input)?;
-    let (input, assassin_name) = parse_terminated(" and returned to the dugout! ").and_then(verify_name).parse(input)?;
+    let (input, victim_name) = parse_terminated(" was 🗡️ Assassinated by ")
+        .and_then(verify_name)
+        .parse(input)?;
+    let (input, assassin_name) = parse_terminated(" and returned to the dugout! ")
+        .and_then(verify_name)
+        .parse(input)?;
 
-    Ok((input, Assassination { assassin_name, victim_name }))
+    Ok((
+        input,
+        Assassination {
+            assassin_name,
+            victim_name,
+        },
+    ))
 }
 
 pub(super) fn score_update(i: &str) -> IResult<'_, &str, (u8, u8)> {
@@ -1577,7 +1590,9 @@ pub fn training(input: &str) -> IResult<'_, &str, BenchSlot> {
     Ok((input, slot))
 }
 
-pub fn augmented_roster_group(roster_group: &str) -> impl Fn(&str) -> IResult<'_, &str, i32> + use<'_> {
+pub fn augmented_roster_group(
+    roster_group: &str,
+) -> impl Fn(&str) -> IResult<'_, &str, i32> + use<'_> {
     move |input| {
         let (input, _) = tag("Augmented ").parse(input)?;
         let (input, _) = tag(roster_group).parse(input)?;
@@ -2077,11 +2092,13 @@ pub(super) fn players_became_friends(input: &str) -> IResult<'_, &str, [&str; 2]
 }
 
 pub(super) fn player_trained(input: &str) -> IResult<'_, &str, (&str, BenchSlot)> {
-    let (input, player_name) = parse_terminated(" was rerolled and trained to Level 30 for ").parse(input)?;
+    let (input, player_name) =
+        parse_terminated(" was rerolled and trained to Level 30 for ").parse(input)?;
     let (input, bench_slot) = alt((
         preceded(tag("Bench Batter #"), u8).map(BenchSlot::Batter),
         preceded(tag("Bench Pitcher #"), u8).map(BenchSlot::Pitcher),
-    )).parse(input)?;
+    ))
+    .parse(input)?;
     let (input, _) = tag(".").parse(input)?;
 
     Ok((input, (player_name, bench_slot)))
@@ -2093,7 +2110,9 @@ pub(super) fn player_retired(input: &str) -> IResult<'_, &str, &str> {
     Ok((input, player_name))
 }
 
-pub(super) fn named_greater_swap(augment_name: &str) -> impl Fn(&str) -> IResult<'_, &str, [&str; 2]> + use<'_> {
+pub(super) fn named_greater_swap(
+    augment_name: &str,
+) -> impl Fn(&str) -> IResult<'_, &str, [&str; 2]> + use<'_> {
     move |input| {
         let (input, player_name_1) = parse_terminated(" swapped with ").parse(input)?;
         let terminator = format!(" via {augment_name}.");

@@ -1,6 +1,9 @@
-use crate::utils::PositionOrSlotHelper;
-use crate::enums::{AttributeCategory, EquipmentEffectPhase, ImplicitEquipmentEffectSource, PitchCategory, PitchType, Slot};
+use crate::enums::{
+    AttributeCategory, EquipmentEffectPhase, ImplicitEquipmentEffectSource, PitchCategory,
+    PitchType, Slot,
+};
 use crate::utils::PitchTypeFromAcronym;
+use crate::utils::PositionOrSlotHelper;
 use crate::utils::{
     extra_fields_deserialize, MaybeRecognizedHelper, SometimesMissingHelper, TimestampHelper,
 };
@@ -17,10 +20,10 @@ use crate::{
     EmptyArrayOr,
 };
 use chrono::{DateTime, Utc};
+use itertools::Either;
 pub use serde::{Deserialize, Serialize};
 use serde_with::serde_as;
 use std::collections::HashMap;
-use itertools::Either;
 use strum::{Display, EnumIter, EnumString, IntoStaticStr};
 use uuid::Uuid;
 

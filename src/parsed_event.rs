@@ -1,3 +1,4 @@
+use itertools::Itertools;
 use serde::{Deserialize, Serialize};
 use std::fmt::Formatter;
 use std::{
@@ -6,7 +7,6 @@ use std::{
     iter::once,
     str::FromStr,
 };
-use itertools::Itertools;
 use strum::{Display, EnumDiscriminants, EnumString, IntoStaticStr};
 use thiserror::Error;
 
@@ -17,7 +17,7 @@ use crate::{
     enums::{
         Base, BaseNameVariant, BatterStat, Distance, EventType, FairBallDestination, FairBallType,
         FieldingErrorType, FoulType, GameOverMessage, HomeAway, ItemName, ItemPrefix, ItemSuffix,
-        MoundVisitType, NowBattingStats, Place, StrikeType, TopBottom, PollenCount,
+        MoundVisitType, NowBattingStats, Place, PollenCount, StrikeType, TopBottom,
     },
     nom_parsing::shared::{hit_by_pitch_text, strike_out_text},
     time::Breakpoints,
@@ -394,7 +394,7 @@ pub enum ParsedEventMessage<S> {
         winning_team_pollen: u32,
         losing_team: EmojiTeam<S>,
         losing_team_pollen: u32,
-    }
+    },
 }
 
 impl<S> ParsedEventMessage<S> {
@@ -912,10 +912,15 @@ impl<S: Display> ParsedEventMessage<S> {
             } => match (stadium, weather) {
                 (None, None) => format!("{} @ {}", away_team, home_team),
                 (Some(stadium), None) => format!("{} vs {} @ {}", away_team, home_team, stadium),
-                (None, Some(weather)) => format!("{} @ {} (Weather: {})", away_team, home_team, weather),
+                (None, Some(weather)) => {
+                    format!("{} @ {} (Weather: {})", away_team, home_team, weather)
+                }
                 (Some(stadium), Some(weather)) => {
                     // This format is a guess, since no known event has stadium and weather
-                    format!("{} vs {} @ {} (Weather: {})", away_team, home_team, stadium, weather)
+                    format!(
+                        "{} vs {} @ {} (Weather: {})",
+                        away_team, home_team, stadium, weather
+                    )
                 }
             },
             Self::PitchingMatchup {
@@ -1117,7 +1122,8 @@ impl<S: Display> ParsedEventMessage<S> {
                 efflorescence,
                 assassinations,
             } => {
-                let assassinations = assassinations.iter()
+                let assassinations = assassinations
+                    .iter()
                     .map(|ass| ass.unparse())
                     .chain(once(String::new()))
                     .join(" ");
@@ -1163,7 +1169,8 @@ impl<S: Display> ParsedEventMessage<S> {
                 surprise_strike,
                 assassinations,
             } => {
-                let assassinations = assassinations.iter()
+                let assassinations = assassinations
+                    .iter()
                     .map(|ass| ass.unparse())
                     .chain(once(String::new()))
                     .join(" ");
@@ -1210,7 +1217,8 @@ impl<S: Display> ParsedEventMessage<S> {
                 efflorescence,
                 assassinations,
             } => {
-                let assassinations: Vec<String> = assassinations.iter()
+                let assassinations: Vec<String> = assassinations
+                    .iter()
                     .map(|ass| ass.unparse())
                     .chain(once(String::new()))
                     .collect();
@@ -1253,7 +1261,8 @@ impl<S: Display> ParsedEventMessage<S> {
                 wither,
                 assassinations,
             } => {
-                let assassinations = assassinations.iter()
+                let assassinations = assassinations
+                    .iter()
                     .map(|ass| ass.unparse())
                     .chain(once(String::new()))
                     .join(" ");
@@ -1323,7 +1332,8 @@ impl<S: Display> ParsedEventMessage<S> {
                 efflorescence,
                 assassinations,
             } => {
-                let assassinations = assassinations.iter()
+                let assassinations = assassinations
+                    .iter()
                     .map(|ass| ass.unparse())
                     .chain(once(String::new()))
                     .join(" ");
@@ -1359,7 +1369,8 @@ impl<S: Display> ParsedEventMessage<S> {
                 wither,
                 assassinations,
             } => {
-                let assassinations = assassinations.iter()
+                let assassinations = assassinations
+                    .iter()
                     .map(|ass| ass.unparse())
                     .chain(once(String::new()))
                     .join(" ");
@@ -1474,7 +1485,8 @@ impl<S: Display> ParsedEventMessage<S> {
                 ejection,
                 assassinations,
             } => {
-                let assassinations = assassinations.iter()
+                let assassinations = assassinations
+                    .iter()
                     .map(|ass| ass.unparse())
                     .chain(once(String::new()))
                     .join(" ");
@@ -3136,8 +3148,7 @@ impl<S: Display> Assassination<S> {
     pub fn unparse(&self) -> String {
         format!(
             "{} was 🗡️ Assassinated by {} and returned to the dugout!",
-            self.victim_name,
-            self.assassin_name,
+            self.victim_name, self.assassin_name,
         )
     }
 }
@@ -3359,17 +3370,15 @@ impl<S: AsRef<str>> WeatherConsumptionEvents<S> {
 
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
 pub enum AugmentedWeather<S> {
-    Pollen {
-        pollen_count: PollenCount,
-    },
-    WeatherName(S)
+    Pollen { pollen_count: PollenCount },
+    WeatherName(S),
 }
 
 impl<S: Display> Display for AugmentedWeather<S> {
     fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
         match self {
             AugmentedWeather::Pollen { pollen_count } => {
-                write!(f, "Pollen - Pollen Count: {pollen_count}", )
+                write!(f, "Pollen - Pollen Count: {pollen_count}")
             }
             AugmentedWeather::WeatherName(name) => {
                 write!(f, "{}", name)
@@ -3381,7 +3390,7 @@ impl<S: Display> Display for AugmentedWeather<S> {
 impl<S: AsRef<str>> AugmentedWeather<S> {
     pub fn name(&self) -> &str {
         match self {
-            AugmentedWeather::Pollen { .. } => { "Pollen" }
+            AugmentedWeather::Pollen { .. } => "Pollen",
             AugmentedWeather::WeatherName(name) => name.as_ref(),
         }
     }

@@ -235,7 +235,7 @@ pub enum ParsedPlayerFeedEventText<S> {
     },
     DefensiveShift {
         player_names: [S; 2],
-    }
+    },
 }
 
 impl<S: Display> ParsedPlayerFeedEventText<S> {

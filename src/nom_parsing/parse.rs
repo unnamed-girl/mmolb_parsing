@@ -7,8 +7,16 @@ use super::{
     },
     ParsingContext,
 };
-use crate::nom_parsing::shared::{assassination, double_trouble, efflorescences, either_team_emoji, failed_ejection_tail, parse_until_exclamation_point_eof, parse_until_period_eof, side_team, swept_away, wither, IResult};
-use crate::parsed_event::{AugmentedWeather, BasicPitcherSwap, ContainResult, PartyDurabilityLoss, PlacedPlayer, WitherResult};
+use crate::enums::PollenCount;
+use crate::nom_parsing::shared::{
+    assassination, double_trouble, efflorescences, either_team_emoji, failed_ejection_tail,
+    parse_until_exclamation_point_eof, parse_until_period_eof, side_team, swept_away, wither,
+    IResult,
+};
+use crate::parsed_event::{
+    AugmentedWeather, BasicPitcherSwap, ContainResult, PartyDurabilityLoss, PlacedPlayer,
+    WitherResult,
+};
 use crate::{enums::Place, nom_parsing::shared::try_all_consuming_splits};
 use crate::{
     enums::{EventType, GameOverMessage, HomeAway, MoundVisitType, NowBattingStats},
@@ -45,7 +53,6 @@ use nom::{bytes::complete::take_till, character::complete::u32, error::ErrorKind
 use nom::{character::complete::space0, sequence::pair};
 use phf::phf_map;
 use std::str::FromStr;
-use crate::enums::PollenCount;
 
 const OVERRIDES: phf::Map<&'static str, phf::Map<u16, ParsedEventMessage<&'static str>>> =
     phf_map!();
@@ -790,21 +797,21 @@ fn field<'parse, 'output: 'parse>(
                 }))))
                 .map(|perfect| perfect.is_some()),
             ),
-        )
+        ),
     )
-    .map(
-        |(assassinations, ((batter, fielders), ((scores, advances), ejection, amazing)))| {
-            ParsedEventMessage::GroundedOut {
-                batter,
-                fielders,
-                scores,
-                advances,
-                amazing,
-                ejection,
-                assassinations,
-            }
-        },
-    );
+        .map(
+            |(assassinations, ((batter, fielders), ((scores, advances), ejection, amazing)))| {
+                ParsedEventMessage::GroundedOut {
+                    batter,
+                    fielders,
+                    scores,
+                    advances,
+                    amazing,
+                    ejection,
+                    assassinations,
+                }
+            },
+        );
 
     let forced_out = all_consuming_sentence_and(
         (
@@ -976,7 +983,10 @@ fn field<'parse, 'output: 'parse>(
         ),
     )
     .map(
-        |(((batter, fair_ball_type), fielders), (out_two, (scores, advances), ejection, double_trouble))| {
+        |(
+            ((batter, fair_ball_type), fielders),
+            (out_two, (scores, advances), ejection, double_trouble),
+        )| {
             ParsedEventMessage::DoublePlayCaught {
                 batter,
                 fair_ball_type,
@@ -1072,7 +1082,13 @@ fn pitch<'parse, 'output: 'parse>(
         .and(opt(ejection(parsing_context)))
         .and(opt(wither(parsing_context)))
         .map(
-            |((((((assassinations, foul, (batter, strike)), steals), aurora_photos), cheer), ejection), wither)| {
+            |(
+                (
+                    ((((assassinations, foul, (batter, strike)), steals), aurora_photos), cheer),
+                    ejection,
+                ),
+                wither,
+            )| {
                 ParsedEventMessage::StrikeOut {
                     foul,
                     batter,
@@ -1120,29 +1136,35 @@ fn pitch<'parse, 'output: 'parse>(
     );
 
     let walks = many0(assassination)
-    .and(preceded(
-        sentence(tag("Ball 4")),
-        sentence(parse_terminated(" walks")),
-    ))
-    .and(scores_and_advances)
-    .and(opt(preceded(tag(" "), aurora(parsing_context))))
-    .and(opt(preceded(tag(" "), cheer(parsing_context))))
-    .and(opt(ejection(parsing_context)))
-    .and(opt(wither(parsing_context)))
-    .map(
-        |((((((assassinations, batter), (scores, advances)), aurora_photos), cheer), ejection), wither)| {
-            ParsedEventMessage::Walk {
-                batter,
-                scores,
-                advances,
-                cheer,
-                aurora_photos,
-                ejection,
+        .and(preceded(
+            sentence(tag("Ball 4")),
+            sentence(parse_terminated(" walks")),
+        ))
+        .and(scores_and_advances)
+        .and(opt(preceded(tag(" "), aurora(parsing_context))))
+        .and(opt(preceded(tag(" "), cheer(parsing_context))))
+        .and(opt(ejection(parsing_context)))
+        .and(opt(wither(parsing_context)))
+        .map(
+            |(
+                (
+                    ((((assassinations, batter), (scores, advances)), aurora_photos), cheer),
+                    ejection,
+                ),
                 wither,
-                assassinations,
-            }
-        },
-    );
+            )| {
+                ParsedEventMessage::Walk {
+                    batter,
+                    scores,
+                    advances,
+                    cheer,
+                    aurora_photos,
+                    ejection,
+                    wither,
+                    assassinations,
+                }
+            },
+        );
 
     let ball = many0(assassination)
         .and(preceded(sentence(tag("Ball")), sentence(score_update)))
@@ -1155,7 +1177,13 @@ fn pitch<'parse, 'output: 'parse>(
         .and(efflorescences)
         .map(
             |(
-                (((((((assassinations, count), steals), aurora_photos), cheer), ejection), door_prizes), wither),
+                (
+                    (
+                        (((((assassinations, count), steals), aurora_photos), cheer), ejection),
+                        door_prizes,
+                    ),
+                    wither,
+                ),
                 efflorescence,
             )| ParsedEventMessage::Ball {
                 steals,
@@ -1172,7 +1200,11 @@ fn pitch<'parse, 'output: 'parse>(
 
     let strike = many0(assassination)
         .and(sentence(preceded(tag("Strike, "), try_from_word)))
-        .and(cut((sentence(score_update), opt(tag(" 😲 Surprise Strike!")).map(|opt| opt.is_some()), many0(base_steal_sentence))))
+        .and(cut((
+            sentence(score_update),
+            opt(tag(" 😲 Surprise Strike!")).map(|opt| opt.is_some()),
+            many0(base_steal_sentence),
+        )))
         .and(opt(preceded(tag(" "), aurora(parsing_context))))
         .and(opt(preceded(tag(" "), cheer(parsing_context))))
         .and(opt(ejection(parsing_context)))
@@ -1184,7 +1216,13 @@ fn pitch<'parse, 'output: 'parse>(
                 (
                     (
                         (
-                            ((((assassinations, strike), (count, surprise_strike, steals)), aurora_photos), cheer),
+                            (
+                                (
+                                    ((assassinations, strike), (count, surprise_strike, steals)),
+                                    aurora_photos,
+                                ),
+                                cheer,
+                            ),
                             ejection,
                         ),
                         door_prizes,
@@ -1218,7 +1256,13 @@ fn pitch<'parse, 'output: 'parse>(
         .and(efflorescences)
         .map(
             |(
-                (((((((assassinations, foul), count), steals), aurora_photos), cheer), door_prizes), wither),
+                (
+                    (
+                        (((((assassinations, foul), count), steals), aurora_photos), cheer),
+                        door_prizes,
+                    ),
+                    wither,
+                ),
                 efflorescence,
             )| ParsedEventMessage::Foul {
                 foul,
@@ -1591,24 +1635,43 @@ fn live_now<'parse, 'output: 'parse>(
                 )
                 .parse(input)
         } else {
-            let (input, away_team) = parse_terminated(" @ ").and_then(emoji_team_eof).parse(input)?;
-            let (input, home_team) = parse_terminated(" (Weather: ").and_then(emoji_team_eof).parse(input)?;
+            let (input, away_team) = parse_terminated(" @ ")
+                .and_then(emoji_team_eof)
+                .parse(input)?;
+            let (input, home_team) = parse_terminated(" (Weather: ")
+                .and_then(emoji_team_eof)
+                .parse(input)?;
             let (input, weather) = alt((
-                preceded(tag("Pollen - Pollen Count: "), alt((
-                    tag("LOW)").map(|_| AugmentedWeather::Pollen { pollen_count: PollenCount::Low }),
-                    tag("MEDIUM)").map(|_| AugmentedWeather::Pollen { pollen_count: PollenCount::Medium }),
-                    tag("HIGH)").map(|_| AugmentedWeather::Pollen { pollen_count: PollenCount::High }),
-                    tag("EXTREME)").map(|_| AugmentedWeather::Pollen { pollen_count: PollenCount::Extreme }),
-                ))),
-                parse_terminated(")").map(AugmentedWeather::WeatherName)
-            )).parse(input)?;
+                preceded(
+                    tag("Pollen - Pollen Count: "),
+                    alt((
+                        tag("LOW)").map(|_| AugmentedWeather::Pollen {
+                            pollen_count: PollenCount::Low,
+                        }),
+                        tag("MEDIUM)").map(|_| AugmentedWeather::Pollen {
+                            pollen_count: PollenCount::Medium,
+                        }),
+                        tag("HIGH)").map(|_| AugmentedWeather::Pollen {
+                            pollen_count: PollenCount::High,
+                        }),
+                        tag("EXTREME)").map(|_| AugmentedWeather::Pollen {
+                            pollen_count: PollenCount::Extreme,
+                        }),
+                    )),
+                ),
+                parse_terminated(")").map(AugmentedWeather::WeatherName),
+            ))
+            .parse(input)?;
 
-            Ok((input, ParsedEventMessage::LiveNow {
-                away_team,
-                home_team,
-                stadium: None,
-                weather: Some(weather),
-            }))
+            Ok((
+                input,
+                ParsedEventMessage::LiveNow {
+                    away_team,
+                    home_team,
+                    stadium: None,
+                    weather: Some(weather),
+                },
+            ))
         }
     };
 
@@ -2026,7 +2089,6 @@ fn weather_noisy<'parse, 'output: 'parse>(
     context("Weather Noisy", f)
 }
 
-
 fn end_game_tokens_inner(
     input: &str,
 ) -> IResult<'_, &str, (EmojiTeam<&str>, u32, EmojiTeam<&str>, u32)> {
@@ -2080,7 +2142,6 @@ fn weather_pollen<'parse, 'output: 'parse>(
         let (_, losing_team) = emoji_team_eof(losing_emoji_team)?;
         let (input, losing_team_pollen) = u32.parse(input)?;
         let (input, _) = tag(" 🏵️.").parse(input)?;
-
 
         Ok((
             input,
