@@ -273,6 +273,13 @@ pub struct Player {
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub free_recomp: Option<bool>,
 
+    #[serde(
+        default = "SometimesMissingHelper::default_result",
+        skip_serializing_if = "AddedLaterResult::is_err"
+    )]
+    #[serde_as(as = "SometimesMissingHelper<_>")]
+    pub friends: AddedLaterResult<Vec<String>>,
+
     #[serde(flatten, deserialize_with = "extra_fields_deserialize")]
     pub extra_fields: serde_json::Map<String, serde_json::Value>,
 }
