@@ -620,6 +620,8 @@ fn election(_event: &'_ FeedEvent) -> impl PlayerFeedEventParser<'_> {
                 .map(|player_names| ParsedPlayerFeedEventText::SweetRelief { player_names }),
             named_greater_swap("Defensive Shift")
                 .map(|player_names| ParsedPlayerFeedEventText::DefensiveShift { player_names }),
+            named_greater_swap("Going Home")
+                .map(|player_names| ParsedPlayerFeedEventText::GoingHome { player_names }),
         )),
     )
 }
