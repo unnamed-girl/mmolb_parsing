@@ -451,6 +451,8 @@ fn election<'output>() -> impl TeamFeedEventParser<'output> {
                 .map(|player_names| ParsedTeamFeedEventText::SweetRelief { player_names }),
             named_greater_swap("Defensive Shift")
                 .map(|player_names| ParsedTeamFeedEventText::DefensiveShift { player_names }),
+            named_greater_swap("Going Home")
+                .map(|player_names| ParsedTeamFeedEventText::GoingHome { player_names }),
         )),
     )
 }

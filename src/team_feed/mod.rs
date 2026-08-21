@@ -286,6 +286,9 @@ pub enum ParsedTeamFeedEventText<S> {
     DefensiveShift {
         player_names: [S; 2],
     },
+    GoingHome {
+        player_names: [S; 2],
+    },
 }
 
 impl<S: Display> ParsedTeamFeedEventText<S> {
@@ -574,6 +577,9 @@ impl<S: Display> ParsedTeamFeedEventText<S> {
             }
             ParsedTeamFeedEventText::DefensiveShift { player_names: [player1, player2] } => {
                 format!("{player1} swapped with {player2} via Defensive Shift.")
+            }
+            ParsedTeamFeedEventText::GoingHome { player_names: [player1, player2] } => {
+                format!("{player1} swapped with {player2} via Going Home.")
             }
         }
     }
