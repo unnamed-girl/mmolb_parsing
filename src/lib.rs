@@ -24,7 +24,7 @@ pub use utils::{
     RemovedLaterResult,
 };
 
-use crate::{enums::Day, parsed_event::EmojiTeam, game_time::GameTime};
+use crate::{enums::Day, game_time::GameTime, parsed_event::EmojiTeam};
 
 #[derive(Clone, Copy)]
 pub struct UnparsingContext<'a> {

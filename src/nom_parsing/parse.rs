@@ -21,6 +21,7 @@ use crate::{enums::Place, nom_parsing::shared::try_all_consuming_splits};
 use crate::{
     enums::{EventType, GameOverMessage, HomeAway, MoundVisitType, NowBattingStats},
     game::Event,
+    game_time::Breakpoints,
     nom_parsing::shared::{
         aurora, cheer, delivery, ejection, team_emoji, try_from_word, try_from_words_m_n, MyParser,
     },
@@ -28,7 +29,6 @@ use crate::{
         EmojiTeam, FallingStarOutcome, FieldingAttempt, GameEventParseError, KnownBug,
         StartOfInningPitcher,
     },
-    game_time::Breakpoints,
     ParsedEventMessage,
 };
 use crate::{

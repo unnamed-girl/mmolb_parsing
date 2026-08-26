@@ -19,8 +19,8 @@ use crate::{
         FieldingErrorType, FoulType, GameOverMessage, HomeAway, ItemName, ItemPrefix, ItemSuffix,
         MoundVisitType, NowBattingStats, Place, PollenCount, StrikeType, TopBottom,
     },
-    nom_parsing::shared::{hit_by_pitch_text, strike_out_text},
     game_time::Breakpoints,
+    nom_parsing::shared::{hit_by_pitch_text, strike_out_text},
     NotRecognized,
 };
 

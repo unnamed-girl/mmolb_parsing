@@ -10,8 +10,8 @@ use crate::{
         ItemSuffix, ModificationType,
     },
     feed_event::FeedEvent,
-    parsed_event::{EmojiTeam, Item},
     game_time::{Breakpoints, Timestamp},
+    parsed_event::{EmojiTeam, Item},
     NotRecognized,
 };
 

@@ -17,11 +17,11 @@ use std::{
 };
 
 use mmolb_parsing::parsed_event::{ContainResult, PartyDurabilityLoss, WitherResult};
+use mmolb_parsing::time::Time;
 use reqwest::blocking::Client;
 use strum::IntoDiscriminant;
 use tracing::{info, span::EnteredSpan, Level};
 use tracing_subscriber::{fmt::writer::MakeWriterExt, layer::SubscriberExt};
-use mmolb_parsing::time::Time;
 
 #[derive(Serialize, Deserialize)]
 pub struct FreeCashewResponse<T> {
@@ -335,7 +335,7 @@ fn get_func<'a, 'b>() -> impl Fn(
             team_feed_inner,
         ),
         Kind::GameFeed => todo!(),
-        Kind::Time => ingest(response, args, progress_report, event_variants, time_inner)
+        Kind::Time => ingest(response, args, progress_report, event_variants, time_inner),
     }
 }
 

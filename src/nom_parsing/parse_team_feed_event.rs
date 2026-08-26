@@ -20,11 +20,11 @@ use crate::parsed_event::{EmojiPlayer, EmojiTeam};
 use crate::{
     enums::{FeedEventType, ModificationType},
     feed_event::{FeedEvent, FeedEventParseError},
+    game_time::{Breakpoints, Timestamp},
     nom_parsing::shared::{
         emojiless_item, feed_delivery, parse_terminated, sentence_eof, try_from_word, verify_name,
     },
     team_feed::ParsedTeamFeedEventText,
-    game_time::{Breakpoints, Timestamp},
 };
 use nom::bytes::complete::take_while;
 use nom::combinator::{eof, verify};
