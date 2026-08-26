@@ -21,6 +21,7 @@ use reqwest::blocking::Client;
 use strum::IntoDiscriminant;
 use tracing::{info, span::EnteredSpan, Level};
 use tracing_subscriber::{fmt::writer::MakeWriterExt, layer::SubscriberExt};
+use mmolb_parsing::time::Time;
 
 #[derive(Serialize, Deserialize)]
 pub struct FreeCashewResponse<T> {
@@ -116,6 +117,7 @@ enum Kind {
     PlayerFeed,
     TeamFeed,
     GameFeed,
+    Time,
 }
 
 impl Kind {
@@ -127,6 +129,7 @@ impl Kind {
             Kind::PlayerFeed => "player_feed",
             Kind::TeamFeed => "team_feed",
             Kind::GameFeed => "game_feed",
+            Kind::Time => "time",
         }
     }
 }
@@ -332,6 +335,7 @@ fn get_func<'a, 'b>() -> impl Fn(
             team_feed_inner,
         ),
         Kind::GameFeed => todo!(),
+        Kind::Time => ingest(response, args, progress_report, event_variants, time_inner)
     }
 }
 
@@ -388,6 +392,16 @@ fn ingest<T: for<'a> Deserialize<'a> + Serialize>(
     }
 
     drop(span);
+}
+
+fn time_inner(
+    _time: Time,
+    _response: EntityResponse<Box<serde_json::value::RawValue>>,
+    _args: &Args,
+    _event_variants: Option<&mut HashSet<String>>,
+) -> EnteredSpan {
+    // Nothing else to do, for now...
+    tracing::span!(Level::INFO, "Time").entered()
 }
 
 fn player_inner(

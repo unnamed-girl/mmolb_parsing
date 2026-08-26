@@ -13,6 +13,7 @@ pub mod player;
 pub mod player_feed;
 pub mod team;
 pub mod team_feed;
+pub mod time;
 
 pub use game::Game;
 pub use parsed_event::ParsedEventMessage;
