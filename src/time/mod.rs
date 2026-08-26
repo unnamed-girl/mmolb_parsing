@@ -1,6 +1,6 @@
-use crate::enums::PollenCount;
-use crate::utils::SometimesMissingHelper;
-use crate::AddedLaterResult;
+use crate::enums::{PollenCount, SeasonStatus};
+use crate::utils::{SometimesMissingHelper, MaybeRecognizedHelper};
+use crate::{AddedLaterResult, MaybeRecognizedResult};
 use serde::{Deserialize, Serialize};
 use serde_with::serde_as;
 use std::collections::HashMap;
@@ -11,9 +11,8 @@ pub struct Time {
     pub season_number: u32,
     pub season_day: u32,
 
-    // TODO the key to this is related to SeasonStatus, but it apparently
-    //   doesn't deserialize the same
-    pub season_status: String,
+    #[serde_as(as = "MaybeRecognizedHelper<_>")]
+    pub season_status: MaybeRecognizedResult<SeasonStatus>,
 
     // TODO the key to this is related to SeasonStatus, but it apparently
     //   doesn't deserialize the same
