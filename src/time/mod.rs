@@ -1,4 +1,4 @@
-use crate::enums::{PollenCount, SeasonStatus};
+use crate::enums::{Day, PollenCount, SeasonStatus};
 use crate::utils::{SometimesMissingHelper, MaybeRecognizedHelper};
 use crate::{AddedLaterResult, MaybeRecognizedResult};
 use serde::{Deserialize, Serialize};
@@ -9,7 +9,9 @@ use std::collections::HashMap;
 #[derive(Serialize, Deserialize, Debug, Clone)]
 pub struct Time {
     pub season_number: u32,
-    pub season_day: u32,
+
+    #[serde_as(as = "MaybeRecognizedHelper<_>")]
+    pub season_day: MaybeRecognizedResult<Day>,
 
     #[serde_as(as = "MaybeRecognizedHelper<_>")]
     pub season_status: MaybeRecognizedResult<SeasonStatus>,
