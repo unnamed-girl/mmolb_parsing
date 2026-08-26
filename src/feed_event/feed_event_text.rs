@@ -11,7 +11,7 @@ use crate::{
     },
     feed_event::FeedEvent,
     parsed_event::{EmojiTeam, Item},
-    time::{Breakpoints, Timestamp},
+    game_time::{Breakpoints, Timestamp},
     NotRecognized,
 };
 

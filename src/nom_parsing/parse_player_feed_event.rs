@@ -16,7 +16,7 @@ use crate::{
         emojiless_item, feed_delivery, parse_terminated, sentence_eof, try_from_word, verify_name,
     },
     player_feed::ParsedPlayerFeedEventText,
-    time::{Breakpoints, Timestamp},
+    game_time::{Breakpoints, Timestamp},
 };
 use nom::character::complete::u32;
 use nom::{

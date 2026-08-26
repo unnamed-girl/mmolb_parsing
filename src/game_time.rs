@@ -4,13 +4,13 @@ use std::cmp::Ordering;
 use crate::enums::Day;
 
 #[derive(Debug, PartialEq, Eq)]
-pub struct Time {
+pub struct GameTime {
     pub season: u32,
     /// Vec of (DayEquivalent, EventIndex), which is the first event after the breakpoint.
     pub ascending_days: Vec<(DayEquivalent, u16)>,
 }
 
-impl Time {
+impl GameTime {
     /// Is the time before self
     pub fn before(&self, season: u32, day: Option<Day>, event_index: Option<u16>) -> bool {
         let event_index = event_index.unwrap_or(0);
@@ -149,21 +149,21 @@ pub enum Breakpoints {
     Season11BalkMessageFix,
     Season15,
 }
-impl From<Breakpoints> for Time {
+impl From<Breakpoints> for GameTime {
     fn from(value: Breakpoints) -> Self {
         value.ascending_transition_time()
     }
 }
 impl Breakpoints {
-    pub fn season(season: u32) -> Time {
-        Time {
+    pub fn season(season: u32) -> GameTime {
+        GameTime {
             season,
             ascending_days: vec![(DayEquivalent { day: 0, offset: 0 }, 0)],
         }
     }
-    fn ascending_transition_time(self) -> Time {
+    fn ascending_transition_time(self) -> GameTime {
         match self {
-            Breakpoints::Season1EnchantmentChange => Time {
+            Breakpoints::Season1EnchantmentChange => GameTime {
                 season: 1,
                 ascending_days: vec![(
                     DayEquivalent {
@@ -173,7 +173,7 @@ impl Breakpoints {
                     0,
                 )],
             },
-            Breakpoints::S1AttributeEqualChange => Time {
+            Breakpoints::S1AttributeEqualChange => GameTime {
                 season: 1,
                 ascending_days: vec![(
                     DayEquivalent {
@@ -183,7 +183,7 @@ impl Breakpoints {
                     0,
                 )],
             },
-            Breakpoints::S2D152 => Time {
+            Breakpoints::S2D152 => GameTime {
                 season: 2,
                 ascending_days: vec![(
                     DayEquivalent {
@@ -193,7 +193,7 @@ impl Breakpoints {
                     70,
                 )],
             },
-            Breakpoints::S2D169 => Time {
+            Breakpoints::S2D169 => GameTime {
                 season: 2,
                 ascending_days: vec![
                     (
@@ -212,15 +212,15 @@ impl Breakpoints {
                     ),
                 ],
             },
-            Breakpoints::Season3 => Time {
+            Breakpoints::Season3 => GameTime {
                 season: 3,
                 ascending_days: vec![(DayEquivalent { day: 0, offset: 0 }, 0)],
             },
-            Breakpoints::CheersGetEmoji => Time {
+            Breakpoints::CheersGetEmoji => GameTime {
                 season: 3,
                 ascending_days: vec![(DayEquivalent { day: 5, offset: 0 }, 330)],
             },
-            Breakpoints::Season3PreSuperstarBreakUpdate => Time {
+            Breakpoints::Season3PreSuperstarBreakUpdate => GameTime {
                 season: 3,
                 ascending_days: vec![(
                     DayEquivalent {
@@ -230,7 +230,7 @@ impl Breakpoints {
                     0,
                 )],
             },
-            Breakpoints::EternalBattle => Time {
+            Breakpoints::EternalBattle => GameTime {
                 season: 2,
                 ascending_days: vec![(
                     DayEquivalent {
@@ -240,7 +240,7 @@ impl Breakpoints {
                     0,
                 )],
             },
-            Breakpoints::Season5TenseChange => Time {
+            Breakpoints::Season5TenseChange => GameTime {
                 season: 5,
                 ascending_days: vec![(
                     DayEquivalent {
@@ -250,31 +250,31 @@ impl Breakpoints {
                     0,
                 )],
             },
-            Breakpoints::Season7WitherTenseChange => Time {
+            Breakpoints::Season7WitherTenseChange => GameTime {
                 season: 7,
                 ascending_days: vec![(DayEquivalent { day: 0, offset: 0 }, 0)],
             },
-            Breakpoints::Season7SuccessfulContainPeriodFix => Time {
+            Breakpoints::Season7SuccessfulContainPeriodFix => GameTime {
                 season: 7,
                 ascending_days: vec![(DayEquivalent { day: 46, offset: 0 }, 24)],
             },
-            Breakpoints::Season8ItemDiscardedMessageChange => Time {
+            Breakpoints::Season8ItemDiscardedMessageChange => GameTime {
                 season: 8,
                 ascending_days: vec![(DayEquivalent { day: 0, offset: 0 }, 0)],
             },
-            Breakpoints::Season10 => Time {
+            Breakpoints::Season10 => GameTime {
                 season: 10,
                 ascending_days: vec![(DayEquivalent { day: 0, offset: 0 }, 0)],
             },
-            Breakpoints::Season11 => Time {
+            Breakpoints::Season11 => GameTime {
                 season: 11,
                 ascending_days: vec![(DayEquivalent { day: 0, offset: 0 }, 0)],
             },
-            Breakpoints::Season11BalkMessageFix => Time {
+            Breakpoints::Season11BalkMessageFix => GameTime {
                 season: 11,
                 ascending_days: vec![(DayEquivalent { day: 5, offset: 0 }, 0)],
             },
-            Breakpoints::Season15 => Time {
+            Breakpoints::Season15 => GameTime {
                 season: 15,
                 ascending_days: vec![(DayEquivalent { day: 0, offset: 0 }, 0)],
             },

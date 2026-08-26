@@ -28,7 +28,7 @@ use crate::{
         EmojiTeam, FallingStarOutcome, FieldingAttempt, GameEventParseError, KnownBug,
         StartOfInningPitcher,
     },
-    time::Breakpoints,
+    game_time::Breakpoints,
     ParsedEventMessage,
 };
 use crate::{

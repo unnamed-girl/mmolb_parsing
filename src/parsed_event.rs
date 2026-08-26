@@ -20,7 +20,7 @@ use crate::{
         MoundVisitType, NowBattingStats, Place, PollenCount, StrikeType, TopBottom,
     },
     nom_parsing::shared::{hit_by_pitch_text, strike_out_text},
-    time::Breakpoints,
+    game_time::Breakpoints,
     NotRecognized,
 };
 

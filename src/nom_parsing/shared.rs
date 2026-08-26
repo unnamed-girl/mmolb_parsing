@@ -19,7 +19,7 @@ use crate::{
         BaseSteal, Cheer, Delivery, DoorPrize, Ejection, EjectionReason, EmojiTeam, Item,
         ItemAffixes, PlacedPlayer, Prize, RunnerAdvance, RunnerOut, SnappedPhotos, ViolationType,
     },
-    time::{Breakpoints, Time},
+    game_time::{Breakpoints, GameTime},
     Game,
 };
 use nom::bytes::complete::is_not;
@@ -92,12 +92,12 @@ impl<'parse> ParsingContext<'parse> {
     }
 
     /// Whether this event is before the given time
-    pub(crate) fn before(&self, time: impl Into<Time>) -> bool {
+    pub(crate) fn before(&self, time: impl Into<GameTime>) -> bool {
         time.into().before(self.season, self.day, self.event_index)
     }
 
     /// Whether this event is after the given time
-    pub(crate) fn after(&self, time: impl Into<Time>) -> bool {
+    pub(crate) fn after(&self, time: impl Into<GameTime>) -> bool {
         time.into().after(self.season, self.day, self.event_index)
     }
 }
@@ -122,13 +122,13 @@ impl PurifiedOutcome {
 }
 
 impl FeedEvent {
-    pub(crate) fn after(&self, time: impl Into<Time>) -> bool {
+    pub(crate) fn after(&self, time: impl Into<GameTime>) -> bool {
         time.into()
             .after(self.season as u32, self.day.as_ref().ok().copied(), None)
     }
 
     #[allow(dead_code)]
-    pub(crate) fn before(&self, time: impl Into<Time>) -> bool {
+    pub(crate) fn before(&self, time: impl Into<GameTime>) -> bool {
         time.into()
             .before(self.season as u32, self.day.as_ref().ok().copied(), None)
     }

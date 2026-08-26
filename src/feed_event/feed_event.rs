@@ -1,4 +1,4 @@
-use crate::time::Breakpoints;
+use crate::game_time::Breakpoints;
 use crate::utils::SometimesMissingHelper;
 use crate::{
     enums::{CelestialEnergyTier, Day, FeedEventType, LinkType, SeasonStatus},

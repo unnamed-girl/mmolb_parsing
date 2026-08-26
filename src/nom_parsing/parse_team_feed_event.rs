@@ -24,7 +24,7 @@ use crate::{
         emojiless_item, feed_delivery, parse_terminated, sentence_eof, try_from_word, verify_name,
     },
     team_feed::ParsedTeamFeedEventText,
-    time::{Breakpoints, Timestamp},
+    game_time::{Breakpoints, Timestamp},
 };
 use nom::bytes::complete::take_while;
 use nom::combinator::{eof, verify};

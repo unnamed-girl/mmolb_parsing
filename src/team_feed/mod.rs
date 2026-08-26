@@ -16,7 +16,7 @@ use crate::{
     feed_event::{
         EmojilessItem, FeedDelivery, FeedEvent, FeedEventParseError, FeedFallingStarOutcome,
     },
-    time::{Breakpoints, Timestamp},
+    game_time::{Breakpoints, Timestamp},
     utils::extra_fields_deserialize,
 };
 
