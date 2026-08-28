@@ -1349,7 +1349,6 @@ pub enum SeasonStatus {
     Preseason,
     PostseasonPreview,
     Offseason,
-    SuperstarDay1,
 }
 impl FromStr for SeasonStatus {
     type Err = &'static str;
@@ -1366,8 +1365,6 @@ impl FromStr for SeasonStatus {
             "Preseason" => Ok(SeasonStatus::Preseason),
             "Offseason" => Ok(SeasonStatus::Offseason),
             "Postseason Preview" => Ok(SeasonStatus::PostseasonPreview),
-            // The escaped quotes are necessary
-            "\"Superstar Day 1\"" => Ok(SeasonStatus::SuperstarDay1),
             s => s
                 .strip_prefix("Postseason Round ")
                 .and_then(|s| s.parse().ok())
@@ -1393,7 +1390,6 @@ impl Display for SeasonStatus {
             SeasonStatus::Preseason => write!(f, "Preseason"),
             SeasonStatus::PostseasonPreview => write!(f, "Postseason Preview"),
             SeasonStatus::Offseason => write!(f, "Offseason"),
-            SeasonStatus::SuperstarDay1 => write!(f, "\"Superstar Day 1\""),
         }
     }
 }
@@ -1420,7 +1416,7 @@ pub enum Day {
         deserialize_with = "superstar_day_de",
         serialize_with = "superstar_day_ser"
     )]
-    SuperstarDay(u8),
+    SuperstarDay(u8, bool),
     #[serde(
         untagged,
         deserialize_with = "postseason_round_de",
@@ -1428,22 +1424,32 @@ pub enum Day {
     )]
     PostseasonRound(u8),
 }
-fn superstar_day_ser<S>(day: &u8, serializer: S) -> Result<S::Ok, S::Error>
+fn superstar_day_ser<S>(day: &u8, quoted: &bool, serializer: S) -> Result<S::Ok, S::Error>
 where
     S: Serializer,
 {
-    format!("Superstar Day {day}").serialize(serializer)
+    if *quoted {
+        format!("\"Superstar Day {day}\"").serialize(serializer)
+    } else {
+        format!("Superstar Day {day}").serialize(serializer)
+    }
 }
 
-fn superstar_day_de<'de, D>(deserializer: D) -> Result<u8, D::Error>
+fn superstar_day_de<'de, D>(deserializer: D) -> Result<(u8, bool), D::Error>
 where
     D: Deserializer<'de>,
 {
-    <String>::deserialize(deserializer)?
-        .strip_prefix("Superstar Day ")
+    let s = <String>::deserialize(deserializer)?;
+    let (s, quoted) = if s.starts_with("\"") && s.len() > 2 {
+        (s[1..s.len() - 1].to_string(), true)
+    } else {
+        (s, false)
+    };
+    let num = s.strip_prefix("Superstar Day ")
         .ok_or(D::Error::custom("Didn't start with \"Superstar Day\""))?
         .parse::<u8>()
-        .map_err(|_| D::Error::custom("Expected a number"))
+        .map_err(|_| D::Error::custom("Expected a number"))?;
+    Ok((num, quoted))
 }
 
 fn postseason_round_ser<S>(round: &u8, serializer: S) -> Result<S::Ok, S::Error>
@@ -1472,7 +1478,8 @@ impl Display for Day {
             Self::Preseason => write!(f, "Preseason"),
             Self::Holiday => write!(f, "Holiday"),
             Self::Election => write!(f, "Election"),
-            Self::SuperstarDay(d) => write!(f, "Superstar Day {d}"),
+            Self::SuperstarDay(d, false) => write!(f, "Superstar Day {d}"),
+            Self::SuperstarDay(d, true) => write!(f, "\"Superstar Day {d}\""),
             Self::PostseasonPreview => write!(f, "Postseason Preview"),
             Self::PostseasonRound(r) => write!(f, "Postseason Round {r}"),
             Self::SpecialEvent => write!(f, "Special Event"),

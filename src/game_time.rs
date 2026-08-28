@@ -71,7 +71,7 @@ impl DayEquivalent {
                 day: 120,
                 offset: 255,
             },
-            Day::SuperstarDay(offset) => DayEquivalent {
+            Day::SuperstarDay(offset, _) => DayEquivalent {
                 day: 120,
                 offset: offset + 1,
             },
