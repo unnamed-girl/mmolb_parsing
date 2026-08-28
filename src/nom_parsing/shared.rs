@@ -609,9 +609,13 @@ pub(super) fn sentence_eof<
     mut parser: F,
 ) -> impl Parser<&'output str, Output = O, Error = E> {
     all_consuming(sentence(move |input: &'output str| {
-        take(input.chars().count() - 1)
-            .and_then(|i| parser.parse(i))
-            .parse(input)
+        if let Some(chars_to_take) = input.chars().count().checked_sub(1) {
+            take(chars_to_take)
+                .and_then(|i| parser.parse(i))
+                .parse(input)
+        } else {
+            fail().parse(input)
+        }
     }))
 }
 

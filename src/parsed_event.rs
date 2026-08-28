@@ -1,6 +1,5 @@
 use itertools::Itertools;
 use serde::{Deserialize, Serialize};
-use std::fmt::Formatter;
 use std::{
     convert::Infallible,
     fmt::{Display, Write},
@@ -1542,6 +1541,11 @@ impl<S: Display> ParsedEventMessage<S> {
                     String::new()
                 };
                 match result {
+                    FieldingAttempt::NoOut => {
+                        let fielder_long = fielders.first().unwrap();
+
+                        format!("{batter} reaches on a fielder's choice, fielded by {fielder_long}.{scores_and_advances}{ejection}")
+                    }
                     FieldingAttempt::Out { out } => {
                         let fielders = unparse_fielders_for_play(fielders);
 
@@ -1939,6 +1943,7 @@ pub enum StartOfInningPitcher<S> {
 #[derive(Debug, Clone, Copy, Serialize, Deserialize, PartialEq, EnumDiscriminants)]
 #[strum_discriminants(derive(Display))]
 pub enum FieldingAttempt<S> {
+    NoOut,
     Out {
         out: RunnerOut<S>,
     },
@@ -1950,6 +1955,7 @@ pub enum FieldingAttempt<S> {
 impl<S: Display> Display for FieldingAttempt<S> {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         match self {
+            Self::NoOut => write!(f, ""),
             Self::Out { out } => {
                 write!(f, "{} out at {}.", out.runner, out.base)
             }
@@ -2336,7 +2342,7 @@ pub enum PartyDurabilityLoss<S> {
 }
 
 impl<S: Display> Display for PartyDurabilityLoss<S> {
-    fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         match self {
             PartyDurabilityLoss::Both(durability_loss) => {
                 write!(f, "Both players lose {durability_loss} Durability.")
@@ -2357,7 +2363,7 @@ impl<S: Display> Display for PartyDurabilityLoss<S> {
 }
 
 impl<S: Display> Display for ContainResult<S> {
-    fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         match self {
             ContainResult::NoContain => Ok(()),
             ContainResult::SuccessfulContain {
@@ -3375,7 +3381,7 @@ pub enum AugmentedWeather<S> {
 }
 
 impl<S: Display> Display for AugmentedWeather<S> {
-    fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         match self {
             AugmentedWeather::Pollen { pollen_count } => {
                 write!(f, "Pollen - Pollen Count: {pollen_count}")

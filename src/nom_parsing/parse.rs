@@ -903,6 +903,29 @@ fn field<'parse, 'output: 'parse>(
         },
     );
 
+    let reaches_on_fielders_choice_no_out = all_consuming_sentence_and(
+        (
+            parse_terminated(" reaches on a fielder's choice, fielded by ").and_then(verify_name),
+            placed_player_eof,
+        ),
+        (
+            scores_and_advances,
+            opt(ejection(parsing_context)),
+        ),
+    )
+    .map(
+        |((batter, fielder), ((scores, advances), ejection))| {
+            ParsedEventMessage::ReachOnFieldersChoice {
+                batter,
+                fielders: vec![fielder],
+                result: FieldingAttempt::NoOut,
+                scores,
+                advances,
+                ejection,
+            }
+        },
+    );
+
     let reaches_on_error = all_consuming_sentence_and(
         (
             parse_terminated(" reaches on a ").and_then(verify_name),
@@ -1019,6 +1042,7 @@ fn field<'parse, 'output: 'parse>(
         forced_out,
         reaches_on_fielders_choice_out,
         reaches_on_fielders_choice_error,
+        reaches_on_fielders_choice_no_out,
         reaches_on_error,
         double_play_grounded,
         double_play_caught,
