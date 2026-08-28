@@ -67,6 +67,10 @@ pub struct Game {
     pub stats: HashMap<String, HashMap<String, HashMap<MaybeRecognizedResult<GameStat>, i32>>>,
 
     /// TeamID -> Stat -> Value. Added in s16
+    #[serde(
+        default = "SometimesMissingHelper::default_result",
+        skip_serializing_if = "AddedLaterResult::is_err"
+    )]
     #[serde_as(as = "SometimesMissingHelper<HashMap<_, HashMap<MaybeRecognizedHelper<_>, _>>>")]
     pub team_stats: AddedLaterResult<HashMap<String, HashMap<MaybeRecognizedResult<GameStat>, i32>>>,
 
