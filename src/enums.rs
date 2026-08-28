@@ -1349,6 +1349,7 @@ pub enum SeasonStatus {
     Preseason,
     PostseasonPreview,
     Offseason,
+    SuperstarDay1,
 }
 impl FromStr for SeasonStatus {
     type Err = &'static str;
@@ -1365,6 +1366,7 @@ impl FromStr for SeasonStatus {
             "Preseason" => Ok(SeasonStatus::Preseason),
             "Offseason" => Ok(SeasonStatus::Offseason),
             "Postseason Preview" => Ok(SeasonStatus::PostseasonPreview),
+            "Superstar Day 1" => Ok(SeasonStatus::SuperstarDay1),
             s => s
                 .strip_prefix("Postseason Round ")
                 .and_then(|s| s.parse().ok())
@@ -1390,6 +1392,7 @@ impl Display for SeasonStatus {
             SeasonStatus::Preseason => write!(f, "Preseason"),
             SeasonStatus::PostseasonPreview => write!(f, "Postseason Preview"),
             SeasonStatus::Offseason => write!(f, "Offseason"),
+            SeasonStatus::SuperstarDay1 => write!(f, "Superstar Day 1"),
         }
     }
 }
