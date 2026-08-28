@@ -66,6 +66,10 @@ pub struct Game {
     #[serde_as(as = "HashMap<_, HashMap<_, HashMap<MaybeRecognizedHelper<_>, _>>>")]
     pub stats: HashMap<String, HashMap<String, HashMap<MaybeRecognizedResult<GameStat>, i32>>>,
 
+    /// TeamID -> Stat -> Value. Added in s16
+    #[serde_as(as = "SometimesMissingHelper<HashMap<_, HashMap<MaybeRecognizedHelper<_>, _>>>")]
+    pub team_stats: AddedLaterResult<HashMap<String, HashMap<MaybeRecognizedResult<GameStat>, i32>>>,
+
     /// PitcherEntries were not retroactively added to old games
     ///
     /// TeamID -> PitcherEntry for that team.
