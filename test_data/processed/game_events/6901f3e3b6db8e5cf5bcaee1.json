@@ -1,1 +1,6041 @@
-[{"away_team":{"emoji":"💪","name":"Brosville Dudes"},"event_type":"LiveNow","home_team":{"emoji":"🕊️","name":"Alexandria Cinnamon Birds"},"stadium":"Red Hot Lot","weather":null},{"away_pitcher":"Jackson Koval","away_team":{"emoji":"💪","name":"Brosville Dudes"},"event_type":"PitchingMatchup","home_pitcher":"Of Kumari","home_team":{"emoji":"🕊️","name":"Alexandria Cinnamon Birds"}},{"event_type":"Lineup","manager_name":null,"players":[{"name":"Nice Tanner","place":"LF"},{"name":"Cecilia Ogden","place":"1B"},{"name":"Fizz Cartwright","place":"3B"},{"name":"Rodney Kumar","place":"RF"},{"name":"Luke Petrosyan","place":"CF"},{"name":"Voicemail Skov","place":"SS"},{"name":"Dora Castaneda","place":"DH"},{"name":"Gladys Ivanov","place":"C"},{"name":"Casey McNally","place":"2B"}],"side":"Away"},{"event_type":"Lineup","manager_name":null,"players":[{"name":"Sallie Bonilla","place":"C"},{"name":"Winnie Otas","place":"SS"},{"name":"David Fujii","place":"DH"},{"name":"Ricky Snow","place":"1B"},{"name":"D. Laurent","place":"LF"},{"name":"Débora Thorsen","place":"3B"},{"name":"Atem Powell","place":"2B"},{"name":"Lauren Pinheiro","place":"RF"},{"name":"Lais Prasad","place":"CF"}],"side":"Home"},{"event_type":"PlayBall"},{"automatic_runner":null,"batting_team":{"emoji":"💪","name":"Brosville Dudes"},"event_type":"InningStart","number":1,"pitcher_status":{"Same":{"emoji":"🕊️","name":"Of Kumari"}},"side":"Top"},{"batter":"Nice Tanner","event_type":"NowBatting","player_swept_away":null,"stats":"FirstPA"},{"assassinations":[],"aurora_photos":null,"cheer":null,"count":[1,0],"door_prizes":[],"efflorescence":[],"ejection":null,"event_type":"Ball","steals":[],"wither":null},{"assassinations":[],"aurora_photos":null,"cheer":null,"count":[2,0],"door_prizes":[],"efflorescence":[],"ejection":null,"event_type":"Ball","steals":[],"wither":null},{"assassinations":[],"aurora_photos":null,"cheer":null,"count":[3,0],"door_prizes":[],"efflorescence":[],"ejection":null,"event_type":"Ball","steals":[],"wither":null},{"advances":[],"assassinations":[],"aurora_photos":null,"batter":"Nice Tanner","cheer":null,"ejection":null,"event_type":"Walk","scores":[],"wither":null},{"batter":"Cecilia Ogden","event_type":"NowBatting","player_swept_away":null,"stats":"FirstPA"},{"assassinations":[],"aurora_photos":null,"cheer":null,"count":[0,1],"door_prizes":[],"efflorescence":[],"event_type":"Foul","foul":"Ball","steals":[],"wither":null},{"assassinations":[],"aurora_photos":null,"cheer":null,"count":[0,2],"door_prizes":[],"efflorescence":[],"ejection":null,"event_type":"Strike","steals":[{"base":"Second","caught":true,"runner":"Nice Tanner"}],"strike":"Looking","surprise_strike":false,"wither":null},{"assassinations":[],"aurora_photos":null,"batter":"Cecilia Ogden","cheer":null,"destination":"LeftField","door_prizes":[],"efflorescence":[],"event_type":"FairBall","fair_ball_type":"LineDrive"},{"advances":[],"batter":"Cecilia Ogden","distance":"Single","ejection":null,"event_type":"BatterToBase","fair_ball_type":"LineDrive","fielder":{"name":"D. Laurent","place":"LF"},"scores":[]},{"batter":"Fizz Cartwright","event_type":"NowBatting","player_swept_away":null,"stats":"FirstPA"},{"assassinations":[],"aurora_photos":null,"batter":"Fizz Cartwright","cheer":null,"destination":"FirstBase","door_prizes":[],"efflorescence":[],"event_type":"FairBall","fair_ball_type":"GroundBall"},{"advances":[],"batter":"Fizz Cartwright","ejection":null,"event_type":"ForceOut","fair_ball_type":"GroundBall","fielders":[{"name":"Ricky Snow","place":"1B"},{"name":"Atem Powell","place":"2B"}],"out":{"base":"Second","runner":"Cecilia Ogden"},"scores":[]},{"batter":"Rodney Kumar","event_type":"NowBatting","player_swept_away":null,"stats":"FirstPA"},{"assassinations":[],"aurora_photos":null,"cheer":null,"count":[0,1],"door_prizes":[],"efflorescence":[],"event_type":"Foul","foul":"Ball","steals":[],"wither":null},{"assassinations":[],"aurora_photos":null,"cheer":null,"count":[1,1],"door_prizes":[],"efflorescence":[],"ejection":null,"event_type":"Ball","steals":[],"wither":null},{"assassinations":[],"aurora_photos":null,"cheer":null,"count":[2,1],"door_prizes":[],"efflorescence":[],"ejection":null,"event_type":"Ball","steals":[],"wither":null},{"assassinations":[],"aurora_photos":null,"cheer":null,"count":[3,1],"door_prizes":[],"efflorescence":[],"ejection":null,"event_type":"Ball","steals":[],"wither":null},{"assassinations":[],"aurora_photos":null,"batter":"Rodney Kumar","cheer":null,"destination":"FirstBase","door_prizes":[],"efflorescence":[],"event_type":"FairBall","fair_ball_type":"GroundBall"},{"advances":[],"amazing":false,"assassinations":[],"batter":"Rodney Kumar","ejection":null,"event_type":"GroundedOut","fielders":[{"name":"Ricky Snow","place":"1B"}],"scores":[]},{"event_type":"InningEnd","number":1,"side":"Top"},{"automatic_runner":null,"batting_team":{"emoji":"🕊️","name":"Alexandria Cinnamon Birds"},"event_type":"InningStart","number":1,"pitcher_status":{"Same":{"emoji":"💪","name":"Jackson Koval"}},"side":"Bottom"},{"batter":"Sallie Bonilla","event_type":"NowBatting","player_swept_away":null,"stats":"FirstPA"},{"assassinations":[],"aurora_photos":null,"cheer":null,"count":[1,0],"door_prizes":[],"efflorescence":[],"ejection":null,"event_type":"Ball","steals":[],"wither":null},{"assassinations":[],"aurora_photos":null,"batter":"Sallie Bonilla","cheer":null,"destination":"LeftField","door_prizes":[],"efflorescence":[],"event_type":"FairBall","fair_ball_type":"GroundBall"},{"advances":[],"batter":"Sallie Bonilla","distance":"Single","ejection":null,"event_type":"BatterToBase","fair_ball_type":"GroundBall","fielder":{"name":"Nice Tanner","place":"LF"},"scores":[]},{"batter":"Winnie Otas","event_type":"NowBatting","player_swept_away":null,"stats":"FirstPA"},{"assassinations":[],"aurora_photos":null,"cheer":null,"count":[1,0],"door_prizes":[],"efflorescence":[],"ejection":null,"event_type":"Ball","steals":[],"wither":null},{"assassinations":[],"aurora_photos":null,"batter":"Winnie Otas","cheer":null,"destination":"Pitcher","door_prizes":[],"efflorescence":[],"event_type":"FairBall","fair_ball_type":"GroundBall"},{"advances":[{"base":"Second","runner":"Sallie Bonilla"}],"amazing":false,"assassinations":[],"batter":"Winnie Otas","ejection":null,"event_type":"GroundedOut","fielders":[{"name":"Jackson Koval","place":"P"},{"name":"Cecilia Ogden","place":"1B"}],"scores":[]},{"batter":"David Fujii","event_type":"NowBatting","player_swept_away":null,"stats":"FirstPA"},{"assassinations":[],"aurora_photos":null,"cheer":"TheStadiumShakesWithExcitement","count":[0,1],"door_prizes":[],"efflorescence":[],"ejection":null,"event_type":"Strike","steals":[],"strike":"Looking","surprise_strike":false,"wither":null},{"assassinations":[],"aurora_photos":null,"cheer":null,"count":[1,1],"door_prizes":[],"efflorescence":[],"ejection":null,"event_type":"Ball","steals":[],"wither":null},{"assassinations":[],"aurora_photos":null,"cheer":null,"count":[1,2],"door_prizes":[],"efflorescence":[],"event_type":"Foul","foul":"Ball","steals":[],"wither":null},{"assassinations":[],"aurora_photos":null,"batter":"David Fujii","cheer":null,"ejection":null,"event_type":"StrikeOut","foul":null,"steals":[],"strike":"Looking","wither":null},{"batter":"Ricky Snow","event_type":"NowBatting","player_swept_away":null,"stats":"FirstPA"},{"assassinations":[],"aurora_photos":null,"cheer":null,"count":[0,1],"door_prizes":[],"efflorescence":[],"event_type":"Foul","foul":"Ball","steals":[],"wither":null},{"assassinations":[],"aurora_photos":null,"cheer":"TheCheeringIsRelentless","count":[1,1],"door_prizes":[],"efflorescence":[],"ejection":null,"event_type":"Ball","steals":[],"wither":null},{"assassinations":[],"aurora_photos":null,"cheer":null,"count":[1,2],"door_prizes":[],"efflorescence":[],"ejection":null,"event_type":"Strike","steals":[],"strike":"Looking","surprise_strike":false,"wither":null},{"assassinations":[],"aurora_photos":null,"batter":"Ricky Snow","cheer":null,"ejection":null,"event_type":"StrikeOut","foul":null,"steals":[],"strike":"Looking","wither":null},{"event_type":"InningEnd","number":1,"side":"Bottom"},{"automatic_runner":null,"batting_team":{"emoji":"💪","name":"Brosville Dudes"},"event_type":"InningStart","number":2,"pitcher_status":{"Same":{"emoji":"🕊️","name":"Of Kumari"}},"side":"Top"},{"batter":"Luke Petrosyan","event_type":"NowBatting","player_swept_away":null,"stats":"FirstPA"},{"assassinations":[],"aurora_photos":null,"cheer":null,"count":[1,0],"door_prizes":[],"efflorescence":[],"ejection":null,"event_type":"Ball","steals":[],"wither":null},{"assassinations":[],"aurora_photos":null,"cheer":null,"count":[2,0],"door_prizes":[],"efflorescence":[],"ejection":null,"event_type":"Ball","steals":[],"wither":null},{"assassinations":[],"aurora_photos":null,"cheer":null,"count":[2,1],"door_prizes":[],"efflorescence":[],"event_type":"Foul","foul":"Ball","steals":[],"wither":null},{"assassinations":[],"aurora_photos":null,"cheer":null,"count":[2,2],"door_prizes":[],"efflorescence":[],"ejection":null,"event_type":"Strike","steals":[],"strike":"Swinging","surprise_strike":false,"wither":null},{"assassinations":[],"aurora_photos":null,"cheer":null,"count":[2,2],"door_prizes":[],"efflorescence":[],"event_type":"Foul","foul":"Ball","steals":[],"wither":null},{"assassinations":[],"aurora_photos":null,"cheer":null,"count":[2,2],"door_prizes":[],"efflorescence":[],"event_type":"Foul","foul":"Ball","steals":[],"wither":null},{"assassinations":[],"aurora_photos":null,"cheer":null,"count":[3,2],"door_prizes":[],"efflorescence":[],"ejection":null,"event_type":"Ball","steals":[],"wither":null},{"advances":[],"assassinations":[],"aurora_photos":null,"batter":"Luke Petrosyan","cheer":null,"ejection":null,"event_type":"Walk","scores":[],"wither":null},{"batter":"Voicemail Skov","event_type":"NowBatting","player_swept_away":null,"stats":"FirstPA"},{"assassinations":[],"aurora_photos":null,"cheer":null,"count":[1,0],"door_prizes":[],"efflorescence":[],"ejection":null,"event_type":"Ball","steals":[],"wither":null},{"assassinations":[],"aurora_photos":null,"cheer":null,"count":[1,1],"door_prizes":[],"efflorescence":[],"event_type":"Foul","foul":"Ball","steals":[],"wither":null},{"assassinations":[],"aurora_photos":null,"cheer":null,"count":[1,2],"door_prizes":[],"efflorescence":[],"ejection":null,"event_type":"Strike","steals":[],"strike":"Looking","surprise_strike":false,"wither":null},{"assassinations":[],"aurora_photos":null,"batter":"Voicemail Skov","cheer":null,"ejection":null,"event_type":"StrikeOut","foul":null,"steals":[],"strike":"Swinging","wither":null},{"batter":"Dora Castaneda","event_type":"NowBatting","player_swept_away":null,"stats":"FirstPA"},{"assassinations":[],"aurora_photos":null,"cheer":null,"count":[1,0],"door_prizes":[],"efflorescence":[],"ejection":null,"event_type":"Ball","steals":[],"wither":null},{"assassinations":[],"aurora_photos":null,"cheer":null,"count":[1,1],"door_prizes":[],"efflorescence":[],"ejection":null,"event_type":"Strike","steals":[],"strike":"Looking","surprise_strike":false,"wither":null},{"assassinations":[],"aurora_photos":null,"cheer":null,"count":[1,2],"door_prizes":[],"efflorescence":[],"ejection":null,"event_type":"Strike","steals":[],"strike":"Looking","surprise_strike":false,"wither":null},{"assassinations":[],"aurora_photos":null,"cheer":null,"count":[2,2],"door_prizes":[],"efflorescence":[],"ejection":null,"event_type":"Ball","steals":[],"wither":{"source_name":"Of Kumari","target":{"name":"Dora Castaneda","place":"DH"},"team_emoji":"💪"}},{"contained":{"SuccessfulContain":{"contained_player_name":"Of Kumari","replacement_player_name":"Jeanette Hirano"}},"corrupted":"Resisted","event_type":"WeatherWither","player":{"name":"Dora Castaneda","place":"DH"},"team_emoji":"💪"},{"assassinations":[],"aurora_photos":null,"batter":"Dora Castaneda","cheer":null,"ejection":null,"event_type":"StrikeOut","foul":null,"steals":[],"strike":"Looking","wither":null},{"batter":"Gladys Ivanov","event_type":"NowBatting","player_swept_away":null,"stats":"FirstPA"},{"assassinations":[],"aurora_photos":null,"cheer":"TheStadiumSwellsWithCheers","count":[1,0],"door_prizes":[],"efflorescence":[],"ejection":null,"event_type":"Ball","steals":[{"base":"Second","caught":false,"runner":"Luke Petrosyan"}],"wither":null},{"assassinations":[],"aurora_photos":null,"batter":"Gladys Ivanov","cheer":null,"destination":"ShortStop","door_prizes":[],"efflorescence":[],"event_type":"FairBall","fair_ball_type":"GroundBall"},{"advances":[],"amazing":false,"assassinations":[],"batter":"Gladys Ivanov","ejection":null,"event_type":"GroundedOut","fielders":[{"name":"Winnie Otas","place":"SS"},{"name":"Ricky Snow","place":"1B"}],"scores":[]},{"event_type":"InningEnd","number":2,"side":"Top"},{"automatic_runner":null,"batting_team":{"emoji":"🕊️","name":"Alexandria Cinnamon Birds"},"event_type":"InningStart","number":2,"pitcher_status":{"Same":{"emoji":"💪","name":"Jackson Koval"}},"side":"Bottom"},{"batter":"D. Laurent","event_type":"NowBatting","player_swept_away":null,"stats":"FirstPA"},{"assassinations":[],"aurora_photos":null,"batter":"D. Laurent","cheer":null,"destination":"CenterField","door_prizes":[],"efflorescence":[],"event_type":"FairBall","fair_ball_type":"LineDrive"},{"advances":[],"batter":"D. Laurent","distance":"Double","ejection":null,"event_type":"BatterToBase","fair_ball_type":"LineDrive","fielder":{"name":"Luke Petrosyan","place":"CF"},"scores":[]},{"batter":"Débora Thorsen","event_type":"NowBatting","player_swept_away":null,"stats":"FirstPA"},{"assassinations":[],"aurora_photos":null,"batter":"Débora Thorsen","cheer":null,"destination":"ThirdBase","door_prizes":[],"efflorescence":[],"event_type":"FairBall","fair_ball_type":"GroundBall"},{"advances":[{"base":"Third","runner":"D. Laurent"}],"amazing":false,"assassinations":[],"batter":"Débora Thorsen","ejection":null,"event_type":"GroundedOut","fielders":[{"name":"Fizz Cartwright","place":"3B"},{"name":"Cecilia Ogden","place":"1B"}],"scores":[]},{"batter":"Atem Powell","event_type":"NowBatting","player_swept_away":null,"stats":"FirstPA"},{"assassinations":[],"aurora_photos":null,"cheer":null,"count":[0,1],"door_prizes":[],"efflorescence":[],"ejection":null,"event_type":"Strike","steals":[],"strike":"Swinging","surprise_strike":false,"wither":null},{"assassinations":[],"aurora_photos":null,"cheer":"TheStandsAreElectric","count":[1,1],"door_prizes":[],"efflorescence":[],"ejection":null,"event_type":"Ball","steals":[],"wither":null},{"assassinations":[],"aurora_photos":null,"cheer":null,"count":[1,2],"door_prizes":[],"efflorescence":[],"event_type":"Foul","foul":"Ball","steals":[],"wither":null},{"assassinations":[],"aurora_photos":null,"cheer":null,"count":[2,2],"door_prizes":[],"efflorescence":[],"ejection":null,"event_type":"Ball","steals":[],"wither":null},{"assassinations":[],"aurora_photos":null,"batter":"Atem Powell","cheer":null,"ejection":null,"event_type":"StrikeOut","foul":null,"steals":[],"strike":"Looking","wither":null},{"batter":"Lauren Pinheiro","event_type":"NowBatting","player_swept_away":null,"stats":"FirstPA"},{"assassinations":[],"aurora_photos":null,"cheer":null,"count":[0,1],"door_prizes":[],"efflorescence":[],"event_type":"Foul","foul":"Ball","steals":[],"wither":null},{"advances":[],"aurora_photos":null,"batter":"Lauren Pinheiro","cheer":null,"door_prizes":[],"efflorescence":[],"ejection":null,"event_type":"HitByPitch","scores":[],"wither":null},{"batter":"Lais Prasad","event_type":"NowBatting","player_swept_away":null,"stats":"FirstPA"},{"assassinations":[],"aurora_photos":null,"cheer":"TheHomeCrowdWontStopCheering","count":[0,1],"door_prizes":[],"efflorescence":[],"ejection":null,"event_type":"Strike","steals":[],"strike":"Looking","surprise_strike":false,"wither":null},{"assassinations":[],"aurora_photos":null,"cheer":null,"count":[0,2],"door_prizes":[],"efflorescence":[],"event_type":"Foul","foul":"Ball","steals":[],"wither":null},{"assassinations":[],"aurora_photos":null,"cheer":null,"count":[0,2],"door_prizes":[],"efflorescence":[],"event_type":"Foul","foul":"Ball","steals":[],"wither":null},{"assassinations":[],"aurora_photos":null,"cheer":null,"count":[0,2],"door_prizes":[],"efflorescence":[],"event_type":"Foul","foul":"Ball","steals":[],"wither":null},{"assassinations":[],"aurora_photos":null,"batter":"Lais Prasad","cheer":null,"destination":"LeftField","door_prizes":[],"efflorescence":[],"event_type":"FairBall","fair_ball_type":"FlyBall"},{"advances":[],"batter":"Lais Prasad","caught_by":{"name":"Nice Tanner","place":"LF"},"ejection":null,"event_type":"CaughtOut","fair_ball_type":"FlyBall","jetpack":false,"perfect":false,"sacrifice":false,"scores":[]},{"event_type":"InningEnd","number":2,"side":"Bottom"},{"automatic_runner":null,"batting_team":{"emoji":"💪","name":"Brosville Dudes"},"event_type":"InningStart","number":3,"pitcher_status":{"Same":{"emoji":"🕊️","name":"Jeanette Hirano"}},"side":"Top"},{"batter":"Casey McNally","event_type":"NowBatting","player_swept_away":null,"stats":"FirstPA"},{"assassinations":[],"aurora_photos":null,"cheer":null,"count":[1,0],"door_prizes":[],"efflorescence":[],"ejection":null,"event_type":"Ball","steals":[],"wither":null},{"assassinations":[],"aurora_photos":null,"batter":"Casey McNally","cheer":null,"destination":"LeftField","door_prizes":[],"efflorescence":[],"event_type":"FairBall","fair_ball_type":"LineDrive"},{"advances":[],"batter":"Casey McNally","distance":"Single","ejection":null,"event_type":"BatterToBase","fair_ball_type":"LineDrive","fielder":{"name":"D. Laurent","place":"LF"},"scores":[]},{"batter":"Nice Tanner","event_type":"NowBatting","player_swept_away":null,"stats":{"Stats":[{"stat":"BaseOnBalls","value":1}]}},{"assassinations":[],"aurora_photos":null,"batter":"Nice Tanner","cheer":null,"destination":"ShortStop","door_prizes":[],"efflorescence":[],"event_type":"FairBall","fair_ball_type":"GroundBall"},{"advances":[{"base":"Second","runner":"Casey McNally"}],"batter":"Nice Tanner","ejection":null,"event_type":"ReachOnFieldersChoice","fielders":[{"name":"Winnie Otas","place":"SS"}],"result":{"Error":{"error":"Fielding","fielder":"Winnie Otas"}},"scores":[]},{"batter":"Cecilia Ogden","event_type":"NowBatting","player_swept_away":null,"stats":{"Stats":[{"stat":"HitsForAtBats","value":{"at_bats":1,"hits":1}},{"stat":"FirstBases","value":1}]}},{"assassinations":[],"aurora_photos":null,"cheer":null,"count":[1,0],"door_prizes":[],"efflorescence":[],"ejection":null,"event_type":"Ball","steals":[],"wither":null},{"assassinations":[],"aurora_photos":null,"cheer":"SupportersYellAtFullVolume","count":[2,0],"door_prizes":[],"efflorescence":[],"ejection":null,"event_type":"Ball","steals":[],"wither":null},{"assassinations":[],"aurora_photos":null,"cheer":null,"count":[2,1],"door_prizes":[],"efflorescence":[],"event_type":"Foul","foul":"Ball","steals":[],"wither":null},{"assassinations":[],"aurora_photos":null,"batter":"Cecilia Ogden","cheer":null,"destination":"FirstBase","door_prizes":[],"efflorescence":[],"event_type":"FairBall","fair_ball_type":"Popup"},{"advances":[],"batter":"Cecilia Ogden","caught_by":{"name":"Ricky Snow","place":"1B"},"ejection":null,"event_type":"CaughtOut","fair_ball_type":"Popup","jetpack":false,"perfect":false,"sacrifice":false,"scores":[]},{"batter":"Fizz Cartwright","event_type":"NowBatting","player_swept_away":null,"stats":{"Stats":[{"stat":"HitsForAtBats","value":{"at_bats":1,"hits":0}},{"stat":"Fouls","value":1}]}},{"assassinations":[],"aurora_photos":null,"cheer":null,"count":[0,1],"door_prizes":[],"efflorescence":[],"event_type":"Foul","foul":"Ball","steals":[],"wither":null},{"assassinations":[],"aurora_photos":null,"cheer":"TheyCheerLikeTheresNoTomorrow","count":[0,2],"door_prizes":[],"efflorescence":[],"ejection":null,"event_type":"Strike","steals":[],"strike":"Swinging","surprise_strike":false,"wither":null},{"assassinations":[],"aurora_photos":null,"batter":"Fizz Cartwright","cheer":null,"ejection":null,"event_type":"StrikeOut","foul":null,"steals":[{"base":"Third","caught":false,"runner":"Casey McNally"}],"strike":"Swinging","wither":null},{"batter":"Rodney Kumar","event_type":"NowBatting","player_swept_away":null,"stats":{"Stats":[{"stat":"HitsForAtBats","value":{"at_bats":1,"hits":0}},{"stat":"GroundOuts","value":1}]}},{"assassinations":[],"aurora_photos":null,"cheer":null,"count":[1,0],"door_prizes":[],"efflorescence":[],"ejection":null,"event_type":"Ball","steals":[],"wither":null},{"assassinations":[],"aurora_photos":null,"cheer":null,"count":[1,1],"door_prizes":[],"efflorescence":[],"ejection":null,"event_type":"Strike","steals":[],"strike":"Swinging","surprise_strike":false,"wither":null},{"assassinations":[],"aurora_photos":null,"batter":"Rodney Kumar","cheer":null,"destination":"Pitcher","door_prizes":[],"efflorescence":[],"event_type":"FairBall","fair_ball_type":"GroundBall"},{"advances":[],"amazing":false,"assassinations":[],"batter":"Rodney Kumar","ejection":null,"event_type":"GroundedOut","fielders":[{"name":"Jeanette Hirano","place":"P"},{"name":"Ricky Snow","place":"1B"}],"scores":[]},{"event_type":"InningEnd","number":3,"side":"Top"},{"automatic_runner":null,"batting_team":{"emoji":"🕊️","name":"Alexandria Cinnamon Birds"},"event_type":"InningStart","number":3,"pitcher_status":{"Same":{"emoji":"💪","name":"Jackson Koval"}},"side":"Bottom"},{"batter":"Sallie Bonilla","event_type":"NowBatting","player_swept_away":null,"stats":{"Stats":[{"stat":"HitsForAtBats","value":{"at_bats":1,"hits":1}},{"stat":"FirstBases","value":1}]}},{"assassinations":[],"aurora_photos":null,"cheer":null,"count":[1,0],"door_prizes":[],"efflorescence":[],"ejection":null,"event_type":"Ball","steals":[],"wither":null},{"assassinations":[],"aurora_photos":null,"cheer":null,"count":[2,0],"door_prizes":[],"efflorescence":[],"ejection":null,"event_type":"Ball","steals":[],"wither":null},{"assassinations":[],"aurora_photos":null,"cheer":null,"count":[2,1],"door_prizes":[],"efflorescence":[],"ejection":null,"event_type":"Strike","steals":[],"strike":"Looking","surprise_strike":false,"wither":null},{"assassinations":[],"aurora_photos":null,"batter":"Sallie Bonilla","cheer":null,"destination":"LeftField","door_prizes":[],"efflorescence":[],"event_type":"FairBall","fair_ball_type":"FlyBall"},{"advances":[],"batter":"Sallie Bonilla","caught_by":{"name":"Nice Tanner","place":"LF"},"ejection":null,"event_type":"CaughtOut","fair_ball_type":"FlyBall","jetpack":false,"perfect":false,"sacrifice":false,"scores":[]},{"batter":"Winnie Otas","event_type":"NowBatting","player_swept_away":null,"stats":{"Stats":[{"stat":"HitsForAtBats","value":{"at_bats":1,"hits":0}},{"stat":"GroundOuts","value":1}]}},{"assassinations":[],"aurora_photos":null,"cheer":null,"count":[0,1],"door_prizes":[],"efflorescence":[],"ejection":null,"event_type":"Strike","steals":[],"strike":"Looking","surprise_strike":false,"wither":null},{"assassinations":[],"aurora_photos":null,"cheer":null,"count":[0,2],"door_prizes":[],"efflorescence":[],"ejection":null,"event_type":"Strike","steals":[],"strike":"Looking","surprise_strike":false,"wither":null},{"assassinations":[],"aurora_photos":null,"batter":"Winnie Otas","cheer":null,"ejection":null,"event_type":"StrikeOut","foul":null,"steals":[],"strike":"Swinging","wither":null},{"batter":"David Fujii","event_type":"NowBatting","player_swept_away":null,"stats":{"Stats":[{"stat":"HitsForAtBats","value":{"at_bats":1,"hits":0}},{"stat":"StrikeOuts","value":1}]}},{"assassinations":[],"aurora_photos":null,"batter":"David Fujii","cheer":null,"destination":"SecondBase","door_prizes":[],"efflorescence":[],"event_type":"FairBall","fair_ball_type":"Popup"},{"advances":[],"batter":"David Fujii","caught_by":{"name":"Casey McNally","place":"2B"},"ejection":null,"event_type":"CaughtOut","fair_ball_type":"Popup","jetpack":false,"perfect":false,"sacrifice":false,"scores":[]},{"event_type":"InningEnd","number":3,"side":"Bottom"},{"automatic_runner":null,"batting_team":{"emoji":"💪","name":"Brosville Dudes"},"event_type":"InningStart","number":4,"pitcher_status":{"Same":{"emoji":"🕊️","name":"Jeanette Hirano"}},"side":"Top"},{"batter":"Luke Petrosyan","event_type":"NowBatting","player_swept_away":null,"stats":{"Stats":[{"stat":"BaseOnBalls","value":1}]}},{"assassinations":[],"aurora_photos":null,"cheer":null,"count":[1,0],"door_prizes":[],"efflorescence":[],"ejection":null,"event_type":"Ball","steals":[],"wither":null},{"assassinations":[],"aurora_photos":null,"cheer":null,"count":[2,0],"door_prizes":[],"efflorescence":[],"ejection":null,"event_type":"Ball","steals":[],"wither":null},{"assassinations":[],"aurora_photos":null,"batter":"Luke Petrosyan","cheer":null,"destination":"CenterField","door_prizes":[],"efflorescence":[],"event_type":"FairBall","fair_ball_type":"LineDrive"},{"advances":[],"batter":"Luke Petrosyan","distance":"Single","ejection":null,"event_type":"BatterToBase","fair_ball_type":"LineDrive","fielder":{"name":"Lais Prasad","place":"CF"},"scores":[]},{"batter":"Voicemail Skov","event_type":"NowBatting","player_swept_away":null,"stats":{"Stats":[{"stat":"HitsForAtBats","value":{"at_bats":1,"hits":0}},{"stat":"StrikeOuts","value":1}]}},{"assassinations":[],"aurora_photos":null,"cheer":null,"count":[0,1],"door_prizes":[],"efflorescence":[],"event_type":"Foul","foul":"Ball","steals":[],"wither":null},{"assassinations":[],"aurora_photos":null,"cheer":null,"count":[0,2],"door_prizes":[],"efflorescence":[],"ejection":null,"event_type":"Strike","steals":[],"strike":"Swinging","surprise_strike":false,"wither":null},{"assassinations":[],"aurora_photos":null,"cheer":null,"count":[1,2],"door_prizes":[],"efflorescence":[],"ejection":null,"event_type":"Ball","steals":[],"wither":null},{"assassinations":[],"aurora_photos":null,"cheer":null,"count":[2,2],"door_prizes":[],"efflorescence":[],"ejection":null,"event_type":"Ball","steals":[],"wither":null},{"assassinations":[],"aurora_photos":null,"batter":"Voicemail Skov","cheer":null,"destination":"LeftField","door_prizes":[],"efflorescence":[],"event_type":"FairBall","fair_ball_type":"LineDrive"},{"advances":[{"base":"Second","runner":"Luke Petrosyan"}],"batter":"Voicemail Skov","distance":"Single","ejection":null,"event_type":"BatterToBase","fair_ball_type":"LineDrive","fielder":{"name":"D. Laurent","place":"LF"},"scores":[]},{"batter":"Dora Castaneda","event_type":"NowBatting","player_swept_away":null,"stats":{"Stats":[{"stat":"HitsForAtBats","value":{"at_bats":1,"hits":0}},{"stat":"StrikeOuts","value":1}]}},{"assassinations":[],"aurora_photos":null,"batter":"Dora Castaneda","cheer":null,"destination":"ShortStop","door_prizes":[],"efflorescence":[],"event_type":"FairBall","fair_ball_type":"GroundBall"},{"advances":[{"base":"Third","runner":"Luke Petrosyan"}],"batter":"Dora Castaneda","double_trouble":null,"ejection":null,"event_type":"DoublePlayGrounded","fielders":[{"name":"Winnie Otas","place":"SS"},{"name":"Atem Powell","place":"2B"},{"name":"Ricky Snow","place":"1B"}],"out_one":{"base":"SecondBase","runner":"Voicemail Skov"},"out_two":{"base":"FirstBase","runner":"Dora Castaneda"},"sacrifice":false,"scores":[]},{"batter":"Gladys Ivanov","event_type":"NowBatting","player_swept_away":null,"stats":{"Stats":[{"stat":"HitsForAtBats","value":{"at_bats":1,"hits":0}},{"stat":"GroundOuts","value":1}]}},{"assassinations":[],"aurora_photos":null,"cheer":null,"count":[0,1],"door_prizes":[],"efflorescence":[],"event_type":"Foul","foul":"Tip","steals":[{"base":"Home","caught":true,"runner":"Luke Petrosyan"}],"wither":null},{"event_type":"InningEnd","number":4,"side":"Top"},{"automatic_runner":null,"batting_team":{"emoji":"🕊️","name":"Alexandria Cinnamon Birds"},"event_type":"InningStart","number":4,"pitcher_status":{"Same":{"emoji":"💪","name":"Jackson Koval"}},"side":"Bottom"},{"batter":"Ricky Snow","event_type":"NowBatting","player_swept_away":null,"stats":{"Stats":[{"stat":"HitsForAtBats","value":{"at_bats":1,"hits":0}},{"stat":"StrikeOuts","value":1}]}},{"assassinations":[],"aurora_photos":null,"batter":"Ricky Snow","cheer":null,"destination":"ThirdBase","door_prizes":[],"efflorescence":[],"event_type":"FairBall","fair_ball_type":"GroundBall"},{"advances":[],"amazing":false,"assassinations":[],"batter":"Ricky Snow","ejection":null,"event_type":"GroundedOut","fielders":[{"name":"Fizz Cartwright","place":"3B"},{"name":"Cecilia Ogden","place":"1B"}],"scores":[]},{"batter":"D. Laurent","event_type":"NowBatting","player_swept_away":null,"stats":{"Stats":[{"stat":"HitsForAtBats","value":{"at_bats":1,"hits":1}},{"stat":"SecondBases","value":1}]}},{"assassinations":[],"aurora_photos":null,"cheer":null,"count":[1,0],"door_prizes":[],"efflorescence":[],"ejection":null,"event_type":"Ball","steals":[],"wither":null},{"assassinations":[],"aurora_photos":null,"cheer":null,"count":[1,1],"door_prizes":[],"efflorescence":[],"event_type":"Foul","foul":"Ball","steals":[],"wither":null},{"assassinations":[],"aurora_photos":null,"cheer":null,"count":[1,2],"door_prizes":[],"efflorescence":[],"ejection":null,"event_type":"Strike","steals":[],"strike":"Swinging","surprise_strike":false,"wither":null},{"assassinations":[],"aurora_photos":null,"batter":"D. Laurent","cheer":null,"destination":"ThirdBase","door_prizes":[],"efflorescence":[],"event_type":"FairBall","fair_ball_type":"GroundBall"},{"advances":[],"amazing":false,"assassinations":[],"batter":"D. Laurent","ejection":null,"event_type":"GroundedOut","fielders":[{"name":"Fizz Cartwright","place":"3B"},{"name":"Cecilia Ogden","place":"1B"}],"scores":[]},{"batter":"Débora Thorsen","event_type":"NowBatting","player_swept_away":null,"stats":{"Stats":[{"stat":"HitsForAtBats","value":{"at_bats":1,"hits":0}},{"stat":"GroundOuts","value":1}]}},{"assassinations":[],"aurora_photos":null,"cheer":null,"count":[0,1],"door_prizes":[],"efflorescence":[],"ejection":null,"event_type":"Strike","steals":[],"strike":"Swinging","surprise_strike":false,"wither":null},{"assassinations":[],"aurora_photos":null,"cheer":null,"count":[1,1],"door_prizes":[],"efflorescence":[],"ejection":null,"event_type":"Ball","steals":[],"wither":null},{"assassinations":[],"aurora_photos":null,"cheer":null,"count":[2,1],"door_prizes":[],"efflorescence":[],"ejection":null,"event_type":"Ball","steals":[],"wither":{"source_name":"Débora Thorsen","target":{"name":"Jackson Koval","place":"SP1"},"team_emoji":"💪"}},{"contained":"NoContain","corrupted":"Resisted","event_type":"WeatherWither","player":{"name":"Jackson Koval","place":"SP1"},"team_emoji":"💪"},{"assassinations":[],"aurora_photos":null,"cheer":null,"count":[2,2],"door_prizes":[],"efflorescence":[],"event_type":"Foul","foul":"Ball","steals":[],"wither":null},{"assassinations":[],"aurora_photos":null,"cheer":null,"count":[3,2],"door_prizes":[],"efflorescence":[],"ejection":null,"event_type":"Ball","steals":[],"wither":null},{"assassinations":[],"aurora_photos":null,"batter":"Débora Thorsen","cheer":null,"destination":"CenterField","door_prizes":[],"efflorescence":[],"event_type":"FairBall","fair_ball_type":"FlyBall"},{"batter":"Débora Thorsen","destination":"CenterField","ejection":null,"event_type":"HomeRun","fair_ball_type":"FlyBall","grand_slam":false,"scores":[]},{"batter":"Atem Powell","event_type":"NowBatting","player_swept_away":null,"stats":{"Stats":[{"stat":"HitsForAtBats","value":{"at_bats":1,"hits":0}},{"stat":"StrikeOuts","value":1}]}},{"assassinations":[],"aurora_photos":null,"batter":"Atem Powell","cheer":null,"destination":"CenterField","door_prizes":[],"efflorescence":[],"event_type":"FairBall","fair_ball_type":"GroundBall"},{"advances":[],"batter":"Atem Powell","distance":"Single","ejection":null,"event_type":"BatterToBase","fair_ball_type":"GroundBall","fielder":{"name":"Luke Petrosyan","place":"CF"},"scores":[]},{"batter":"Lauren Pinheiro","event_type":"NowBatting","player_swept_away":null,"stats":{"Stats":[{"stat":"HitByPitchs","value":1}]}},{"assassinations":[],"aurora_photos":null,"cheer":null,"count":[0,1],"door_prizes":[],"efflorescence":[],"ejection":null,"event_type":"Strike","steals":[],"strike":"Swinging","surprise_strike":false,"wither":null},{"assassinations":[],"aurora_photos":null,"cheer":null,"count":[0,2],"door_prizes":[],"efflorescence":[],"ejection":null,"event_type":"Strike","steals":[],"strike":"Looking","surprise_strike":false,"wither":null},{"assassinations":[],"aurora_photos":null,"batter":"Lauren Pinheiro","cheer":null,"destination":"LeftField","door_prizes":[],"efflorescence":[],"event_type":"FairBall","fair_ball_type":"LineDrive"},{"advances":[],"batter":"Lauren Pinheiro","caught_by":{"name":"Nice Tanner","place":"LF"},"ejection":null,"event_type":"CaughtOut","fair_ball_type":"LineDrive","jetpack":false,"perfect":false,"sacrifice":false,"scores":[]},{"event_type":"InningEnd","number":4,"side":"Bottom"},{"automatic_runner":null,"batting_team":{"emoji":"💪","name":"Brosville Dudes"},"event_type":"InningStart","number":5,"pitcher_status":{"Same":{"emoji":"🕊️","name":"Jeanette Hirano"}},"side":"Top"},{"batter":"Gladys Ivanov","event_type":"NowBatting","player_swept_away":null,"stats":{"Stats":[{"stat":"HitsForAtBats","value":{"at_bats":1,"hits":0}},{"stat":"GroundOuts","value":1}]}},{"assassinations":[],"aurora_photos":null,"cheer":null,"count":[1,0],"door_prizes":[],"efflorescence":[],"ejection":null,"event_type":"Ball","steals":[],"wither":null},{"assassinations":[],"aurora_photos":null,"cheer":null,"count":[2,0],"door_prizes":[],"efflorescence":[],"ejection":null,"event_type":"Ball","steals":[],"wither":null},{"assassinations":[],"aurora_photos":null,"cheer":null,"count":[2,1],"door_prizes":[],"efflorescence":[],"ejection":null,"event_type":"Strike","steals":[],"strike":"Looking","surprise_strike":false,"wither":null},{"assassinations":[],"aurora_photos":null,"cheer":null,"count":[3,1],"door_prizes":[],"efflorescence":[],"ejection":null,"event_type":"Ball","steals":[],"wither":null},{"assassinations":[],"aurora_photos":null,"batter":"Gladys Ivanov","cheer":null,"destination":"LeftField","door_prizes":[],"efflorescence":[],"event_type":"FairBall","fair_ball_type":"LineDrive"},{"advances":[],"batter":"Gladys Ivanov","distance":"Single","ejection":null,"event_type":"BatterToBase","fair_ball_type":"LineDrive","fielder":{"name":"D. Laurent","place":"LF"},"scores":[]},{"batter":"Casey McNally","event_type":"NowBatting","player_swept_away":null,"stats":{"Stats":[{"stat":"HitsForAtBats","value":{"at_bats":1,"hits":1}},{"stat":"FirstBases","value":1}]}},{"assassinations":[],"aurora_photos":null,"cheer":null,"count":[0,1],"door_prizes":[],"efflorescence":[],"event_type":"Foul","foul":"Ball","steals":[],"wither":null},{"assassinations":[],"aurora_photos":null,"cheer":null,"count":[1,1],"door_prizes":[],"efflorescence":[],"ejection":null,"event_type":"Ball","steals":[{"base":"Second","caught":false,"runner":"Gladys Ivanov"}],"wither":null},{"assassinations":[],"aurora_photos":null,"cheer":null,"count":[1,2],"door_prizes":[],"efflorescence":[],"event_type":"Foul","foul":"Ball","steals":[],"wither":null},{"assassinations":[],"aurora_photos":null,"batter":"Casey McNally","cheer":null,"ejection":null,"event_type":"StrikeOut","foul":null,"steals":[],"strike":"Swinging","wither":null},{"batter":"Nice Tanner","event_type":"NowBatting","player_swept_away":null,"stats":{"Stats":[{"stat":"HitsForAtBats","value":{"at_bats":1,"hits":0}},{"stat":"BaseOnBalls","value":1},{"stat":"FieldersChoices","value":1}]}},{"assassinations":[],"aurora_photos":null,"cheer":null,"count":[0,1],"door_prizes":[],"efflorescence":[],"event_type":"Foul","foul":"Ball","steals":[],"wither":null},{"assassinations":[],"aurora_photos":null,"cheer":"TheNoiseIsOverwhelming","count":[0,2],"door_prizes":[],"efflorescence":[],"event_type":"Foul","foul":"Ball","steals":[],"wither":null},{"assassinations":[],"aurora_photos":null,"batter":"Nice Tanner","cheer":null,"destination":"FirstBase","door_prizes":[],"efflorescence":[],"event_type":"FairBall","fair_ball_type":"GroundBall"},{"advances":[{"base":"Third","runner":"Gladys Ivanov"}],"amazing":false,"assassinations":[],"batter":"Nice Tanner","ejection":null,"event_type":"GroundedOut","fielders":[{"name":"Ricky Snow","place":"1B"}],"scores":[]},{"batter":"Cecilia Ogden","event_type":"NowBatting","player_swept_away":null,"stats":{"Stats":[{"stat":"HitsForAtBats","value":{"at_bats":2,"hits":1}},{"stat":"FirstBases","value":1},{"stat":"PopOuts","value":1}]}},{"assassinations":[],"aurora_photos":null,"cheer":null,"count":[1,0],"door_prizes":[],"efflorescence":[],"ejection":null,"event_type":"Ball","steals":[],"wither":null},{"assassinations":[],"aurora_photos":null,"cheer":null,"count":[2,0],"door_prizes":[],"efflorescence":[],"ejection":null,"event_type":"Ball","steals":[],"wither":null},{"assassinations":[],"aurora_photos":null,"cheer":null,"count":[3,0],"door_prizes":[],"efflorescence":[],"ejection":null,"event_type":"Ball","steals":[],"wither":null},{"assassinations":[],"aurora_photos":null,"cheer":"ARumbleOfExcitementRollsThroughTheStadium","count":[3,1],"door_prizes":[],"efflorescence":[],"event_type":"Foul","foul":"Ball","steals":[],"wither":null},{"assassinations":[],"aurora_photos":null,"cheer":null,"count":[3,2],"door_prizes":[],"efflorescence":[],"event_type":"Foul","foul":"Ball","steals":[],"wither":null},{"assassinations":[],"aurora_photos":null,"batter":"Cecilia Ogden","cheer":null,"ejection":null,"event_type":"StrikeOut","foul":null,"steals":[],"strike":"Swinging","wither":null},{"event_type":"InningEnd","number":5,"side":"Top"},{"automatic_runner":null,"batting_team":{"emoji":"🕊️","name":"Alexandria Cinnamon Birds"},"event_type":"InningStart","number":5,"pitcher_status":{"Same":{"emoji":"💪","name":"Jackson Koval"}},"side":"Bottom"},{"batter":"Lais Prasad","event_type":"NowBatting","player_swept_away":null,"stats":{"Stats":[{"stat":"HitsForAtBats","value":{"at_bats":1,"hits":0}},{"stat":"ForceOuts","value":1}]}},{"assassinations":[],"aurora_photos":null,"cheer":null,"count":[1,0],"door_prizes":[],"efflorescence":[],"ejection":null,"event_type":"Ball","steals":[],"wither":null},{"assassinations":[],"aurora_photos":null,"cheer":null,"count":[1,1],"door_prizes":[],"efflorescence":[],"event_type":"Foul","foul":"Tip","steals":[],"wither":null},{"assassinations":[],"aurora_photos":null,"cheer":null,"count":[2,1],"door_prizes":[],"efflorescence":[],"ejection":null,"event_type":"Ball","steals":[],"wither":null},{"assassinations":[],"aurora_photos":null,"cheer":null,"count":[2,2],"door_prizes":[],"efflorescence":[],"event_type":"Foul","foul":"Ball","steals":[],"wither":null},{"assassinations":[],"aurora_photos":null,"cheer":null,"count":[3,2],"door_prizes":[],"efflorescence":[],"ejection":null,"event_type":"Ball","steals":[],"wither":null},{"assassinations":[],"aurora_photos":null,"batter":"Lais Prasad","cheer":null,"ejection":null,"event_type":"StrikeOut","foul":null,"steals":[],"strike":"Swinging","wither":null},{"batter":"Sallie Bonilla","event_type":"NowBatting","player_swept_away":null,"stats":{"Stats":[{"stat":"HitsForAtBats","value":{"at_bats":2,"hits":1}},{"stat":"FirstBases","value":1},{"stat":"ForceOuts","value":1}]}},{"assassinations":[],"aurora_photos":null,"batter":"Sallie Bonilla","cheer":null,"destination":"CenterField","door_prizes":[],"efflorescence":[],"event_type":"FairBall","fair_ball_type":"FlyBall"},{"batter":"Sallie Bonilla","destination":"CenterField","ejection":null,"event_type":"HomeRun","fair_ball_type":"FlyBall","grand_slam":false,"scores":[]},{"batter":"Winnie Otas","event_type":"NowBatting","player_swept_away":null,"stats":{"Stats":[{"stat":"HitsForAtBats","value":{"at_bats":2,"hits":0}},{"stat":"GroundOuts","value":1},{"stat":"StrikeOuts","value":1}]}},{"assassinations":[],"aurora_photos":null,"cheer":null,"count":[0,1],"door_prizes":[],"efflorescence":[],"ejection":null,"event_type":"Strike","steals":[],"strike":"Looking","surprise_strike":false,"wither":null},{"assassinations":[],"aurora_photos":null,"cheer":null,"count":[1,1],"door_prizes":[],"efflorescence":[],"ejection":null,"event_type":"Ball","steals":[],"wither":null},{"assassinations":[],"aurora_photos":null,"batter":"Winnie Otas","cheer":null,"destination":"CenterField","door_prizes":[],"efflorescence":[],"event_type":"FairBall","fair_ball_type":"FlyBall"},{"advances":[],"batter":"Winnie Otas","caught_by":{"name":"Luke Petrosyan","place":"CF"},"ejection":null,"event_type":"CaughtOut","fair_ball_type":"FlyBall","jetpack":false,"perfect":false,"sacrifice":false,"scores":[]},{"batter":"David Fujii","event_type":"NowBatting","player_swept_away":null,"stats":{"Stats":[{"stat":"HitsForAtBats","value":{"at_bats":2,"hits":0}},{"stat":"StrikeOuts","value":1},{"stat":"PopOuts","value":1}]}},{"assassinations":[],"aurora_photos":null,"cheer":null,"count":[0,1],"door_prizes":[],"efflorescence":[],"event_type":"Foul","foul":"Ball","steals":[],"wither":null},{"assassinations":[],"aurora_photos":null,"cheer":null,"count":[1,1],"door_prizes":[],"efflorescence":[],"ejection":null,"event_type":"Ball","steals":[],"wither":null},{"assassinations":[],"aurora_photos":null,"cheer":null,"count":[1,2],"door_prizes":[],"efflorescence":[],"event_type":"Foul","foul":"Ball","steals":[],"wither":null},{"assassinations":[],"aurora_photos":null,"batter":"David Fujii","cheer":null,"ejection":null,"event_type":"StrikeOut","foul":null,"steals":[],"strike":"Looking","wither":null},{"event_type":"InningEnd","number":5,"side":"Bottom"},{"automatic_runner":null,"batting_team":{"emoji":"💪","name":"Brosville Dudes"},"event_type":"InningStart","number":6,"pitcher_status":{"Same":{"emoji":"🕊️","name":"Jeanette Hirano"}},"side":"Top"},{"batter":"Fizz Cartwright","event_type":"NowBatting","player_swept_away":null,"stats":{"Stats":[{"stat":"HitsForAtBats","value":{"at_bats":2,"hits":0}},{"stat":"Fouls","value":1},{"stat":"StrikeOuts","value":1}]}},{"assassinations":[],"aurora_photos":null,"cheer":null,"count":[1,0],"door_prizes":[],"efflorescence":[],"ejection":null,"event_type":"Ball","steals":[],"wither":null},{"assassinations":[],"aurora_photos":null,"batter":"Fizz Cartwright","cheer":null,"destination":"SecondBase","door_prizes":[],"efflorescence":[],"event_type":"FairBall","fair_ball_type":"GroundBall"},{"advances":[],"amazing":false,"assassinations":[],"batter":"Fizz Cartwright","ejection":null,"event_type":"GroundedOut","fielders":[{"name":"Atem Powell","place":"2B"},{"name":"Ricky Snow","place":"1B"}],"scores":[]},{"batter":"Rodney Kumar","event_type":"NowBatting","player_swept_away":null,"stats":{"Stats":[{"stat":"HitsForAtBats","value":{"at_bats":2,"hits":0}},{"stat":"GroundOuts","value":2}]}},{"assassinations":[],"aurora_photos":null,"batter":"Rodney Kumar","cheer":null,"destination":"SecondBase","door_prizes":[],"efflorescence":[],"event_type":"FairBall","fair_ball_type":"GroundBall"},{"advances":[],"batter":"Rodney Kumar","distance":"Single","ejection":null,"event_type":"BatterToBase","fair_ball_type":"GroundBall","fielder":{"name":"Atem Powell","place":"2B"},"scores":[]},{"batter":"Luke Petrosyan","event_type":"NowBatting","player_swept_away":null,"stats":{"Stats":[{"stat":"HitsForAtBats","value":{"at_bats":1,"hits":1}},{"stat":"BaseOnBalls","value":1},{"stat":"FirstBases","value":1}]}},{"assassinations":[],"aurora_photos":null,"batter":"Luke Petrosyan","cheer":null,"destination":"RightField","door_prizes":[],"efflorescence":[],"event_type":"FairBall","fair_ball_type":"FlyBall"},{"advances":[],"batter":"Luke Petrosyan","caught_by":{"name":"Lauren Pinheiro","place":"RF"},"ejection":null,"event_type":"CaughtOut","fair_ball_type":"FlyBall","jetpack":false,"perfect":false,"sacrifice":false,"scores":[]},{"batter":"Voicemail Skov","event_type":"NowBatting","player_swept_away":null,"stats":{"Stats":[{"stat":"HitsForAtBats","value":{"at_bats":2,"hits":1}},{"stat":"StrikeOuts","value":1},{"stat":"FirstBases","value":1}]}},{"assassinations":[],"aurora_photos":null,"cheer":null,"count":[1,0],"door_prizes":[],"efflorescence":[],"ejection":null,"event_type":"Ball","steals":[],"wither":null},{"assassinations":[],"aurora_photos":null,"cheer":null,"count":[2,0],"door_prizes":[],"efflorescence":[],"ejection":null,"event_type":"Ball","steals":[],"wither":null},{"assassinations":[],"aurora_photos":null,"cheer":null,"count":[2,1],"door_prizes":[],"efflorescence":[],"event_type":"Foul","foul":"Ball","steals":[],"wither":null},{"assassinations":[],"aurora_photos":null,"cheer":null,"count":[3,1],"door_prizes":[],"efflorescence":[],"ejection":null,"event_type":"Ball","steals":[],"wither":null},{"assassinations":[],"aurora_photos":null,"cheer":null,"count":[3,2],"door_prizes":[],"efflorescence":[],"ejection":null,"event_type":"Strike","steals":[],"strike":"Swinging","surprise_strike":false,"wither":null},{"assassinations":[],"aurora_photos":null,"batter":"Voicemail Skov","cheer":null,"ejection":null,"event_type":"StrikeOut","foul":null,"steals":[],"strike":"Looking","wither":null},{"event_type":"InningEnd","number":6,"side":"Top"},{"automatic_runner":null,"batting_team":{"emoji":"🕊️","name":"Alexandria Cinnamon Birds"},"event_type":"InningStart","number":6,"pitcher_status":{"Same":{"emoji":"💪","name":"Jackson Koval"}},"side":"Bottom"},{"batter":"Ricky Snow","event_type":"NowBatting","player_swept_away":null,"stats":{"Stats":[{"stat":"HitsForAtBats","value":{"at_bats":2,"hits":0}},{"stat":"StrikeOuts","value":1},{"stat":"GroundOuts","value":1}]}},{"assassinations":[],"aurora_photos":null,"cheer":null,"count":[1,0],"door_prizes":[],"efflorescence":[],"ejection":null,"event_type":"Ball","steals":[],"wither":null},{"assassinations":[],"aurora_photos":null,"cheer":null,"count":[2,0],"door_prizes":[],"efflorescence":[],"ejection":null,"event_type":"Ball","steals":[],"wither":null},{"assassinations":[],"aurora_photos":null,"cheer":null,"count":[2,1],"door_prizes":[],"efflorescence":[],"ejection":null,"event_type":"Strike","steals":[],"strike":"Looking","surprise_strike":false,"wither":null},{"assassinations":[],"aurora_photos":null,"cheer":null,"count":[2,2],"door_prizes":[],"efflorescence":[],"event_type":"Foul","foul":"Ball","steals":[],"wither":null},{"assassinations":[],"aurora_photos":null,"batter":"Ricky Snow","cheer":null,"ejection":null,"event_type":"StrikeOut","foul":null,"steals":[],"strike":"Looking","wither":null},{"batter":"D. Laurent","event_type":"NowBatting","player_swept_away":null,"stats":{"Stats":[{"stat":"HitsForAtBats","value":{"at_bats":2,"hits":1}},{"stat":"SecondBases","value":1},{"stat":"GroundOuts","value":1}]}},{"assassinations":[],"aurora_photos":null,"cheer":null,"count":[0,1],"door_prizes":[],"efflorescence":[],"ejection":null,"event_type":"Strike","steals":[],"strike":"Looking","surprise_strike":false,"wither":null},{"assassinations":[],"aurora_photos":null,"batter":"D. Laurent","cheer":null,"destination":"FirstBase","door_prizes":[],"efflorescence":[],"event_type":"FairBall","fair_ball_type":"GroundBall"},{"advances":[],"amazing":false,"assassinations":[],"batter":"D. Laurent","ejection":null,"event_type":"GroundedOut","fielders":[{"name":"Cecilia Ogden","place":"1B"}],"scores":[]},{"batter":"Débora Thorsen","event_type":"NowBatting","player_swept_away":null,"stats":{"Stats":[{"stat":"HitsForAtBats","value":{"at_bats":2,"hits":1}},{"stat":"GroundOuts","value":1},{"stat":"HomeRuns","value":1}]}},{"assassinations":[],"aurora_photos":null,"batter":"Débora Thorsen","cheer":null,"destination":"LeftField","door_prizes":[],"efflorescence":[],"event_type":"FairBall","fair_ball_type":"FlyBall"},{"advances":[],"batter":"Débora Thorsen","caught_by":{"name":"Nice Tanner","place":"LF"},"ejection":null,"event_type":"CaughtOut","fair_ball_type":"FlyBall","jetpack":false,"perfect":false,"sacrifice":false,"scores":[]},{"event_type":"InningEnd","number":6,"side":"Bottom"},{"automatic_runner":null,"batting_team":{"emoji":"💪","name":"Brosville Dudes"},"event_type":"InningStart","number":7,"pitcher_status":{"Same":{"emoji":"🕊️","name":"Jeanette Hirano"}},"side":"Top"},{"batter":"Dora Castaneda","event_type":"NowBatting","player_swept_away":null,"stats":{"Stats":[{"stat":"HitsForAtBats","value":{"at_bats":2,"hits":0}},{"stat":"StrikeOuts","value":1},{"stat":"GroundIntoDoublePlays","value":1},{"stat":"GroundOuts","value":1}]}},{"assassinations":[],"aurora_photos":null,"cheer":null,"count":[0,1],"door_prizes":[],"efflorescence":[],"ejection":null,"event_type":"Strike","steals":[],"strike":"Swinging","surprise_strike":false,"wither":null},{"assassinations":[],"aurora_photos":null,"cheer":null,"count":[0,2],"door_prizes":[],"efflorescence":[],"ejection":null,"event_type":"Strike","steals":[],"strike":"Looking","surprise_strike":false,"wither":null},{"assassinations":[],"aurora_photos":null,"batter":"Dora Castaneda","cheer":null,"destination":"ShortStop","door_prizes":[],"efflorescence":[],"event_type":"FairBall","fair_ball_type":"GroundBall"},{"advances":[],"amazing":false,"assassinations":[],"batter":"Dora Castaneda","ejection":null,"event_type":"GroundedOut","fielders":[{"name":"Winnie Otas","place":"SS"},{"name":"Ricky Snow","place":"1B"}],"scores":[]},{"batter":"Gladys Ivanov","event_type":"NowBatting","player_swept_away":null,"stats":{"Stats":[{"stat":"HitsForAtBats","value":{"at_bats":2,"hits":1}},{"stat":"GroundOuts","value":1},{"stat":"FirstBases","value":1}]}},{"assassinations":[],"aurora_photos":null,"cheer":null,"count":[1,0],"door_prizes":[],"efflorescence":[],"ejection":null,"event_type":"Ball","steals":[],"wither":null},{"assassinations":[],"aurora_photos":null,"cheer":null,"count":[2,0],"door_prizes":[],"efflorescence":[],"ejection":null,"event_type":"Ball","steals":[],"wither":null},{"assassinations":[],"aurora_photos":null,"cheer":null,"count":[3,0],"door_prizes":[],"efflorescence":[],"ejection":null,"event_type":"Ball","steals":[],"wither":null},{"advances":[],"assassinations":[],"aurora_photos":null,"batter":"Gladys Ivanov","cheer":null,"ejection":null,"event_type":"Walk","scores":[],"wither":null},{"batter":"Casey McNally","event_type":"NowBatting","player_swept_away":null,"stats":{"Stats":[{"stat":"HitsForAtBats","value":{"at_bats":2,"hits":1}},{"stat":"FirstBases","value":1},{"stat":"StrikeOuts","value":1}]}},{"assassinations":[],"aurora_photos":null,"batter":"Casey McNally","cheer":null,"destination":"LeftField","door_prizes":[],"efflorescence":[],"event_type":"FairBall","fair_ball_type":"LineDrive"},{"advances":[],"batter":"Casey McNally","caught_by":{"name":"D. Laurent","place":"LF"},"ejection":null,"event_type":"CaughtOut","fair_ball_type":"LineDrive","jetpack":false,"perfect":false,"sacrifice":false,"scores":[]},{"batter":"Nice Tanner","event_type":"NowBatting","player_swept_away":null,"stats":{"Stats":[{"stat":"HitsForAtBats","value":{"at_bats":2,"hits":0}},{"stat":"BaseOnBalls","value":1},{"stat":"GroundOuts","value":1},{"stat":"FieldersChoices","value":1}]}},{"assassinations":[],"aurora_photos":null,"cheer":null,"count":[0,1],"door_prizes":[],"efflorescence":[],"ejection":null,"event_type":"Strike","steals":[],"strike":"Looking","surprise_strike":false,"wither":null},{"assassinations":[],"aurora_photos":null,"cheer":null,"count":[1,1],"door_prizes":[],"efflorescence":[],"ejection":null,"event_type":"Ball","steals":[],"wither":null},{"assassinations":[],"aurora_photos":null,"cheer":null,"count":[2,1],"door_prizes":[],"efflorescence":[],"ejection":null,"event_type":"Ball","steals":[],"wither":null},{"assassinations":[],"aurora_photos":null,"batter":"Nice Tanner","cheer":null,"destination":"Catcher","door_prizes":[],"efflorescence":[],"event_type":"FairBall","fair_ball_type":"Popup"},{"advances":[],"batter":"Nice Tanner","caught_by":{"name":"Sallie Bonilla","place":"C"},"ejection":null,"event_type":"CaughtOut","fair_ball_type":"Popup","jetpack":false,"perfect":false,"sacrifice":false,"scores":[]},{"event_type":"InningEnd","number":7,"side":"Top"},{"automatic_runner":null,"batting_team":{"emoji":"🕊️","name":"Alexandria Cinnamon Birds"},"event_type":"InningStart","number":7,"pitcher_status":{"Same":{"emoji":"💪","name":"Jackson Koval"}},"side":"Bottom"},{"batter":"Atem Powell","event_type":"NowBatting","player_swept_away":null,"stats":{"Stats":[{"stat":"HitsForAtBats","value":{"at_bats":2,"hits":1}},{"stat":"StrikeOuts","value":1},{"stat":"FirstBases","value":1}]}},{"assassinations":[],"aurora_photos":null,"batter":"Atem Powell","cheer":null,"destination":"LeftField","door_prizes":[],"efflorescence":[],"event_type":"FairBall","fair_ball_type":"FlyBall"},{"advances":[],"batter":"Atem Powell","caught_by":{"name":"Nice Tanner","place":"LF"},"ejection":null,"event_type":"CaughtOut","fair_ball_type":"FlyBall","jetpack":false,"perfect":false,"sacrifice":false,"scores":[]},{"batter":"Lauren Pinheiro","event_type":"NowBatting","player_swept_away":null,"stats":{"Stats":[{"stat":"HitsForAtBats","value":{"at_bats":1,"hits":0}},{"stat":"HitByPitchs","value":1},{"stat":"LineOuts","value":1}]}},{"assassinations":[],"aurora_photos":null,"cheer":null,"count":[1,0],"door_prizes":[],"efflorescence":[],"ejection":null,"event_type":"Ball","steals":[],"wither":null},{"assassinations":[],"aurora_photos":null,"cheer":null,"count":[1,1],"door_prizes":[],"efflorescence":[],"event_type":"Foul","foul":"Ball","steals":[],"wither":null},{"assassinations":[],"aurora_photos":null,"batter":"Lauren Pinheiro","cheer":null,"destination":"CenterField","door_prizes":[],"efflorescence":[],"event_type":"FairBall","fair_ball_type":"FlyBall"},{"advances":[],"batter":"Lauren Pinheiro","caught_by":{"name":"Luke Petrosyan","place":"CF"},"ejection":null,"event_type":"CaughtOut","fair_ball_type":"FlyBall","jetpack":false,"perfect":false,"sacrifice":false,"scores":[]},{"batter":"Lais Prasad","event_type":"NowBatting","player_swept_away":null,"stats":{"Stats":[{"stat":"HitsForAtBats","value":{"at_bats":2,"hits":0}},{"stat":"ForceOuts","value":1},{"stat":"StrikeOuts","value":1}]}},{"assassinations":[],"aurora_photos":null,"cheer":null,"count":[0,1],"door_prizes":[],"efflorescence":[],"ejection":null,"event_type":"Strike","steals":[],"strike":"Looking","surprise_strike":false,"wither":null},{"assassinations":[],"aurora_photos":null,"cheer":null,"count":[0,2],"door_prizes":[],"efflorescence":[],"ejection":null,"event_type":"Strike","steals":[],"strike":"Looking","surprise_strike":false,"wither":null},{"assassinations":[],"aurora_photos":null,"cheer":null,"count":[0,2],"door_prizes":[],"efflorescence":[],"event_type":"Foul","foul":"Ball","steals":[],"wither":null},{"assassinations":[],"aurora_photos":null,"batter":"Lais Prasad","cheer":null,"destination":"LeftField","door_prizes":[],"efflorescence":[],"event_type":"FairBall","fair_ball_type":"GroundBall"},{"advances":[],"batter":"Lais Prasad","distance":"Single","ejection":null,"event_type":"BatterToBase","fair_ball_type":"GroundBall","fielder":{"name":"Nice Tanner","place":"LF"},"scores":[]},{"batter":"Sallie Bonilla","event_type":"NowBatting","player_swept_away":null,"stats":{"Stats":[{"stat":"HitsForAtBats","value":{"at_bats":3,"hits":2}},{"stat":"FirstBases","value":1},{"stat":"ForceOuts","value":1},{"stat":"HomeRuns","value":1}]}},{"assassinations":[],"aurora_photos":null,"batter":"Sallie Bonilla","cheer":null,"destination":"RightField","door_prizes":[],"efflorescence":[],"event_type":"FairBall","fair_ball_type":"LineDrive"},{"advances":[],"batter":"Sallie Bonilla","caught_by":{"name":"Rodney Kumar","place":"RF"},"ejection":null,"event_type":"CaughtOut","fair_ball_type":"LineDrive","jetpack":false,"perfect":false,"sacrifice":false,"scores":[]},{"event_type":"InningEnd","number":7,"side":"Bottom"},{"automatic_runner":null,"batting_team":{"emoji":"💪","name":"Brosville Dudes"},"event_type":"InningStart","number":8,"pitcher_status":{"Same":{"emoji":"🕊️","name":"Jeanette Hirano"}},"side":"Top"},{"batter":"Cecilia Ogden","event_type":"NowBatting","player_swept_away":null,"stats":{"Stats":[{"stat":"HitsForAtBats","value":{"at_bats":3,"hits":1}},{"stat":"FirstBases","value":1},{"stat":"PopOuts","value":1},{"stat":"StrikeOuts","value":1}]}},{"assassinations":[],"aurora_photos":null,"batter":"Cecilia Ogden","cheer":null,"destination":"RightField","door_prizes":[],"efflorescence":[],"event_type":"FairBall","fair_ball_type":"FlyBall"},{"advances":[],"batter":"Cecilia Ogden","caught_by":{"name":"Lauren Pinheiro","place":"RF"},"ejection":null,"event_type":"CaughtOut","fair_ball_type":"FlyBall","jetpack":false,"perfect":false,"sacrifice":false,"scores":[]},{"batter":"Fizz Cartwright","event_type":"NowBatting","player_swept_away":null,"stats":{"Stats":[{"stat":"HitsForAtBats","value":{"at_bats":3,"hits":0}},{"stat":"Fouls","value":1},{"stat":"StrikeOuts","value":1},{"stat":"GroundOuts","value":1}]}},{"assassinations":[],"aurora_photos":null,"batter":"Fizz Cartwright","cheer":null,"destination":"SecondBase","door_prizes":[],"efflorescence":[],"event_type":"FairBall","fair_ball_type":"GroundBall"},{"advances":[],"amazing":false,"assassinations":[],"batter":"Fizz Cartwright","ejection":null,"event_type":"GroundedOut","fielders":[{"name":"Atem Powell","place":"2B"},{"name":"Ricky Snow","place":"1B"}],"scores":[]},{"batter":"Rodney Kumar","event_type":"NowBatting","player_swept_away":null,"stats":{"Stats":[{"stat":"HitsForAtBats","value":{"at_bats":3,"hits":1}},{"stat":"GroundOuts","value":2},{"stat":"FirstBases","value":1}]}},{"assassinations":[],"aurora_photos":null,"cheer":null,"count":[1,0],"door_prizes":[],"efflorescence":[],"ejection":null,"event_type":"Ball","steals":[],"wither":null},{"assassinations":[],"aurora_photos":null,"cheer":null,"count":[1,1],"door_prizes":[],"efflorescence":[],"ejection":null,"event_type":"Strike","steals":[],"strike":"Looking","surprise_strike":false,"wither":null},{"assassinations":[],"aurora_photos":null,"cheer":null,"count":[2,1],"door_prizes":[],"efflorescence":[],"ejection":null,"event_type":"Ball","steals":[],"wither":null},{"assassinations":[],"aurora_photos":null,"cheer":null,"count":[2,2],"door_prizes":[],"efflorescence":[],"event_type":"Foul","foul":"Ball","steals":[],"wither":null},{"assassinations":[],"aurora_photos":null,"cheer":null,"count":[3,2],"door_prizes":[],"efflorescence":[],"ejection":null,"event_type":"Ball","steals":[],"wither":null},{"assassinations":[],"aurora_photos":null,"cheer":null,"count":[3,2],"door_prizes":[],"efflorescence":[],"event_type":"Foul","foul":"Ball","steals":[],"wither":null},{"assassinations":[],"aurora_photos":null,"batter":"Rodney Kumar","cheer":null,"ejection":null,"event_type":"StrikeOut","foul":null,"steals":[],"strike":"Swinging","wither":null},{"event_type":"InningEnd","number":8,"side":"Top"},{"automatic_runner":null,"batting_team":{"emoji":"🕊️","name":"Alexandria Cinnamon Birds"},"event_type":"InningStart","number":8,"pitcher_status":{"Same":{"emoji":"💪","name":"Jackson Koval"}},"side":"Bottom"},{"batter":"Winnie Otas","event_type":"NowBatting","player_swept_away":null,"stats":{"Stats":[{"stat":"HitsForAtBats","value":{"at_bats":3,"hits":0}},{"stat":"GroundOuts","value":1},{"stat":"StrikeOuts","value":1},{"stat":"ForceOuts","value":1}]}},{"assassinations":[],"aurora_photos":null,"cheer":null,"count":[1,0],"door_prizes":[],"efflorescence":[],"ejection":null,"event_type":"Ball","steals":[],"wither":null},{"assassinations":[],"aurora_photos":null,"cheer":null,"count":[1,1],"door_prizes":[],"efflorescence":[],"event_type":"Foul","foul":"Ball","steals":[],"wither":null},{"assassinations":[],"aurora_photos":null,"batter":"Winnie Otas","cheer":null,"destination":"CenterField","door_prizes":[],"efflorescence":[],"event_type":"FairBall","fair_ball_type":"GroundBall"},{"advances":[],"batter":"Winnie Otas","distance":"Single","ejection":null,"event_type":"BatterToBase","fair_ball_type":"GroundBall","fielder":{"name":"Luke Petrosyan","place":"CF"},"scores":[]},{"batter":"David Fujii","event_type":"NowBatting","player_swept_away":null,"stats":{"Stats":[{"stat":"HitsForAtBats","value":{"at_bats":3,"hits":0}},{"stat":"StrikeOuts","value":2},{"stat":"PopOuts","value":1}]}},{"assassinations":[],"aurora_photos":null,"batter":"David Fujii","cheer":null,"destination":"LeftField","door_prizes":[],"efflorescence":[],"event_type":"FairBall","fair_ball_type":"FlyBall"},{"advances":[{"base":"Third","runner":"Winnie Otas"}],"batter":"David Fujii","distance":"Double","ejection":null,"event_type":"BatterToBase","fair_ball_type":"FlyBall","fielder":{"name":"Nice Tanner","place":"LF"},"scores":[]},{"batter":"Ricky Snow","event_type":"NowBatting","player_swept_away":null,"stats":{"Stats":[{"stat":"HitsForAtBats","value":{"at_bats":3,"hits":0}},{"stat":"StrikeOuts","value":2},{"stat":"GroundOuts","value":1}]}},{"assassinations":[],"aurora_photos":null,"cheer":"ARumbleOfExcitementRollsThroughTheStadium","count":[0,1],"door_prizes":[],"efflorescence":[],"ejection":null,"event_type":"Strike","steals":[],"strike":"Swinging","surprise_strike":false,"wither":null},{"assassinations":[],"aurora_photos":null,"batter":"Ricky Snow","cheer":null,"destination":"CenterField","door_prizes":[],"efflorescence":[],"event_type":"FairBall","fair_ball_type":"FlyBall"},{"batter":"Ricky Snow","destination":"CenterField","ejection":null,"event_type":"HomeRun","fair_ball_type":"FlyBall","grand_slam":false,"scores":["Winnie Otas","David Fujii"]},{"batter":"D. Laurent","event_type":"NowBatting","player_swept_away":null,"stats":{"Stats":[{"stat":"HitsForAtBats","value":{"at_bats":3,"hits":1}},{"stat":"SecondBases","value":1},{"stat":"GroundOuts","value":2}]}},{"assassinations":[],"aurora_photos":null,"cheer":null,"count":[0,1],"door_prizes":[],"efflorescence":[],"event_type":"Foul","foul":"Ball","steals":[],"wither":null},{"assassinations":[],"aurora_photos":null,"cheer":null,"count":[0,2],"door_prizes":[],"efflorescence":[],"event_type":"Foul","foul":"Ball","steals":[],"wither":null},{"assassinations":[],"aurora_photos":null,"batter":"D. Laurent","cheer":null,"ejection":null,"event_type":"StrikeOut","foul":null,"steals":[],"strike":"Swinging","wither":null},{"batter":"Débora Thorsen","event_type":"NowBatting","player_swept_away":null,"stats":{"Stats":[{"stat":"HitsForAtBats","value":{"at_bats":3,"hits":1}},{"stat":"GroundOuts","value":1},{"stat":"HomeRuns","value":1},{"stat":"ForceOuts","value":1}]}},{"assassinations":[],"aurora_photos":null,"cheer":null,"count":[1,0],"door_prizes":[],"efflorescence":[],"ejection":null,"event_type":"Ball","steals":[],"wither":null},{"assassinations":[],"aurora_photos":null,"batter":"Débora Thorsen","cheer":null,"destination":"LeftField","door_prizes":[],"efflorescence":[],"event_type":"FairBall","fair_ball_type":"FlyBall"},{"batter":"Débora Thorsen","destination":"LeftField","ejection":null,"event_type":"HomeRun","fair_ball_type":"FlyBall","grand_slam":false,"scores":[]},{"batter":"Atem Powell","event_type":"NowBatting","player_swept_away":null,"stats":{"Stats":[{"stat":"HitsForAtBats","value":{"at_bats":3,"hits":1}},{"stat":"StrikeOuts","value":1},{"stat":"FirstBases","value":1},{"stat":"ForceOuts","value":1}]}},{"assassinations":[],"aurora_photos":null,"cheer":null,"count":[1,0],"door_prizes":[],"efflorescence":[],"ejection":null,"event_type":"Ball","steals":[],"wither":null},{"assassinations":[],"aurora_photos":null,"cheer":null,"count":[1,1],"door_prizes":[],"efflorescence":[],"ejection":null,"event_type":"Strike","steals":[],"strike":"Looking","surprise_strike":false,"wither":null},{"assassinations":[],"aurora_photos":null,"cheer":null,"count":[2,1],"door_prizes":[],"efflorescence":[],"ejection":null,"event_type":"Ball","steals":[],"wither":null},{"assassinations":[],"aurora_photos":null,"cheer":null,"count":[3,1],"door_prizes":[],"efflorescence":[],"ejection":null,"event_type":"Ball","steals":[],"wither":null},{"assassinations":[],"aurora_photos":null,"cheer":null,"count":[3,2],"door_prizes":[],"efflorescence":[],"event_type":"Foul","foul":"Ball","steals":[],"wither":null},{"advances":[],"assassinations":[],"aurora_photos":null,"batter":"Atem Powell","cheer":null,"ejection":null,"event_type":"Walk","scores":[],"wither":null},{"batter":"Lauren Pinheiro","event_type":"NowBatting","player_swept_away":null,"stats":{"Stats":[{"stat":"HitsForAtBats","value":{"at_bats":2,"hits":0}},{"stat":"HitByPitchs","value":1},{"stat":"LineOuts","value":1},{"stat":"ForceOuts","value":1}]}},{"assassinations":[],"aurora_photos":null,"cheer":null,"count":[0,1],"door_prizes":[],"efflorescence":[],"ejection":null,"event_type":"Strike","steals":[],"strike":"Swinging","surprise_strike":false,"wither":null},{"assassinations":[],"aurora_photos":null,"batter":"Lauren Pinheiro","cheer":null,"destination":"CenterField","door_prizes":[],"efflorescence":[],"event_type":"FairBall","fair_ball_type":"LineDrive"},{"advances":[{"base":"Third","runner":"Atem Powell"}],"batter":"Lauren Pinheiro","distance":"Single","ejection":null,"event_type":"BatterToBase","fair_ball_type":"LineDrive","fielder":{"name":"Luke Petrosyan","place":"CF"},"scores":[]},{"batter":"Lais Prasad","event_type":"NowBatting","player_swept_away":null,"stats":{"Stats":[{"stat":"HitsForAtBats","value":{"at_bats":3,"hits":1}},{"stat":"ForceOuts","value":1},{"stat":"StrikeOuts","value":1},{"stat":"FirstBases","value":1}]}},{"assassinations":[],"aurora_photos":null,"batter":"Lais Prasad","cheer":null,"destination":"LeftField","door_prizes":[],"efflorescence":[],"event_type":"FairBall","fair_ball_type":"GroundBall"},{"advances":[{"base":"Third","runner":"Lauren Pinheiro"}],"batter":"Lais Prasad","distance":"Single","ejection":null,"event_type":"BatterToBase","fair_ball_type":"GroundBall","fielder":{"name":"Nice Tanner","place":"LF"},"scores":["Atem Powell"]},{"batter":"Sallie Bonilla","event_type":"NowBatting","player_swept_away":null,"stats":{"Stats":[{"stat":"HitsForAtBats","value":{"at_bats":4,"hits":2}},{"stat":"FirstBases","value":1},{"stat":"ForceOuts","value":1},{"stat":"HomeRuns","value":1},{"stat":"LineOuts","value":1}]}},{"assassinations":[],"aurora_photos":null,"cheer":"FansSlapTheWallsInRhythm","count":[1,0],"door_prizes":[],"efflorescence":[],"ejection":null,"event_type":"Ball","steals":[],"wither":null},{"assassinations":[],"aurora_photos":null,"cheer":null,"count":[1,1],"door_prizes":[],"efflorescence":[],"event_type":"Foul","foul":"Ball","steals":[],"wither":null},{"assassinations":[],"aurora_photos":null,"cheer":null,"count":[1,2],"door_prizes":[],"efflorescence":[],"ejection":null,"event_type":"Strike","steals":[],"strike":"Looking","surprise_strike":false,"wither":null},{"assassinations":[],"aurora_photos":null,"batter":"Sallie Bonilla","cheer":null,"destination":"ThirdBase","door_prizes":[],"efflorescence":[],"event_type":"FairBall","fair_ball_type":"GroundBall"},{"advances":[],"batter":"Sallie Bonilla","double_trouble":null,"ejection":null,"event_type":"DoublePlayGrounded","fielders":[{"name":"Fizz Cartwright","place":"3B"},{"name":"Voicemail Skov","place":"SS"},{"name":"Cecilia Ogden","place":"1B"}],"out_one":{"base":"SecondBase","runner":"Lais Prasad"},"out_two":{"base":"FirstBase","runner":"Sallie Bonilla"},"sacrifice":false,"scores":[]},{"event_type":"InningEnd","number":8,"side":"Bottom"},{"automatic_runner":null,"batting_team":{"emoji":"💪","name":"Brosville Dudes"},"event_type":"InningStart","number":9,"pitcher_status":{"Same":{"emoji":"🕊️","name":"Jeanette Hirano"}},"side":"Top"},{"batter":"Luke Petrosyan","event_type":"NowBatting","player_swept_away":null,"stats":{"Stats":[{"stat":"HitsForAtBats","value":{"at_bats":2,"hits":1}},{"stat":"BaseOnBalls","value":1},{"stat":"FirstBases","value":1},{"stat":"ForceOuts","value":1}]}},{"assassinations":[],"aurora_photos":null,"cheer":null,"count":[1,0],"door_prizes":[],"efflorescence":[],"ejection":null,"event_type":"Ball","steals":[],"wither":null},{"assassinations":[],"aurora_photos":null,"cheer":null,"count":[1,1],"door_prizes":[],"efflorescence":[],"ejection":null,"event_type":"Strike","steals":[],"strike":"Swinging","surprise_strike":false,"wither":null},{"assassinations":[],"aurora_photos":null,"cheer":null,"count":[1,2],"door_prizes":[],"efflorescence":[],"event_type":"Foul","foul":"Ball","steals":[],"wither":null},{"assassinations":[],"aurora_photos":null,"cheer":null,"count":[2,2],"door_prizes":[],"efflorescence":[],"ejection":null,"event_type":"Ball","steals":[],"wither":null},{"assassinations":[],"aurora_photos":null,"cheer":null,"count":[2,2],"door_prizes":[],"efflorescence":[],"event_type":"Foul","foul":"Ball","steals":[],"wither":null},{"assassinations":[],"aurora_photos":null,"cheer":null,"count":[3,2],"door_prizes":[],"efflorescence":[],"ejection":null,"event_type":"Ball","steals":[],"wither":null},{"assassinations":[],"aurora_photos":null,"batter":"Luke Petrosyan","cheer":null,"destination":"CenterField","door_prizes":[],"efflorescence":[],"event_type":"FairBall","fair_ball_type":"LineDrive"},{"advances":[],"batter":"Luke Petrosyan","distance":"Triple","ejection":null,"event_type":"BatterToBase","fair_ball_type":"LineDrive","fielder":{"name":"Lais Prasad","place":"CF"},"scores":[]},{"event_type":"MoundVisit","manager_name":null,"mound_visit_type":"MoundVisit","team":{"emoji":"🕊️","name":"Alexandria Cinnamon Birds"}},{"event_type":"PitcherRemains","remaining_pitcher":{"name":"Jeanette Hirano","place":"SP1"}},{"batter":"Voicemail Skov","event_type":"NowBatting","player_swept_away":null,"stats":{"Stats":[{"stat":"HitsForAtBats","value":{"at_bats":3,"hits":1}},{"stat":"StrikeOuts","value":2},{"stat":"FirstBases","value":1}]}},{"assassinations":[],"aurora_photos":null,"batter":"Voicemail Skov","cheer":null,"destination":"FirstBase","door_prizes":[],"efflorescence":[],"event_type":"FairBall","fair_ball_type":"GroundBall"},{"advances":[],"amazing":false,"assassinations":[],"batter":"Voicemail Skov","ejection":null,"event_type":"GroundedOut","fielders":[{"name":"Ricky Snow","place":"1B"}],"scores":["Luke Petrosyan"]},{"batter":"Dora Castaneda","event_type":"NowBatting","player_swept_away":null,"stats":{"Stats":[{"stat":"HitsForAtBats","value":{"at_bats":3,"hits":0}},{"stat":"StrikeOuts","value":1},{"stat":"GroundIntoDoublePlays","value":1},{"stat":"GroundOuts","value":2}]}},{"assassinations":[],"aurora_photos":null,"cheer":null,"count":[0,1],"door_prizes":[],"efflorescence":[],"event_type":"Foul","foul":"Ball","steals":[],"wither":null},{"assassinations":[],"aurora_photos":null,"cheer":null,"count":[1,1],"door_prizes":[],"efflorescence":[],"ejection":null,"event_type":"Ball","steals":[],"wither":null},{"assassinations":[],"aurora_photos":null,"cheer":null,"count":[1,2],"door_prizes":[],"efflorescence":[],"ejection":null,"event_type":"Strike","steals":[],"strike":"Swinging","surprise_strike":false,"wither":null},{"assassinations":[],"aurora_photos":null,"cheer":null,"count":[2,2],"door_prizes":[],"efflorescence":[],"ejection":null,"event_type":"Ball","steals":[],"wither":null},{"assassinations":[],"aurora_photos":null,"batter":"Dora Castaneda","cheer":null,"destination":"FirstBase","door_prizes":[],"efflorescence":[],"event_type":"FairBall","fair_ball_type":"Popup"},{"advances":[],"batter":"Dora Castaneda","caught_by":{"name":"Ricky Snow","place":"1B"},"ejection":null,"event_type":"CaughtOut","fair_ball_type":"Popup","jetpack":false,"perfect":false,"sacrifice":false,"scores":[]},{"batter":"Gladys Ivanov","event_type":"NowBatting","player_swept_away":null,"stats":{"Stats":[{"stat":"HitsForAtBats","value":{"at_bats":2,"hits":1}},{"stat":"GroundOuts","value":1},{"stat":"FirstBases","value":1},{"stat":"BaseOnBalls","value":1}]}},{"assassinations":[],"aurora_photos":null,"cheer":null,"count":[0,1],"door_prizes":[],"efflorescence":[],"event_type":"Foul","foul":"Ball","steals":[],"wither":null},{"assassinations":[],"aurora_photos":null,"cheer":null,"count":[0,2],"door_prizes":[],"efflorescence":[],"event_type":"Foul","foul":"Ball","steals":[],"wither":null},{"assassinations":[],"aurora_photos":null,"cheer":null,"count":[1,2],"door_prizes":[],"efflorescence":[],"ejection":null,"event_type":"Ball","steals":[],"wither":null},{"assassinations":[],"aurora_photos":null,"cheer":null,"count":[2,2],"door_prizes":[],"efflorescence":[],"ejection":null,"event_type":"Ball","steals":[],"wither":null},{"assassinations":[],"aurora_photos":null,"cheer":null,"count":[3,2],"door_prizes":[],"efflorescence":[],"ejection":null,"event_type":"Ball","steals":[],"wither":null},{"assassinations":[],"aurora_photos":null,"cheer":null,"count":[3,2],"door_prizes":[],"efflorescence":[],"event_type":"Foul","foul":"Ball","steals":[],"wither":null},{"assassinations":[],"aurora_photos":null,"cheer":null,"count":[3,2],"door_prizes":[],"efflorescence":[],"event_type":"Foul","foul":"Ball","steals":[],"wither":null},{"assassinations":[],"aurora_photos":null,"batter":"Gladys Ivanov","cheer":null,"ejection":null,"event_type":"StrikeOut","foul":null,"steals":[],"strike":"Looking","wither":null},{"event_type":"InningEnd","number":9,"side":"Top"},{"event_type":"GameOver","message":"QuotedGAMEOVER"},{"event_type":"Recordkeeping","losing_score":1,"losing_team":{"emoji":"💪","name":"Brosville Dudes"},"winning_score":7,"winning_team":{"emoji":"🕊️","name":"Alexandria Cinnamon Birds"}}]
+[
+  {
+    "away_team": {
+      "emoji": "💪",
+      "name": "Brosville Dudes"
+    },
+    "event_type": "LiveNow",
+    "home_team": {
+      "emoji": "🕊️",
+      "name": "Alexandria Cinnamon Birds"
+    },
+    "stadium": "Red Hot Lot",
+    "weather": null
+  },
+  {
+    "away_pitcher": "Jackson Koval",
+    "away_team": {
+      "emoji": "💪",
+      "name": "Brosville Dudes"
+    },
+    "event_type": "PitchingMatchup",
+    "home_pitcher": "Of Kumari",
+    "home_team": {
+      "emoji": "🕊️",
+      "name": "Alexandria Cinnamon Birds"
+    }
+  },
+  {
+    "event_type": "Lineup",
+    "manager_name": null,
+    "players": [
+      {
+        "name": "Nice Tanner",
+        "place": "LF"
+      },
+      {
+        "name": "Cecilia Ogden",
+        "place": "1B"
+      },
+      {
+        "name": "Fizz Cartwright",
+        "place": "3B"
+      },
+      {
+        "name": "Rodney Kumar",
+        "place": "RF"
+      },
+      {
+        "name": "Luke Petrosyan",
+        "place": "CF"
+      },
+      {
+        "name": "Voicemail Skov",
+        "place": "SS"
+      },
+      {
+        "name": "Dora Castaneda",
+        "place": "DH"
+      },
+      {
+        "name": "Gladys Ivanov",
+        "place": "C"
+      },
+      {
+        "name": "Casey McNally",
+        "place": "2B"
+      }
+    ],
+    "side": "Away"
+  },
+  {
+    "event_type": "Lineup",
+    "manager_name": null,
+    "players": [
+      {
+        "name": "Sallie Bonilla",
+        "place": "C"
+      },
+      {
+        "name": "Winnie Otas",
+        "place": "SS"
+      },
+      {
+        "name": "David Fujii",
+        "place": "DH"
+      },
+      {
+        "name": "Ricky Snow",
+        "place": "1B"
+      },
+      {
+        "name": "D. Laurent",
+        "place": "LF"
+      },
+      {
+        "name": "Débora Thorsen",
+        "place": "3B"
+      },
+      {
+        "name": "Atem Powell",
+        "place": "2B"
+      },
+      {
+        "name": "Lauren Pinheiro",
+        "place": "RF"
+      },
+      {
+        "name": "Lais Prasad",
+        "place": "CF"
+      }
+    ],
+    "side": "Home"
+  },
+  {
+    "event_type": "PlayBall"
+  },
+  {
+    "automatic_runner": null,
+    "batting_team": {
+      "emoji": "💪",
+      "name": "Brosville Dudes"
+    },
+    "event_type": "InningStart",
+    "number": 1,
+    "pitcher_status": {
+      "Same": {
+        "emoji": "🕊️",
+        "name": "Of Kumari"
+      }
+    },
+    "side": "Top"
+  },
+  {
+    "batter": "Nice Tanner",
+    "event_type": "NowBatting",
+    "player_swept_away": null,
+    "stats": "FirstPA"
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      1,
+      0
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "ejection": null,
+    "event_type": "Ball",
+    "steals": [],
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      2,
+      0
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "ejection": null,
+    "event_type": "Ball",
+    "steals": [],
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      3,
+      0
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "ejection": null,
+    "event_type": "Ball",
+    "steals": [],
+    "wither": null
+  },
+  {
+    "advances": [],
+    "assassinations": [],
+    "aurora_photos": null,
+    "batter": "Nice Tanner",
+    "cheer": null,
+    "ejection": null,
+    "event_type": "Walk",
+    "scores": [],
+    "wither": null
+  },
+  {
+    "batter": "Cecilia Ogden",
+    "event_type": "NowBatting",
+    "player_swept_away": null,
+    "stats": "FirstPA"
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      0,
+      1
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "event_type": "Foul",
+    "foul": "Ball",
+    "steals": [],
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      0,
+      2
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "ejection": null,
+    "event_type": "Strike",
+    "steals": [
+      {
+        "base": "Second",
+        "caught": true,
+        "runner": "Nice Tanner"
+      }
+    ],
+    "strike": "Looking",
+    "surprise_strike": false,
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "batter": "Cecilia Ogden",
+    "cheer": null,
+    "destination": "LeftField",
+    "door_prizes": [],
+    "efflorescence": [],
+    "event_type": "FairBall",
+    "fair_ball_type": "LineDrive"
+  },
+  {
+    "advances": [],
+    "batter": "Cecilia Ogden",
+    "distance": "Single",
+    "ejection": null,
+    "event_type": "BatterToBase",
+    "fair_ball_type": "LineDrive",
+    "fielder": {
+      "name": "D. Laurent",
+      "place": "LF"
+    },
+    "scores": []
+  },
+  {
+    "batter": "Fizz Cartwright",
+    "event_type": "NowBatting",
+    "player_swept_away": null,
+    "stats": "FirstPA"
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "batter": "Fizz Cartwright",
+    "cheer": null,
+    "destination": "FirstBase",
+    "door_prizes": [],
+    "efflorescence": [],
+    "event_type": "FairBall",
+    "fair_ball_type": "GroundBall"
+  },
+  {
+    "advances": [],
+    "batter": "Fizz Cartwright",
+    "ejection": null,
+    "event_type": "ForceOut",
+    "fair_ball_type": "GroundBall",
+    "fielders": [
+      {
+        "name": "Ricky Snow",
+        "place": "1B"
+      },
+      {
+        "name": "Atem Powell",
+        "place": "2B"
+      }
+    ],
+    "out": {
+      "base": "Second",
+      "runner": "Cecilia Ogden"
+    },
+    "scores": []
+  },
+  {
+    "batter": "Rodney Kumar",
+    "event_type": "NowBatting",
+    "player_swept_away": null,
+    "stats": "FirstPA"
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      0,
+      1
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "event_type": "Foul",
+    "foul": "Ball",
+    "steals": [],
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      1,
+      1
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "ejection": null,
+    "event_type": "Ball",
+    "steals": [],
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      2,
+      1
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "ejection": null,
+    "event_type": "Ball",
+    "steals": [],
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      3,
+      1
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "ejection": null,
+    "event_type": "Ball",
+    "steals": [],
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "batter": "Rodney Kumar",
+    "cheer": null,
+    "destination": "FirstBase",
+    "door_prizes": [],
+    "efflorescence": [],
+    "event_type": "FairBall",
+    "fair_ball_type": "GroundBall"
+  },
+  {
+    "advances": [],
+    "amazing": false,
+    "assassinations": [],
+    "batter": "Rodney Kumar",
+    "ejection": null,
+    "event_type": "GroundedOut",
+    "fielders": [
+      {
+        "name": "Ricky Snow",
+        "place": "1B"
+      }
+    ],
+    "scores": []
+  },
+  {
+    "event_type": "InningEnd",
+    "number": 1,
+    "side": "Top"
+  },
+  {
+    "automatic_runner": null,
+    "batting_team": {
+      "emoji": "🕊️",
+      "name": "Alexandria Cinnamon Birds"
+    },
+    "event_type": "InningStart",
+    "number": 1,
+    "pitcher_status": {
+      "Same": {
+        "emoji": "💪",
+        "name": "Jackson Koval"
+      }
+    },
+    "side": "Bottom"
+  },
+  {
+    "batter": "Sallie Bonilla",
+    "event_type": "NowBatting",
+    "player_swept_away": null,
+    "stats": "FirstPA"
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      1,
+      0
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "ejection": null,
+    "event_type": "Ball",
+    "steals": [],
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "batter": "Sallie Bonilla",
+    "cheer": null,
+    "destination": "LeftField",
+    "door_prizes": [],
+    "efflorescence": [],
+    "event_type": "FairBall",
+    "fair_ball_type": "GroundBall"
+  },
+  {
+    "advances": [],
+    "batter": "Sallie Bonilla",
+    "distance": "Single",
+    "ejection": null,
+    "event_type": "BatterToBase",
+    "fair_ball_type": "GroundBall",
+    "fielder": {
+      "name": "Nice Tanner",
+      "place": "LF"
+    },
+    "scores": []
+  },
+  {
+    "batter": "Winnie Otas",
+    "event_type": "NowBatting",
+    "player_swept_away": null,
+    "stats": "FirstPA"
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      1,
+      0
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "ejection": null,
+    "event_type": "Ball",
+    "steals": [],
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "batter": "Winnie Otas",
+    "cheer": null,
+    "destination": "Pitcher",
+    "door_prizes": [],
+    "efflorescence": [],
+    "event_type": "FairBall",
+    "fair_ball_type": "GroundBall"
+  },
+  {
+    "advances": [
+      {
+        "base": "Second",
+        "runner": "Sallie Bonilla"
+      }
+    ],
+    "amazing": false,
+    "assassinations": [],
+    "batter": "Winnie Otas",
+    "ejection": null,
+    "event_type": "GroundedOut",
+    "fielders": [
+      {
+        "name": "Jackson Koval",
+        "place": "P"
+      },
+      {
+        "name": "Cecilia Ogden",
+        "place": "1B"
+      }
+    ],
+    "scores": []
+  },
+  {
+    "batter": "David Fujii",
+    "event_type": "NowBatting",
+    "player_swept_away": null,
+    "stats": "FirstPA"
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": "TheStadiumShakesWithExcitement",
+    "count": [
+      0,
+      1
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "ejection": null,
+    "event_type": "Strike",
+    "steals": [],
+    "strike": "Looking",
+    "surprise_strike": false,
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      1,
+      1
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "ejection": null,
+    "event_type": "Ball",
+    "steals": [],
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      1,
+      2
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "event_type": "Foul",
+    "foul": "Ball",
+    "steals": [],
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "batter": "David Fujii",
+    "cheer": null,
+    "ejection": null,
+    "event_type": "StrikeOut",
+    "foul": null,
+    "steals": [],
+    "strike": "Looking",
+    "wither": null
+  },
+  {
+    "batter": "Ricky Snow",
+    "event_type": "NowBatting",
+    "player_swept_away": null,
+    "stats": "FirstPA"
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      0,
+      1
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "event_type": "Foul",
+    "foul": "Ball",
+    "steals": [],
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": "TheCheeringIsRelentless",
+    "count": [
+      1,
+      1
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "ejection": null,
+    "event_type": "Ball",
+    "steals": [],
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      1,
+      2
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "ejection": null,
+    "event_type": "Strike",
+    "steals": [],
+    "strike": "Looking",
+    "surprise_strike": false,
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "batter": "Ricky Snow",
+    "cheer": null,
+    "ejection": null,
+    "event_type": "StrikeOut",
+    "foul": null,
+    "steals": [],
+    "strike": "Looking",
+    "wither": null
+  },
+  {
+    "event_type": "InningEnd",
+    "number": 1,
+    "side": "Bottom"
+  },
+  {
+    "automatic_runner": null,
+    "batting_team": {
+      "emoji": "💪",
+      "name": "Brosville Dudes"
+    },
+    "event_type": "InningStart",
+    "number": 2,
+    "pitcher_status": {
+      "Same": {
+        "emoji": "🕊️",
+        "name": "Of Kumari"
+      }
+    },
+    "side": "Top"
+  },
+  {
+    "batter": "Luke Petrosyan",
+    "event_type": "NowBatting",
+    "player_swept_away": null,
+    "stats": "FirstPA"
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      1,
+      0
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "ejection": null,
+    "event_type": "Ball",
+    "steals": [],
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      2,
+      0
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "ejection": null,
+    "event_type": "Ball",
+    "steals": [],
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      2,
+      1
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "event_type": "Foul",
+    "foul": "Ball",
+    "steals": [],
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      2,
+      2
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "ejection": null,
+    "event_type": "Strike",
+    "steals": [],
+    "strike": "Swinging",
+    "surprise_strike": false,
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      2,
+      2
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "event_type": "Foul",
+    "foul": "Ball",
+    "steals": [],
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      2,
+      2
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "event_type": "Foul",
+    "foul": "Ball",
+    "steals": [],
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      3,
+      2
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "ejection": null,
+    "event_type": "Ball",
+    "steals": [],
+    "wither": null
+  },
+  {
+    "advances": [],
+    "assassinations": [],
+    "aurora_photos": null,
+    "batter": "Luke Petrosyan",
+    "cheer": null,
+    "ejection": null,
+    "event_type": "Walk",
+    "scores": [],
+    "wither": null
+  },
+  {
+    "batter": "Voicemail Skov",
+    "event_type": "NowBatting",
+    "player_swept_away": null,
+    "stats": "FirstPA"
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      1,
+      0
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "ejection": null,
+    "event_type": "Ball",
+    "steals": [],
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      1,
+      1
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "event_type": "Foul",
+    "foul": "Ball",
+    "steals": [],
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      1,
+      2
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "ejection": null,
+    "event_type": "Strike",
+    "steals": [],
+    "strike": "Looking",
+    "surprise_strike": false,
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "batter": "Voicemail Skov",
+    "cheer": null,
+    "ejection": null,
+    "event_type": "StrikeOut",
+    "foul": null,
+    "steals": [],
+    "strike": "Swinging",
+    "wither": null
+  },
+  {
+    "batter": "Dora Castaneda",
+    "event_type": "NowBatting",
+    "player_swept_away": null,
+    "stats": "FirstPA"
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      1,
+      0
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "ejection": null,
+    "event_type": "Ball",
+    "steals": [],
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      1,
+      1
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "ejection": null,
+    "event_type": "Strike",
+    "steals": [],
+    "strike": "Looking",
+    "surprise_strike": false,
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      1,
+      2
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "ejection": null,
+    "event_type": "Strike",
+    "steals": [],
+    "strike": "Looking",
+    "surprise_strike": false,
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      2,
+      2
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "ejection": null,
+    "event_type": "Ball",
+    "steals": [],
+    "wither": {
+      "source_name": "Of Kumari",
+      "target": {
+        "name": "Dora Castaneda",
+        "place": "DH"
+      },
+      "team_emoji": "💪"
+    }
+  },
+  {
+    "contained": {
+      "SuccessfulContain": {
+        "contained_player_name": "Of Kumari",
+        "replacement_player_name": "Jeanette Hirano"
+      }
+    },
+    "corrupted": "Resisted",
+    "event_type": "WeatherWither",
+    "player": {
+      "name": "Dora Castaneda",
+      "place": "DH"
+    },
+    "team_emoji": "💪"
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "batter": "Dora Castaneda",
+    "cheer": null,
+    "ejection": null,
+    "event_type": "StrikeOut",
+    "foul": null,
+    "steals": [],
+    "strike": "Looking",
+    "wither": null
+  },
+  {
+    "batter": "Gladys Ivanov",
+    "event_type": "NowBatting",
+    "player_swept_away": null,
+    "stats": "FirstPA"
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": "TheStadiumSwellsWithCheers",
+    "count": [
+      1,
+      0
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "ejection": null,
+    "event_type": "Ball",
+    "steals": [
+      {
+        "base": "Second",
+        "caught": false,
+        "runner": "Luke Petrosyan"
+      }
+    ],
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "batter": "Gladys Ivanov",
+    "cheer": null,
+    "destination": "ShortStop",
+    "door_prizes": [],
+    "efflorescence": [],
+    "event_type": "FairBall",
+    "fair_ball_type": "GroundBall"
+  },
+  {
+    "advances": [],
+    "amazing": false,
+    "assassinations": [],
+    "batter": "Gladys Ivanov",
+    "ejection": null,
+    "event_type": "GroundedOut",
+    "fielders": [
+      {
+        "name": "Winnie Otas",
+        "place": "SS"
+      },
+      {
+        "name": "Ricky Snow",
+        "place": "1B"
+      }
+    ],
+    "scores": []
+  },
+  {
+    "event_type": "InningEnd",
+    "number": 2,
+    "side": "Top"
+  },
+  {
+    "automatic_runner": null,
+    "batting_team": {
+      "emoji": "🕊️",
+      "name": "Alexandria Cinnamon Birds"
+    },
+    "event_type": "InningStart",
+    "number": 2,
+    "pitcher_status": {
+      "Same": {
+        "emoji": "💪",
+        "name": "Jackson Koval"
+      }
+    },
+    "side": "Bottom"
+  },
+  {
+    "batter": "D. Laurent",
+    "event_type": "NowBatting",
+    "player_swept_away": null,
+    "stats": "FirstPA"
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "batter": "D. Laurent",
+    "cheer": null,
+    "destination": "CenterField",
+    "door_prizes": [],
+    "efflorescence": [],
+    "event_type": "FairBall",
+    "fair_ball_type": "LineDrive"
+  },
+  {
+    "advances": [],
+    "batter": "D. Laurent",
+    "distance": "Double",
+    "ejection": null,
+    "event_type": "BatterToBase",
+    "fair_ball_type": "LineDrive",
+    "fielder": {
+      "name": "Luke Petrosyan",
+      "place": "CF"
+    },
+    "scores": []
+  },
+  {
+    "batter": "Débora Thorsen",
+    "event_type": "NowBatting",
+    "player_swept_away": null,
+    "stats": "FirstPA"
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "batter": "Débora Thorsen",
+    "cheer": null,
+    "destination": "ThirdBase",
+    "door_prizes": [],
+    "efflorescence": [],
+    "event_type": "FairBall",
+    "fair_ball_type": "GroundBall"
+  },
+  {
+    "advances": [
+      {
+        "base": "Third",
+        "runner": "D. Laurent"
+      }
+    ],
+    "amazing": false,
+    "assassinations": [],
+    "batter": "Débora Thorsen",
+    "ejection": null,
+    "event_type": "GroundedOut",
+    "fielders": [
+      {
+        "name": "Fizz Cartwright",
+        "place": "3B"
+      },
+      {
+        "name": "Cecilia Ogden",
+        "place": "1B"
+      }
+    ],
+    "scores": []
+  },
+  {
+    "batter": "Atem Powell",
+    "event_type": "NowBatting",
+    "player_swept_away": null,
+    "stats": "FirstPA"
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      0,
+      1
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "ejection": null,
+    "event_type": "Strike",
+    "steals": [],
+    "strike": "Swinging",
+    "surprise_strike": false,
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": "TheStandsAreElectric",
+    "count": [
+      1,
+      1
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "ejection": null,
+    "event_type": "Ball",
+    "steals": [],
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      1,
+      2
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "event_type": "Foul",
+    "foul": "Ball",
+    "steals": [],
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      2,
+      2
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "ejection": null,
+    "event_type": "Ball",
+    "steals": [],
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "batter": "Atem Powell",
+    "cheer": null,
+    "ejection": null,
+    "event_type": "StrikeOut",
+    "foul": null,
+    "steals": [],
+    "strike": "Looking",
+    "wither": null
+  },
+  {
+    "batter": "Lauren Pinheiro",
+    "event_type": "NowBatting",
+    "player_swept_away": null,
+    "stats": "FirstPA"
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      0,
+      1
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "event_type": "Foul",
+    "foul": "Ball",
+    "steals": [],
+    "wither": null
+  },
+  {
+    "advances": [],
+    "aurora_photos": null,
+    "batter": "Lauren Pinheiro",
+    "cheer": null,
+    "door_prizes": [],
+    "efflorescence": [],
+    "ejection": null,
+    "event_type": "HitByPitch",
+    "scores": [],
+    "wither": null
+  },
+  {
+    "batter": "Lais Prasad",
+    "event_type": "NowBatting",
+    "player_swept_away": null,
+    "stats": "FirstPA"
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": "TheHomeCrowdWontStopCheering",
+    "count": [
+      0,
+      1
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "ejection": null,
+    "event_type": "Strike",
+    "steals": [],
+    "strike": "Looking",
+    "surprise_strike": false,
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      0,
+      2
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "event_type": "Foul",
+    "foul": "Ball",
+    "steals": [],
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      0,
+      2
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "event_type": "Foul",
+    "foul": "Ball",
+    "steals": [],
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      0,
+      2
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "event_type": "Foul",
+    "foul": "Ball",
+    "steals": [],
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "batter": "Lais Prasad",
+    "cheer": null,
+    "destination": "LeftField",
+    "door_prizes": [],
+    "efflorescence": [],
+    "event_type": "FairBall",
+    "fair_ball_type": "FlyBall"
+  },
+  {
+    "advances": [],
+    "batter": "Lais Prasad",
+    "caught_by": {
+      "name": "Nice Tanner",
+      "place": "LF"
+    },
+    "ejection": null,
+    "event_type": "CaughtOut",
+    "fair_ball_type": "FlyBall",
+    "jetpack": false,
+    "perfect": false,
+    "sacrifice": false,
+    "scores": []
+  },
+  {
+    "event_type": "InningEnd",
+    "number": 2,
+    "side": "Bottom"
+  },
+  {
+    "automatic_runner": null,
+    "batting_team": {
+      "emoji": "💪",
+      "name": "Brosville Dudes"
+    },
+    "event_type": "InningStart",
+    "number": 3,
+    "pitcher_status": {
+      "Same": {
+        "emoji": "🕊️",
+        "name": "Jeanette Hirano"
+      }
+    },
+    "side": "Top"
+  },
+  {
+    "batter": "Casey McNally",
+    "event_type": "NowBatting",
+    "player_swept_away": null,
+    "stats": "FirstPA"
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      1,
+      0
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "ejection": null,
+    "event_type": "Ball",
+    "steals": [],
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "batter": "Casey McNally",
+    "cheer": null,
+    "destination": "LeftField",
+    "door_prizes": [],
+    "efflorescence": [],
+    "event_type": "FairBall",
+    "fair_ball_type": "LineDrive"
+  },
+  {
+    "advances": [],
+    "batter": "Casey McNally",
+    "distance": "Single",
+    "ejection": null,
+    "event_type": "BatterToBase",
+    "fair_ball_type": "LineDrive",
+    "fielder": {
+      "name": "D. Laurent",
+      "place": "LF"
+    },
+    "scores": []
+  },
+  {
+    "batter": "Nice Tanner",
+    "event_type": "NowBatting",
+    "player_swept_away": null,
+    "stats": {
+      "Stats": [
+        {
+          "stat": "BaseOnBalls",
+          "value": 1
+        }
+      ]
+    }
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "batter": "Nice Tanner",
+    "cheer": null,
+    "destination": "ShortStop",
+    "door_prizes": [],
+    "efflorescence": [],
+    "event_type": "FairBall",
+    "fair_ball_type": "GroundBall"
+  },
+  {
+    "advances": [
+      {
+        "base": "Second",
+        "runner": "Casey McNally"
+      }
+    ],
+    "batter": "Nice Tanner",
+    "ejection": null,
+    "event_type": "ReachOnFieldersChoice",
+    "fielders": [
+      {
+        "name": "Winnie Otas",
+        "place": "SS"
+      }
+    ],
+    "result": {
+      "Error": {
+        "error": "Fielding",
+        "fielder": "Winnie Otas"
+      }
+    },
+    "scores": []
+  },
+  {
+    "batter": "Cecilia Ogden",
+    "event_type": "NowBatting",
+    "player_swept_away": null,
+    "stats": {
+      "Stats": [
+        {
+          "stat": "HitsForAtBats",
+          "value": {
+            "at_bats": 1,
+            "hits": 1
+          }
+        },
+        {
+          "stat": "FirstBases",
+          "value": 1
+        }
+      ]
+    }
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      1,
+      0
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "ejection": null,
+    "event_type": "Ball",
+    "steals": [],
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": "SupportersYellAtFullVolume",
+    "count": [
+      2,
+      0
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "ejection": null,
+    "event_type": "Ball",
+    "steals": [],
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      2,
+      1
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "event_type": "Foul",
+    "foul": "Ball",
+    "steals": [],
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "batter": "Cecilia Ogden",
+    "cheer": null,
+    "destination": "FirstBase",
+    "door_prizes": [],
+    "efflorescence": [],
+    "event_type": "FairBall",
+    "fair_ball_type": "Popup"
+  },
+  {
+    "advances": [],
+    "batter": "Cecilia Ogden",
+    "caught_by": {
+      "name": "Ricky Snow",
+      "place": "1B"
+    },
+    "ejection": null,
+    "event_type": "CaughtOut",
+    "fair_ball_type": "Popup",
+    "jetpack": false,
+    "perfect": false,
+    "sacrifice": false,
+    "scores": []
+  },
+  {
+    "batter": "Fizz Cartwright",
+    "event_type": "NowBatting",
+    "player_swept_away": null,
+    "stats": {
+      "Stats": [
+        {
+          "stat": "HitsForAtBats",
+          "value": {
+            "at_bats": 1,
+            "hits": 0
+          }
+        },
+        {
+          "stat": "Fouls",
+          "value": 1
+        }
+      ]
+    }
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      0,
+      1
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "event_type": "Foul",
+    "foul": "Ball",
+    "steals": [],
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": "TheyCheerLikeTheresNoTomorrow",
+    "count": [
+      0,
+      2
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "ejection": null,
+    "event_type": "Strike",
+    "steals": [],
+    "strike": "Swinging",
+    "surprise_strike": false,
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "batter": "Fizz Cartwright",
+    "cheer": null,
+    "ejection": null,
+    "event_type": "StrikeOut",
+    "foul": null,
+    "steals": [
+      {
+        "base": "Third",
+        "caught": false,
+        "runner": "Casey McNally"
+      }
+    ],
+    "strike": "Swinging",
+    "wither": null
+  },
+  {
+    "batter": "Rodney Kumar",
+    "event_type": "NowBatting",
+    "player_swept_away": null,
+    "stats": {
+      "Stats": [
+        {
+          "stat": "HitsForAtBats",
+          "value": {
+            "at_bats": 1,
+            "hits": 0
+          }
+        },
+        {
+          "stat": "GroundOuts",
+          "value": 1
+        }
+      ]
+    }
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      1,
+      0
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "ejection": null,
+    "event_type": "Ball",
+    "steals": [],
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      1,
+      1
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "ejection": null,
+    "event_type": "Strike",
+    "steals": [],
+    "strike": "Swinging",
+    "surprise_strike": false,
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "batter": "Rodney Kumar",
+    "cheer": null,
+    "destination": "Pitcher",
+    "door_prizes": [],
+    "efflorescence": [],
+    "event_type": "FairBall",
+    "fair_ball_type": "GroundBall"
+  },
+  {
+    "advances": [],
+    "amazing": false,
+    "assassinations": [],
+    "batter": "Rodney Kumar",
+    "ejection": null,
+    "event_type": "GroundedOut",
+    "fielders": [
+      {
+        "name": "Jeanette Hirano",
+        "place": "P"
+      },
+      {
+        "name": "Ricky Snow",
+        "place": "1B"
+      }
+    ],
+    "scores": []
+  },
+  {
+    "event_type": "InningEnd",
+    "number": 3,
+    "side": "Top"
+  },
+  {
+    "automatic_runner": null,
+    "batting_team": {
+      "emoji": "🕊️",
+      "name": "Alexandria Cinnamon Birds"
+    },
+    "event_type": "InningStart",
+    "number": 3,
+    "pitcher_status": {
+      "Same": {
+        "emoji": "💪",
+        "name": "Jackson Koval"
+      }
+    },
+    "side": "Bottom"
+  },
+  {
+    "batter": "Sallie Bonilla",
+    "event_type": "NowBatting",
+    "player_swept_away": null,
+    "stats": {
+      "Stats": [
+        {
+          "stat": "HitsForAtBats",
+          "value": {
+            "at_bats": 1,
+            "hits": 1
+          }
+        },
+        {
+          "stat": "FirstBases",
+          "value": 1
+        }
+      ]
+    }
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      1,
+      0
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "ejection": null,
+    "event_type": "Ball",
+    "steals": [],
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      2,
+      0
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "ejection": null,
+    "event_type": "Ball",
+    "steals": [],
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      2,
+      1
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "ejection": null,
+    "event_type": "Strike",
+    "steals": [],
+    "strike": "Looking",
+    "surprise_strike": false,
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "batter": "Sallie Bonilla",
+    "cheer": null,
+    "destination": "LeftField",
+    "door_prizes": [],
+    "efflorescence": [],
+    "event_type": "FairBall",
+    "fair_ball_type": "FlyBall"
+  },
+  {
+    "advances": [],
+    "batter": "Sallie Bonilla",
+    "caught_by": {
+      "name": "Nice Tanner",
+      "place": "LF"
+    },
+    "ejection": null,
+    "event_type": "CaughtOut",
+    "fair_ball_type": "FlyBall",
+    "jetpack": false,
+    "perfect": false,
+    "sacrifice": false,
+    "scores": []
+  },
+  {
+    "batter": "Winnie Otas",
+    "event_type": "NowBatting",
+    "player_swept_away": null,
+    "stats": {
+      "Stats": [
+        {
+          "stat": "HitsForAtBats",
+          "value": {
+            "at_bats": 1,
+            "hits": 0
+          }
+        },
+        {
+          "stat": "GroundOuts",
+          "value": 1
+        }
+      ]
+    }
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      0,
+      1
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "ejection": null,
+    "event_type": "Strike",
+    "steals": [],
+    "strike": "Looking",
+    "surprise_strike": false,
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      0,
+      2
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "ejection": null,
+    "event_type": "Strike",
+    "steals": [],
+    "strike": "Looking",
+    "surprise_strike": false,
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "batter": "Winnie Otas",
+    "cheer": null,
+    "ejection": null,
+    "event_type": "StrikeOut",
+    "foul": null,
+    "steals": [],
+    "strike": "Swinging",
+    "wither": null
+  },
+  {
+    "batter": "David Fujii",
+    "event_type": "NowBatting",
+    "player_swept_away": null,
+    "stats": {
+      "Stats": [
+        {
+          "stat": "HitsForAtBats",
+          "value": {
+            "at_bats": 1,
+            "hits": 0
+          }
+        },
+        {
+          "stat": "StrikeOuts",
+          "value": 1
+        }
+      ]
+    }
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "batter": "David Fujii",
+    "cheer": null,
+    "destination": "SecondBase",
+    "door_prizes": [],
+    "efflorescence": [],
+    "event_type": "FairBall",
+    "fair_ball_type": "Popup"
+  },
+  {
+    "advances": [],
+    "batter": "David Fujii",
+    "caught_by": {
+      "name": "Casey McNally",
+      "place": "2B"
+    },
+    "ejection": null,
+    "event_type": "CaughtOut",
+    "fair_ball_type": "Popup",
+    "jetpack": false,
+    "perfect": false,
+    "sacrifice": false,
+    "scores": []
+  },
+  {
+    "event_type": "InningEnd",
+    "number": 3,
+    "side": "Bottom"
+  },
+  {
+    "automatic_runner": null,
+    "batting_team": {
+      "emoji": "💪",
+      "name": "Brosville Dudes"
+    },
+    "event_type": "InningStart",
+    "number": 4,
+    "pitcher_status": {
+      "Same": {
+        "emoji": "🕊️",
+        "name": "Jeanette Hirano"
+      }
+    },
+    "side": "Top"
+  },
+  {
+    "batter": "Luke Petrosyan",
+    "event_type": "NowBatting",
+    "player_swept_away": null,
+    "stats": {
+      "Stats": [
+        {
+          "stat": "BaseOnBalls",
+          "value": 1
+        }
+      ]
+    }
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      1,
+      0
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "ejection": null,
+    "event_type": "Ball",
+    "steals": [],
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      2,
+      0
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "ejection": null,
+    "event_type": "Ball",
+    "steals": [],
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "batter": "Luke Petrosyan",
+    "cheer": null,
+    "destination": "CenterField",
+    "door_prizes": [],
+    "efflorescence": [],
+    "event_type": "FairBall",
+    "fair_ball_type": "LineDrive"
+  },
+  {
+    "advances": [],
+    "batter": "Luke Petrosyan",
+    "distance": "Single",
+    "ejection": null,
+    "event_type": "BatterToBase",
+    "fair_ball_type": "LineDrive",
+    "fielder": {
+      "name": "Lais Prasad",
+      "place": "CF"
+    },
+    "scores": []
+  },
+  {
+    "batter": "Voicemail Skov",
+    "event_type": "NowBatting",
+    "player_swept_away": null,
+    "stats": {
+      "Stats": [
+        {
+          "stat": "HitsForAtBats",
+          "value": {
+            "at_bats": 1,
+            "hits": 0
+          }
+        },
+        {
+          "stat": "StrikeOuts",
+          "value": 1
+        }
+      ]
+    }
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      0,
+      1
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "event_type": "Foul",
+    "foul": "Ball",
+    "steals": [],
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      0,
+      2
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "ejection": null,
+    "event_type": "Strike",
+    "steals": [],
+    "strike": "Swinging",
+    "surprise_strike": false,
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      1,
+      2
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "ejection": null,
+    "event_type": "Ball",
+    "steals": [],
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      2,
+      2
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "ejection": null,
+    "event_type": "Ball",
+    "steals": [],
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "batter": "Voicemail Skov",
+    "cheer": null,
+    "destination": "LeftField",
+    "door_prizes": [],
+    "efflorescence": [],
+    "event_type": "FairBall",
+    "fair_ball_type": "LineDrive"
+  },
+  {
+    "advances": [
+      {
+        "base": "Second",
+        "runner": "Luke Petrosyan"
+      }
+    ],
+    "batter": "Voicemail Skov",
+    "distance": "Single",
+    "ejection": null,
+    "event_type": "BatterToBase",
+    "fair_ball_type": "LineDrive",
+    "fielder": {
+      "name": "D. Laurent",
+      "place": "LF"
+    },
+    "scores": []
+  },
+  {
+    "batter": "Dora Castaneda",
+    "event_type": "NowBatting",
+    "player_swept_away": null,
+    "stats": {
+      "Stats": [
+        {
+          "stat": "HitsForAtBats",
+          "value": {
+            "at_bats": 1,
+            "hits": 0
+          }
+        },
+        {
+          "stat": "StrikeOuts",
+          "value": 1
+        }
+      ]
+    }
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "batter": "Dora Castaneda",
+    "cheer": null,
+    "destination": "ShortStop",
+    "door_prizes": [],
+    "efflorescence": [],
+    "event_type": "FairBall",
+    "fair_ball_type": "GroundBall"
+  },
+  {
+    "advances": [
+      {
+        "base": "Third",
+        "runner": "Luke Petrosyan"
+      }
+    ],
+    "batter": "Dora Castaneda",
+    "double_trouble": null,
+    "ejection": null,
+    "event_type": "DoublePlayGrounded",
+    "fielders": [
+      {
+        "name": "Winnie Otas",
+        "place": "SS"
+      },
+      {
+        "name": "Atem Powell",
+        "place": "2B"
+      },
+      {
+        "name": "Ricky Snow",
+        "place": "1B"
+      }
+    ],
+    "out_one": {
+      "base": "SecondBase",
+      "runner": "Voicemail Skov"
+    },
+    "out_two": {
+      "base": "FirstBase",
+      "runner": "Dora Castaneda"
+    },
+    "sacrifice": false,
+    "scores": []
+  },
+  {
+    "batter": "Gladys Ivanov",
+    "event_type": "NowBatting",
+    "player_swept_away": null,
+    "stats": {
+      "Stats": [
+        {
+          "stat": "HitsForAtBats",
+          "value": {
+            "at_bats": 1,
+            "hits": 0
+          }
+        },
+        {
+          "stat": "GroundOuts",
+          "value": 1
+        }
+      ]
+    }
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      0,
+      1
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "event_type": "Foul",
+    "foul": "Tip",
+    "steals": [
+      {
+        "base": "Home",
+        "caught": true,
+        "runner": "Luke Petrosyan"
+      }
+    ],
+    "wither": null
+  },
+  {
+    "event_type": "InningEnd",
+    "number": 4,
+    "side": "Top"
+  },
+  {
+    "automatic_runner": null,
+    "batting_team": {
+      "emoji": "🕊️",
+      "name": "Alexandria Cinnamon Birds"
+    },
+    "event_type": "InningStart",
+    "number": 4,
+    "pitcher_status": {
+      "Same": {
+        "emoji": "💪",
+        "name": "Jackson Koval"
+      }
+    },
+    "side": "Bottom"
+  },
+  {
+    "batter": "Ricky Snow",
+    "event_type": "NowBatting",
+    "player_swept_away": null,
+    "stats": {
+      "Stats": [
+        {
+          "stat": "HitsForAtBats",
+          "value": {
+            "at_bats": 1,
+            "hits": 0
+          }
+        },
+        {
+          "stat": "StrikeOuts",
+          "value": 1
+        }
+      ]
+    }
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "batter": "Ricky Snow",
+    "cheer": null,
+    "destination": "ThirdBase",
+    "door_prizes": [],
+    "efflorescence": [],
+    "event_type": "FairBall",
+    "fair_ball_type": "GroundBall"
+  },
+  {
+    "advances": [],
+    "amazing": false,
+    "assassinations": [],
+    "batter": "Ricky Snow",
+    "ejection": null,
+    "event_type": "GroundedOut",
+    "fielders": [
+      {
+        "name": "Fizz Cartwright",
+        "place": "3B"
+      },
+      {
+        "name": "Cecilia Ogden",
+        "place": "1B"
+      }
+    ],
+    "scores": []
+  },
+  {
+    "batter": "D. Laurent",
+    "event_type": "NowBatting",
+    "player_swept_away": null,
+    "stats": {
+      "Stats": [
+        {
+          "stat": "HitsForAtBats",
+          "value": {
+            "at_bats": 1,
+            "hits": 1
+          }
+        },
+        {
+          "stat": "SecondBases",
+          "value": 1
+        }
+      ]
+    }
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      1,
+      0
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "ejection": null,
+    "event_type": "Ball",
+    "steals": [],
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      1,
+      1
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "event_type": "Foul",
+    "foul": "Ball",
+    "steals": [],
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      1,
+      2
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "ejection": null,
+    "event_type": "Strike",
+    "steals": [],
+    "strike": "Swinging",
+    "surprise_strike": false,
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "batter": "D. Laurent",
+    "cheer": null,
+    "destination": "ThirdBase",
+    "door_prizes": [],
+    "efflorescence": [],
+    "event_type": "FairBall",
+    "fair_ball_type": "GroundBall"
+  },
+  {
+    "advances": [],
+    "amazing": false,
+    "assassinations": [],
+    "batter": "D. Laurent",
+    "ejection": null,
+    "event_type": "GroundedOut",
+    "fielders": [
+      {
+        "name": "Fizz Cartwright",
+        "place": "3B"
+      },
+      {
+        "name": "Cecilia Ogden",
+        "place": "1B"
+      }
+    ],
+    "scores": []
+  },
+  {
+    "batter": "Débora Thorsen",
+    "event_type": "NowBatting",
+    "player_swept_away": null,
+    "stats": {
+      "Stats": [
+        {
+          "stat": "HitsForAtBats",
+          "value": {
+            "at_bats": 1,
+            "hits": 0
+          }
+        },
+        {
+          "stat": "GroundOuts",
+          "value": 1
+        }
+      ]
+    }
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      0,
+      1
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "ejection": null,
+    "event_type": "Strike",
+    "steals": [],
+    "strike": "Swinging",
+    "surprise_strike": false,
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      1,
+      1
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "ejection": null,
+    "event_type": "Ball",
+    "steals": [],
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      2,
+      1
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "ejection": null,
+    "event_type": "Ball",
+    "steals": [],
+    "wither": {
+      "source_name": "Débora Thorsen",
+      "target": {
+        "name": "Jackson Koval",
+        "place": "SP1"
+      },
+      "team_emoji": "💪"
+    }
+  },
+  {
+    "contained": "NoContain",
+    "corrupted": "Resisted",
+    "event_type": "WeatherWither",
+    "player": {
+      "name": "Jackson Koval",
+      "place": "SP1"
+    },
+    "team_emoji": "💪"
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      2,
+      2
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "event_type": "Foul",
+    "foul": "Ball",
+    "steals": [],
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      3,
+      2
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "ejection": null,
+    "event_type": "Ball",
+    "steals": [],
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "batter": "Débora Thorsen",
+    "cheer": null,
+    "destination": "CenterField",
+    "door_prizes": [],
+    "efflorescence": [],
+    "event_type": "FairBall",
+    "fair_ball_type": "FlyBall"
+  },
+  {
+    "batter": "Débora Thorsen",
+    "destination": "CenterField",
+    "ejection": null,
+    "event_type": "HomeRun",
+    "fair_ball_type": "FlyBall",
+    "grand_slam": false,
+    "scores": []
+  },
+  {
+    "batter": "Atem Powell",
+    "event_type": "NowBatting",
+    "player_swept_away": null,
+    "stats": {
+      "Stats": [
+        {
+          "stat": "HitsForAtBats",
+          "value": {
+            "at_bats": 1,
+            "hits": 0
+          }
+        },
+        {
+          "stat": "StrikeOuts",
+          "value": 1
+        }
+      ]
+    }
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "batter": "Atem Powell",
+    "cheer": null,
+    "destination": "CenterField",
+    "door_prizes": [],
+    "efflorescence": [],
+    "event_type": "FairBall",
+    "fair_ball_type": "GroundBall"
+  },
+  {
+    "advances": [],
+    "batter": "Atem Powell",
+    "distance": "Single",
+    "ejection": null,
+    "event_type": "BatterToBase",
+    "fair_ball_type": "GroundBall",
+    "fielder": {
+      "name": "Luke Petrosyan",
+      "place": "CF"
+    },
+    "scores": []
+  },
+  {
+    "batter": "Lauren Pinheiro",
+    "event_type": "NowBatting",
+    "player_swept_away": null,
+    "stats": {
+      "Stats": [
+        {
+          "stat": "HitByPitchs",
+          "value": 1
+        }
+      ]
+    }
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      0,
+      1
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "ejection": null,
+    "event_type": "Strike",
+    "steals": [],
+    "strike": "Swinging",
+    "surprise_strike": false,
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      0,
+      2
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "ejection": null,
+    "event_type": "Strike",
+    "steals": [],
+    "strike": "Looking",
+    "surprise_strike": false,
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "batter": "Lauren Pinheiro",
+    "cheer": null,
+    "destination": "LeftField",
+    "door_prizes": [],
+    "efflorescence": [],
+    "event_type": "FairBall",
+    "fair_ball_type": "LineDrive"
+  },
+  {
+    "advances": [],
+    "batter": "Lauren Pinheiro",
+    "caught_by": {
+      "name": "Nice Tanner",
+      "place": "LF"
+    },
+    "ejection": null,
+    "event_type": "CaughtOut",
+    "fair_ball_type": "LineDrive",
+    "jetpack": false,
+    "perfect": false,
+    "sacrifice": false,
+    "scores": []
+  },
+  {
+    "event_type": "InningEnd",
+    "number": 4,
+    "side": "Bottom"
+  },
+  {
+    "automatic_runner": null,
+    "batting_team": {
+      "emoji": "💪",
+      "name": "Brosville Dudes"
+    },
+    "event_type": "InningStart",
+    "number": 5,
+    "pitcher_status": {
+      "Same": {
+        "emoji": "🕊️",
+        "name": "Jeanette Hirano"
+      }
+    },
+    "side": "Top"
+  },
+  {
+    "batter": "Gladys Ivanov",
+    "event_type": "NowBatting",
+    "player_swept_away": null,
+    "stats": {
+      "Stats": [
+        {
+          "stat": "HitsForAtBats",
+          "value": {
+            "at_bats": 1,
+            "hits": 0
+          }
+        },
+        {
+          "stat": "GroundOuts",
+          "value": 1
+        }
+      ]
+    }
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      1,
+      0
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "ejection": null,
+    "event_type": "Ball",
+    "steals": [],
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      2,
+      0
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "ejection": null,
+    "event_type": "Ball",
+    "steals": [],
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      2,
+      1
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "ejection": null,
+    "event_type": "Strike",
+    "steals": [],
+    "strike": "Looking",
+    "surprise_strike": false,
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      3,
+      1
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "ejection": null,
+    "event_type": "Ball",
+    "steals": [],
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "batter": "Gladys Ivanov",
+    "cheer": null,
+    "destination": "LeftField",
+    "door_prizes": [],
+    "efflorescence": [],
+    "event_type": "FairBall",
+    "fair_ball_type": "LineDrive"
+  },
+  {
+    "advances": [],
+    "batter": "Gladys Ivanov",
+    "distance": "Single",
+    "ejection": null,
+    "event_type": "BatterToBase",
+    "fair_ball_type": "LineDrive",
+    "fielder": {
+      "name": "D. Laurent",
+      "place": "LF"
+    },
+    "scores": []
+  },
+  {
+    "batter": "Casey McNally",
+    "event_type": "NowBatting",
+    "player_swept_away": null,
+    "stats": {
+      "Stats": [
+        {
+          "stat": "HitsForAtBats",
+          "value": {
+            "at_bats": 1,
+            "hits": 1
+          }
+        },
+        {
+          "stat": "FirstBases",
+          "value": 1
+        }
+      ]
+    }
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      0,
+      1
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "event_type": "Foul",
+    "foul": "Ball",
+    "steals": [],
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      1,
+      1
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "ejection": null,
+    "event_type": "Ball",
+    "steals": [
+      {
+        "base": "Second",
+        "caught": false,
+        "runner": "Gladys Ivanov"
+      }
+    ],
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      1,
+      2
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "event_type": "Foul",
+    "foul": "Ball",
+    "steals": [],
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "batter": "Casey McNally",
+    "cheer": null,
+    "ejection": null,
+    "event_type": "StrikeOut",
+    "foul": null,
+    "steals": [],
+    "strike": "Swinging",
+    "wither": null
+  },
+  {
+    "batter": "Nice Tanner",
+    "event_type": "NowBatting",
+    "player_swept_away": null,
+    "stats": {
+      "Stats": [
+        {
+          "stat": "HitsForAtBats",
+          "value": {
+            "at_bats": 1,
+            "hits": 0
+          }
+        },
+        {
+          "stat": "BaseOnBalls",
+          "value": 1
+        },
+        {
+          "stat": "FieldersChoices",
+          "value": 1
+        }
+      ]
+    }
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      0,
+      1
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "event_type": "Foul",
+    "foul": "Ball",
+    "steals": [],
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": "TheNoiseIsOverwhelming",
+    "count": [
+      0,
+      2
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "event_type": "Foul",
+    "foul": "Ball",
+    "steals": [],
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "batter": "Nice Tanner",
+    "cheer": null,
+    "destination": "FirstBase",
+    "door_prizes": [],
+    "efflorescence": [],
+    "event_type": "FairBall",
+    "fair_ball_type": "GroundBall"
+  },
+  {
+    "advances": [
+      {
+        "base": "Third",
+        "runner": "Gladys Ivanov"
+      }
+    ],
+    "amazing": false,
+    "assassinations": [],
+    "batter": "Nice Tanner",
+    "ejection": null,
+    "event_type": "GroundedOut",
+    "fielders": [
+      {
+        "name": "Ricky Snow",
+        "place": "1B"
+      }
+    ],
+    "scores": []
+  },
+  {
+    "batter": "Cecilia Ogden",
+    "event_type": "NowBatting",
+    "player_swept_away": null,
+    "stats": {
+      "Stats": [
+        {
+          "stat": "HitsForAtBats",
+          "value": {
+            "at_bats": 2,
+            "hits": 1
+          }
+        },
+        {
+          "stat": "FirstBases",
+          "value": 1
+        },
+        {
+          "stat": "PopOuts",
+          "value": 1
+        }
+      ]
+    }
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      1,
+      0
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "ejection": null,
+    "event_type": "Ball",
+    "steals": [],
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      2,
+      0
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "ejection": null,
+    "event_type": "Ball",
+    "steals": [],
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      3,
+      0
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "ejection": null,
+    "event_type": "Ball",
+    "steals": [],
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": "ARumbleOfExcitementRollsThroughTheStadium",
+    "count": [
+      3,
+      1
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "event_type": "Foul",
+    "foul": "Ball",
+    "steals": [],
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      3,
+      2
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "event_type": "Foul",
+    "foul": "Ball",
+    "steals": [],
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "batter": "Cecilia Ogden",
+    "cheer": null,
+    "ejection": null,
+    "event_type": "StrikeOut",
+    "foul": null,
+    "steals": [],
+    "strike": "Swinging",
+    "wither": null
+  },
+  {
+    "event_type": "InningEnd",
+    "number": 5,
+    "side": "Top"
+  },
+  {
+    "automatic_runner": null,
+    "batting_team": {
+      "emoji": "🕊️",
+      "name": "Alexandria Cinnamon Birds"
+    },
+    "event_type": "InningStart",
+    "number": 5,
+    "pitcher_status": {
+      "Same": {
+        "emoji": "💪",
+        "name": "Jackson Koval"
+      }
+    },
+    "side": "Bottom"
+  },
+  {
+    "batter": "Lais Prasad",
+    "event_type": "NowBatting",
+    "player_swept_away": null,
+    "stats": {
+      "Stats": [
+        {
+          "stat": "HitsForAtBats",
+          "value": {
+            "at_bats": 1,
+            "hits": 0
+          }
+        },
+        {
+          "stat": "ForceOuts",
+          "value": 1
+        }
+      ]
+    }
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      1,
+      0
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "ejection": null,
+    "event_type": "Ball",
+    "steals": [],
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      1,
+      1
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "event_type": "Foul",
+    "foul": "Tip",
+    "steals": [],
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      2,
+      1
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "ejection": null,
+    "event_type": "Ball",
+    "steals": [],
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      2,
+      2
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "event_type": "Foul",
+    "foul": "Ball",
+    "steals": [],
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      3,
+      2
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "ejection": null,
+    "event_type": "Ball",
+    "steals": [],
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "batter": "Lais Prasad",
+    "cheer": null,
+    "ejection": null,
+    "event_type": "StrikeOut",
+    "foul": null,
+    "steals": [],
+    "strike": "Swinging",
+    "wither": null
+  },
+  {
+    "batter": "Sallie Bonilla",
+    "event_type": "NowBatting",
+    "player_swept_away": null,
+    "stats": {
+      "Stats": [
+        {
+          "stat": "HitsForAtBats",
+          "value": {
+            "at_bats": 2,
+            "hits": 1
+          }
+        },
+        {
+          "stat": "FirstBases",
+          "value": 1
+        },
+        {
+          "stat": "ForceOuts",
+          "value": 1
+        }
+      ]
+    }
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "batter": "Sallie Bonilla",
+    "cheer": null,
+    "destination": "CenterField",
+    "door_prizes": [],
+    "efflorescence": [],
+    "event_type": "FairBall",
+    "fair_ball_type": "FlyBall"
+  },
+  {
+    "batter": "Sallie Bonilla",
+    "destination": "CenterField",
+    "ejection": null,
+    "event_type": "HomeRun",
+    "fair_ball_type": "FlyBall",
+    "grand_slam": false,
+    "scores": []
+  },
+  {
+    "batter": "Winnie Otas",
+    "event_type": "NowBatting",
+    "player_swept_away": null,
+    "stats": {
+      "Stats": [
+        {
+          "stat": "HitsForAtBats",
+          "value": {
+            "at_bats": 2,
+            "hits": 0
+          }
+        },
+        {
+          "stat": "GroundOuts",
+          "value": 1
+        },
+        {
+          "stat": "StrikeOuts",
+          "value": 1
+        }
+      ]
+    }
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      0,
+      1
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "ejection": null,
+    "event_type": "Strike",
+    "steals": [],
+    "strike": "Looking",
+    "surprise_strike": false,
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      1,
+      1
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "ejection": null,
+    "event_type": "Ball",
+    "steals": [],
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "batter": "Winnie Otas",
+    "cheer": null,
+    "destination": "CenterField",
+    "door_prizes": [],
+    "efflorescence": [],
+    "event_type": "FairBall",
+    "fair_ball_type": "FlyBall"
+  },
+  {
+    "advances": [],
+    "batter": "Winnie Otas",
+    "caught_by": {
+      "name": "Luke Petrosyan",
+      "place": "CF"
+    },
+    "ejection": null,
+    "event_type": "CaughtOut",
+    "fair_ball_type": "FlyBall",
+    "jetpack": false,
+    "perfect": false,
+    "sacrifice": false,
+    "scores": []
+  },
+  {
+    "batter": "David Fujii",
+    "event_type": "NowBatting",
+    "player_swept_away": null,
+    "stats": {
+      "Stats": [
+        {
+          "stat": "HitsForAtBats",
+          "value": {
+            "at_bats": 2,
+            "hits": 0
+          }
+        },
+        {
+          "stat": "StrikeOuts",
+          "value": 1
+        },
+        {
+          "stat": "PopOuts",
+          "value": 1
+        }
+      ]
+    }
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      0,
+      1
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "event_type": "Foul",
+    "foul": "Ball",
+    "steals": [],
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      1,
+      1
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "ejection": null,
+    "event_type": "Ball",
+    "steals": [],
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      1,
+      2
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "event_type": "Foul",
+    "foul": "Ball",
+    "steals": [],
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "batter": "David Fujii",
+    "cheer": null,
+    "ejection": null,
+    "event_type": "StrikeOut",
+    "foul": null,
+    "steals": [],
+    "strike": "Looking",
+    "wither": null
+  },
+  {
+    "event_type": "InningEnd",
+    "number": 5,
+    "side": "Bottom"
+  },
+  {
+    "automatic_runner": null,
+    "batting_team": {
+      "emoji": "💪",
+      "name": "Brosville Dudes"
+    },
+    "event_type": "InningStart",
+    "number": 6,
+    "pitcher_status": {
+      "Same": {
+        "emoji": "🕊️",
+        "name": "Jeanette Hirano"
+      }
+    },
+    "side": "Top"
+  },
+  {
+    "batter": "Fizz Cartwright",
+    "event_type": "NowBatting",
+    "player_swept_away": null,
+    "stats": {
+      "Stats": [
+        {
+          "stat": "HitsForAtBats",
+          "value": {
+            "at_bats": 2,
+            "hits": 0
+          }
+        },
+        {
+          "stat": "Fouls",
+          "value": 1
+        },
+        {
+          "stat": "StrikeOuts",
+          "value": 1
+        }
+      ]
+    }
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      1,
+      0
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "ejection": null,
+    "event_type": "Ball",
+    "steals": [],
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "batter": "Fizz Cartwright",
+    "cheer": null,
+    "destination": "SecondBase",
+    "door_prizes": [],
+    "efflorescence": [],
+    "event_type": "FairBall",
+    "fair_ball_type": "GroundBall"
+  },
+  {
+    "advances": [],
+    "amazing": false,
+    "assassinations": [],
+    "batter": "Fizz Cartwright",
+    "ejection": null,
+    "event_type": "GroundedOut",
+    "fielders": [
+      {
+        "name": "Atem Powell",
+        "place": "2B"
+      },
+      {
+        "name": "Ricky Snow",
+        "place": "1B"
+      }
+    ],
+    "scores": []
+  },
+  {
+    "batter": "Rodney Kumar",
+    "event_type": "NowBatting",
+    "player_swept_away": null,
+    "stats": {
+      "Stats": [
+        {
+          "stat": "HitsForAtBats",
+          "value": {
+            "at_bats": 2,
+            "hits": 0
+          }
+        },
+        {
+          "stat": "GroundOuts",
+          "value": 2
+        }
+      ]
+    }
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "batter": "Rodney Kumar",
+    "cheer": null,
+    "destination": "SecondBase",
+    "door_prizes": [],
+    "efflorescence": [],
+    "event_type": "FairBall",
+    "fair_ball_type": "GroundBall"
+  },
+  {
+    "advances": [],
+    "batter": "Rodney Kumar",
+    "distance": "Single",
+    "ejection": null,
+    "event_type": "BatterToBase",
+    "fair_ball_type": "GroundBall",
+    "fielder": {
+      "name": "Atem Powell",
+      "place": "2B"
+    },
+    "scores": []
+  },
+  {
+    "batter": "Luke Petrosyan",
+    "event_type": "NowBatting",
+    "player_swept_away": null,
+    "stats": {
+      "Stats": [
+        {
+          "stat": "HitsForAtBats",
+          "value": {
+            "at_bats": 1,
+            "hits": 1
+          }
+        },
+        {
+          "stat": "BaseOnBalls",
+          "value": 1
+        },
+        {
+          "stat": "FirstBases",
+          "value": 1
+        }
+      ]
+    }
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "batter": "Luke Petrosyan",
+    "cheer": null,
+    "destination": "RightField",
+    "door_prizes": [],
+    "efflorescence": [],
+    "event_type": "FairBall",
+    "fair_ball_type": "FlyBall"
+  },
+  {
+    "advances": [],
+    "batter": "Luke Petrosyan",
+    "caught_by": {
+      "name": "Lauren Pinheiro",
+      "place": "RF"
+    },
+    "ejection": null,
+    "event_type": "CaughtOut",
+    "fair_ball_type": "FlyBall",
+    "jetpack": false,
+    "perfect": false,
+    "sacrifice": false,
+    "scores": []
+  },
+  {
+    "batter": "Voicemail Skov",
+    "event_type": "NowBatting",
+    "player_swept_away": null,
+    "stats": {
+      "Stats": [
+        {
+          "stat": "HitsForAtBats",
+          "value": {
+            "at_bats": 2,
+            "hits": 1
+          }
+        },
+        {
+          "stat": "StrikeOuts",
+          "value": 1
+        },
+        {
+          "stat": "FirstBases",
+          "value": 1
+        }
+      ]
+    }
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      1,
+      0
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "ejection": null,
+    "event_type": "Ball",
+    "steals": [],
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      2,
+      0
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "ejection": null,
+    "event_type": "Ball",
+    "steals": [],
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      2,
+      1
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "event_type": "Foul",
+    "foul": "Ball",
+    "steals": [],
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      3,
+      1
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "ejection": null,
+    "event_type": "Ball",
+    "steals": [],
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      3,
+      2
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "ejection": null,
+    "event_type": "Strike",
+    "steals": [],
+    "strike": "Swinging",
+    "surprise_strike": false,
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "batter": "Voicemail Skov",
+    "cheer": null,
+    "ejection": null,
+    "event_type": "StrikeOut",
+    "foul": null,
+    "steals": [],
+    "strike": "Looking",
+    "wither": null
+  },
+  {
+    "event_type": "InningEnd",
+    "number": 6,
+    "side": "Top"
+  },
+  {
+    "automatic_runner": null,
+    "batting_team": {
+      "emoji": "🕊️",
+      "name": "Alexandria Cinnamon Birds"
+    },
+    "event_type": "InningStart",
+    "number": 6,
+    "pitcher_status": {
+      "Same": {
+        "emoji": "💪",
+        "name": "Jackson Koval"
+      }
+    },
+    "side": "Bottom"
+  },
+  {
+    "batter": "Ricky Snow",
+    "event_type": "NowBatting",
+    "player_swept_away": null,
+    "stats": {
+      "Stats": [
+        {
+          "stat": "HitsForAtBats",
+          "value": {
+            "at_bats": 2,
+            "hits": 0
+          }
+        },
+        {
+          "stat": "StrikeOuts",
+          "value": 1
+        },
+        {
+          "stat": "GroundOuts",
+          "value": 1
+        }
+      ]
+    }
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      1,
+      0
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "ejection": null,
+    "event_type": "Ball",
+    "steals": [],
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      2,
+      0
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "ejection": null,
+    "event_type": "Ball",
+    "steals": [],
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      2,
+      1
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "ejection": null,
+    "event_type": "Strike",
+    "steals": [],
+    "strike": "Looking",
+    "surprise_strike": false,
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      2,
+      2
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "event_type": "Foul",
+    "foul": "Ball",
+    "steals": [],
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "batter": "Ricky Snow",
+    "cheer": null,
+    "ejection": null,
+    "event_type": "StrikeOut",
+    "foul": null,
+    "steals": [],
+    "strike": "Looking",
+    "wither": null
+  },
+  {
+    "batter": "D. Laurent",
+    "event_type": "NowBatting",
+    "player_swept_away": null,
+    "stats": {
+      "Stats": [
+        {
+          "stat": "HitsForAtBats",
+          "value": {
+            "at_bats": 2,
+            "hits": 1
+          }
+        },
+        {
+          "stat": "SecondBases",
+          "value": 1
+        },
+        {
+          "stat": "GroundOuts",
+          "value": 1
+        }
+      ]
+    }
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      0,
+      1
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "ejection": null,
+    "event_type": "Strike",
+    "steals": [],
+    "strike": "Looking",
+    "surprise_strike": false,
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "batter": "D. Laurent",
+    "cheer": null,
+    "destination": "FirstBase",
+    "door_prizes": [],
+    "efflorescence": [],
+    "event_type": "FairBall",
+    "fair_ball_type": "GroundBall"
+  },
+  {
+    "advances": [],
+    "amazing": false,
+    "assassinations": [],
+    "batter": "D. Laurent",
+    "ejection": null,
+    "event_type": "GroundedOut",
+    "fielders": [
+      {
+        "name": "Cecilia Ogden",
+        "place": "1B"
+      }
+    ],
+    "scores": []
+  },
+  {
+    "batter": "Débora Thorsen",
+    "event_type": "NowBatting",
+    "player_swept_away": null,
+    "stats": {
+      "Stats": [
+        {
+          "stat": "HitsForAtBats",
+          "value": {
+            "at_bats": 2,
+            "hits": 1
+          }
+        },
+        {
+          "stat": "GroundOuts",
+          "value": 1
+        },
+        {
+          "stat": "HomeRuns",
+          "value": 1
+        }
+      ]
+    }
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "batter": "Débora Thorsen",
+    "cheer": null,
+    "destination": "LeftField",
+    "door_prizes": [],
+    "efflorescence": [],
+    "event_type": "FairBall",
+    "fair_ball_type": "FlyBall"
+  },
+  {
+    "advances": [],
+    "batter": "Débora Thorsen",
+    "caught_by": {
+      "name": "Nice Tanner",
+      "place": "LF"
+    },
+    "ejection": null,
+    "event_type": "CaughtOut",
+    "fair_ball_type": "FlyBall",
+    "jetpack": false,
+    "perfect": false,
+    "sacrifice": false,
+    "scores": []
+  },
+  {
+    "event_type": "InningEnd",
+    "number": 6,
+    "side": "Bottom"
+  },
+  {
+    "automatic_runner": null,
+    "batting_team": {
+      "emoji": "💪",
+      "name": "Brosville Dudes"
+    },
+    "event_type": "InningStart",
+    "number": 7,
+    "pitcher_status": {
+      "Same": {
+        "emoji": "🕊️",
+        "name": "Jeanette Hirano"
+      }
+    },
+    "side": "Top"
+  },
+  {
+    "batter": "Dora Castaneda",
+    "event_type": "NowBatting",
+    "player_swept_away": null,
+    "stats": {
+      "Stats": [
+        {
+          "stat": "HitsForAtBats",
+          "value": {
+            "at_bats": 2,
+            "hits": 0
+          }
+        },
+        {
+          "stat": "StrikeOuts",
+          "value": 1
+        },
+        {
+          "stat": "GroundIntoDoublePlays",
+          "value": 1
+        },
+        {
+          "stat": "GroundOuts",
+          "value": 1
+        }
+      ]
+    }
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      0,
+      1
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "ejection": null,
+    "event_type": "Strike",
+    "steals": [],
+    "strike": "Swinging",
+    "surprise_strike": false,
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      0,
+      2
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "ejection": null,
+    "event_type": "Strike",
+    "steals": [],
+    "strike": "Looking",
+    "surprise_strike": false,
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "batter": "Dora Castaneda",
+    "cheer": null,
+    "destination": "ShortStop",
+    "door_prizes": [],
+    "efflorescence": [],
+    "event_type": "FairBall",
+    "fair_ball_type": "GroundBall"
+  },
+  {
+    "advances": [],
+    "amazing": false,
+    "assassinations": [],
+    "batter": "Dora Castaneda",
+    "ejection": null,
+    "event_type": "GroundedOut",
+    "fielders": [
+      {
+        "name": "Winnie Otas",
+        "place": "SS"
+      },
+      {
+        "name": "Ricky Snow",
+        "place": "1B"
+      }
+    ],
+    "scores": []
+  },
+  {
+    "batter": "Gladys Ivanov",
+    "event_type": "NowBatting",
+    "player_swept_away": null,
+    "stats": {
+      "Stats": [
+        {
+          "stat": "HitsForAtBats",
+          "value": {
+            "at_bats": 2,
+            "hits": 1
+          }
+        },
+        {
+          "stat": "GroundOuts",
+          "value": 1
+        },
+        {
+          "stat": "FirstBases",
+          "value": 1
+        }
+      ]
+    }
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      1,
+      0
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "ejection": null,
+    "event_type": "Ball",
+    "steals": [],
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      2,
+      0
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "ejection": null,
+    "event_type": "Ball",
+    "steals": [],
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      3,
+      0
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "ejection": null,
+    "event_type": "Ball",
+    "steals": [],
+    "wither": null
+  },
+  {
+    "advances": [],
+    "assassinations": [],
+    "aurora_photos": null,
+    "batter": "Gladys Ivanov",
+    "cheer": null,
+    "ejection": null,
+    "event_type": "Walk",
+    "scores": [],
+    "wither": null
+  },
+  {
+    "batter": "Casey McNally",
+    "event_type": "NowBatting",
+    "player_swept_away": null,
+    "stats": {
+      "Stats": [
+        {
+          "stat": "HitsForAtBats",
+          "value": {
+            "at_bats": 2,
+            "hits": 1
+          }
+        },
+        {
+          "stat": "FirstBases",
+          "value": 1
+        },
+        {
+          "stat": "StrikeOuts",
+          "value": 1
+        }
+      ]
+    }
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "batter": "Casey McNally",
+    "cheer": null,
+    "destination": "LeftField",
+    "door_prizes": [],
+    "efflorescence": [],
+    "event_type": "FairBall",
+    "fair_ball_type": "LineDrive"
+  },
+  {
+    "advances": [],
+    "batter": "Casey McNally",
+    "caught_by": {
+      "name": "D. Laurent",
+      "place": "LF"
+    },
+    "ejection": null,
+    "event_type": "CaughtOut",
+    "fair_ball_type": "LineDrive",
+    "jetpack": false,
+    "perfect": false,
+    "sacrifice": false,
+    "scores": []
+  },
+  {
+    "batter": "Nice Tanner",
+    "event_type": "NowBatting",
+    "player_swept_away": null,
+    "stats": {
+      "Stats": [
+        {
+          "stat": "HitsForAtBats",
+          "value": {
+            "at_bats": 2,
+            "hits": 0
+          }
+        },
+        {
+          "stat": "BaseOnBalls",
+          "value": 1
+        },
+        {
+          "stat": "GroundOuts",
+          "value": 1
+        },
+        {
+          "stat": "FieldersChoices",
+          "value": 1
+        }
+      ]
+    }
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      0,
+      1
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "ejection": null,
+    "event_type": "Strike",
+    "steals": [],
+    "strike": "Looking",
+    "surprise_strike": false,
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      1,
+      1
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "ejection": null,
+    "event_type": "Ball",
+    "steals": [],
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      2,
+      1
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "ejection": null,
+    "event_type": "Ball",
+    "steals": [],
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "batter": "Nice Tanner",
+    "cheer": null,
+    "destination": "Catcher",
+    "door_prizes": [],
+    "efflorescence": [],
+    "event_type": "FairBall",
+    "fair_ball_type": "Popup"
+  },
+  {
+    "advances": [],
+    "batter": "Nice Tanner",
+    "caught_by": {
+      "name": "Sallie Bonilla",
+      "place": "C"
+    },
+    "ejection": null,
+    "event_type": "CaughtOut",
+    "fair_ball_type": "Popup",
+    "jetpack": false,
+    "perfect": false,
+    "sacrifice": false,
+    "scores": []
+  },
+  {
+    "event_type": "InningEnd",
+    "number": 7,
+    "side": "Top"
+  },
+  {
+    "automatic_runner": null,
+    "batting_team": {
+      "emoji": "🕊️",
+      "name": "Alexandria Cinnamon Birds"
+    },
+    "event_type": "InningStart",
+    "number": 7,
+    "pitcher_status": {
+      "Same": {
+        "emoji": "💪",
+        "name": "Jackson Koval"
+      }
+    },
+    "side": "Bottom"
+  },
+  {
+    "batter": "Atem Powell",
+    "event_type": "NowBatting",
+    "player_swept_away": null,
+    "stats": {
+      "Stats": [
+        {
+          "stat": "HitsForAtBats",
+          "value": {
+            "at_bats": 2,
+            "hits": 1
+          }
+        },
+        {
+          "stat": "StrikeOuts",
+          "value": 1
+        },
+        {
+          "stat": "FirstBases",
+          "value": 1
+        }
+      ]
+    }
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "batter": "Atem Powell",
+    "cheer": null,
+    "destination": "LeftField",
+    "door_prizes": [],
+    "efflorescence": [],
+    "event_type": "FairBall",
+    "fair_ball_type": "FlyBall"
+  },
+  {
+    "advances": [],
+    "batter": "Atem Powell",
+    "caught_by": {
+      "name": "Nice Tanner",
+      "place": "LF"
+    },
+    "ejection": null,
+    "event_type": "CaughtOut",
+    "fair_ball_type": "FlyBall",
+    "jetpack": false,
+    "perfect": false,
+    "sacrifice": false,
+    "scores": []
+  },
+  {
+    "batter": "Lauren Pinheiro",
+    "event_type": "NowBatting",
+    "player_swept_away": null,
+    "stats": {
+      "Stats": [
+        {
+          "stat": "HitsForAtBats",
+          "value": {
+            "at_bats": 1,
+            "hits": 0
+          }
+        },
+        {
+          "stat": "HitByPitchs",
+          "value": 1
+        },
+        {
+          "stat": "LineOuts",
+          "value": 1
+        }
+      ]
+    }
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      1,
+      0
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "ejection": null,
+    "event_type": "Ball",
+    "steals": [],
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      1,
+      1
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "event_type": "Foul",
+    "foul": "Ball",
+    "steals": [],
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "batter": "Lauren Pinheiro",
+    "cheer": null,
+    "destination": "CenterField",
+    "door_prizes": [],
+    "efflorescence": [],
+    "event_type": "FairBall",
+    "fair_ball_type": "FlyBall"
+  },
+  {
+    "advances": [],
+    "batter": "Lauren Pinheiro",
+    "caught_by": {
+      "name": "Luke Petrosyan",
+      "place": "CF"
+    },
+    "ejection": null,
+    "event_type": "CaughtOut",
+    "fair_ball_type": "FlyBall",
+    "jetpack": false,
+    "perfect": false,
+    "sacrifice": false,
+    "scores": []
+  },
+  {
+    "batter": "Lais Prasad",
+    "event_type": "NowBatting",
+    "player_swept_away": null,
+    "stats": {
+      "Stats": [
+        {
+          "stat": "HitsForAtBats",
+          "value": {
+            "at_bats": 2,
+            "hits": 0
+          }
+        },
+        {
+          "stat": "ForceOuts",
+          "value": 1
+        },
+        {
+          "stat": "StrikeOuts",
+          "value": 1
+        }
+      ]
+    }
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      0,
+      1
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "ejection": null,
+    "event_type": "Strike",
+    "steals": [],
+    "strike": "Looking",
+    "surprise_strike": false,
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      0,
+      2
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "ejection": null,
+    "event_type": "Strike",
+    "steals": [],
+    "strike": "Looking",
+    "surprise_strike": false,
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      0,
+      2
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "event_type": "Foul",
+    "foul": "Ball",
+    "steals": [],
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "batter": "Lais Prasad",
+    "cheer": null,
+    "destination": "LeftField",
+    "door_prizes": [],
+    "efflorescence": [],
+    "event_type": "FairBall",
+    "fair_ball_type": "GroundBall"
+  },
+  {
+    "advances": [],
+    "batter": "Lais Prasad",
+    "distance": "Single",
+    "ejection": null,
+    "event_type": "BatterToBase",
+    "fair_ball_type": "GroundBall",
+    "fielder": {
+      "name": "Nice Tanner",
+      "place": "LF"
+    },
+    "scores": []
+  },
+  {
+    "batter": "Sallie Bonilla",
+    "event_type": "NowBatting",
+    "player_swept_away": null,
+    "stats": {
+      "Stats": [
+        {
+          "stat": "HitsForAtBats",
+          "value": {
+            "at_bats": 3,
+            "hits": 2
+          }
+        },
+        {
+          "stat": "FirstBases",
+          "value": 1
+        },
+        {
+          "stat": "ForceOuts",
+          "value": 1
+        },
+        {
+          "stat": "HomeRuns",
+          "value": 1
+        }
+      ]
+    }
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "batter": "Sallie Bonilla",
+    "cheer": null,
+    "destination": "RightField",
+    "door_prizes": [],
+    "efflorescence": [],
+    "event_type": "FairBall",
+    "fair_ball_type": "LineDrive"
+  },
+  {
+    "advances": [],
+    "batter": "Sallie Bonilla",
+    "caught_by": {
+      "name": "Rodney Kumar",
+      "place": "RF"
+    },
+    "ejection": null,
+    "event_type": "CaughtOut",
+    "fair_ball_type": "LineDrive",
+    "jetpack": false,
+    "perfect": false,
+    "sacrifice": false,
+    "scores": []
+  },
+  {
+    "event_type": "InningEnd",
+    "number": 7,
+    "side": "Bottom"
+  },
+  {
+    "automatic_runner": null,
+    "batting_team": {
+      "emoji": "💪",
+      "name": "Brosville Dudes"
+    },
+    "event_type": "InningStart",
+    "number": 8,
+    "pitcher_status": {
+      "Same": {
+        "emoji": "🕊️",
+        "name": "Jeanette Hirano"
+      }
+    },
+    "side": "Top"
+  },
+  {
+    "batter": "Cecilia Ogden",
+    "event_type": "NowBatting",
+    "player_swept_away": null,
+    "stats": {
+      "Stats": [
+        {
+          "stat": "HitsForAtBats",
+          "value": {
+            "at_bats": 3,
+            "hits": 1
+          }
+        },
+        {
+          "stat": "FirstBases",
+          "value": 1
+        },
+        {
+          "stat": "PopOuts",
+          "value": 1
+        },
+        {
+          "stat": "StrikeOuts",
+          "value": 1
+        }
+      ]
+    }
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "batter": "Cecilia Ogden",
+    "cheer": null,
+    "destination": "RightField",
+    "door_prizes": [],
+    "efflorescence": [],
+    "event_type": "FairBall",
+    "fair_ball_type": "FlyBall"
+  },
+  {
+    "advances": [],
+    "batter": "Cecilia Ogden",
+    "caught_by": {
+      "name": "Lauren Pinheiro",
+      "place": "RF"
+    },
+    "ejection": null,
+    "event_type": "CaughtOut",
+    "fair_ball_type": "FlyBall",
+    "jetpack": false,
+    "perfect": false,
+    "sacrifice": false,
+    "scores": []
+  },
+  {
+    "batter": "Fizz Cartwright",
+    "event_type": "NowBatting",
+    "player_swept_away": null,
+    "stats": {
+      "Stats": [
+        {
+          "stat": "HitsForAtBats",
+          "value": {
+            "at_bats": 3,
+            "hits": 0
+          }
+        },
+        {
+          "stat": "Fouls",
+          "value": 1
+        },
+        {
+          "stat": "StrikeOuts",
+          "value": 1
+        },
+        {
+          "stat": "GroundOuts",
+          "value": 1
+        }
+      ]
+    }
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "batter": "Fizz Cartwright",
+    "cheer": null,
+    "destination": "SecondBase",
+    "door_prizes": [],
+    "efflorescence": [],
+    "event_type": "FairBall",
+    "fair_ball_type": "GroundBall"
+  },
+  {
+    "advances": [],
+    "amazing": false,
+    "assassinations": [],
+    "batter": "Fizz Cartwright",
+    "ejection": null,
+    "event_type": "GroundedOut",
+    "fielders": [
+      {
+        "name": "Atem Powell",
+        "place": "2B"
+      },
+      {
+        "name": "Ricky Snow",
+        "place": "1B"
+      }
+    ],
+    "scores": []
+  },
+  {
+    "batter": "Rodney Kumar",
+    "event_type": "NowBatting",
+    "player_swept_away": null,
+    "stats": {
+      "Stats": [
+        {
+          "stat": "HitsForAtBats",
+          "value": {
+            "at_bats": 3,
+            "hits": 1
+          }
+        },
+        {
+          "stat": "GroundOuts",
+          "value": 2
+        },
+        {
+          "stat": "FirstBases",
+          "value": 1
+        }
+      ]
+    }
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      1,
+      0
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "ejection": null,
+    "event_type": "Ball",
+    "steals": [],
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      1,
+      1
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "ejection": null,
+    "event_type": "Strike",
+    "steals": [],
+    "strike": "Looking",
+    "surprise_strike": false,
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      2,
+      1
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "ejection": null,
+    "event_type": "Ball",
+    "steals": [],
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      2,
+      2
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "event_type": "Foul",
+    "foul": "Ball",
+    "steals": [],
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      3,
+      2
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "ejection": null,
+    "event_type": "Ball",
+    "steals": [],
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      3,
+      2
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "event_type": "Foul",
+    "foul": "Ball",
+    "steals": [],
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "batter": "Rodney Kumar",
+    "cheer": null,
+    "ejection": null,
+    "event_type": "StrikeOut",
+    "foul": null,
+    "steals": [],
+    "strike": "Swinging",
+    "wither": null
+  },
+  {
+    "event_type": "InningEnd",
+    "number": 8,
+    "side": "Top"
+  },
+  {
+    "automatic_runner": null,
+    "batting_team": {
+      "emoji": "🕊️",
+      "name": "Alexandria Cinnamon Birds"
+    },
+    "event_type": "InningStart",
+    "number": 8,
+    "pitcher_status": {
+      "Same": {
+        "emoji": "💪",
+        "name": "Jackson Koval"
+      }
+    },
+    "side": "Bottom"
+  },
+  {
+    "batter": "Winnie Otas",
+    "event_type": "NowBatting",
+    "player_swept_away": null,
+    "stats": {
+      "Stats": [
+        {
+          "stat": "HitsForAtBats",
+          "value": {
+            "at_bats": 3,
+            "hits": 0
+          }
+        },
+        {
+          "stat": "GroundOuts",
+          "value": 1
+        },
+        {
+          "stat": "StrikeOuts",
+          "value": 1
+        },
+        {
+          "stat": "ForceOuts",
+          "value": 1
+        }
+      ]
+    }
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      1,
+      0
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "ejection": null,
+    "event_type": "Ball",
+    "steals": [],
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      1,
+      1
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "event_type": "Foul",
+    "foul": "Ball",
+    "steals": [],
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "batter": "Winnie Otas",
+    "cheer": null,
+    "destination": "CenterField",
+    "door_prizes": [],
+    "efflorescence": [],
+    "event_type": "FairBall",
+    "fair_ball_type": "GroundBall"
+  },
+  {
+    "advances": [],
+    "batter": "Winnie Otas",
+    "distance": "Single",
+    "ejection": null,
+    "event_type": "BatterToBase",
+    "fair_ball_type": "GroundBall",
+    "fielder": {
+      "name": "Luke Petrosyan",
+      "place": "CF"
+    },
+    "scores": []
+  },
+  {
+    "batter": "David Fujii",
+    "event_type": "NowBatting",
+    "player_swept_away": null,
+    "stats": {
+      "Stats": [
+        {
+          "stat": "HitsForAtBats",
+          "value": {
+            "at_bats": 3,
+            "hits": 0
+          }
+        },
+        {
+          "stat": "StrikeOuts",
+          "value": 2
+        },
+        {
+          "stat": "PopOuts",
+          "value": 1
+        }
+      ]
+    }
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "batter": "David Fujii",
+    "cheer": null,
+    "destination": "LeftField",
+    "door_prizes": [],
+    "efflorescence": [],
+    "event_type": "FairBall",
+    "fair_ball_type": "FlyBall"
+  },
+  {
+    "advances": [
+      {
+        "base": "Third",
+        "runner": "Winnie Otas"
+      }
+    ],
+    "batter": "David Fujii",
+    "distance": "Double",
+    "ejection": null,
+    "event_type": "BatterToBase",
+    "fair_ball_type": "FlyBall",
+    "fielder": {
+      "name": "Nice Tanner",
+      "place": "LF"
+    },
+    "scores": []
+  },
+  {
+    "batter": "Ricky Snow",
+    "event_type": "NowBatting",
+    "player_swept_away": null,
+    "stats": {
+      "Stats": [
+        {
+          "stat": "HitsForAtBats",
+          "value": {
+            "at_bats": 3,
+            "hits": 0
+          }
+        },
+        {
+          "stat": "StrikeOuts",
+          "value": 2
+        },
+        {
+          "stat": "GroundOuts",
+          "value": 1
+        }
+      ]
+    }
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": "ARumbleOfExcitementRollsThroughTheStadium",
+    "count": [
+      0,
+      1
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "ejection": null,
+    "event_type": "Strike",
+    "steals": [],
+    "strike": "Swinging",
+    "surprise_strike": false,
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "batter": "Ricky Snow",
+    "cheer": null,
+    "destination": "CenterField",
+    "door_prizes": [],
+    "efflorescence": [],
+    "event_type": "FairBall",
+    "fair_ball_type": "FlyBall"
+  },
+  {
+    "batter": "Ricky Snow",
+    "destination": "CenterField",
+    "ejection": null,
+    "event_type": "HomeRun",
+    "fair_ball_type": "FlyBall",
+    "grand_slam": false,
+    "scores": [
+      "Winnie Otas",
+      "David Fujii"
+    ]
+  },
+  {
+    "batter": "D. Laurent",
+    "event_type": "NowBatting",
+    "player_swept_away": null,
+    "stats": {
+      "Stats": [
+        {
+          "stat": "HitsForAtBats",
+          "value": {
+            "at_bats": 3,
+            "hits": 1
+          }
+        },
+        {
+          "stat": "SecondBases",
+          "value": 1
+        },
+        {
+          "stat": "GroundOuts",
+          "value": 2
+        }
+      ]
+    }
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      0,
+      1
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "event_type": "Foul",
+    "foul": "Ball",
+    "steals": [],
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      0,
+      2
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "event_type": "Foul",
+    "foul": "Ball",
+    "steals": [],
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "batter": "D. Laurent",
+    "cheer": null,
+    "ejection": null,
+    "event_type": "StrikeOut",
+    "foul": null,
+    "steals": [],
+    "strike": "Swinging",
+    "wither": null
+  },
+  {
+    "batter": "Débora Thorsen",
+    "event_type": "NowBatting",
+    "player_swept_away": null,
+    "stats": {
+      "Stats": [
+        {
+          "stat": "HitsForAtBats",
+          "value": {
+            "at_bats": 3,
+            "hits": 1
+          }
+        },
+        {
+          "stat": "GroundOuts",
+          "value": 1
+        },
+        {
+          "stat": "HomeRuns",
+          "value": 1
+        },
+        {
+          "stat": "ForceOuts",
+          "value": 1
+        }
+      ]
+    }
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      1,
+      0
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "ejection": null,
+    "event_type": "Ball",
+    "steals": [],
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "batter": "Débora Thorsen",
+    "cheer": null,
+    "destination": "LeftField",
+    "door_prizes": [],
+    "efflorescence": [],
+    "event_type": "FairBall",
+    "fair_ball_type": "FlyBall"
+  },
+  {
+    "batter": "Débora Thorsen",
+    "destination": "LeftField",
+    "ejection": null,
+    "event_type": "HomeRun",
+    "fair_ball_type": "FlyBall",
+    "grand_slam": false,
+    "scores": []
+  },
+  {
+    "batter": "Atem Powell",
+    "event_type": "NowBatting",
+    "player_swept_away": null,
+    "stats": {
+      "Stats": [
+        {
+          "stat": "HitsForAtBats",
+          "value": {
+            "at_bats": 3,
+            "hits": 1
+          }
+        },
+        {
+          "stat": "StrikeOuts",
+          "value": 1
+        },
+        {
+          "stat": "FirstBases",
+          "value": 1
+        },
+        {
+          "stat": "ForceOuts",
+          "value": 1
+        }
+      ]
+    }
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      1,
+      0
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "ejection": null,
+    "event_type": "Ball",
+    "steals": [],
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      1,
+      1
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "ejection": null,
+    "event_type": "Strike",
+    "steals": [],
+    "strike": "Looking",
+    "surprise_strike": false,
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      2,
+      1
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "ejection": null,
+    "event_type": "Ball",
+    "steals": [],
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      3,
+      1
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "ejection": null,
+    "event_type": "Ball",
+    "steals": [],
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      3,
+      2
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "event_type": "Foul",
+    "foul": "Ball",
+    "steals": [],
+    "wither": null
+  },
+  {
+    "advances": [],
+    "assassinations": [],
+    "aurora_photos": null,
+    "batter": "Atem Powell",
+    "cheer": null,
+    "ejection": null,
+    "event_type": "Walk",
+    "scores": [],
+    "wither": null
+  },
+  {
+    "batter": "Lauren Pinheiro",
+    "event_type": "NowBatting",
+    "player_swept_away": null,
+    "stats": {
+      "Stats": [
+        {
+          "stat": "HitsForAtBats",
+          "value": {
+            "at_bats": 2,
+            "hits": 0
+          }
+        },
+        {
+          "stat": "HitByPitchs",
+          "value": 1
+        },
+        {
+          "stat": "LineOuts",
+          "value": 1
+        },
+        {
+          "stat": "ForceOuts",
+          "value": 1
+        }
+      ]
+    }
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      0,
+      1
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "ejection": null,
+    "event_type": "Strike",
+    "steals": [],
+    "strike": "Swinging",
+    "surprise_strike": false,
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "batter": "Lauren Pinheiro",
+    "cheer": null,
+    "destination": "CenterField",
+    "door_prizes": [],
+    "efflorescence": [],
+    "event_type": "FairBall",
+    "fair_ball_type": "LineDrive"
+  },
+  {
+    "advances": [
+      {
+        "base": "Third",
+        "runner": "Atem Powell"
+      }
+    ],
+    "batter": "Lauren Pinheiro",
+    "distance": "Single",
+    "ejection": null,
+    "event_type": "BatterToBase",
+    "fair_ball_type": "LineDrive",
+    "fielder": {
+      "name": "Luke Petrosyan",
+      "place": "CF"
+    },
+    "scores": []
+  },
+  {
+    "batter": "Lais Prasad",
+    "event_type": "NowBatting",
+    "player_swept_away": null,
+    "stats": {
+      "Stats": [
+        {
+          "stat": "HitsForAtBats",
+          "value": {
+            "at_bats": 3,
+            "hits": 1
+          }
+        },
+        {
+          "stat": "ForceOuts",
+          "value": 1
+        },
+        {
+          "stat": "StrikeOuts",
+          "value": 1
+        },
+        {
+          "stat": "FirstBases",
+          "value": 1
+        }
+      ]
+    }
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "batter": "Lais Prasad",
+    "cheer": null,
+    "destination": "LeftField",
+    "door_prizes": [],
+    "efflorescence": [],
+    "event_type": "FairBall",
+    "fair_ball_type": "GroundBall"
+  },
+  {
+    "advances": [
+      {
+        "base": "Third",
+        "runner": "Lauren Pinheiro"
+      }
+    ],
+    "batter": "Lais Prasad",
+    "distance": "Single",
+    "ejection": null,
+    "event_type": "BatterToBase",
+    "fair_ball_type": "GroundBall",
+    "fielder": {
+      "name": "Nice Tanner",
+      "place": "LF"
+    },
+    "scores": [
+      "Atem Powell"
+    ]
+  },
+  {
+    "batter": "Sallie Bonilla",
+    "event_type": "NowBatting",
+    "player_swept_away": null,
+    "stats": {
+      "Stats": [
+        {
+          "stat": "HitsForAtBats",
+          "value": {
+            "at_bats": 4,
+            "hits": 2
+          }
+        },
+        {
+          "stat": "FirstBases",
+          "value": 1
+        },
+        {
+          "stat": "ForceOuts",
+          "value": 1
+        },
+        {
+          "stat": "HomeRuns",
+          "value": 1
+        },
+        {
+          "stat": "LineOuts",
+          "value": 1
+        }
+      ]
+    }
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": "FansSlapTheWallsInRhythm",
+    "count": [
+      1,
+      0
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "ejection": null,
+    "event_type": "Ball",
+    "steals": [],
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      1,
+      1
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "event_type": "Foul",
+    "foul": "Ball",
+    "steals": [],
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      1,
+      2
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "ejection": null,
+    "event_type": "Strike",
+    "steals": [],
+    "strike": "Looking",
+    "surprise_strike": false,
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "batter": "Sallie Bonilla",
+    "cheer": null,
+    "destination": "ThirdBase",
+    "door_prizes": [],
+    "efflorescence": [],
+    "event_type": "FairBall",
+    "fair_ball_type": "GroundBall"
+  },
+  {
+    "advances": [],
+    "batter": "Sallie Bonilla",
+    "double_trouble": null,
+    "ejection": null,
+    "event_type": "DoublePlayGrounded",
+    "fielders": [
+      {
+        "name": "Fizz Cartwright",
+        "place": "3B"
+      },
+      {
+        "name": "Voicemail Skov",
+        "place": "SS"
+      },
+      {
+        "name": "Cecilia Ogden",
+        "place": "1B"
+      }
+    ],
+    "out_one": {
+      "base": "SecondBase",
+      "runner": "Lais Prasad"
+    },
+    "out_two": {
+      "base": "FirstBase",
+      "runner": "Sallie Bonilla"
+    },
+    "sacrifice": false,
+    "scores": []
+  },
+  {
+    "event_type": "InningEnd",
+    "number": 8,
+    "side": "Bottom"
+  },
+  {
+    "automatic_runner": null,
+    "batting_team": {
+      "emoji": "💪",
+      "name": "Brosville Dudes"
+    },
+    "event_type": "InningStart",
+    "number": 9,
+    "pitcher_status": {
+      "Same": {
+        "emoji": "🕊️",
+        "name": "Jeanette Hirano"
+      }
+    },
+    "side": "Top"
+  },
+  {
+    "batter": "Luke Petrosyan",
+    "event_type": "NowBatting",
+    "player_swept_away": null,
+    "stats": {
+      "Stats": [
+        {
+          "stat": "HitsForAtBats",
+          "value": {
+            "at_bats": 2,
+            "hits": 1
+          }
+        },
+        {
+          "stat": "BaseOnBalls",
+          "value": 1
+        },
+        {
+          "stat": "FirstBases",
+          "value": 1
+        },
+        {
+          "stat": "ForceOuts",
+          "value": 1
+        }
+      ]
+    }
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      1,
+      0
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "ejection": null,
+    "event_type": "Ball",
+    "steals": [],
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      1,
+      1
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "ejection": null,
+    "event_type": "Strike",
+    "steals": [],
+    "strike": "Swinging",
+    "surprise_strike": false,
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      1,
+      2
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "event_type": "Foul",
+    "foul": "Ball",
+    "steals": [],
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      2,
+      2
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "ejection": null,
+    "event_type": "Ball",
+    "steals": [],
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      2,
+      2
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "event_type": "Foul",
+    "foul": "Ball",
+    "steals": [],
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      3,
+      2
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "ejection": null,
+    "event_type": "Ball",
+    "steals": [],
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "batter": "Luke Petrosyan",
+    "cheer": null,
+    "destination": "CenterField",
+    "door_prizes": [],
+    "efflorescence": [],
+    "event_type": "FairBall",
+    "fair_ball_type": "LineDrive"
+  },
+  {
+    "advances": [],
+    "batter": "Luke Petrosyan",
+    "distance": "Triple",
+    "ejection": null,
+    "event_type": "BatterToBase",
+    "fair_ball_type": "LineDrive",
+    "fielder": {
+      "name": "Lais Prasad",
+      "place": "CF"
+    },
+    "scores": []
+  },
+  {
+    "event_type": "MoundVisit",
+    "manager_name": null,
+    "mound_visit_type": "MoundVisit",
+    "team": {
+      "emoji": "🕊️",
+      "name": "Alexandria Cinnamon Birds"
+    }
+  },
+  {
+    "event_type": "PitcherRemains",
+    "remaining_pitcher": {
+      "name": "Jeanette Hirano",
+      "place": "SP1"
+    }
+  },
+  {
+    "batter": "Voicemail Skov",
+    "event_type": "NowBatting",
+    "player_swept_away": null,
+    "stats": {
+      "Stats": [
+        {
+          "stat": "HitsForAtBats",
+          "value": {
+            "at_bats": 3,
+            "hits": 1
+          }
+        },
+        {
+          "stat": "StrikeOuts",
+          "value": 2
+        },
+        {
+          "stat": "FirstBases",
+          "value": 1
+        }
+      ]
+    }
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "batter": "Voicemail Skov",
+    "cheer": null,
+    "destination": "FirstBase",
+    "door_prizes": [],
+    "efflorescence": [],
+    "event_type": "FairBall",
+    "fair_ball_type": "GroundBall"
+  },
+  {
+    "advances": [],
+    "amazing": false,
+    "assassinations": [],
+    "batter": "Voicemail Skov",
+    "ejection": null,
+    "event_type": "GroundedOut",
+    "fielders": [
+      {
+        "name": "Ricky Snow",
+        "place": "1B"
+      }
+    ],
+    "scores": [
+      "Luke Petrosyan"
+    ]
+  },
+  {
+    "batter": "Dora Castaneda",
+    "event_type": "NowBatting",
+    "player_swept_away": null,
+    "stats": {
+      "Stats": [
+        {
+          "stat": "HitsForAtBats",
+          "value": {
+            "at_bats": 3,
+            "hits": 0
+          }
+        },
+        {
+          "stat": "StrikeOuts",
+          "value": 1
+        },
+        {
+          "stat": "GroundIntoDoublePlays",
+          "value": 1
+        },
+        {
+          "stat": "GroundOuts",
+          "value": 2
+        }
+      ]
+    }
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      0,
+      1
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "event_type": "Foul",
+    "foul": "Ball",
+    "steals": [],
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      1,
+      1
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "ejection": null,
+    "event_type": "Ball",
+    "steals": [],
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      1,
+      2
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "ejection": null,
+    "event_type": "Strike",
+    "steals": [],
+    "strike": "Swinging",
+    "surprise_strike": false,
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      2,
+      2
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "ejection": null,
+    "event_type": "Ball",
+    "steals": [],
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "batter": "Dora Castaneda",
+    "cheer": null,
+    "destination": "FirstBase",
+    "door_prizes": [],
+    "efflorescence": [],
+    "event_type": "FairBall",
+    "fair_ball_type": "Popup"
+  },
+  {
+    "advances": [],
+    "batter": "Dora Castaneda",
+    "caught_by": {
+      "name": "Ricky Snow",
+      "place": "1B"
+    },
+    "ejection": null,
+    "event_type": "CaughtOut",
+    "fair_ball_type": "Popup",
+    "jetpack": false,
+    "perfect": false,
+    "sacrifice": false,
+    "scores": []
+  },
+  {
+    "batter": "Gladys Ivanov",
+    "event_type": "NowBatting",
+    "player_swept_away": null,
+    "stats": {
+      "Stats": [
+        {
+          "stat": "HitsForAtBats",
+          "value": {
+            "at_bats": 2,
+            "hits": 1
+          }
+        },
+        {
+          "stat": "GroundOuts",
+          "value": 1
+        },
+        {
+          "stat": "FirstBases",
+          "value": 1
+        },
+        {
+          "stat": "BaseOnBalls",
+          "value": 1
+        }
+      ]
+    }
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      0,
+      1
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "event_type": "Foul",
+    "foul": "Ball",
+    "steals": [],
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      0,
+      2
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "event_type": "Foul",
+    "foul": "Ball",
+    "steals": [],
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      1,
+      2
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "ejection": null,
+    "event_type": "Ball",
+    "steals": [],
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      2,
+      2
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "ejection": null,
+    "event_type": "Ball",
+    "steals": [],
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      3,
+      2
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "ejection": null,
+    "event_type": "Ball",
+    "steals": [],
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      3,
+      2
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "event_type": "Foul",
+    "foul": "Ball",
+    "steals": [],
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      3,
+      2
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "event_type": "Foul",
+    "foul": "Ball",
+    "steals": [],
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "batter": "Gladys Ivanov",
+    "cheer": null,
+    "ejection": null,
+    "event_type": "StrikeOut",
+    "foul": null,
+    "steals": [],
+    "strike": "Looking",
+    "wither": null
+  },
+  {
+    "event_type": "InningEnd",
+    "number": 9,
+    "side": "Top"
+  },
+  {
+    "event_type": "GameOver",
+    "message": "QuotedGAMEOVER"
+  },
+  {
+    "event_type": "Recordkeeping",
+    "losing_score": 1,
+    "losing_team": {
+      "emoji": "💪",
+      "name": "Brosville Dudes"
+    },
+    "winning_score": 7,
+    "winning_team": {
+      "emoji": "🕊️",
+      "name": "Alexandria Cinnamon Birds"
+    }
+  }
+]

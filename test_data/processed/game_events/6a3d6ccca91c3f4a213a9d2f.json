@@ -1,1 +1,6220 @@
-[{"away_team":{"emoji":"🚀","name":"Houston Lunar Operations Personnel"},"event_type":"LiveNow","home_team":{"emoji":"🦢","name":"Kitchener Cobra Chickens"},"stadium":"Average Everyday Park","weather":null},{"away_pitcher":"Mildred Ashley","away_team":{"emoji":"🚀","name":"Houston Lunar Operations Personnel"},"event_type":"PitchingMatchup","home_pitcher":"Quibble Jakobsen","home_team":{"emoji":"🦢","name":"Kitchener Cobra Chickens"}},{"event_type":"Lineup","manager_name":"Luuke Strawberry","players":[{"name":"G. Chauhan","place":"SS"},{"name":"Emilio Kowalczyk","place":"2B"},{"name":"Cabbage Tóth","place":"C"},{"name":"Jackson Khatun","place":"1B"},{"name":"Myra Voigt","place":"DH"},{"name":"Ann Naylor","place":"CF"},{"name":"Sarah Oshima","place":"LF"},{"name":"Mel Baumgartner","place":"RF"},{"name":"April Kovalchuk","place":"3B"}],"side":"Away"},{"event_type":"Lineup","manager_name":"Frederick Oliver","players":[{"name":"Squirrel Benson","place":"DH"},{"name":"McBaseball Aguilera","place":"LF"},{"name":"Goober Gotrax","place":"2B"},{"name":"Doc Petrauskas","place":"C"},{"name":"Grerbert Eyestrain","place":"CF"},{"name":"Ol' Bauer","place":"SS"},{"name":"Odysseus Figuereo","place":"RF"},{"name":"Lugubrious Sinclair","place":"3B"},{"name":"Geraldine van der Veen","place":"1B"}],"side":"Home"},{"event_type":"PlayBall"},{"automatic_runner":null,"batting_team":{"emoji":"🚀","name":"Houston Lunar Operations Personnel"},"event_type":"InningStart","number":1,"pitcher_status":{"Same":{"emoji":"🦢","name":"Quibble Jakobsen"}},"side":"Top"},{"batter":"G. Chauhan","event_type":"NowBatting","player_swept_away":null,"stats":"FirstPA"},{"assassinations":[],"aurora_photos":null,"cheer":null,"count":[1,0],"door_prizes":[],"efflorescence":[],"ejection":null,"event_type":"Ball","steals":[],"wither":null},{"assassinations":[],"aurora_photos":null,"cheer":null,"count":[1,1],"door_prizes":[],"efflorescence":[],"ejection":null,"event_type":"Strike","steals":[],"strike":"Looking","surprise_strike":false,"wither":null},{"assassinations":[],"aurora_photos":null,"cheer":null,"count":[1,2],"door_prizes":[],"efflorescence":[],"event_type":"Foul","foul":"Ball","steals":[],"wither":null},{"assassinations":[],"aurora_photos":null,"cheer":null,"count":[1,2],"door_prizes":[],"efflorescence":[],"event_type":"Foul","foul":"Ball","steals":[],"wither":null},{"assassinations":[],"aurora_photos":null,"cheer":null,"count":[1,2],"door_prizes":[],"efflorescence":[],"event_type":"Foul","foul":"Ball","steals":[],"wither":null},{"assassinations":[],"aurora_photos":null,"batter":"G. Chauhan","cheer":null,"destination":"RightField","door_prizes":[],"efflorescence":[],"event_type":"FairBall","fair_ball_type":"LineDrive"},{"advances":[],"batter":"G. Chauhan","distance":"Single","ejection":null,"event_type":"BatterToBase","fair_ball_type":"LineDrive","fielder":{"name":"Odysseus Figuereo","place":"RF"},"scores":[]},{"batter":"Emilio Kowalczyk","event_type":"NowBatting","player_swept_away":null,"stats":"FirstPA"},{"assassinations":[],"aurora_photos":null,"cheer":null,"count":[0,1],"door_prizes":[],"efflorescence":[],"event_type":"Foul","foul":"Ball","steals":[],"wither":null},{"assassinations":[],"aurora_photos":null,"cheer":null,"count":[1,1],"door_prizes":[],"efflorescence":[],"ejection":null,"event_type":"Ball","steals":[],"wither":null},{"assassinations":[],"aurora_photos":null,"cheer":null,"count":[2,1],"door_prizes":[],"efflorescence":[],"ejection":null,"event_type":"Ball","steals":[],"wither":null},{"assassinations":[],"aurora_photos":null,"cheer":null,"count":[2,2],"door_prizes":[],"efflorescence":[],"event_type":"Foul","foul":"Ball","steals":[],"wither":null},{"assassinations":[],"aurora_photos":null,"cheer":null,"count":[3,2],"door_prizes":[],"efflorescence":[],"ejection":null,"event_type":"Ball","steals":[],"wither":null},{"advances":[{"base":"Second","runner":"G. Chauhan"}],"assassinations":[],"aurora_photos":null,"batter":"Emilio Kowalczyk","cheer":null,"ejection":null,"event_type":"Walk","scores":[],"wither":null},{"batter":"Cabbage Tóth","event_type":"NowBatting","player_swept_away":null,"stats":"FirstPA"},{"assassinations":[],"aurora_photos":null,"cheer":"TheCheeringIsRelentless","count":[0,1],"door_prizes":[],"efflorescence":[],"ejection":null,"event_type":"Strike","steals":[],"strike":"Swinging","surprise_strike":false,"wither":null},{"assassinations":[],"aurora_photos":null,"batter":"Cabbage Tóth","cheer":null,"destination":"FirstBase","door_prizes":[],"efflorescence":[],"event_type":"FairBall","fair_ball_type":"GroundBall"},{"advances":[],"batter":"Cabbage Tóth","distance":"Double","ejection":null,"event_type":"BatterToBase","fair_ball_type":"GroundBall","fielder":{"name":"Odysseus Figuereo","place":"RF"},"scores":["G. Chauhan","Emilio Kowalczyk"]},{"batter":"Jackson Khatun","event_type":"NowBatting","player_swept_away":null,"stats":"FirstPA"},{"assassinations":[],"aurora_photos":null,"cheer":null,"count":[1,0],"door_prizes":[],"efflorescence":[],"ejection":null,"event_type":"Ball","steals":[],"wither":null},{"assassinations":[],"aurora_photos":null,"cheer":null,"count":[2,0],"door_prizes":[],"efflorescence":[],"ejection":null,"event_type":"Ball","steals":[],"wither":null},{"assassinations":[],"aurora_photos":null,"cheer":null,"count":[3,0],"door_prizes":[],"efflorescence":[],"ejection":null,"event_type":"Ball","steals":[],"wither":null},{"assassinations":[],"aurora_photos":null,"cheer":null,"count":[3,1],"door_prizes":[],"efflorescence":[],"event_type":"Foul","foul":"Ball","steals":[],"wither":null},{"assassinations":[],"aurora_photos":null,"batter":"Jackson Khatun","cheer":null,"destination":"FirstBase","door_prizes":[],"efflorescence":[],"event_type":"FairBall","fair_ball_type":"Popup"},{"advances":[],"batter":"Jackson Khatun","caught_by":{"name":"Geraldine van der Veen","place":"1B"},"ejection":null,"event_type":"CaughtOut","fair_ball_type":"Popup","jetpack":false,"perfect":false,"sacrifice":false,"scores":[]},{"batter":"Myra Voigt","event_type":"NowBatting","player_swept_away":null,"stats":"FirstPA"},{"assassinations":[],"aurora_photos":null,"cheer":null,"count":[0,1],"door_prizes":[],"efflorescence":[],"ejection":null,"event_type":"Strike","steals":[],"strike":"Looking","surprise_strike":false,"wither":null},{"assassinations":[],"aurora_photos":null,"cheer":null,"count":[0,2],"door_prizes":[],"efflorescence":[],"ejection":null,"event_type":"Strike","steals":[],"strike":"Looking","surprise_strike":false,"wither":null},{"assassinations":[],"aurora_photos":null,"batter":"Myra Voigt","cheer":"TheCrowdEruptsIntoCheers","destination":"CenterField","door_prizes":[],"efflorescence":[],"event_type":"FairBall","fair_ball_type":"LineDrive"},{"advances":[{"base":"Third","runner":"Cabbage Tóth"}],"batter":"Myra Voigt","caught_by":{"name":"Grerbert Eyestrain","place":"CF"},"ejection":null,"event_type":"CaughtOut","fair_ball_type":"LineDrive","jetpack":false,"perfect":false,"sacrifice":false,"scores":[]},{"batter":"Ann Naylor","event_type":"NowBatting","player_swept_away":null,"stats":"FirstPA"},{"assassinations":[],"aurora_photos":null,"cheer":null,"count":[1,0],"door_prizes":[],"efflorescence":[],"ejection":null,"event_type":"Ball","steals":[],"wither":null},{"assassinations":[],"aurora_photos":null,"cheer":null,"count":[1,1],"door_prizes":[],"efflorescence":[],"ejection":null,"event_type":"Strike","steals":[],"strike":"Looking","surprise_strike":false,"wither":null},{"assassinations":[],"aurora_photos":null,"cheer":null,"count":[1,2],"door_prizes":[],"efflorescence":[],"ejection":null,"event_type":"Strike","steals":[],"strike":"Swinging","surprise_strike":false,"wither":null},{"assassinations":[],"aurora_photos":null,"cheer":null,"count":[1,2],"door_prizes":[],"efflorescence":[],"event_type":"Foul","foul":"Ball","steals":[],"wither":null},{"assassinations":[],"aurora_photos":null,"cheer":null,"count":[1,2],"door_prizes":[],"efflorescence":[],"event_type":"Foul","foul":"Ball","steals":[],"wither":null},{"assassinations":[],"aurora_photos":null,"batter":"Ann Naylor","cheer":null,"ejection":null,"event_type":"StrikeOut","foul":null,"steals":[],"strike":"Looking","wither":null},{"event_type":"InningEnd","number":1,"side":"Top"},{"automatic_runner":null,"batting_team":{"emoji":"🦢","name":"Kitchener Cobra Chickens"},"event_type":"InningStart","number":1,"pitcher_status":{"Same":{"emoji":"🚀","name":"Mildred Ashley"}},"side":"Bottom"},{"batter":"Squirrel Benson","event_type":"NowBatting","player_swept_away":null,"stats":"FirstPA"},{"assassinations":[],"aurora_photos":null,"cheer":null,"count":[0,1],"door_prizes":[],"efflorescence":[],"ejection":null,"event_type":"Strike","steals":[],"strike":"Looking","surprise_strike":false,"wither":null},{"assassinations":[],"aurora_photos":null,"cheer":null,"count":[0,2],"door_prizes":[],"efflorescence":[],"ejection":null,"event_type":"Strike","steals":[],"strike":"Looking","surprise_strike":false,"wither":null},{"advances":[],"aurora_photos":null,"batter":"Squirrel Benson","cheer":null,"door_prizes":[],"efflorescence":[],"ejection":null,"event_type":"HitByPitch","scores":[],"wither":null},{"batter":"McBaseball Aguilera","event_type":"NowBatting","player_swept_away":null,"stats":"FirstPA"},{"assassinations":[],"aurora_photos":null,"cheer":null,"count":[1,0],"door_prizes":[],"efflorescence":[],"ejection":null,"event_type":"Ball","steals":[],"wither":null},{"assassinations":[],"aurora_photos":null,"cheer":null,"count":[2,0],"door_prizes":[],"efflorescence":[],"ejection":null,"event_type":"Ball","steals":[],"wither":null},{"assassinations":[],"aurora_photos":null,"cheer":null,"count":[2,1],"door_prizes":[],"efflorescence":[],"event_type":"Foul","foul":"Ball","steals":[],"wither":null},{"assassinations":[],"aurora_photos":null,"cheer":null,"count":[3,1],"door_prizes":[],"efflorescence":[],"ejection":null,"event_type":"Ball","steals":[],"wither":null},{"advances":[{"base":"Second","runner":"Squirrel Benson"}],"assassinations":[],"aurora_photos":null,"batter":"McBaseball Aguilera","cheer":null,"ejection":null,"event_type":"Walk","scores":[],"wither":null},{"batter":"Goober Gotrax","event_type":"NowBatting","player_swept_away":null,"stats":"FirstPA"},{"advances":[{"base":"Third","runner":"Squirrel Benson"},{"base":"Second","runner":"McBaseball Aguilera"}],"aurora_photos":null,"batter":"Goober Gotrax","cheer":"TheHomeTownSectionIsDeafening","door_prizes":[],"efflorescence":[],"ejection":null,"event_type":"HitByPitch","scores":[],"wither":null},{"batter":"Doc Petrauskas","event_type":"NowBatting","player_swept_away":null,"stats":"FirstPA"},{"assassinations":[],"aurora_photos":null,"cheer":null,"count":[1,0],"door_prizes":[],"efflorescence":[],"ejection":null,"event_type":"Ball","steals":[],"wither":null},{"assassinations":[],"aurora_photos":null,"cheer":null,"count":[1,1],"door_prizes":[],"efflorescence":[],"ejection":null,"event_type":"Strike","steals":[],"strike":"Looking","surprise_strike":false,"wither":null},{"assassinations":[],"aurora_photos":null,"cheer":null,"count":[1,2],"door_prizes":[],"efflorescence":[],"ejection":null,"event_type":"Strike","steals":[],"strike":"Swinging","surprise_strike":false,"wither":null},{"assassinations":[],"aurora_photos":null,"cheer":null,"count":[1,2],"door_prizes":[],"efflorescence":[],"event_type":"Foul","foul":"Ball","steals":[],"wither":null},{"assassinations":[],"aurora_photos":null,"cheer":null,"count":[1,2],"door_prizes":[],"efflorescence":[],"event_type":"Foul","foul":"Ball","steals":[],"wither":null},{"assassinations":[],"aurora_photos":null,"batter":"Doc Petrauskas","cheer":null,"ejection":null,"event_type":"StrikeOut","foul":null,"steals":[],"strike":"Looking","wither":null},{"batter":"Grerbert Eyestrain","event_type":"NowBatting","player_swept_away":null,"stats":"FirstPA"},{"assassinations":[],"aurora_photos":null,"batter":"Grerbert Eyestrain","cheer":null,"destination":"RightField","door_prizes":[],"efflorescence":[],"event_type":"FairBall","fair_ball_type":"FlyBall"},{"advances":[],"batter":"Grerbert Eyestrain","caught_by":{"name":"Mel Baumgartner","place":"RF"},"ejection":null,"event_type":"CaughtOut","fair_ball_type":"FlyBall","jetpack":false,"perfect":false,"sacrifice":true,"scores":["Squirrel Benson"]},{"batter":"Himbo Narciso","event_type":"NowBatting","player_swept_away":"Ol' Bauer","stats":"FirstPA"},{"assassinations":[],"aurora_photos":null,"cheer":null,"count":[0,1],"door_prizes":[],"efflorescence":[],"event_type":"Foul","foul":"Ball","steals":[],"wither":null},{"assassinations":[],"aurora_photos":null,"cheer":"ARumbleOfExcitementRollsThroughTheStadium","count":[1,1],"door_prizes":[],"efflorescence":[],"ejection":null,"event_type":"Ball","steals":[],"wither":null},{"assassinations":[],"aurora_photos":null,"cheer":null,"count":[2,1],"door_prizes":[],"efflorescence":[],"ejection":null,"event_type":"Ball","steals":[],"wither":null},{"assassinations":[],"aurora_photos":null,"cheer":null,"count":[2,2],"door_prizes":[],"efflorescence":[],"ejection":null,"event_type":"Strike","steals":[],"strike":"Swinging","surprise_strike":false,"wither":null},{"assassinations":[],"aurora_photos":null,"cheer":null,"count":[2,2],"door_prizes":[],"efflorescence":[],"event_type":"Foul","foul":"Ball","steals":[],"wither":null},{"assassinations":[],"aurora_photos":null,"batter":"Himbo Narciso","cheer":null,"ejection":null,"event_type":"StrikeOut","foul":null,"steals":[],"strike":"Swinging","wither":null},{"event_type":"InningEnd","number":1,"side":"Bottom"},{"automatic_runner":null,"batting_team":{"emoji":"🚀","name":"Houston Lunar Operations Personnel"},"event_type":"InningStart","number":2,"pitcher_status":{"Same":{"emoji":"🦢","name":"Quibble Jakobsen"}},"side":"Top"},{"batter":"Sarah Oshima","event_type":"NowBatting","player_swept_away":null,"stats":"FirstPA"},{"assassinations":[],"aurora_photos":null,"cheer":null,"count":[0,1],"door_prizes":[],"efflorescence":[],"ejection":null,"event_type":"Strike","steals":[],"strike":"Swinging","surprise_strike":false,"wither":null},{"assassinations":[],"aurora_photos":null,"batter":"Sarah Oshima","cheer":null,"destination":"SecondBase","door_prizes":[],"efflorescence":[],"event_type":"FairBall","fair_ball_type":"GroundBall"},{"advances":[],"batter":"Sarah Oshima","distance":"Single","ejection":null,"event_type":"BatterToBase","fair_ball_type":"GroundBall","fielder":{"name":"Grerbert Eyestrain","place":"CF"},"scores":[]},{"batter":"Mel Baumgartner","event_type":"NowBatting","player_swept_away":null,"stats":"FirstPA"},{"assassinations":[],"aurora_photos":null,"cheer":null,"count":[0,1],"door_prizes":[],"efflorescence":[],"ejection":null,"event_type":"Strike","steals":[],"strike":"Looking","surprise_strike":false,"wither":null},{"assassinations":[],"aurora_photos":null,"batter":"Mel Baumgartner","cheer":null,"destination":"SecondBase","door_prizes":[],"efflorescence":[],"event_type":"FairBall","fair_ball_type":"GroundBall"},{"advances":[],"batter":"Mel Baumgartner","double_trouble":null,"ejection":null,"event_type":"DoublePlayGrounded","fielders":[{"name":"Goober Gotrax","place":"2B"},{"name":"Ol' Bauer","place":"SS"},{"name":"Geraldine van der Veen","place":"1B"}],"out_one":{"base":"SecondBase","runner":"Sarah Oshima"},"out_two":{"base":"FirstBase","runner":"Mel Baumgartner"},"sacrifice":false,"scores":[]},{"batter":"April Kovalchuk","event_type":"NowBatting","player_swept_away":null,"stats":"FirstPA"},{"assassinations":[],"aurora_photos":null,"cheer":null,"count":[1,0],"door_prizes":[],"efflorescence":[],"ejection":null,"event_type":"Ball","steals":[],"wither":null},{"assassinations":[],"aurora_photos":null,"batter":"April Kovalchuk","cheer":null,"destination":"CenterField","door_prizes":[],"efflorescence":[],"event_type":"FairBall","fair_ball_type":"FlyBall"},{"advances":[],"batter":"April Kovalchuk","caught_by":{"name":"Grerbert Eyestrain","place":"CF"},"ejection":null,"event_type":"CaughtOut","fair_ball_type":"FlyBall","jetpack":false,"perfect":false,"sacrifice":false,"scores":[]},{"event_type":"InningEnd","number":2,"side":"Top"},{"automatic_runner":null,"batting_team":{"emoji":"🦢","name":"Kitchener Cobra Chickens"},"event_type":"InningStart","number":2,"pitcher_status":{"Same":{"emoji":"🚀","name":"Mildred Ashley"}},"side":"Bottom"},{"batter":"Odysseus Figuereo","event_type":"NowBatting","player_swept_away":null,"stats":"FirstPA"},{"assassinations":[],"aurora_photos":null,"cheer":null,"count":[1,0],"door_prizes":[],"efflorescence":[],"ejection":null,"event_type":"Ball","steals":[],"wither":null},{"assassinations":[],"aurora_photos":null,"batter":"Odysseus Figuereo","cheer":null,"destination":"Catcher","door_prizes":[],"efflorescence":[],"event_type":"FairBall","fair_ball_type":"Popup"},{"advances":[],"batter":"Odysseus Figuereo","caught_by":{"name":"Cabbage Tóth","place":"C"},"ejection":null,"event_type":"CaughtOut","fair_ball_type":"Popup","jetpack":false,"perfect":false,"sacrifice":false,"scores":[]},{"batter":"Lugubrious Sinclair","event_type":"NowBatting","player_swept_away":null,"stats":"FirstPA"},{"assassinations":[],"aurora_photos":null,"cheer":null,"count":[0,1],"door_prizes":[],"efflorescence":[],"event_type":"Foul","foul":"Ball","steals":[],"wither":null},{"assassinations":[],"aurora_photos":null,"cheer":null,"count":[0,2],"door_prizes":[],"efflorescence":[],"ejection":null,"event_type":"Strike","steals":[],"strike":"Looking","surprise_strike":false,"wither":null},{"assassinations":[],"aurora_photos":null,"cheer":null,"count":[1,2],"door_prizes":[],"efflorescence":[],"ejection":null,"event_type":"Ball","steals":[],"wither":null},{"assassinations":[],"aurora_photos":null,"cheer":null,"count":[2,2],"door_prizes":[],"efflorescence":[],"ejection":null,"event_type":"Ball","steals":[],"wither":null},{"assassinations":[],"aurora_photos":null,"cheer":null,"count":[2,2],"door_prizes":[],"efflorescence":[],"event_type":"Foul","foul":"Ball","steals":[],"wither":null},{"assassinations":[],"aurora_photos":null,"cheer":null,"count":[3,2],"door_prizes":[],"efflorescence":[],"ejection":null,"event_type":"Ball","steals":[],"wither":null},{"assassinations":[],"aurora_photos":null,"batter":"Lugubrious Sinclair","cheer":null,"destination":"LeftField","door_prizes":[],"efflorescence":[],"event_type":"FairBall","fair_ball_type":"LineDrive"},{"advances":[],"batter":"Lugubrious Sinclair","distance":"Single","ejection":null,"event_type":"BatterToBase","fair_ball_type":"LineDrive","fielder":{"name":"Sarah Oshima","place":"LF"},"scores":[]},{"batter":"Geraldine van der Veen","event_type":"NowBatting","player_swept_away":null,"stats":"FirstPA"},{"assassinations":[],"aurora_photos":null,"cheer":null,"count":[0,1],"door_prizes":[],"efflorescence":[],"ejection":null,"event_type":"Strike","steals":[],"strike":"Looking","surprise_strike":false,"wither":null},{"assassinations":[],"aurora_photos":null,"cheer":null,"count":[0,2],"door_prizes":[],"efflorescence":[],"event_type":"Foul","foul":"Ball","steals":[],"wither":null},{"assassinations":[],"aurora_photos":null,"cheer":null,"count":[1,2],"door_prizes":[],"efflorescence":[],"ejection":null,"event_type":"Ball","steals":[],"wither":null},{"assassinations":[],"aurora_photos":null,"cheer":null,"count":[2,2],"door_prizes":[],"efflorescence":[],"ejection":null,"event_type":"Ball","steals":[],"wither":null},{"assassinations":[],"aurora_photos":null,"cheer":null,"count":[3,2],"door_prizes":[],"efflorescence":[],"ejection":null,"event_type":"Ball","steals":[],"wither":null},{"advances":[{"base":"Second","runner":"Lugubrious Sinclair"}],"assassinations":[],"aurora_photos":null,"batter":"Geraldine van der Veen","cheer":null,"ejection":null,"event_type":"Walk","scores":[],"wither":null},{"batter":"Squirrel Benson","event_type":"NowBatting","player_swept_away":null,"stats":{"Stats":[{"stat":"HitByPitchs","value":1}]}},{"assassinations":[],"aurora_photos":null,"batter":"Squirrel Benson","cheer":null,"destination":"ShortStop","door_prizes":[],"efflorescence":[],"event_type":"FairBall","fair_ball_type":"GroundBall"},{"advances":[{"base":"Third","runner":"Lugubrious Sinclair"}],"batter":"Squirrel Benson","ejection":null,"event_type":"ForceOut","fair_ball_type":"GroundBall","fielders":[{"name":"G. Chauhan","place":"SS"}],"out":{"base":"Second","runner":"Geraldine van der Veen"},"scores":[]},{"batter":"McBaseball Aguilera","event_type":"NowBatting","player_swept_away":null,"stats":{"Stats":[{"stat":"BaseOnBalls","value":1}]}},{"assassinations":[],"aurora_photos":null,"cheer":null,"count":[0,1],"door_prizes":[],"efflorescence":[],"ejection":null,"event_type":"Strike","steals":[],"strike":"Swinging","surprise_strike":false,"wither":null},{"assassinations":[],"aurora_photos":null,"cheer":null,"count":[1,1],"door_prizes":[],"efflorescence":[],"ejection":null,"event_type":"Ball","steals":[],"wither":null},{"assassinations":[],"aurora_photos":null,"cheer":"TheStandsAreElectric","count":[2,1],"door_prizes":[],"efflorescence":[],"ejection":null,"event_type":"Ball","steals":[],"wither":null},{"assassinations":[],"aurora_photos":null,"batter":"McBaseball Aguilera","cheer":null,"destination":"SecondBase","door_prizes":[],"efflorescence":[],"event_type":"FairBall","fair_ball_type":"GroundBall"},{"advances":[],"amazing":false,"assassinations":[],"batter":"McBaseball Aguilera","ejection":null,"event_type":"GroundedOut","fielders":[{"name":"Emilio Kowalczyk","place":"2B"},{"name":"Jackson Khatun","place":"1B"}],"scores":[]},{"event_type":"InningEnd","number":2,"side":"Bottom"},{"automatic_runner":null,"batting_team":{"emoji":"🚀","name":"Houston Lunar Operations Personnel"},"event_type":"InningStart","number":3,"pitcher_status":{"Same":{"emoji":"🦢","name":"Quibble Jakobsen"}},"side":"Top"},{"batter":"Jackson Gallo","event_type":"NowBatting","player_swept_away":"G. Chauhan","stats":"FirstPA"},{"assassinations":[],"aurora_photos":null,"cheer":null,"count":[0,1],"door_prizes":[],"efflorescence":[],"ejection":null,"event_type":"Strike","steals":[],"strike":"Looking","surprise_strike":false,"wither":null},{"assassinations":[],"aurora_photos":null,"cheer":null,"count":[0,2],"door_prizes":[],"efflorescence":[],"ejection":null,"event_type":"Strike","steals":[],"strike":"Looking","surprise_strike":false,"wither":null},{"assassinations":[],"aurora_photos":null,"batter":"Jackson Gallo","cheer":null,"destination":"CenterField","door_prizes":[],"efflorescence":[],"event_type":"FairBall","fair_ball_type":"FlyBall"},{"advances":[],"batter":"Jackson Gallo","caught_by":{"name":"Grerbert Eyestrain","place":"CF"},"ejection":null,"event_type":"CaughtOut","fair_ball_type":"FlyBall","jetpack":false,"perfect":false,"sacrifice":false,"scores":[]},{"batter":"Emilio Kowalczyk","event_type":"NowBatting","player_swept_away":null,"stats":{"Stats":[{"stat":"BaseOnBalls","value":1}]}},{"assassinations":[],"aurora_photos":null,"batter":"Emilio Kowalczyk","cheer":null,"destination":"FirstBase","door_prizes":[],"efflorescence":[],"event_type":"FairBall","fair_ball_type":"GroundBall"},{"advances":[],"amazing":false,"assassinations":[],"batter":"Emilio Kowalczyk","ejection":null,"event_type":"GroundedOut","fielders":[{"name":"Geraldine van der Veen","place":"1B"}],"scores":[]},{"batter":"Cabbage Tóth","event_type":"NowBatting","player_swept_away":null,"stats":{"Stats":[{"stat":"HitsForAtBats","value":{"at_bats":1,"hits":1}},{"stat":"SecondBases","value":1}]}},{"assassinations":[],"aurora_photos":null,"cheer":null,"count":[1,0],"door_prizes":[],"efflorescence":[],"ejection":null,"event_type":"Ball","steals":[],"wither":null},{"assassinations":[],"aurora_photos":null,"cheer":null,"count":[1,1],"door_prizes":[],"efflorescence":[],"event_type":"Foul","foul":"Ball","steals":[],"wither":null},{"assassinations":[],"aurora_photos":null,"cheer":null,"count":[1,2],"door_prizes":[],"efflorescence":[],"event_type":"Foul","foul":"Ball","steals":[],"wither":null},{"assassinations":[],"aurora_photos":null,"batter":"Cabbage Tóth","cheer":null,"ejection":null,"event_type":"StrikeOut","foul":null,"steals":[],"strike":"Looking","wither":null},{"event_type":"InningEnd","number":3,"side":"Top"},{"automatic_runner":null,"batting_team":{"emoji":"🦢","name":"Kitchener Cobra Chickens"},"event_type":"InningStart","number":3,"pitcher_status":{"Same":{"emoji":"🚀","name":"Mildred Ashley"}},"side":"Bottom"},{"batter":"Goober Gotrax","event_type":"NowBatting","player_swept_away":null,"stats":{"Stats":[{"stat":"HitByPitchs","value":1}]}},{"assassinations":[],"aurora_photos":null,"cheer":null,"count":[1,0],"door_prizes":[],"efflorescence":[],"ejection":null,"event_type":"Ball","steals":[],"wither":null},{"assassinations":[],"aurora_photos":null,"batter":"Goober Gotrax","cheer":null,"destination":"ShortStop","door_prizes":[],"efflorescence":[],"event_type":"FairBall","fair_ball_type":"GroundBall"},{"advances":[],"amazing":false,"assassinations":[],"batter":"Goober Gotrax","ejection":null,"event_type":"GroundedOut","fielders":[{"name":"G. Chauhan","place":"SS"},{"name":"Jackson Khatun","place":"1B"}],"scores":[]},{"batter":"Doc Petrauskas","event_type":"NowBatting","player_swept_away":null,"stats":{"Stats":[{"stat":"HitsForAtBats","value":{"at_bats":1,"hits":0}},{"stat":"StrikeOuts","value":1}]}},{"assassinations":[],"aurora_photos":null,"batter":"Doc Petrauskas","cheer":null,"destination":"FirstBase","door_prizes":[],"efflorescence":[],"event_type":"FairBall","fair_ball_type":"GroundBall"},{"advances":[],"amazing":false,"assassinations":[],"batter":"Doc Petrauskas","ejection":null,"event_type":"GroundedOut","fielders":[{"name":"Jackson Khatun","place":"1B"}],"scores":[]},{"batter":"Grerbert Eyestrain","event_type":"NowBatting","player_swept_away":null,"stats":{"Stats":[{"stat":"SacrificeFlies","value":1}]}},{"assassinations":[],"aurora_photos":null,"cheer":null,"count":[1,0],"door_prizes":[],"efflorescence":[],"ejection":null,"event_type":"Ball","steals":[],"wither":null},{"assassinations":[],"aurora_photos":null,"cheer":null,"count":[1,1],"door_prizes":[],"efflorescence":[],"event_type":"Foul","foul":"Ball","steals":[],"wither":null},{"assassinations":[],"aurora_photos":null,"cheer":null,"count":[2,1],"door_prizes":[],"efflorescence":[],"ejection":null,"event_type":"Ball","steals":[],"wither":null},{"assassinations":[],"aurora_photos":null,"cheer":null,"count":[3,1],"door_prizes":[],"efflorescence":[],"ejection":null,"event_type":"Ball","steals":[],"wither":null},{"assassinations":[],"aurora_photos":null,"batter":"Grerbert Eyestrain","cheer":null,"destination":"ThirdBase","door_prizes":[],"efflorescence":[],"event_type":"FairBall","fair_ball_type":"GroundBall"},{"advances":[],"amazing":false,"assassinations":[],"batter":"Grerbert Eyestrain","ejection":null,"event_type":"GroundedOut","fielders":[{"name":"April Kovalchuk","place":"3B"},{"name":"Jackson Khatun","place":"1B"}],"scores":[]},{"event_type":"InningEnd","number":3,"side":"Bottom"},{"automatic_runner":null,"batting_team":{"emoji":"🚀","name":"Houston Lunar Operations Personnel"},"event_type":"InningStart","number":4,"pitcher_status":{"Same":{"emoji":"🦢","name":"Quibble Jakobsen"}},"side":"Top"},{"batter":"Jackson Khatun","event_type":"NowBatting","player_swept_away":null,"stats":{"Stats":[{"stat":"HitsForAtBats","value":{"at_bats":1,"hits":0}},{"stat":"PopOuts","value":1}]}},{"assassinations":[],"aurora_photos":null,"cheer":null,"count":[0,1],"door_prizes":[],"efflorescence":[],"ejection":null,"event_type":"Strike","steals":[],"strike":"Looking","surprise_strike":false,"wither":null},{"assassinations":[],"aurora_photos":null,"cheer":null,"count":[0,2],"door_prizes":[],"efflorescence":[],"event_type":"Foul","foul":"Ball","steals":[],"wither":null},{"assassinations":[],"aurora_photos":null,"batter":"Jackson Khatun","cheer":null,"ejection":null,"event_type":"StrikeOut","foul":null,"steals":[],"strike":"Swinging","wither":null},{"batter":"Myra Voigt","event_type":"NowBatting","player_swept_away":null,"stats":{"Stats":[{"stat":"HitsForAtBats","value":{"at_bats":1,"hits":0}},{"stat":"LineOuts","value":1}]}},{"assassinations":[],"aurora_photos":null,"cheer":null,"count":[1,0],"door_prizes":[],"efflorescence":[],"ejection":null,"event_type":"Ball","steals":[],"wither":null},{"assassinations":[],"aurora_photos":null,"cheer":null,"count":[1,1],"door_prizes":[],"efflorescence":[],"event_type":"Foul","foul":"Ball","steals":[],"wither":null},{"assassinations":[],"aurora_photos":null,"cheer":null,"count":[1,2],"door_prizes":[],"efflorescence":[],"ejection":null,"event_type":"Strike","steals":[],"strike":"Looking","surprise_strike":false,"wither":null},{"assassinations":[],"aurora_photos":null,"cheer":null,"count":[2,2],"door_prizes":[],"efflorescence":[],"ejection":null,"event_type":"Ball","steals":[],"wither":null},{"assassinations":[],"aurora_photos":null,"cheer":null,"count":[2,2],"door_prizes":[],"efflorescence":[],"event_type":"Foul","foul":"Ball","steals":[],"wither":null},{"assassinations":[],"aurora_photos":null,"cheer":null,"count":[3,2],"door_prizes":[],"efflorescence":[],"ejection":null,"event_type":"Ball","steals":[],"wither":null},{"advances":[],"assassinations":[],"aurora_photos":null,"batter":"Myra Voigt","cheer":null,"ejection":null,"event_type":"Walk","scores":[],"wither":null},{"batter":"Ann Naylor","event_type":"NowBatting","player_swept_away":null,"stats":{"Stats":[{"stat":"HitsForAtBats","value":{"at_bats":1,"hits":0}},{"stat":"StrikeOuts","value":1}]}},{"assassinations":[],"aurora_photos":null,"cheer":null,"count":[1,0],"door_prizes":[],"efflorescence":[],"ejection":null,"event_type":"Ball","steals":[],"wither":null},{"assassinations":[],"aurora_photos":null,"cheer":null,"count":[2,0],"door_prizes":[],"efflorescence":[],"ejection":null,"event_type":"Ball","steals":[],"wither":null},{"assassinations":[],"aurora_photos":null,"batter":"Ann Naylor","cheer":null,"destination":"SecondBase","door_prizes":[],"efflorescence":[],"event_type":"FairBall","fair_ball_type":"GroundBall"},{"advances":[],"batter":"Ann Naylor","double_trouble":null,"ejection":null,"event_type":"DoublePlayGrounded","fielders":[{"name":"Goober Gotrax","place":"2B"},{"name":"Geraldine van der Veen","place":"1B"}],"out_one":{"base":"SecondBase","runner":"Myra Voigt"},"out_two":{"base":"FirstBase","runner":"Ann Naylor"},"sacrifice":false,"scores":[]},{"event_type":"InningEnd","number":4,"side":"Top"},{"automatic_runner":null,"batting_team":{"emoji":"🦢","name":"Kitchener Cobra Chickens"},"event_type":"InningStart","number":4,"pitcher_status":{"Same":{"emoji":"🚀","name":"Mildred Ashley"}},"side":"Bottom"},{"batter":"Ol' Bauer","event_type":"NowBatting","player_swept_away":null,"stats":"FirstPA"},{"assassinations":[],"aurora_photos":null,"cheer":null,"count":[0,1],"door_prizes":[],"efflorescence":[],"ejection":null,"event_type":"Strike","steals":[],"strike":"Looking","surprise_strike":false,"wither":null},{"assassinations":[],"aurora_photos":null,"cheer":null,"count":[0,2],"door_prizes":[],"efflorescence":[],"ejection":null,"event_type":"Strike","steals":[],"strike":"Looking","surprise_strike":false,"wither":null},{"assassinations":[],"aurora_photos":null,"cheer":null,"count":[1,2],"door_prizes":[],"efflorescence":[],"ejection":null,"event_type":"Ball","steals":[],"wither":null},{"assassinations":[],"aurora_photos":null,"batter":"Ol' Bauer","cheer":null,"destination":"FirstBase","door_prizes":[],"efflorescence":[],"event_type":"FairBall","fair_ball_type":"GroundBall"},{"advances":[],"amazing":false,"assassinations":[],"batter":"Ol' Bauer","ejection":null,"event_type":"GroundedOut","fielders":[{"name":"Jackson Khatun","place":"1B"}],"scores":[]},{"batter":"Odysseus Figuereo","event_type":"NowBatting","player_swept_away":null,"stats":{"Stats":[{"stat":"HitsForAtBats","value":{"at_bats":1,"hits":0}},{"stat":"PopOuts","value":1}]}},{"assassinations":[],"aurora_photos":null,"cheer":null,"count":[0,1],"door_prizes":[],"efflorescence":[],"event_type":"Foul","foul":"Ball","steals":[],"wither":null},{"assassinations":[],"aurora_photos":null,"cheer":null,"count":[1,1],"door_prizes":[],"efflorescence":[],"ejection":null,"event_type":"Ball","steals":[],"wither":null},{"assassinations":[],"aurora_photos":null,"cheer":null,"count":[1,2],"door_prizes":[],"efflorescence":[],"ejection":null,"event_type":"Strike","steals":[],"strike":"Looking","surprise_strike":false,"wither":null},{"assassinations":[],"aurora_photos":null,"cheer":null,"count":[1,2],"door_prizes":[],"efflorescence":[],"event_type":"Foul","foul":"Ball","steals":[],"wither":null},{"assassinations":[],"aurora_photos":null,"cheer":null,"count":[2,2],"door_prizes":[],"efflorescence":[],"ejection":null,"event_type":"Ball","steals":[],"wither":null},{"assassinations":[],"aurora_photos":null,"batter":"Odysseus Figuereo","cheer":null,"destination":"CenterField","door_prizes":[],"efflorescence":[],"event_type":"FairBall","fair_ball_type":"FlyBall"},{"advances":[],"batter":"Odysseus Figuereo","caught_by":{"name":"Ann Naylor","place":"CF"},"ejection":null,"event_type":"CaughtOut","fair_ball_type":"FlyBall","jetpack":false,"perfect":false,"sacrifice":false,"scores":[]},{"batter":"Lugubrious Sinclair","event_type":"NowBatting","player_swept_away":null,"stats":{"Stats":[{"stat":"HitsForAtBats","value":{"at_bats":1,"hits":1}},{"stat":"FirstBases","value":1}]}},{"assassinations":[],"aurora_photos":null,"cheer":null,"count":[0,1],"door_prizes":[],"efflorescence":[],"event_type":"Foul","foul":"Ball","steals":[],"wither":null},{"assassinations":[],"aurora_photos":null,"cheer":null,"count":[1,1],"door_prizes":[],"efflorescence":[],"ejection":null,"event_type":"Ball","steals":[],"wither":null},{"assassinations":[],"aurora_photos":null,"cheer":null,"count":[1,2],"door_prizes":[],"efflorescence":[],"event_type":"Foul","foul":"Ball","steals":[],"wither":null},{"assassinations":[],"aurora_photos":null,"batter":"Lugubrious Sinclair","cheer":null,"ejection":null,"event_type":"StrikeOut","foul":"Tip","steals":[],"strike":"Swinging","wither":null},{"event_type":"InningEnd","number":4,"side":"Bottom"},{"automatic_runner":null,"batting_team":{"emoji":"🚀","name":"Houston Lunar Operations Personnel"},"event_type":"InningStart","number":5,"pitcher_status":{"Same":{"emoji":"🦢","name":"Quibble Jakobsen"}},"side":"Top"},{"batter":"Sarah Oshima","event_type":"NowBatting","player_swept_away":null,"stats":{"Stats":[{"stat":"HitsForAtBats","value":{"at_bats":1,"hits":1}},{"stat":"FirstBases","value":1}]}},{"assassinations":[],"aurora_photos":null,"cheer":null,"count":[0,1],"door_prizes":[],"efflorescence":[],"ejection":null,"event_type":"Strike","steals":[],"strike":"Looking","surprise_strike":false,"wither":null},{"assassinations":[],"aurora_photos":null,"cheer":null,"count":[1,1],"door_prizes":[],"efflorescence":[],"ejection":null,"event_type":"Ball","steals":[],"wither":null},{"assassinations":[],"aurora_photos":null,"cheer":null,"count":[1,2],"door_prizes":[],"efflorescence":[],"event_type":"Foul","foul":"Ball","steals":[],"wither":null},{"assassinations":[],"aurora_photos":null,"cheer":null,"count":[2,2],"door_prizes":[],"efflorescence":[],"ejection":null,"event_type":"Ball","steals":[],"wither":null},{"assassinations":[],"aurora_photos":null,"cheer":null,"count":[3,2],"door_prizes":[],"efflorescence":[],"ejection":null,"event_type":"Ball","steals":[],"wither":null},{"assassinations":[],"aurora_photos":null,"batter":"Sarah Oshima","cheer":null,"ejection":null,"event_type":"StrikeOut","foul":null,"steals":[],"strike":"Looking","wither":null},{"batter":"Mel Baumgartner","event_type":"NowBatting","player_swept_away":null,"stats":{"Stats":[{"stat":"HitsForAtBats","value":{"at_bats":1,"hits":0}},{"stat":"GroundIntoDoublePlays","value":1},{"stat":"GroundOuts","value":1}]}},{"assassinations":[],"aurora_photos":null,"cheer":null,"count":[0,1],"door_prizes":[],"efflorescence":[],"event_type":"Foul","foul":"Ball","steals":[],"wither":null},{"assassinations":[],"aurora_photos":null,"cheer":null,"count":[0,2],"door_prizes":[],"efflorescence":[],"ejection":null,"event_type":"Strike","steals":[],"strike":"Looking","surprise_strike":false,"wither":null},{"assassinations":[],"aurora_photos":null,"cheer":null,"count":[1,2],"door_prizes":[],"efflorescence":[],"ejection":null,"event_type":"Ball","steals":[],"wither":null},{"assassinations":[],"aurora_photos":null,"cheer":null,"count":[1,2],"door_prizes":[],"efflorescence":[],"event_type":"Foul","foul":"Ball","steals":[],"wither":null},{"assassinations":[],"aurora_photos":null,"batter":"Mel Baumgartner","cheer":null,"ejection":null,"event_type":"StrikeOut","foul":null,"steals":[],"strike":"Swinging","wither":null},{"batter":"April Kovalchuk","event_type":"NowBatting","player_swept_away":null,"stats":{"Stats":[{"stat":"HitsForAtBats","value":{"at_bats":1,"hits":0}},{"stat":"ForceOuts","value":1}]}},{"assassinations":[],"aurora_photos":null,"cheer":null,"count":[1,0],"door_prizes":[],"efflorescence":[],"ejection":null,"event_type":"Ball","steals":[],"wither":null},{"assassinations":[],"aurora_photos":null,"cheer":null,"count":[2,0],"door_prizes":[],"efflorescence":[],"ejection":null,"event_type":"Ball","steals":[],"wither":null},{"assassinations":[],"aurora_photos":null,"cheer":null,"count":[3,0],"door_prizes":[],"efflorescence":[],"ejection":null,"event_type":"Ball","steals":[],"wither":null},{"advances":[],"assassinations":[],"aurora_photos":null,"batter":"April Kovalchuk","cheer":null,"ejection":null,"event_type":"Walk","scores":[],"wither":null},{"batter":"G. Chauhan","event_type":"NowBatting","player_swept_away":null,"stats":{"Stats":[{"stat":"HitsForAtBats","value":{"at_bats":1,"hits":1}},{"stat":"FirstBases","value":1}]}},{"assassinations":[],"aurora_photos":null,"batter":"G. Chauhan","cheer":null,"destination":"FirstBase","door_prizes":[],"efflorescence":[],"event_type":"FairBall","fair_ball_type":"Popup"},{"advances":[],"batter":"G. Chauhan","caught_by":{"name":"Geraldine van der Veen","place":"1B"},"ejection":null,"event_type":"CaughtOut","fair_ball_type":"Popup","jetpack":false,"perfect":false,"sacrifice":false,"scores":[]},{"event_type":"InningEnd","number":5,"side":"Top"},{"automatic_runner":null,"batting_team":{"emoji":"🦢","name":"Kitchener Cobra Chickens"},"event_type":"InningStart","number":5,"pitcher_status":{"Same":{"emoji":"🚀","name":"Mildred Ashley"}},"side":"Bottom"},{"batter":"Lester à la Mode","event_type":"NowBatting","player_swept_away":"Geraldine van der Veen","stats":"FirstPA"},{"assassinations":[],"aurora_photos":null,"cheer":null,"count":[0,1],"door_prizes":[],"efflorescence":[],"ejection":null,"event_type":"Strike","steals":[],"strike":"Looking","surprise_strike":false,"wither":null},{"assassinations":[],"aurora_photos":null,"cheer":null,"count":[1,1],"door_prizes":[],"efflorescence":[],"ejection":null,"event_type":"Ball","steals":[],"wither":null},{"assassinations":[],"aurora_photos":null,"batter":"Lester à la Mode","cheer":null,"destination":"ShortStop","door_prizes":[],"efflorescence":[],"event_type":"FairBall","fair_ball_type":"GroundBall"},{"advances":[],"batter":"Lester à la Mode","distance":"Double","ejection":null,"event_type":"BatterToBase","fair_ball_type":"GroundBall","fielder":{"name":"Sarah Oshima","place":"LF"},"scores":[]},{"batter":"Squirrel Benson","event_type":"NowBatting","player_swept_away":null,"stats":{"Stats":[{"stat":"HitsForAtBats","value":{"at_bats":1,"hits":0}},{"stat":"HitByPitchs","value":1},{"stat":"Fouls","value":1}]}},{"assassinations":[],"aurora_photos":null,"batter":"Squirrel Benson","cheer":null,"destination":"Pitcher","door_prizes":[],"efflorescence":[],"event_type":"FairBall","fair_ball_type":"GroundBall"},{"advances":[{"base":"Third","runner":"Lester à la Mode"}],"batter":"Squirrel Benson","distance":"Single","ejection":null,"event_type":"BatterToBase","fair_ball_type":"GroundBall","fielder":{"name":"Mildred Ashley","place":"P"},"scores":[]},{"batter":"McBaseball Aguilera","event_type":"NowBatting","player_swept_away":null,"stats":{"Stats":[{"stat":"HitsForAtBats","value":{"at_bats":1,"hits":0}},{"stat":"BaseOnBalls","value":1},{"stat":"GroundOuts","value":1}]}},{"assassinations":[],"aurora_photos":null,"cheer":null,"count":[1,0],"door_prizes":[],"efflorescence":[],"ejection":null,"event_type":"Ball","steals":[],"wither":null},{"assassinations":[],"aurora_photos":null,"cheer":null,"count":[2,0],"door_prizes":[],"efflorescence":[],"ejection":null,"event_type":"Ball","steals":[],"wither":null},{"assassinations":[],"aurora_photos":null,"cheer":null,"count":[2,1],"door_prizes":[],"efflorescence":[],"event_type":"Foul","foul":"Tip","steals":[],"wither":null},{"assassinations":[],"aurora_photos":null,"cheer":"TheHomeSupportersCantContainThemselves","count":[3,1],"door_prizes":[],"efflorescence":[],"ejection":null,"event_type":"Ball","steals":[],"wither":null},{"assassinations":[],"aurora_photos":null,"cheer":null,"count":[3,2],"door_prizes":[],"efflorescence":[],"event_type":"Foul","foul":"Ball","steals":[],"wither":null},{"advances":[{"base":"Second","runner":"Squirrel Benson"}],"assassinations":[],"aurora_photos":null,"batter":"McBaseball Aguilera","cheer":null,"ejection":null,"event_type":"Walk","scores":[],"wither":null},{"batter":"Goober Gotrax","event_type":"NowBatting","player_swept_away":null,"stats":{"Stats":[{"stat":"HitsForAtBats","value":{"at_bats":1,"hits":0}},{"stat":"HitByPitchs","value":1},{"stat":"GroundOuts","value":1}]}},{"assassinations":[],"aurora_photos":null,"cheer":null,"count":[0,1],"door_prizes":[],"efflorescence":[],"event_type":"Foul","foul":"Ball","steals":[],"wither":null},{"assassinations":[],"aurora_photos":null,"cheer":null,"count":[0,2],"door_prizes":[],"efflorescence":[],"ejection":null,"event_type":"Strike","steals":[],"strike":"Swinging","surprise_strike":false,"wither":null},{"assassinations":[],"aurora_photos":null,"cheer":null,"count":[1,2],"door_prizes":[],"efflorescence":[],"ejection":null,"event_type":"Ball","steals":[],"wither":null},{"assassinations":[],"aurora_photos":null,"batter":"Goober Gotrax","cheer":null,"ejection":null,"event_type":"StrikeOut","foul":null,"steals":[],"strike":"Looking","wither":null},{"event_type":"MoundVisit","manager_name":"Luuke Strawberry","mound_visit_type":"MoundVisit","team":{"emoji":"🚀","name":"Houston Lunar Operations Personnel"}},{"event_type":"PitcherRemains","remaining_pitcher":{"name":"Mildred Ashley","place":"SP1"}},{"batter":"Himbo Narciso","event_type":"NowBatting","player_swept_away":"Doc Petrauskas","stats":{"Stats":[{"stat":"HitsForAtBats","value":{"at_bats":1,"hits":0}},{"stat":"StrikeOuts","value":1}]}},{"assassinations":[],"aurora_photos":null,"cheer":null,"count":[0,1],"door_prizes":[],"efflorescence":[],"event_type":"Foul","foul":"Ball","steals":[],"wither":null},{"assassinations":[],"aurora_photos":null,"batter":"Himbo Narciso","cheer":"EveryoneIsChantingTheTeamsName","destination":"ShortStop","door_prizes":[],"efflorescence":[],"event_type":"FairBall","fair_ball_type":"GroundBall"},{"advances":[{"base":"Third","runner":"Squirrel Benson"},{"base":"Second","runner":"McBaseball Aguilera"},{"base":"First","runner":"Himbo Narciso"}],"batter":"Himbo Narciso","ejection":null,"event_type":"ForceOut","fair_ball_type":"GroundBall","fielders":[{"name":"G. Chauhan","place":"SS"},{"name":"Cabbage Tóth","place":"C"}],"out":{"base":"Home","runner":"Lester à la Mode"},"scores":[]},{"batter":"Grerbert Eyestrain","event_type":"NowBatting","player_swept_away":null,"stats":{"Stats":[{"stat":"HitsForAtBats","value":{"at_bats":1,"hits":0}},{"stat":"SacrificeFlies","value":1},{"stat":"GroundOuts","value":1}]}},{"assassinations":[],"aurora_photos":null,"cheer":null,"count":[1,0],"door_prizes":[],"efflorescence":[],"ejection":null,"event_type":"Ball","steals":[],"wither":null},{"assassinations":[],"aurora_photos":null,"cheer":null,"count":[2,0],"door_prizes":[],"efflorescence":[],"ejection":null,"event_type":"Ball","steals":[],"wither":null},{"assassinations":[],"aurora_photos":null,"cheer":null,"count":[3,0],"door_prizes":[],"efflorescence":[],"ejection":null,"event_type":"Ball","steals":[],"wither":null},{"advances":[{"base":"Third","runner":"McBaseball Aguilera"},{"base":"Second","runner":"Himbo Narciso"}],"assassinations":[],"aurora_photos":null,"batter":"Grerbert Eyestrain","cheer":null,"ejection":null,"event_type":"Walk","scores":["Squirrel Benson"],"wither":null},{"batter":"Ol' Bauer","event_type":"NowBatting","player_swept_away":null,"stats":{"Stats":[{"stat":"HitsForAtBats","value":{"at_bats":1,"hits":0}},{"stat":"GroundOuts","value":1}]}},{"assassinations":[],"aurora_photos":null,"cheer":null,"count":[0,1],"door_prizes":[],"efflorescence":[],"ejection":null,"event_type":"Strike","steals":[],"strike":"Swinging","surprise_strike":false,"wither":null},{"assassinations":[],"aurora_photos":null,"cheer":null,"count":[1,1],"door_prizes":[],"efflorescence":[],"ejection":null,"event_type":"Ball","steals":[],"wither":null},{"assassinations":[],"aurora_photos":null,"cheer":null,"count":[2,1],"door_prizes":[],"efflorescence":[],"ejection":null,"event_type":"Ball","steals":[],"wither":null},{"assassinations":[],"aurora_photos":null,"cheer":null,"count":[3,1],"door_prizes":[],"efflorescence":[],"ejection":null,"event_type":"Ball","steals":[],"wither":null},{"assassinations":[],"aurora_photos":null,"cheer":null,"count":[3,2],"door_prizes":[],"efflorescence":[],"event_type":"Foul","foul":"Ball","steals":[],"wither":null},{"advances":[{"base":"Third","runner":"Himbo Narciso"},{"base":"Second","runner":"Grerbert Eyestrain"}],"assassinations":[],"aurora_photos":null,"batter":"Ol' Bauer","cheer":null,"ejection":null,"event_type":"Walk","scores":["McBaseball Aguilera"],"wither":null},{"event_type":"MoundVisit","manager_name":"Luuke Strawberry","mound_visit_type":"PitchingChange","team":{"emoji":"🚀","name":"Houston Lunar Operations Personnel"}},{"arriving_pitcher_emoji":"🚀","arriving_pitcher_name":"Quackers Umar","arriving_pitcher_place":"RP1","event_type":"PitcherSwap","leaving_pitcher":{"name":"Mildred Ashley","place":"SP1"},"leaving_pitcher_emoji":null},{"batter":"Odysseus Figuereo","event_type":"NowBatting","player_swept_away":null,"stats":{"Stats":[{"stat":"HitsForAtBats","value":{"at_bats":2,"hits":0}},{"stat":"PopOuts","value":1},{"stat":"ForceOuts","value":1}]}},{"assassinations":[],"aurora_photos":null,"cheer":null,"count":[1,0],"door_prizes":[],"efflorescence":[],"ejection":null,"event_type":"Ball","steals":[],"wither":null},{"assassinations":[],"aurora_photos":null,"cheer":null,"count":[2,0],"door_prizes":[],"efflorescence":[],"ejection":null,"event_type":"Ball","steals":[],"wither":null},{"assassinations":[],"aurora_photos":null,"batter":"Odysseus Figuereo","cheer":null,"destination":"SecondBase","door_prizes":[],"efflorescence":[],"event_type":"FairBall","fair_ball_type":"GroundBall"},{"advances":[{"base":"Third","runner":"Grerbert Eyestrain"},{"base":"Second","runner":"Ol' Bauer"}],"batter":"Odysseus Figuereo","ejection":null,"error":"Throwing","event_type":"ReachOnFieldingError","fielder":{"name":"Emilio Kowalczyk","place":"2B"},"scores":["Himbo Narciso"]},{"batter":"Lugubrious Sinclair","event_type":"NowBatting","player_swept_away":null,"stats":{"Stats":[{"stat":"HitsForAtBats","value":{"at_bats":2,"hits":1}},{"stat":"FirstBases","value":1},{"stat":"StrikeOuts","value":1}]}},{"assassinations":[],"aurora_photos":null,"cheer":null,"count":[1,0],"door_prizes":[],"efflorescence":[],"ejection":null,"event_type":"Ball","steals":[],"wither":null},{"assassinations":[],"aurora_photos":null,"cheer":"TheSupportersFuelTheirTeam","count":[1,1],"door_prizes":[],"efflorescence":[],"ejection":null,"event_type":"Strike","steals":[],"strike":"Looking","surprise_strike":false,"wither":null},{"assassinations":[],"aurora_photos":null,"cheer":null,"count":[1,2],"door_prizes":[],"efflorescence":[],"event_type":"Foul","foul":"Ball","steals":[],"wither":null},{"assassinations":[],"aurora_photos":null,"batter":"Lugubrious Sinclair","cheer":null,"destination":"RightField","door_prizes":[],"efflorescence":[],"event_type":"FairBall","fair_ball_type":"FlyBall"},{"advances":[],"batter":"Lugubrious Sinclair","caught_by":{"name":"Mel Baumgartner","place":"RF"},"ejection":null,"event_type":"CaughtOut","fair_ball_type":"FlyBall","jetpack":false,"perfect":false,"sacrifice":false,"scores":[]},{"event_type":"InningEnd","number":5,"side":"Bottom"},{"automatic_runner":null,"batting_team":{"emoji":"🚀","name":"Houston Lunar Operations Personnel"},"event_type":"InningStart","number":6,"pitcher_status":{"Same":{"emoji":"🦢","name":"Quibble Jakobsen"}},"side":"Top"},{"batter":"Emilio Kowalczyk","event_type":"NowBatting","player_swept_away":null,"stats":{"Stats":[{"stat":"HitsForAtBats","value":{"at_bats":1,"hits":0}},{"stat":"BaseOnBalls","value":1},{"stat":"GroundOuts","value":1}]}},{"assassinations":[],"aurora_photos":null,"cheer":null,"count":[1,0],"door_prizes":[],"efflorescence":[],"ejection":null,"event_type":"Ball","steals":[],"wither":null},{"assassinations":[],"aurora_photos":null,"cheer":null,"count":[2,0],"door_prizes":[],"efflorescence":[],"ejection":null,"event_type":"Ball","steals":[],"wither":null},{"assassinations":[],"aurora_photos":null,"cheer":null,"count":[2,1],"door_prizes":[],"efflorescence":[],"ejection":null,"event_type":"Strike","steals":[],"strike":"Swinging","surprise_strike":false,"wither":null},{"assassinations":[],"aurora_photos":null,"cheer":null,"count":[2,2],"door_prizes":[],"efflorescence":[],"ejection":null,"event_type":"Strike","steals":[],"strike":"Looking","surprise_strike":false,"wither":null},{"assassinations":[],"aurora_photos":null,"batter":"Emilio Kowalczyk","cheer":null,"ejection":null,"event_type":"StrikeOut","foul":null,"steals":[],"strike":"Looking","wither":null},{"batter":"Cabbage Tóth","event_type":"NowBatting","player_swept_away":null,"stats":{"Stats":[{"stat":"HitsForAtBats","value":{"at_bats":2,"hits":1}},{"stat":"SecondBases","value":1},{"stat":"StrikeOuts","value":1}]}},{"assassinations":[],"aurora_photos":null,"cheer":null,"count":[0,1],"door_prizes":[],"efflorescence":[],"ejection":null,"event_type":"Strike","steals":[],"strike":"Swinging","surprise_strike":false,"wither":null},{"assassinations":[],"aurora_photos":null,"cheer":null,"count":[1,1],"door_prizes":[],"efflorescence":[],"ejection":null,"event_type":"Ball","steals":[],"wither":null},{"assassinations":[],"aurora_photos":null,"cheer":null,"count":[2,1],"door_prizes":[],"efflorescence":[],"ejection":null,"event_type":"Ball","steals":[],"wither":null},{"assassinations":[],"aurora_photos":null,"batter":"Cabbage Tóth","cheer":null,"destination":"RightField","door_prizes":[],"efflorescence":[],"event_type":"FairBall","fair_ball_type":"LineDrive"},{"advances":[],"batter":"Cabbage Tóth","distance":"Single","ejection":null,"event_type":"BatterToBase","fair_ball_type":"LineDrive","fielder":{"name":"Odysseus Figuereo","place":"RF"},"scores":[]},{"batter":"Jackson Khatun","event_type":"NowBatting","player_swept_away":null,"stats":{"Stats":[{"stat":"HitsForAtBats","value":{"at_bats":2,"hits":0}},{"stat":"PopOuts","value":1},{"stat":"StrikeOuts","value":1}]}},{"assassinations":[],"aurora_photos":null,"batter":"Jackson Khatun","cheer":null,"destination":"Pitcher","door_prizes":[],"efflorescence":[],"event_type":"FairBall","fair_ball_type":"GroundBall"},{"advances":[],"batter":"Jackson Khatun","double_trouble":null,"ejection":null,"event_type":"DoublePlayGrounded","fielders":[{"name":"Quibble Jakobsen","place":"SP1"},{"name":"Ol' Bauer","place":"SS"},{"name":"Geraldine van der Veen","place":"1B"}],"out_one":{"base":"SecondBase","runner":"Cabbage Tóth"},"out_two":{"base":"FirstBase","runner":"Jackson Khatun"},"sacrifice":false,"scores":[]},{"event_type":"InningEnd","number":6,"side":"Top"},{"automatic_runner":null,"batting_team":{"emoji":"🦢","name":"Kitchener Cobra Chickens"},"event_type":"InningStart","number":6,"pitcher_status":{"Same":{"emoji":"🚀","name":"Quackers Umar"}},"side":"Bottom"},{"batter":"Geraldine van der Veen","event_type":"NowBatting","player_swept_away":null,"stats":{"Stats":[{"stat":"BaseOnBalls","value":1}]}},{"assassinations":[],"aurora_photos":null,"cheer":null,"count":[1,0],"door_prizes":[],"efflorescence":[],"ejection":null,"event_type":"Ball","steals":[],"wither":null},{"assassinations":[],"aurora_photos":null,"batter":"Geraldine van der Veen","cheer":null,"destination":"CenterField","door_prizes":[],"efflorescence":[],"event_type":"FairBall","fair_ball_type":"FlyBall"},{"advances":[],"batter":"Geraldine van der Veen","caught_by":{"name":"Ann Naylor","place":"CF"},"ejection":null,"event_type":"CaughtOut","fair_ball_type":"FlyBall","jetpack":false,"perfect":false,"sacrifice":false,"scores":[]},{"batter":"Squirrel Benson","event_type":"NowBatting","player_swept_away":null,"stats":{"Stats":[{"stat":"HitsForAtBats","value":{"at_bats":2,"hits":1}},{"stat":"HitByPitchs","value":1},{"stat":"Fouls","value":1},{"stat":"FirstBases","value":1}]}},{"assassinations":[],"aurora_photos":null,"cheer":null,"count":[1,0],"door_prizes":[],"efflorescence":[],"ejection":null,"event_type":"Ball","steals":[],"wither":null},{"assassinations":[],"aurora_photos":null,"batter":"Squirrel Benson","cheer":null,"destination":"FirstBase","door_prizes":[],"efflorescence":[],"event_type":"FairBall","fair_ball_type":"GroundBall"},{"advances":[],"amazing":false,"assassinations":[],"batter":"Squirrel Benson","ejection":null,"event_type":"GroundedOut","fielders":[{"name":"Jackson Khatun","place":"1B"}],"scores":[]},{"batter":"McBaseball Aguilera","event_type":"NowBatting","player_swept_away":null,"stats":{"Stats":[{"stat":"HitsForAtBats","value":{"at_bats":1,"hits":0}},{"stat":"BaseOnBalls","value":2},{"stat":"GroundOuts","value":1}]}},{"assassinations":[],"aurora_photos":null,"batter":"McBaseball Aguilera","cheer":null,"destination":"SecondBase","door_prizes":[],"efflorescence":[],"event_type":"FairBall","fair_ball_type":"GroundBall"},{"advances":[],"amazing":false,"assassinations":[],"batter":"McBaseball Aguilera","ejection":null,"event_type":"GroundedOut","fielders":[{"name":"Emilio Kowalczyk","place":"2B"},{"name":"Jackson Khatun","place":"1B"}],"scores":[]},{"event_type":"InningEnd","number":6,"side":"Bottom"},{"automatic_runner":null,"batting_team":{"emoji":"🚀","name":"Houston Lunar Operations Personnel"},"event_type":"InningStart","number":7,"pitcher_status":{"Same":{"emoji":"🦢","name":"Quibble Jakobsen"}},"side":"Top"},{"batter":"Myra Voigt","event_type":"NowBatting","player_swept_away":null,"stats":{"Stats":[{"stat":"HitsForAtBats","value":{"at_bats":1,"hits":0}},{"stat":"LineOuts","value":1},{"stat":"BaseOnBalls","value":1}]}},{"assassinations":[],"aurora_photos":null,"cheer":null,"count":[1,0],"door_prizes":[],"efflorescence":[],"ejection":null,"event_type":"Ball","steals":[],"wither":null},{"assassinations":[],"aurora_photos":null,"cheer":null,"count":[2,0],"door_prizes":[],"efflorescence":[],"ejection":null,"event_type":"Ball","steals":[],"wither":null},{"assassinations":[],"aurora_photos":null,"cheer":null,"count":[2,1],"door_prizes":[],"efflorescence":[],"ejection":null,"event_type":"Strike","steals":[],"strike":"Looking","surprise_strike":false,"wither":null},{"assassinations":[],"aurora_photos":null,"cheer":null,"count":[3,1],"door_prizes":[],"efflorescence":[],"ejection":null,"event_type":"Ball","steals":[],"wither":null},{"assassinations":[],"aurora_photos":null,"batter":"Myra Voigt","cheer":null,"destination":"LeftField","door_prizes":[],"efflorescence":[],"event_type":"FairBall","fair_ball_type":"LineDrive"},{"advances":[],"batter":"Myra Voigt","distance":"Single","ejection":null,"event_type":"BatterToBase","fair_ball_type":"LineDrive","fielder":{"name":"McBaseball Aguilera","place":"LF"},"scores":[]},{"batter":"Ann Naylor","event_type":"NowBatting","player_swept_away":null,"stats":{"Stats":[{"stat":"HitsForAtBats","value":{"at_bats":2,"hits":0}},{"stat":"StrikeOuts","value":1},{"stat":"GroundIntoDoublePlays","value":1},{"stat":"GroundOuts","value":1}]}},{"assassinations":[],"aurora_photos":null,"cheer":null,"count":[0,1],"door_prizes":[],"efflorescence":[],"ejection":null,"event_type":"Strike","steals":[],"strike":"Swinging","surprise_strike":false,"wither":null},{"assassinations":[],"aurora_photos":null,"cheer":null,"count":[0,2],"door_prizes":[],"efflorescence":[],"ejection":null,"event_type":"Strike","steals":[],"strike":"Looking","surprise_strike":false,"wither":null},{"assassinations":[],"aurora_photos":null,"batter":"Ann Naylor","cheer":null,"ejection":null,"event_type":"StrikeOut","foul":null,"steals":[],"strike":"Looking","wither":null},{"batter":"Sarah Oshima","event_type":"NowBatting","player_swept_away":null,"stats":{"Stats":[{"stat":"HitsForAtBats","value":{"at_bats":2,"hits":1}},{"stat":"FirstBases","value":1},{"stat":"StrikeOuts","value":1}]}},{"assassinations":[],"aurora_photos":null,"batter":"Sarah Oshima","cheer":null,"destination":"CenterField","door_prizes":[],"efflorescence":[],"event_type":"FairBall","fair_ball_type":"LineDrive"},{"advances":[],"batter":"Sarah Oshima","caught_by":{"name":"Ol' Bauer","place":"SS"},"ejection":null,"event_type":"CaughtOut","fair_ball_type":"LineDrive","jetpack":false,"perfect":false,"sacrifice":false,"scores":[]},{"batter":"Mel Baumgartner","event_type":"NowBatting","player_swept_away":null,"stats":{"Stats":[{"stat":"HitsForAtBats","value":{"at_bats":2,"hits":0}},{"stat":"GroundIntoDoublePlays","value":1},{"stat":"GroundOuts","value":1},{"stat":"StrikeOuts","value":1}]}},{"assassinations":[],"aurora_photos":null,"cheer":null,"count":[1,0],"door_prizes":[],"efflorescence":[],"ejection":null,"event_type":"Ball","steals":[],"wither":null},{"assassinations":[],"aurora_photos":null,"cheer":null,"count":[2,0],"door_prizes":[],"efflorescence":[],"ejection":null,"event_type":"Ball","steals":[],"wither":null},{"assassinations":[],"aurora_photos":null,"batter":"Mel Baumgartner","cheer":null,"destination":"CenterField","door_prizes":[],"efflorescence":[],"event_type":"FairBall","fair_ball_type":"FlyBall"},{"advances":[],"batter":"Mel Baumgartner","caught_by":{"name":"Grerbert Eyestrain","place":"CF"},"ejection":null,"event_type":"CaughtOut","fair_ball_type":"FlyBall","jetpack":false,"perfect":false,"sacrifice":false,"scores":[]},{"event_type":"InningEnd","number":7,"side":"Top"},{"automatic_runner":null,"batting_team":{"emoji":"🦢","name":"Kitchener Cobra Chickens"},"event_type":"InningStart","number":7,"pitcher_status":{"Same":{"emoji":"🚀","name":"Quackers Umar"}},"side":"Bottom"},{"batter":"Goober Gotrax","event_type":"NowBatting","player_swept_away":null,"stats":{"Stats":[{"stat":"HitsForAtBats","value":{"at_bats":2,"hits":0}},{"stat":"HitByPitchs","value":1},{"stat":"GroundOuts","value":1},{"stat":"StrikeOuts","value":1}]}},{"assassinations":[],"aurora_photos":null,"cheer":null,"count":[1,0],"door_prizes":[],"efflorescence":[],"ejection":null,"event_type":"Ball","steals":[],"wither":null},{"assassinations":[],"aurora_photos":null,"batter":"Goober Gotrax","cheer":null,"destination":"LeftField","door_prizes":[],"efflorescence":[],"event_type":"FairBall","fair_ball_type":"LineDrive"},{"advances":[],"batter":"Goober Gotrax","distance":"Single","ejection":null,"event_type":"BatterToBase","fair_ball_type":"LineDrive","fielder":{"name":"Sarah Oshima","place":"LF"},"scores":[]},{"batter":"Doc Petrauskas","event_type":"NowBatting","player_swept_away":null,"stats":{"Stats":[{"stat":"HitsForAtBats","value":{"at_bats":2,"hits":0}},{"stat":"StrikeOuts","value":1},{"stat":"GroundOuts","value":1}]}},{"assassinations":[],"aurora_photos":null,"cheer":null,"count":[1,0],"door_prizes":[],"efflorescence":[],"ejection":null,"event_type":"Ball","steals":[],"wither":null},{"assassinations":[],"aurora_photos":null,"cheer":null,"count":[1,1],"door_prizes":[],"efflorescence":[],"ejection":null,"event_type":"Strike","steals":[],"strike":"Looking","surprise_strike":false,"wither":null},{"assassinations":[],"aurora_photos":null,"cheer":null,"count":[2,1],"door_prizes":[],"efflorescence":[],"ejection":null,"event_type":"Ball","steals":[],"wither":null},{"assassinations":[],"aurora_photos":null,"cheer":null,"count":[2,2],"door_prizes":[],"efflorescence":[],"ejection":null,"event_type":"Strike","steals":[],"strike":"Swinging","surprise_strike":false,"wither":null},{"assassinations":[],"aurora_photos":null,"batter":"Doc Petrauskas","cheer":"TheFansAreLosingTheirMinds","ejection":null,"event_type":"StrikeOut","foul":null,"steals":[{"base":"Second","caught":false,"runner":"Goober Gotrax"}],"strike":"Looking","wither":null},{"batter":"Grerbert Eyestrain","event_type":"NowBatting","player_swept_away":null,"stats":{"Stats":[{"stat":"HitsForAtBats","value":{"at_bats":1,"hits":0}},{"stat":"SacrificeFlies","value":1},{"stat":"GroundOuts","value":1},{"stat":"BaseOnBalls","value":1}]}},{"assassinations":[],"aurora_photos":null,"batter":"Grerbert Eyestrain","cheer":null,"destination":"ThirdBase","door_prizes":[],"efflorescence":[],"event_type":"FairBall","fair_ball_type":"GroundBall"},{"advances":[{"base":"Third","runner":"Goober Gotrax"}],"amazing":false,"assassinations":[],"batter":"Grerbert Eyestrain","ejection":null,"event_type":"GroundedOut","fielders":[{"name":"April Kovalchuk","place":"3B"},{"name":"Jackson Khatun","place":"1B"}],"scores":[]},{"batter":"Julius Naptime","event_type":"NowBatting","player_swept_away":"Ol' Bauer","stats":"FirstPA"},{"assassinations":[],"aurora_photos":null,"cheer":null,"count":[1,0],"door_prizes":[],"efflorescence":[],"ejection":null,"event_type":"Ball","steals":[],"wither":null},{"assassinations":[],"aurora_photos":null,"cheer":null,"count":[1,1],"door_prizes":[],"efflorescence":[],"event_type":"Foul","foul":"Tip","steals":[],"wither":null},{"assassinations":[],"aurora_photos":null,"cheer":null,"count":[2,1],"door_prizes":[],"efflorescence":[],"ejection":null,"event_type":"Ball","steals":[],"wither":null},{"assassinations":[],"aurora_photos":null,"cheer":null,"count":[3,1],"door_prizes":[],"efflorescence":[],"ejection":null,"event_type":"Ball","steals":[],"wither":null},{"assassinations":[],"aurora_photos":null,"batter":"Julius Naptime","cheer":null,"destination":"RightField","door_prizes":[],"efflorescence":[],"event_type":"FairBall","fair_ball_type":"FlyBall"},{"advances":[],"batter":"Julius Naptime","caught_by":{"name":"Mel Baumgartner","place":"RF"},"ejection":null,"event_type":"CaughtOut","fair_ball_type":"FlyBall","jetpack":false,"perfect":false,"sacrifice":false,"scores":[]},{"event_type":"InningEnd","number":7,"side":"Bottom"},{"automatic_runner":null,"batting_team":{"emoji":"🚀","name":"Houston Lunar Operations Personnel"},"event_type":"InningStart","number":8,"pitcher_status":{"Same":{"emoji":"🦢","name":"Quibble Jakobsen"}},"side":"Top"},{"batter":"Taylor Beltre","event_type":"NowBatting","player_swept_away":"April Kovalchuk","stats":"FirstPA"},{"assassinations":[],"aurora_photos":null,"cheer":null,"count":[1,0],"door_prizes":[],"efflorescence":[],"ejection":null,"event_type":"Ball","steals":[],"wither":null},{"assassinations":[],"aurora_photos":null,"cheer":null,"count":[2,0],"door_prizes":[],"efflorescence":[],"ejection":null,"event_type":"Ball","steals":[],"wither":null},{"assassinations":[],"aurora_photos":null,"cheer":null,"count":[3,0],"door_prizes":[],"efflorescence":[],"ejection":null,"event_type":"Ball","steals":[],"wither":null},{"assassinations":[],"aurora_photos":null,"cheer":null,"count":[3,1],"door_prizes":[],"efflorescence":[],"event_type":"Foul","foul":"Ball","steals":[],"wither":null},{"assassinations":[],"aurora_photos":null,"cheer":null,"count":[3,2],"door_prizes":[],"efflorescence":[],"event_type":"Foul","foul":"Ball","steals":[],"wither":null},{"assassinations":[],"aurora_photos":null,"batter":"Taylor Beltre","cheer":null,"ejection":null,"event_type":"StrikeOut","foul":null,"steals":[],"strike":"Looking","wither":null},{"batter":"G. Chauhan","event_type":"NowBatting","player_swept_away":null,"stats":{"Stats":[{"stat":"HitsForAtBats","value":{"at_bats":2,"hits":1}},{"stat":"FirstBases","value":1},{"stat":"PopOuts","value":1}]}},{"assassinations":[],"aurora_photos":null,"cheer":null,"count":[0,1],"door_prizes":[],"efflorescence":[],"event_type":"Foul","foul":"Ball","steals":[],"wither":null},{"assassinations":[],"aurora_photos":null,"cheer":null,"count":[0,2],"door_prizes":[],"efflorescence":[],"event_type":"Foul","foul":"Ball","steals":[],"wither":null},{"assassinations":[],"aurora_photos":null,"batter":"G. Chauhan","cheer":null,"destination":"ShortStop","door_prizes":[],"efflorescence":[],"event_type":"FairBall","fair_ball_type":"GroundBall"},{"advances":[],"batter":"G. Chauhan","ejection":null,"error":"Throwing","event_type":"ReachOnFieldingError","fielder":{"name":"Ol' Bauer","place":"SS"},"scores":[]},{"batter":"Emilio Kowalczyk","event_type":"NowBatting","player_swept_away":null,"stats":{"Stats":[{"stat":"HitsForAtBats","value":{"at_bats":2,"hits":0}},{"stat":"BaseOnBalls","value":1},{"stat":"GroundOuts","value":1},{"stat":"StrikeOuts","value":1}]}},{"assassinations":[],"aurora_photos":null,"batter":"Emilio Kowalczyk","cheer":null,"destination":"ThirdBase","door_prizes":[],"efflorescence":[],"event_type":"FairBall","fair_ball_type":"Popup"},{"advances":[],"batter":"Emilio Kowalczyk","caught_by":{"name":"Lugubrious Sinclair","place":"3B"},"ejection":null,"event_type":"CaughtOut","fair_ball_type":"Popup","jetpack":false,"perfect":false,"sacrifice":false,"scores":[]},{"batter":"Cabbage Tóth","event_type":"NowBatting","player_swept_away":null,"stats":{"Stats":[{"stat":"HitsForAtBats","value":{"at_bats":3,"hits":2}},{"stat":"SecondBases","value":1},{"stat":"StrikeOuts","value":1},{"stat":"FirstBases","value":1}]}},{"assassinations":[],"aurora_photos":null,"cheer":null,"count":[0,1],"door_prizes":[],"efflorescence":[],"event_type":"Foul","foul":"Ball","steals":[],"wither":null},{"assassinations":[],"aurora_photos":null,"cheer":null,"count":[1,1],"door_prizes":[],"efflorescence":[],"ejection":null,"event_type":"Ball","steals":[],"wither":null},{"assassinations":[],"aurora_photos":null,"batter":"Cabbage Tóth","cheer":null,"destination":"LeftField","door_prizes":[],"efflorescence":[],"event_type":"FairBall","fair_ball_type":"FlyBall"},{"advances":[],"batter":"Cabbage Tóth","caught_by":{"name":"McBaseball Aguilera","place":"LF"},"ejection":null,"event_type":"CaughtOut","fair_ball_type":"FlyBall","jetpack":false,"perfect":false,"sacrifice":false,"scores":[]},{"event_type":"InningEnd","number":8,"side":"Top"},{"automatic_runner":null,"batting_team":{"emoji":"🦢","name":"Kitchener Cobra Chickens"},"event_type":"InningStart","number":8,"pitcher_status":{"Same":{"emoji":"🚀","name":"Quackers Umar"}},"side":"Bottom"},{"batter":"Odysseus Figuereo","event_type":"NowBatting","player_swept_away":null,"stats":{"Stats":[{"stat":"HitsForAtBats","value":{"at_bats":3,"hits":0}},{"stat":"PopOuts","value":1},{"stat":"ForceOuts","value":1}]}},{"assassinations":[],"aurora_photos":null,"cheer":null,"count":[1,0],"door_prizes":[],"efflorescence":[],"ejection":null,"event_type":"Ball","steals":[],"wither":null},{"assassinations":[],"aurora_photos":null,"cheer":null,"count":[1,1],"door_prizes":[],"efflorescence":[],"ejection":null,"event_type":"Strike","steals":[],"strike":"Looking","surprise_strike":false,"wither":null},{"assassinations":[],"aurora_photos":null,"cheer":null,"count":[1,2],"door_prizes":[],"efflorescence":[],"ejection":null,"event_type":"Strike","steals":[],"strike":"Looking","surprise_strike":false,"wither":null},{"assassinations":[],"aurora_photos":null,"batter":"Odysseus Figuereo","cheer":null,"destination":"CenterField","door_prizes":[],"efflorescence":[],"event_type":"FairBall","fair_ball_type":"FlyBall"},{"advances":[],"batter":"Odysseus Figuereo","caught_by":{"name":"Ann Naylor","place":"CF"},"ejection":null,"event_type":"CaughtOut","fair_ball_type":"FlyBall","jetpack":false,"perfect":false,"sacrifice":false,"scores":[]},{"batter":"Lugubrious Sinclair","event_type":"NowBatting","player_swept_away":null,"stats":{"Stats":[{"stat":"HitsForAtBats","value":{"at_bats":3,"hits":1}},{"stat":"FirstBases","value":1},{"stat":"StrikeOuts","value":1},{"stat":"ForceOuts","value":1}]}},{"assassinations":[],"aurora_photos":null,"cheer":null,"count":[1,0],"door_prizes":[],"efflorescence":[],"ejection":null,"event_type":"Ball","steals":[],"wither":null},{"assassinations":[],"aurora_photos":null,"batter":"Lugubrious Sinclair","cheer":null,"destination":"RightField","door_prizes":[],"efflorescence":[],"event_type":"FairBall","fair_ball_type":"FlyBall"},{"advances":[],"batter":"Lugubrious Sinclair","caught_by":{"name":"Mel Baumgartner","place":"RF"},"ejection":null,"event_type":"CaughtOut","fair_ball_type":"FlyBall","jetpack":false,"perfect":false,"sacrifice":false,"scores":[]},{"batter":"Geraldine van der Veen","event_type":"NowBatting","player_swept_away":null,"stats":{"Stats":[{"stat":"HitsForAtBats","value":{"at_bats":1,"hits":0}},{"stat":"BaseOnBalls","value":1},{"stat":"ForceOuts","value":1}]}},{"assassinations":[],"aurora_photos":null,"cheer":null,"count":[1,0],"door_prizes":[],"efflorescence":[],"ejection":null,"event_type":"Ball","steals":[],"wither":null},{"assassinations":[],"aurora_photos":null,"cheer":null,"count":[1,1],"door_prizes":[],"efflorescence":[],"event_type":"Foul","foul":"Ball","steals":[],"wither":null},{"assassinations":[],"aurora_photos":null,"cheer":null,"count":[2,1],"door_prizes":[],"efflorescence":[],"ejection":null,"event_type":"Ball","steals":[],"wither":null},{"assassinations":[],"aurora_photos":null,"cheer":null,"count":[3,1],"door_prizes":[],"efflorescence":[],"ejection":null,"event_type":"Ball","steals":[],"wither":null},{"assassinations":[],"aurora_photos":null,"cheer":null,"count":[3,2],"door_prizes":[],"efflorescence":[],"ejection":null,"event_type":"Strike","steals":[],"strike":"Swinging","surprise_strike":false,"wither":null},{"assassinations":[],"aurora_photos":null,"cheer":null,"count":[3,2],"door_prizes":[],"efflorescence":[],"event_type":"Foul","foul":"Ball","steals":[],"wither":null},{"advances":[],"assassinations":[],"aurora_photos":null,"batter":"Geraldine van der Veen","cheer":null,"ejection":null,"event_type":"Walk","scores":[],"wither":null},{"batter":"Squirrel Benson","event_type":"NowBatting","player_swept_away":null,"stats":{"Stats":[{"stat":"HitsForAtBats","value":{"at_bats":3,"hits":1}},{"stat":"HitByPitchs","value":1},{"stat":"Fouls","value":1},{"stat":"FirstBases","value":1},{"stat":"GroundOuts","value":1}]}},{"assassinations":[],"aurora_photos":null,"batter":"Squirrel Benson","cheer":null,"destination":"LeftField","door_prizes":[],"efflorescence":[],"event_type":"FairBall","fair_ball_type":"FlyBall"},{"advances":[],"batter":"Squirrel Benson","caught_by":{"name":"Sarah Oshima","place":"LF"},"ejection":null,"event_type":"CaughtOut","fair_ball_type":"FlyBall","jetpack":false,"perfect":false,"sacrifice":false,"scores":[]},{"event_type":"InningEnd","number":8,"side":"Bottom"},{"automatic_runner":null,"batting_team":{"emoji":"🚀","name":"Houston Lunar Operations Personnel"},"event_type":"InningStart","number":9,"pitcher_status":{"Flooded":{"incoming_pitcher_name":"Sticky Doe","preemption":{"arriving_pitcher":{"name":"Angel Steel","place":"CL"},"leaving_pitcher":{"name":"Quibble Jakobsen","place":"SP1"}},"swept_pitcher_name":"Quibble Jakobsen"}},"side":"Top"},{"batter":"Jackson Khatun","event_type":"NowBatting","player_swept_away":null,"stats":{"Stats":[{"stat":"HitsForAtBats","value":{"at_bats":3,"hits":0}},{"stat":"PopOuts","value":1},{"stat":"StrikeOuts","value":1},{"stat":"GroundIntoDoublePlays","value":1},{"stat":"GroundOuts","value":1}]}},{"assassinations":[],"aurora_photos":null,"cheer":null,"count":[0,1],"door_prizes":[],"efflorescence":[],"ejection":null,"event_type":"Strike","steals":[],"strike":"Swinging","surprise_strike":false,"wither":null},{"assassinations":[],"aurora_photos":null,"cheer":null,"count":[1,1],"door_prizes":[],"efflorescence":[],"ejection":null,"event_type":"Ball","steals":[],"wither":null},{"assassinations":[],"aurora_photos":null,"cheer":null,"count":[1,2],"door_prizes":[],"efflorescence":[],"ejection":null,"event_type":"Strike","steals":[],"strike":"Swinging","surprise_strike":false,"wither":null},{"assassinations":[],"aurora_photos":null,"batter":"Jackson Khatun","cheer":null,"ejection":null,"event_type":"StrikeOut","foul":null,"steals":[],"strike":"Looking","wither":null},{"batter":"Myra Voigt","event_type":"NowBatting","player_swept_away":null,"stats":{"Stats":[{"stat":"HitsForAtBats","value":{"at_bats":2,"hits":1}},{"stat":"LineOuts","value":1},{"stat":"BaseOnBalls","value":1},{"stat":"FirstBases","value":1}]}},{"assassinations":[],"aurora_photos":null,"cheer":null,"count":[1,0],"door_prizes":[],"efflorescence":[],"ejection":null,"event_type":"Ball","steals":[],"wither":null},{"assassinations":[],"aurora_photos":null,"cheer":null,"count":[1,1],"door_prizes":[],"efflorescence":[],"event_type":"Foul","foul":"Ball","steals":[],"wither":null},{"assassinations":[],"aurora_photos":null,"cheer":null,"count":[1,2],"door_prizes":[],"efflorescence":[],"ejection":null,"event_type":"Strike","steals":[],"strike":"Swinging","surprise_strike":false,"wither":null},{"assassinations":[],"aurora_photos":null,"cheer":null,"count":[1,2],"door_prizes":[],"efflorescence":[],"event_type":"Foul","foul":"Ball","steals":[],"wither":null},{"assassinations":[],"aurora_photos":null,"batter":"Myra Voigt","cheer":"TheHomeFansMakeThemselvesHeard","ejection":null,"event_type":"StrikeOut","foul":null,"steals":[],"strike":"Looking","wither":null},{"batter":"Ann Naylor","event_type":"NowBatting","player_swept_away":null,"stats":{"Stats":[{"stat":"HitsForAtBats","value":{"at_bats":3,"hits":0}},{"stat":"StrikeOuts","value":2},{"stat":"GroundIntoDoublePlays","value":1},{"stat":"GroundOuts","value":1}]}},{"assassinations":[],"aurora_photos":null,"cheer":null,"count":[0,1],"door_prizes":[],"efflorescence":[],"event_type":"Foul","foul":"Ball","steals":[],"wither":null},{"assassinations":[],"aurora_photos":null,"cheer":null,"count":[1,1],"door_prizes":[],"efflorescence":[],"ejection":null,"event_type":"Ball","steals":[],"wither":null},{"assassinations":[],"aurora_photos":null,"cheer":null,"count":[2,1],"door_prizes":[],"efflorescence":[],"ejection":null,"event_type":"Ball","steals":[],"wither":null},{"assassinations":[],"aurora_photos":null,"cheer":null,"count":[2,2],"door_prizes":[],"efflorescence":[],"event_type":"Foul","foul":"Ball","steals":[],"wither":null},{"assassinations":[],"aurora_photos":null,"cheer":null,"count":[3,2],"door_prizes":[],"efflorescence":[],"ejection":null,"event_type":"Ball","steals":[],"wither":null},{"assassinations":[],"aurora_photos":null,"cheer":null,"count":[3,2],"door_prizes":[],"efflorescence":[],"event_type":"Foul","foul":"Ball","steals":[],"wither":null},{"advances":[],"assassinations":[],"aurora_photos":null,"batter":"Ann Naylor","cheer":"EveryoneCheersAtOnce","ejection":null,"event_type":"Walk","scores":[],"wither":null},{"batter":"Sarah Oshima","event_type":"NowBatting","player_swept_away":null,"stats":{"Stats":[{"stat":"HitsForAtBats","value":{"at_bats":3,"hits":1}},{"stat":"FirstBases","value":1},{"stat":"StrikeOuts","value":1},{"stat":"LineOuts","value":1}]}},{"assassinations":[],"aurora_photos":null,"cheer":null,"count":[0,1],"door_prizes":[],"efflorescence":[],"event_type":"Foul","foul":"Ball","steals":[],"wither":null},{"assassinations":[],"aurora_photos":null,"batter":"Sarah Oshima","cheer":null,"destination":"ShortStop","door_prizes":[],"efflorescence":[],"event_type":"FairBall","fair_ball_type":"GroundBall"},{"advances":[],"amazing":false,"assassinations":[],"batter":"Sarah Oshima","ejection":null,"event_type":"GroundedOut","fielders":[{"name":"Ol' Bauer","place":"SS"},{"name":"Geraldine van der Veen","place":"1B"}],"scores":[]},{"event_type":"InningEnd","number":9,"side":"Top"},{"event_type":"GameOver","message":"QuotedGAMEOVER"},{"event_type":"EndGameIncome","losing_team":{"emoji":"🚀","name":"Houston Lunar Operations Personnel"},"losing_team_income":240,"winning_team":{"emoji":"🦢","name":"Kitchener Cobra Chickens"},"winning_team_income":120},{"event_type":"Recordkeeping","losing_score":2,"losing_team":{"emoji":"🚀","name":"Houston Lunar Operations Personnel"},"winning_score":4,"winning_team":{"emoji":"🦢","name":"Kitchener Cobra Chickens"}}]
+[
+  {
+    "away_team": {
+      "emoji": "🚀",
+      "name": "Houston Lunar Operations Personnel"
+    },
+    "event_type": "LiveNow",
+    "home_team": {
+      "emoji": "🦢",
+      "name": "Kitchener Cobra Chickens"
+    },
+    "stadium": "Average Everyday Park",
+    "weather": null
+  },
+  {
+    "away_pitcher": "Mildred Ashley",
+    "away_team": {
+      "emoji": "🚀",
+      "name": "Houston Lunar Operations Personnel"
+    },
+    "event_type": "PitchingMatchup",
+    "home_pitcher": "Quibble Jakobsen",
+    "home_team": {
+      "emoji": "🦢",
+      "name": "Kitchener Cobra Chickens"
+    }
+  },
+  {
+    "event_type": "Lineup",
+    "manager_name": "Luuke Strawberry",
+    "players": [
+      {
+        "name": "G. Chauhan",
+        "place": "SS"
+      },
+      {
+        "name": "Emilio Kowalczyk",
+        "place": "2B"
+      },
+      {
+        "name": "Cabbage Tóth",
+        "place": "C"
+      },
+      {
+        "name": "Jackson Khatun",
+        "place": "1B"
+      },
+      {
+        "name": "Myra Voigt",
+        "place": "DH"
+      },
+      {
+        "name": "Ann Naylor",
+        "place": "CF"
+      },
+      {
+        "name": "Sarah Oshima",
+        "place": "LF"
+      },
+      {
+        "name": "Mel Baumgartner",
+        "place": "RF"
+      },
+      {
+        "name": "April Kovalchuk",
+        "place": "3B"
+      }
+    ],
+    "side": "Away"
+  },
+  {
+    "event_type": "Lineup",
+    "manager_name": "Frederick Oliver",
+    "players": [
+      {
+        "name": "Squirrel Benson",
+        "place": "DH"
+      },
+      {
+        "name": "McBaseball Aguilera",
+        "place": "LF"
+      },
+      {
+        "name": "Goober Gotrax",
+        "place": "2B"
+      },
+      {
+        "name": "Doc Petrauskas",
+        "place": "C"
+      },
+      {
+        "name": "Grerbert Eyestrain",
+        "place": "CF"
+      },
+      {
+        "name": "Ol' Bauer",
+        "place": "SS"
+      },
+      {
+        "name": "Odysseus Figuereo",
+        "place": "RF"
+      },
+      {
+        "name": "Lugubrious Sinclair",
+        "place": "3B"
+      },
+      {
+        "name": "Geraldine van der Veen",
+        "place": "1B"
+      }
+    ],
+    "side": "Home"
+  },
+  {
+    "event_type": "PlayBall"
+  },
+  {
+    "automatic_runner": null,
+    "batting_team": {
+      "emoji": "🚀",
+      "name": "Houston Lunar Operations Personnel"
+    },
+    "event_type": "InningStart",
+    "number": 1,
+    "pitcher_status": {
+      "Same": {
+        "emoji": "🦢",
+        "name": "Quibble Jakobsen"
+      }
+    },
+    "side": "Top"
+  },
+  {
+    "batter": "G. Chauhan",
+    "event_type": "NowBatting",
+    "player_swept_away": null,
+    "stats": "FirstPA"
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      1,
+      0
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "ejection": null,
+    "event_type": "Ball",
+    "steals": [],
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      1,
+      1
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "ejection": null,
+    "event_type": "Strike",
+    "steals": [],
+    "strike": "Looking",
+    "surprise_strike": false,
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      1,
+      2
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "event_type": "Foul",
+    "foul": "Ball",
+    "steals": [],
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      1,
+      2
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "event_type": "Foul",
+    "foul": "Ball",
+    "steals": [],
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      1,
+      2
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "event_type": "Foul",
+    "foul": "Ball",
+    "steals": [],
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "batter": "G. Chauhan",
+    "cheer": null,
+    "destination": "RightField",
+    "door_prizes": [],
+    "efflorescence": [],
+    "event_type": "FairBall",
+    "fair_ball_type": "LineDrive"
+  },
+  {
+    "advances": [],
+    "batter": "G. Chauhan",
+    "distance": "Single",
+    "ejection": null,
+    "event_type": "BatterToBase",
+    "fair_ball_type": "LineDrive",
+    "fielder": {
+      "name": "Odysseus Figuereo",
+      "place": "RF"
+    },
+    "scores": []
+  },
+  {
+    "batter": "Emilio Kowalczyk",
+    "event_type": "NowBatting",
+    "player_swept_away": null,
+    "stats": "FirstPA"
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      0,
+      1
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "event_type": "Foul",
+    "foul": "Ball",
+    "steals": [],
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      1,
+      1
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "ejection": null,
+    "event_type": "Ball",
+    "steals": [],
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      2,
+      1
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "ejection": null,
+    "event_type": "Ball",
+    "steals": [],
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      2,
+      2
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "event_type": "Foul",
+    "foul": "Ball",
+    "steals": [],
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      3,
+      2
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "ejection": null,
+    "event_type": "Ball",
+    "steals": [],
+    "wither": null
+  },
+  {
+    "advances": [
+      {
+        "base": "Second",
+        "runner": "G. Chauhan"
+      }
+    ],
+    "assassinations": [],
+    "aurora_photos": null,
+    "batter": "Emilio Kowalczyk",
+    "cheer": null,
+    "ejection": null,
+    "event_type": "Walk",
+    "scores": [],
+    "wither": null
+  },
+  {
+    "batter": "Cabbage Tóth",
+    "event_type": "NowBatting",
+    "player_swept_away": null,
+    "stats": "FirstPA"
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": "TheCheeringIsRelentless",
+    "count": [
+      0,
+      1
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "ejection": null,
+    "event_type": "Strike",
+    "steals": [],
+    "strike": "Swinging",
+    "surprise_strike": false,
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "batter": "Cabbage Tóth",
+    "cheer": null,
+    "destination": "FirstBase",
+    "door_prizes": [],
+    "efflorescence": [],
+    "event_type": "FairBall",
+    "fair_ball_type": "GroundBall"
+  },
+  {
+    "advances": [],
+    "batter": "Cabbage Tóth",
+    "distance": "Double",
+    "ejection": null,
+    "event_type": "BatterToBase",
+    "fair_ball_type": "GroundBall",
+    "fielder": {
+      "name": "Odysseus Figuereo",
+      "place": "RF"
+    },
+    "scores": [
+      "G. Chauhan",
+      "Emilio Kowalczyk"
+    ]
+  },
+  {
+    "batter": "Jackson Khatun",
+    "event_type": "NowBatting",
+    "player_swept_away": null,
+    "stats": "FirstPA"
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      1,
+      0
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "ejection": null,
+    "event_type": "Ball",
+    "steals": [],
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      2,
+      0
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "ejection": null,
+    "event_type": "Ball",
+    "steals": [],
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      3,
+      0
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "ejection": null,
+    "event_type": "Ball",
+    "steals": [],
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      3,
+      1
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "event_type": "Foul",
+    "foul": "Ball",
+    "steals": [],
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "batter": "Jackson Khatun",
+    "cheer": null,
+    "destination": "FirstBase",
+    "door_prizes": [],
+    "efflorescence": [],
+    "event_type": "FairBall",
+    "fair_ball_type": "Popup"
+  },
+  {
+    "advances": [],
+    "batter": "Jackson Khatun",
+    "caught_by": {
+      "name": "Geraldine van der Veen",
+      "place": "1B"
+    },
+    "ejection": null,
+    "event_type": "CaughtOut",
+    "fair_ball_type": "Popup",
+    "jetpack": false,
+    "perfect": false,
+    "sacrifice": false,
+    "scores": []
+  },
+  {
+    "batter": "Myra Voigt",
+    "event_type": "NowBatting",
+    "player_swept_away": null,
+    "stats": "FirstPA"
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      0,
+      1
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "ejection": null,
+    "event_type": "Strike",
+    "steals": [],
+    "strike": "Looking",
+    "surprise_strike": false,
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      0,
+      2
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "ejection": null,
+    "event_type": "Strike",
+    "steals": [],
+    "strike": "Looking",
+    "surprise_strike": false,
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "batter": "Myra Voigt",
+    "cheer": "TheCrowdEruptsIntoCheers",
+    "destination": "CenterField",
+    "door_prizes": [],
+    "efflorescence": [],
+    "event_type": "FairBall",
+    "fair_ball_type": "LineDrive"
+  },
+  {
+    "advances": [
+      {
+        "base": "Third",
+        "runner": "Cabbage Tóth"
+      }
+    ],
+    "batter": "Myra Voigt",
+    "caught_by": {
+      "name": "Grerbert Eyestrain",
+      "place": "CF"
+    },
+    "ejection": null,
+    "event_type": "CaughtOut",
+    "fair_ball_type": "LineDrive",
+    "jetpack": false,
+    "perfect": false,
+    "sacrifice": false,
+    "scores": []
+  },
+  {
+    "batter": "Ann Naylor",
+    "event_type": "NowBatting",
+    "player_swept_away": null,
+    "stats": "FirstPA"
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      1,
+      0
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "ejection": null,
+    "event_type": "Ball",
+    "steals": [],
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      1,
+      1
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "ejection": null,
+    "event_type": "Strike",
+    "steals": [],
+    "strike": "Looking",
+    "surprise_strike": false,
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      1,
+      2
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "ejection": null,
+    "event_type": "Strike",
+    "steals": [],
+    "strike": "Swinging",
+    "surprise_strike": false,
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      1,
+      2
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "event_type": "Foul",
+    "foul": "Ball",
+    "steals": [],
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      1,
+      2
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "event_type": "Foul",
+    "foul": "Ball",
+    "steals": [],
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "batter": "Ann Naylor",
+    "cheer": null,
+    "ejection": null,
+    "event_type": "StrikeOut",
+    "foul": null,
+    "steals": [],
+    "strike": "Looking",
+    "wither": null
+  },
+  {
+    "event_type": "InningEnd",
+    "number": 1,
+    "side": "Top"
+  },
+  {
+    "automatic_runner": null,
+    "batting_team": {
+      "emoji": "🦢",
+      "name": "Kitchener Cobra Chickens"
+    },
+    "event_type": "InningStart",
+    "number": 1,
+    "pitcher_status": {
+      "Same": {
+        "emoji": "🚀",
+        "name": "Mildred Ashley"
+      }
+    },
+    "side": "Bottom"
+  },
+  {
+    "batter": "Squirrel Benson",
+    "event_type": "NowBatting",
+    "player_swept_away": null,
+    "stats": "FirstPA"
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      0,
+      1
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "ejection": null,
+    "event_type": "Strike",
+    "steals": [],
+    "strike": "Looking",
+    "surprise_strike": false,
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      0,
+      2
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "ejection": null,
+    "event_type": "Strike",
+    "steals": [],
+    "strike": "Looking",
+    "surprise_strike": false,
+    "wither": null
+  },
+  {
+    "advances": [],
+    "aurora_photos": null,
+    "batter": "Squirrel Benson",
+    "cheer": null,
+    "door_prizes": [],
+    "efflorescence": [],
+    "ejection": null,
+    "event_type": "HitByPitch",
+    "scores": [],
+    "wither": null
+  },
+  {
+    "batter": "McBaseball Aguilera",
+    "event_type": "NowBatting",
+    "player_swept_away": null,
+    "stats": "FirstPA"
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      1,
+      0
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "ejection": null,
+    "event_type": "Ball",
+    "steals": [],
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      2,
+      0
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "ejection": null,
+    "event_type": "Ball",
+    "steals": [],
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      2,
+      1
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "event_type": "Foul",
+    "foul": "Ball",
+    "steals": [],
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      3,
+      1
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "ejection": null,
+    "event_type": "Ball",
+    "steals": [],
+    "wither": null
+  },
+  {
+    "advances": [
+      {
+        "base": "Second",
+        "runner": "Squirrel Benson"
+      }
+    ],
+    "assassinations": [],
+    "aurora_photos": null,
+    "batter": "McBaseball Aguilera",
+    "cheer": null,
+    "ejection": null,
+    "event_type": "Walk",
+    "scores": [],
+    "wither": null
+  },
+  {
+    "batter": "Goober Gotrax",
+    "event_type": "NowBatting",
+    "player_swept_away": null,
+    "stats": "FirstPA"
+  },
+  {
+    "advances": [
+      {
+        "base": "Third",
+        "runner": "Squirrel Benson"
+      },
+      {
+        "base": "Second",
+        "runner": "McBaseball Aguilera"
+      }
+    ],
+    "aurora_photos": null,
+    "batter": "Goober Gotrax",
+    "cheer": "TheHomeTownSectionIsDeafening",
+    "door_prizes": [],
+    "efflorescence": [],
+    "ejection": null,
+    "event_type": "HitByPitch",
+    "scores": [],
+    "wither": null
+  },
+  {
+    "batter": "Doc Petrauskas",
+    "event_type": "NowBatting",
+    "player_swept_away": null,
+    "stats": "FirstPA"
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      1,
+      0
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "ejection": null,
+    "event_type": "Ball",
+    "steals": [],
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      1,
+      1
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "ejection": null,
+    "event_type": "Strike",
+    "steals": [],
+    "strike": "Looking",
+    "surprise_strike": false,
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      1,
+      2
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "ejection": null,
+    "event_type": "Strike",
+    "steals": [],
+    "strike": "Swinging",
+    "surprise_strike": false,
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      1,
+      2
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "event_type": "Foul",
+    "foul": "Ball",
+    "steals": [],
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      1,
+      2
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "event_type": "Foul",
+    "foul": "Ball",
+    "steals": [],
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "batter": "Doc Petrauskas",
+    "cheer": null,
+    "ejection": null,
+    "event_type": "StrikeOut",
+    "foul": null,
+    "steals": [],
+    "strike": "Looking",
+    "wither": null
+  },
+  {
+    "batter": "Grerbert Eyestrain",
+    "event_type": "NowBatting",
+    "player_swept_away": null,
+    "stats": "FirstPA"
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "batter": "Grerbert Eyestrain",
+    "cheer": null,
+    "destination": "RightField",
+    "door_prizes": [],
+    "efflorescence": [],
+    "event_type": "FairBall",
+    "fair_ball_type": "FlyBall"
+  },
+  {
+    "advances": [],
+    "batter": "Grerbert Eyestrain",
+    "caught_by": {
+      "name": "Mel Baumgartner",
+      "place": "RF"
+    },
+    "ejection": null,
+    "event_type": "CaughtOut",
+    "fair_ball_type": "FlyBall",
+    "jetpack": false,
+    "perfect": false,
+    "sacrifice": true,
+    "scores": [
+      "Squirrel Benson"
+    ]
+  },
+  {
+    "batter": "Himbo Narciso",
+    "event_type": "NowBatting",
+    "player_swept_away": "Ol' Bauer",
+    "stats": "FirstPA"
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      0,
+      1
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "event_type": "Foul",
+    "foul": "Ball",
+    "steals": [],
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": "ARumbleOfExcitementRollsThroughTheStadium",
+    "count": [
+      1,
+      1
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "ejection": null,
+    "event_type": "Ball",
+    "steals": [],
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      2,
+      1
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "ejection": null,
+    "event_type": "Ball",
+    "steals": [],
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      2,
+      2
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "ejection": null,
+    "event_type": "Strike",
+    "steals": [],
+    "strike": "Swinging",
+    "surprise_strike": false,
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      2,
+      2
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "event_type": "Foul",
+    "foul": "Ball",
+    "steals": [],
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "batter": "Himbo Narciso",
+    "cheer": null,
+    "ejection": null,
+    "event_type": "StrikeOut",
+    "foul": null,
+    "steals": [],
+    "strike": "Swinging",
+    "wither": null
+  },
+  {
+    "event_type": "InningEnd",
+    "number": 1,
+    "side": "Bottom"
+  },
+  {
+    "automatic_runner": null,
+    "batting_team": {
+      "emoji": "🚀",
+      "name": "Houston Lunar Operations Personnel"
+    },
+    "event_type": "InningStart",
+    "number": 2,
+    "pitcher_status": {
+      "Same": {
+        "emoji": "🦢",
+        "name": "Quibble Jakobsen"
+      }
+    },
+    "side": "Top"
+  },
+  {
+    "batter": "Sarah Oshima",
+    "event_type": "NowBatting",
+    "player_swept_away": null,
+    "stats": "FirstPA"
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      0,
+      1
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "ejection": null,
+    "event_type": "Strike",
+    "steals": [],
+    "strike": "Swinging",
+    "surprise_strike": false,
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "batter": "Sarah Oshima",
+    "cheer": null,
+    "destination": "SecondBase",
+    "door_prizes": [],
+    "efflorescence": [],
+    "event_type": "FairBall",
+    "fair_ball_type": "GroundBall"
+  },
+  {
+    "advances": [],
+    "batter": "Sarah Oshima",
+    "distance": "Single",
+    "ejection": null,
+    "event_type": "BatterToBase",
+    "fair_ball_type": "GroundBall",
+    "fielder": {
+      "name": "Grerbert Eyestrain",
+      "place": "CF"
+    },
+    "scores": []
+  },
+  {
+    "batter": "Mel Baumgartner",
+    "event_type": "NowBatting",
+    "player_swept_away": null,
+    "stats": "FirstPA"
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      0,
+      1
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "ejection": null,
+    "event_type": "Strike",
+    "steals": [],
+    "strike": "Looking",
+    "surprise_strike": false,
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "batter": "Mel Baumgartner",
+    "cheer": null,
+    "destination": "SecondBase",
+    "door_prizes": [],
+    "efflorescence": [],
+    "event_type": "FairBall",
+    "fair_ball_type": "GroundBall"
+  },
+  {
+    "advances": [],
+    "batter": "Mel Baumgartner",
+    "double_trouble": null,
+    "ejection": null,
+    "event_type": "DoublePlayGrounded",
+    "fielders": [
+      {
+        "name": "Goober Gotrax",
+        "place": "2B"
+      },
+      {
+        "name": "Ol' Bauer",
+        "place": "SS"
+      },
+      {
+        "name": "Geraldine van der Veen",
+        "place": "1B"
+      }
+    ],
+    "out_one": {
+      "base": "SecondBase",
+      "runner": "Sarah Oshima"
+    },
+    "out_two": {
+      "base": "FirstBase",
+      "runner": "Mel Baumgartner"
+    },
+    "sacrifice": false,
+    "scores": []
+  },
+  {
+    "batter": "April Kovalchuk",
+    "event_type": "NowBatting",
+    "player_swept_away": null,
+    "stats": "FirstPA"
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      1,
+      0
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "ejection": null,
+    "event_type": "Ball",
+    "steals": [],
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "batter": "April Kovalchuk",
+    "cheer": null,
+    "destination": "CenterField",
+    "door_prizes": [],
+    "efflorescence": [],
+    "event_type": "FairBall",
+    "fair_ball_type": "FlyBall"
+  },
+  {
+    "advances": [],
+    "batter": "April Kovalchuk",
+    "caught_by": {
+      "name": "Grerbert Eyestrain",
+      "place": "CF"
+    },
+    "ejection": null,
+    "event_type": "CaughtOut",
+    "fair_ball_type": "FlyBall",
+    "jetpack": false,
+    "perfect": false,
+    "sacrifice": false,
+    "scores": []
+  },
+  {
+    "event_type": "InningEnd",
+    "number": 2,
+    "side": "Top"
+  },
+  {
+    "automatic_runner": null,
+    "batting_team": {
+      "emoji": "🦢",
+      "name": "Kitchener Cobra Chickens"
+    },
+    "event_type": "InningStart",
+    "number": 2,
+    "pitcher_status": {
+      "Same": {
+        "emoji": "🚀",
+        "name": "Mildred Ashley"
+      }
+    },
+    "side": "Bottom"
+  },
+  {
+    "batter": "Odysseus Figuereo",
+    "event_type": "NowBatting",
+    "player_swept_away": null,
+    "stats": "FirstPA"
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      1,
+      0
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "ejection": null,
+    "event_type": "Ball",
+    "steals": [],
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "batter": "Odysseus Figuereo",
+    "cheer": null,
+    "destination": "Catcher",
+    "door_prizes": [],
+    "efflorescence": [],
+    "event_type": "FairBall",
+    "fair_ball_type": "Popup"
+  },
+  {
+    "advances": [],
+    "batter": "Odysseus Figuereo",
+    "caught_by": {
+      "name": "Cabbage Tóth",
+      "place": "C"
+    },
+    "ejection": null,
+    "event_type": "CaughtOut",
+    "fair_ball_type": "Popup",
+    "jetpack": false,
+    "perfect": false,
+    "sacrifice": false,
+    "scores": []
+  },
+  {
+    "batter": "Lugubrious Sinclair",
+    "event_type": "NowBatting",
+    "player_swept_away": null,
+    "stats": "FirstPA"
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      0,
+      1
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "event_type": "Foul",
+    "foul": "Ball",
+    "steals": [],
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      0,
+      2
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "ejection": null,
+    "event_type": "Strike",
+    "steals": [],
+    "strike": "Looking",
+    "surprise_strike": false,
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      1,
+      2
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "ejection": null,
+    "event_type": "Ball",
+    "steals": [],
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      2,
+      2
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "ejection": null,
+    "event_type": "Ball",
+    "steals": [],
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      2,
+      2
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "event_type": "Foul",
+    "foul": "Ball",
+    "steals": [],
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      3,
+      2
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "ejection": null,
+    "event_type": "Ball",
+    "steals": [],
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "batter": "Lugubrious Sinclair",
+    "cheer": null,
+    "destination": "LeftField",
+    "door_prizes": [],
+    "efflorescence": [],
+    "event_type": "FairBall",
+    "fair_ball_type": "LineDrive"
+  },
+  {
+    "advances": [],
+    "batter": "Lugubrious Sinclair",
+    "distance": "Single",
+    "ejection": null,
+    "event_type": "BatterToBase",
+    "fair_ball_type": "LineDrive",
+    "fielder": {
+      "name": "Sarah Oshima",
+      "place": "LF"
+    },
+    "scores": []
+  },
+  {
+    "batter": "Geraldine van der Veen",
+    "event_type": "NowBatting",
+    "player_swept_away": null,
+    "stats": "FirstPA"
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      0,
+      1
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "ejection": null,
+    "event_type": "Strike",
+    "steals": [],
+    "strike": "Looking",
+    "surprise_strike": false,
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      0,
+      2
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "event_type": "Foul",
+    "foul": "Ball",
+    "steals": [],
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      1,
+      2
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "ejection": null,
+    "event_type": "Ball",
+    "steals": [],
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      2,
+      2
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "ejection": null,
+    "event_type": "Ball",
+    "steals": [],
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      3,
+      2
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "ejection": null,
+    "event_type": "Ball",
+    "steals": [],
+    "wither": null
+  },
+  {
+    "advances": [
+      {
+        "base": "Second",
+        "runner": "Lugubrious Sinclair"
+      }
+    ],
+    "assassinations": [],
+    "aurora_photos": null,
+    "batter": "Geraldine van der Veen",
+    "cheer": null,
+    "ejection": null,
+    "event_type": "Walk",
+    "scores": [],
+    "wither": null
+  },
+  {
+    "batter": "Squirrel Benson",
+    "event_type": "NowBatting",
+    "player_swept_away": null,
+    "stats": {
+      "Stats": [
+        {
+          "stat": "HitByPitchs",
+          "value": 1
+        }
+      ]
+    }
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "batter": "Squirrel Benson",
+    "cheer": null,
+    "destination": "ShortStop",
+    "door_prizes": [],
+    "efflorescence": [],
+    "event_type": "FairBall",
+    "fair_ball_type": "GroundBall"
+  },
+  {
+    "advances": [
+      {
+        "base": "Third",
+        "runner": "Lugubrious Sinclair"
+      }
+    ],
+    "batter": "Squirrel Benson",
+    "ejection": null,
+    "event_type": "ForceOut",
+    "fair_ball_type": "GroundBall",
+    "fielders": [
+      {
+        "name": "G. Chauhan",
+        "place": "SS"
+      }
+    ],
+    "out": {
+      "base": "Second",
+      "runner": "Geraldine van der Veen"
+    },
+    "scores": []
+  },
+  {
+    "batter": "McBaseball Aguilera",
+    "event_type": "NowBatting",
+    "player_swept_away": null,
+    "stats": {
+      "Stats": [
+        {
+          "stat": "BaseOnBalls",
+          "value": 1
+        }
+      ]
+    }
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      0,
+      1
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "ejection": null,
+    "event_type": "Strike",
+    "steals": [],
+    "strike": "Swinging",
+    "surprise_strike": false,
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      1,
+      1
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "ejection": null,
+    "event_type": "Ball",
+    "steals": [],
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": "TheStandsAreElectric",
+    "count": [
+      2,
+      1
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "ejection": null,
+    "event_type": "Ball",
+    "steals": [],
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "batter": "McBaseball Aguilera",
+    "cheer": null,
+    "destination": "SecondBase",
+    "door_prizes": [],
+    "efflorescence": [],
+    "event_type": "FairBall",
+    "fair_ball_type": "GroundBall"
+  },
+  {
+    "advances": [],
+    "amazing": false,
+    "assassinations": [],
+    "batter": "McBaseball Aguilera",
+    "ejection": null,
+    "event_type": "GroundedOut",
+    "fielders": [
+      {
+        "name": "Emilio Kowalczyk",
+        "place": "2B"
+      },
+      {
+        "name": "Jackson Khatun",
+        "place": "1B"
+      }
+    ],
+    "scores": []
+  },
+  {
+    "event_type": "InningEnd",
+    "number": 2,
+    "side": "Bottom"
+  },
+  {
+    "automatic_runner": null,
+    "batting_team": {
+      "emoji": "🚀",
+      "name": "Houston Lunar Operations Personnel"
+    },
+    "event_type": "InningStart",
+    "number": 3,
+    "pitcher_status": {
+      "Same": {
+        "emoji": "🦢",
+        "name": "Quibble Jakobsen"
+      }
+    },
+    "side": "Top"
+  },
+  {
+    "batter": "Jackson Gallo",
+    "event_type": "NowBatting",
+    "player_swept_away": "G. Chauhan",
+    "stats": "FirstPA"
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      0,
+      1
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "ejection": null,
+    "event_type": "Strike",
+    "steals": [],
+    "strike": "Looking",
+    "surprise_strike": false,
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      0,
+      2
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "ejection": null,
+    "event_type": "Strike",
+    "steals": [],
+    "strike": "Looking",
+    "surprise_strike": false,
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "batter": "Jackson Gallo",
+    "cheer": null,
+    "destination": "CenterField",
+    "door_prizes": [],
+    "efflorescence": [],
+    "event_type": "FairBall",
+    "fair_ball_type": "FlyBall"
+  },
+  {
+    "advances": [],
+    "batter": "Jackson Gallo",
+    "caught_by": {
+      "name": "Grerbert Eyestrain",
+      "place": "CF"
+    },
+    "ejection": null,
+    "event_type": "CaughtOut",
+    "fair_ball_type": "FlyBall",
+    "jetpack": false,
+    "perfect": false,
+    "sacrifice": false,
+    "scores": []
+  },
+  {
+    "batter": "Emilio Kowalczyk",
+    "event_type": "NowBatting",
+    "player_swept_away": null,
+    "stats": {
+      "Stats": [
+        {
+          "stat": "BaseOnBalls",
+          "value": 1
+        }
+      ]
+    }
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "batter": "Emilio Kowalczyk",
+    "cheer": null,
+    "destination": "FirstBase",
+    "door_prizes": [],
+    "efflorescence": [],
+    "event_type": "FairBall",
+    "fair_ball_type": "GroundBall"
+  },
+  {
+    "advances": [],
+    "amazing": false,
+    "assassinations": [],
+    "batter": "Emilio Kowalczyk",
+    "ejection": null,
+    "event_type": "GroundedOut",
+    "fielders": [
+      {
+        "name": "Geraldine van der Veen",
+        "place": "1B"
+      }
+    ],
+    "scores": []
+  },
+  {
+    "batter": "Cabbage Tóth",
+    "event_type": "NowBatting",
+    "player_swept_away": null,
+    "stats": {
+      "Stats": [
+        {
+          "stat": "HitsForAtBats",
+          "value": {
+            "at_bats": 1,
+            "hits": 1
+          }
+        },
+        {
+          "stat": "SecondBases",
+          "value": 1
+        }
+      ]
+    }
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      1,
+      0
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "ejection": null,
+    "event_type": "Ball",
+    "steals": [],
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      1,
+      1
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "event_type": "Foul",
+    "foul": "Ball",
+    "steals": [],
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      1,
+      2
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "event_type": "Foul",
+    "foul": "Ball",
+    "steals": [],
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "batter": "Cabbage Tóth",
+    "cheer": null,
+    "ejection": null,
+    "event_type": "StrikeOut",
+    "foul": null,
+    "steals": [],
+    "strike": "Looking",
+    "wither": null
+  },
+  {
+    "event_type": "InningEnd",
+    "number": 3,
+    "side": "Top"
+  },
+  {
+    "automatic_runner": null,
+    "batting_team": {
+      "emoji": "🦢",
+      "name": "Kitchener Cobra Chickens"
+    },
+    "event_type": "InningStart",
+    "number": 3,
+    "pitcher_status": {
+      "Same": {
+        "emoji": "🚀",
+        "name": "Mildred Ashley"
+      }
+    },
+    "side": "Bottom"
+  },
+  {
+    "batter": "Goober Gotrax",
+    "event_type": "NowBatting",
+    "player_swept_away": null,
+    "stats": {
+      "Stats": [
+        {
+          "stat": "HitByPitchs",
+          "value": 1
+        }
+      ]
+    }
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      1,
+      0
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "ejection": null,
+    "event_type": "Ball",
+    "steals": [],
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "batter": "Goober Gotrax",
+    "cheer": null,
+    "destination": "ShortStop",
+    "door_prizes": [],
+    "efflorescence": [],
+    "event_type": "FairBall",
+    "fair_ball_type": "GroundBall"
+  },
+  {
+    "advances": [],
+    "amazing": false,
+    "assassinations": [],
+    "batter": "Goober Gotrax",
+    "ejection": null,
+    "event_type": "GroundedOut",
+    "fielders": [
+      {
+        "name": "G. Chauhan",
+        "place": "SS"
+      },
+      {
+        "name": "Jackson Khatun",
+        "place": "1B"
+      }
+    ],
+    "scores": []
+  },
+  {
+    "batter": "Doc Petrauskas",
+    "event_type": "NowBatting",
+    "player_swept_away": null,
+    "stats": {
+      "Stats": [
+        {
+          "stat": "HitsForAtBats",
+          "value": {
+            "at_bats": 1,
+            "hits": 0
+          }
+        },
+        {
+          "stat": "StrikeOuts",
+          "value": 1
+        }
+      ]
+    }
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "batter": "Doc Petrauskas",
+    "cheer": null,
+    "destination": "FirstBase",
+    "door_prizes": [],
+    "efflorescence": [],
+    "event_type": "FairBall",
+    "fair_ball_type": "GroundBall"
+  },
+  {
+    "advances": [],
+    "amazing": false,
+    "assassinations": [],
+    "batter": "Doc Petrauskas",
+    "ejection": null,
+    "event_type": "GroundedOut",
+    "fielders": [
+      {
+        "name": "Jackson Khatun",
+        "place": "1B"
+      }
+    ],
+    "scores": []
+  },
+  {
+    "batter": "Grerbert Eyestrain",
+    "event_type": "NowBatting",
+    "player_swept_away": null,
+    "stats": {
+      "Stats": [
+        {
+          "stat": "SacrificeFlies",
+          "value": 1
+        }
+      ]
+    }
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      1,
+      0
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "ejection": null,
+    "event_type": "Ball",
+    "steals": [],
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      1,
+      1
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "event_type": "Foul",
+    "foul": "Ball",
+    "steals": [],
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      2,
+      1
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "ejection": null,
+    "event_type": "Ball",
+    "steals": [],
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      3,
+      1
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "ejection": null,
+    "event_type": "Ball",
+    "steals": [],
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "batter": "Grerbert Eyestrain",
+    "cheer": null,
+    "destination": "ThirdBase",
+    "door_prizes": [],
+    "efflorescence": [],
+    "event_type": "FairBall",
+    "fair_ball_type": "GroundBall"
+  },
+  {
+    "advances": [],
+    "amazing": false,
+    "assassinations": [],
+    "batter": "Grerbert Eyestrain",
+    "ejection": null,
+    "event_type": "GroundedOut",
+    "fielders": [
+      {
+        "name": "April Kovalchuk",
+        "place": "3B"
+      },
+      {
+        "name": "Jackson Khatun",
+        "place": "1B"
+      }
+    ],
+    "scores": []
+  },
+  {
+    "event_type": "InningEnd",
+    "number": 3,
+    "side": "Bottom"
+  },
+  {
+    "automatic_runner": null,
+    "batting_team": {
+      "emoji": "🚀",
+      "name": "Houston Lunar Operations Personnel"
+    },
+    "event_type": "InningStart",
+    "number": 4,
+    "pitcher_status": {
+      "Same": {
+        "emoji": "🦢",
+        "name": "Quibble Jakobsen"
+      }
+    },
+    "side": "Top"
+  },
+  {
+    "batter": "Jackson Khatun",
+    "event_type": "NowBatting",
+    "player_swept_away": null,
+    "stats": {
+      "Stats": [
+        {
+          "stat": "HitsForAtBats",
+          "value": {
+            "at_bats": 1,
+            "hits": 0
+          }
+        },
+        {
+          "stat": "PopOuts",
+          "value": 1
+        }
+      ]
+    }
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      0,
+      1
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "ejection": null,
+    "event_type": "Strike",
+    "steals": [],
+    "strike": "Looking",
+    "surprise_strike": false,
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      0,
+      2
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "event_type": "Foul",
+    "foul": "Ball",
+    "steals": [],
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "batter": "Jackson Khatun",
+    "cheer": null,
+    "ejection": null,
+    "event_type": "StrikeOut",
+    "foul": null,
+    "steals": [],
+    "strike": "Swinging",
+    "wither": null
+  },
+  {
+    "batter": "Myra Voigt",
+    "event_type": "NowBatting",
+    "player_swept_away": null,
+    "stats": {
+      "Stats": [
+        {
+          "stat": "HitsForAtBats",
+          "value": {
+            "at_bats": 1,
+            "hits": 0
+          }
+        },
+        {
+          "stat": "LineOuts",
+          "value": 1
+        }
+      ]
+    }
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      1,
+      0
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "ejection": null,
+    "event_type": "Ball",
+    "steals": [],
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      1,
+      1
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "event_type": "Foul",
+    "foul": "Ball",
+    "steals": [],
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      1,
+      2
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "ejection": null,
+    "event_type": "Strike",
+    "steals": [],
+    "strike": "Looking",
+    "surprise_strike": false,
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      2,
+      2
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "ejection": null,
+    "event_type": "Ball",
+    "steals": [],
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      2,
+      2
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "event_type": "Foul",
+    "foul": "Ball",
+    "steals": [],
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      3,
+      2
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "ejection": null,
+    "event_type": "Ball",
+    "steals": [],
+    "wither": null
+  },
+  {
+    "advances": [],
+    "assassinations": [],
+    "aurora_photos": null,
+    "batter": "Myra Voigt",
+    "cheer": null,
+    "ejection": null,
+    "event_type": "Walk",
+    "scores": [],
+    "wither": null
+  },
+  {
+    "batter": "Ann Naylor",
+    "event_type": "NowBatting",
+    "player_swept_away": null,
+    "stats": {
+      "Stats": [
+        {
+          "stat": "HitsForAtBats",
+          "value": {
+            "at_bats": 1,
+            "hits": 0
+          }
+        },
+        {
+          "stat": "StrikeOuts",
+          "value": 1
+        }
+      ]
+    }
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      1,
+      0
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "ejection": null,
+    "event_type": "Ball",
+    "steals": [],
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      2,
+      0
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "ejection": null,
+    "event_type": "Ball",
+    "steals": [],
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "batter": "Ann Naylor",
+    "cheer": null,
+    "destination": "SecondBase",
+    "door_prizes": [],
+    "efflorescence": [],
+    "event_type": "FairBall",
+    "fair_ball_type": "GroundBall"
+  },
+  {
+    "advances": [],
+    "batter": "Ann Naylor",
+    "double_trouble": null,
+    "ejection": null,
+    "event_type": "DoublePlayGrounded",
+    "fielders": [
+      {
+        "name": "Goober Gotrax",
+        "place": "2B"
+      },
+      {
+        "name": "Geraldine van der Veen",
+        "place": "1B"
+      }
+    ],
+    "out_one": {
+      "base": "SecondBase",
+      "runner": "Myra Voigt"
+    },
+    "out_two": {
+      "base": "FirstBase",
+      "runner": "Ann Naylor"
+    },
+    "sacrifice": false,
+    "scores": []
+  },
+  {
+    "event_type": "InningEnd",
+    "number": 4,
+    "side": "Top"
+  },
+  {
+    "automatic_runner": null,
+    "batting_team": {
+      "emoji": "🦢",
+      "name": "Kitchener Cobra Chickens"
+    },
+    "event_type": "InningStart",
+    "number": 4,
+    "pitcher_status": {
+      "Same": {
+        "emoji": "🚀",
+        "name": "Mildred Ashley"
+      }
+    },
+    "side": "Bottom"
+  },
+  {
+    "batter": "Ol' Bauer",
+    "event_type": "NowBatting",
+    "player_swept_away": null,
+    "stats": "FirstPA"
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      0,
+      1
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "ejection": null,
+    "event_type": "Strike",
+    "steals": [],
+    "strike": "Looking",
+    "surprise_strike": false,
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      0,
+      2
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "ejection": null,
+    "event_type": "Strike",
+    "steals": [],
+    "strike": "Looking",
+    "surprise_strike": false,
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      1,
+      2
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "ejection": null,
+    "event_type": "Ball",
+    "steals": [],
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "batter": "Ol' Bauer",
+    "cheer": null,
+    "destination": "FirstBase",
+    "door_prizes": [],
+    "efflorescence": [],
+    "event_type": "FairBall",
+    "fair_ball_type": "GroundBall"
+  },
+  {
+    "advances": [],
+    "amazing": false,
+    "assassinations": [],
+    "batter": "Ol' Bauer",
+    "ejection": null,
+    "event_type": "GroundedOut",
+    "fielders": [
+      {
+        "name": "Jackson Khatun",
+        "place": "1B"
+      }
+    ],
+    "scores": []
+  },
+  {
+    "batter": "Odysseus Figuereo",
+    "event_type": "NowBatting",
+    "player_swept_away": null,
+    "stats": {
+      "Stats": [
+        {
+          "stat": "HitsForAtBats",
+          "value": {
+            "at_bats": 1,
+            "hits": 0
+          }
+        },
+        {
+          "stat": "PopOuts",
+          "value": 1
+        }
+      ]
+    }
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      0,
+      1
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "event_type": "Foul",
+    "foul": "Ball",
+    "steals": [],
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      1,
+      1
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "ejection": null,
+    "event_type": "Ball",
+    "steals": [],
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      1,
+      2
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "ejection": null,
+    "event_type": "Strike",
+    "steals": [],
+    "strike": "Looking",
+    "surprise_strike": false,
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      1,
+      2
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "event_type": "Foul",
+    "foul": "Ball",
+    "steals": [],
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      2,
+      2
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "ejection": null,
+    "event_type": "Ball",
+    "steals": [],
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "batter": "Odysseus Figuereo",
+    "cheer": null,
+    "destination": "CenterField",
+    "door_prizes": [],
+    "efflorescence": [],
+    "event_type": "FairBall",
+    "fair_ball_type": "FlyBall"
+  },
+  {
+    "advances": [],
+    "batter": "Odysseus Figuereo",
+    "caught_by": {
+      "name": "Ann Naylor",
+      "place": "CF"
+    },
+    "ejection": null,
+    "event_type": "CaughtOut",
+    "fair_ball_type": "FlyBall",
+    "jetpack": false,
+    "perfect": false,
+    "sacrifice": false,
+    "scores": []
+  },
+  {
+    "batter": "Lugubrious Sinclair",
+    "event_type": "NowBatting",
+    "player_swept_away": null,
+    "stats": {
+      "Stats": [
+        {
+          "stat": "HitsForAtBats",
+          "value": {
+            "at_bats": 1,
+            "hits": 1
+          }
+        },
+        {
+          "stat": "FirstBases",
+          "value": 1
+        }
+      ]
+    }
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      0,
+      1
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "event_type": "Foul",
+    "foul": "Ball",
+    "steals": [],
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      1,
+      1
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "ejection": null,
+    "event_type": "Ball",
+    "steals": [],
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      1,
+      2
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "event_type": "Foul",
+    "foul": "Ball",
+    "steals": [],
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "batter": "Lugubrious Sinclair",
+    "cheer": null,
+    "ejection": null,
+    "event_type": "StrikeOut",
+    "foul": "Tip",
+    "steals": [],
+    "strike": "Swinging",
+    "wither": null
+  },
+  {
+    "event_type": "InningEnd",
+    "number": 4,
+    "side": "Bottom"
+  },
+  {
+    "automatic_runner": null,
+    "batting_team": {
+      "emoji": "🚀",
+      "name": "Houston Lunar Operations Personnel"
+    },
+    "event_type": "InningStart",
+    "number": 5,
+    "pitcher_status": {
+      "Same": {
+        "emoji": "🦢",
+        "name": "Quibble Jakobsen"
+      }
+    },
+    "side": "Top"
+  },
+  {
+    "batter": "Sarah Oshima",
+    "event_type": "NowBatting",
+    "player_swept_away": null,
+    "stats": {
+      "Stats": [
+        {
+          "stat": "HitsForAtBats",
+          "value": {
+            "at_bats": 1,
+            "hits": 1
+          }
+        },
+        {
+          "stat": "FirstBases",
+          "value": 1
+        }
+      ]
+    }
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      0,
+      1
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "ejection": null,
+    "event_type": "Strike",
+    "steals": [],
+    "strike": "Looking",
+    "surprise_strike": false,
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      1,
+      1
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "ejection": null,
+    "event_type": "Ball",
+    "steals": [],
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      1,
+      2
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "event_type": "Foul",
+    "foul": "Ball",
+    "steals": [],
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      2,
+      2
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "ejection": null,
+    "event_type": "Ball",
+    "steals": [],
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      3,
+      2
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "ejection": null,
+    "event_type": "Ball",
+    "steals": [],
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "batter": "Sarah Oshima",
+    "cheer": null,
+    "ejection": null,
+    "event_type": "StrikeOut",
+    "foul": null,
+    "steals": [],
+    "strike": "Looking",
+    "wither": null
+  },
+  {
+    "batter": "Mel Baumgartner",
+    "event_type": "NowBatting",
+    "player_swept_away": null,
+    "stats": {
+      "Stats": [
+        {
+          "stat": "HitsForAtBats",
+          "value": {
+            "at_bats": 1,
+            "hits": 0
+          }
+        },
+        {
+          "stat": "GroundIntoDoublePlays",
+          "value": 1
+        },
+        {
+          "stat": "GroundOuts",
+          "value": 1
+        }
+      ]
+    }
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      0,
+      1
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "event_type": "Foul",
+    "foul": "Ball",
+    "steals": [],
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      0,
+      2
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "ejection": null,
+    "event_type": "Strike",
+    "steals": [],
+    "strike": "Looking",
+    "surprise_strike": false,
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      1,
+      2
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "ejection": null,
+    "event_type": "Ball",
+    "steals": [],
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      1,
+      2
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "event_type": "Foul",
+    "foul": "Ball",
+    "steals": [],
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "batter": "Mel Baumgartner",
+    "cheer": null,
+    "ejection": null,
+    "event_type": "StrikeOut",
+    "foul": null,
+    "steals": [],
+    "strike": "Swinging",
+    "wither": null
+  },
+  {
+    "batter": "April Kovalchuk",
+    "event_type": "NowBatting",
+    "player_swept_away": null,
+    "stats": {
+      "Stats": [
+        {
+          "stat": "HitsForAtBats",
+          "value": {
+            "at_bats": 1,
+            "hits": 0
+          }
+        },
+        {
+          "stat": "ForceOuts",
+          "value": 1
+        }
+      ]
+    }
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      1,
+      0
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "ejection": null,
+    "event_type": "Ball",
+    "steals": [],
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      2,
+      0
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "ejection": null,
+    "event_type": "Ball",
+    "steals": [],
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      3,
+      0
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "ejection": null,
+    "event_type": "Ball",
+    "steals": [],
+    "wither": null
+  },
+  {
+    "advances": [],
+    "assassinations": [],
+    "aurora_photos": null,
+    "batter": "April Kovalchuk",
+    "cheer": null,
+    "ejection": null,
+    "event_type": "Walk",
+    "scores": [],
+    "wither": null
+  },
+  {
+    "batter": "G. Chauhan",
+    "event_type": "NowBatting",
+    "player_swept_away": null,
+    "stats": {
+      "Stats": [
+        {
+          "stat": "HitsForAtBats",
+          "value": {
+            "at_bats": 1,
+            "hits": 1
+          }
+        },
+        {
+          "stat": "FirstBases",
+          "value": 1
+        }
+      ]
+    }
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "batter": "G. Chauhan",
+    "cheer": null,
+    "destination": "FirstBase",
+    "door_prizes": [],
+    "efflorescence": [],
+    "event_type": "FairBall",
+    "fair_ball_type": "Popup"
+  },
+  {
+    "advances": [],
+    "batter": "G. Chauhan",
+    "caught_by": {
+      "name": "Geraldine van der Veen",
+      "place": "1B"
+    },
+    "ejection": null,
+    "event_type": "CaughtOut",
+    "fair_ball_type": "Popup",
+    "jetpack": false,
+    "perfect": false,
+    "sacrifice": false,
+    "scores": []
+  },
+  {
+    "event_type": "InningEnd",
+    "number": 5,
+    "side": "Top"
+  },
+  {
+    "automatic_runner": null,
+    "batting_team": {
+      "emoji": "🦢",
+      "name": "Kitchener Cobra Chickens"
+    },
+    "event_type": "InningStart",
+    "number": 5,
+    "pitcher_status": {
+      "Same": {
+        "emoji": "🚀",
+        "name": "Mildred Ashley"
+      }
+    },
+    "side": "Bottom"
+  },
+  {
+    "batter": "Lester à la Mode",
+    "event_type": "NowBatting",
+    "player_swept_away": "Geraldine van der Veen",
+    "stats": "FirstPA"
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      0,
+      1
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "ejection": null,
+    "event_type": "Strike",
+    "steals": [],
+    "strike": "Looking",
+    "surprise_strike": false,
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      1,
+      1
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "ejection": null,
+    "event_type": "Ball",
+    "steals": [],
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "batter": "Lester à la Mode",
+    "cheer": null,
+    "destination": "ShortStop",
+    "door_prizes": [],
+    "efflorescence": [],
+    "event_type": "FairBall",
+    "fair_ball_type": "GroundBall"
+  },
+  {
+    "advances": [],
+    "batter": "Lester à la Mode",
+    "distance": "Double",
+    "ejection": null,
+    "event_type": "BatterToBase",
+    "fair_ball_type": "GroundBall",
+    "fielder": {
+      "name": "Sarah Oshima",
+      "place": "LF"
+    },
+    "scores": []
+  },
+  {
+    "batter": "Squirrel Benson",
+    "event_type": "NowBatting",
+    "player_swept_away": null,
+    "stats": {
+      "Stats": [
+        {
+          "stat": "HitsForAtBats",
+          "value": {
+            "at_bats": 1,
+            "hits": 0
+          }
+        },
+        {
+          "stat": "HitByPitchs",
+          "value": 1
+        },
+        {
+          "stat": "Fouls",
+          "value": 1
+        }
+      ]
+    }
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "batter": "Squirrel Benson",
+    "cheer": null,
+    "destination": "Pitcher",
+    "door_prizes": [],
+    "efflorescence": [],
+    "event_type": "FairBall",
+    "fair_ball_type": "GroundBall"
+  },
+  {
+    "advances": [
+      {
+        "base": "Third",
+        "runner": "Lester à la Mode"
+      }
+    ],
+    "batter": "Squirrel Benson",
+    "distance": "Single",
+    "ejection": null,
+    "event_type": "BatterToBase",
+    "fair_ball_type": "GroundBall",
+    "fielder": {
+      "name": "Mildred Ashley",
+      "place": "P"
+    },
+    "scores": []
+  },
+  {
+    "batter": "McBaseball Aguilera",
+    "event_type": "NowBatting",
+    "player_swept_away": null,
+    "stats": {
+      "Stats": [
+        {
+          "stat": "HitsForAtBats",
+          "value": {
+            "at_bats": 1,
+            "hits": 0
+          }
+        },
+        {
+          "stat": "BaseOnBalls",
+          "value": 1
+        },
+        {
+          "stat": "GroundOuts",
+          "value": 1
+        }
+      ]
+    }
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      1,
+      0
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "ejection": null,
+    "event_type": "Ball",
+    "steals": [],
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      2,
+      0
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "ejection": null,
+    "event_type": "Ball",
+    "steals": [],
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      2,
+      1
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "event_type": "Foul",
+    "foul": "Tip",
+    "steals": [],
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": "TheHomeSupportersCantContainThemselves",
+    "count": [
+      3,
+      1
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "ejection": null,
+    "event_type": "Ball",
+    "steals": [],
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      3,
+      2
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "event_type": "Foul",
+    "foul": "Ball",
+    "steals": [],
+    "wither": null
+  },
+  {
+    "advances": [
+      {
+        "base": "Second",
+        "runner": "Squirrel Benson"
+      }
+    ],
+    "assassinations": [],
+    "aurora_photos": null,
+    "batter": "McBaseball Aguilera",
+    "cheer": null,
+    "ejection": null,
+    "event_type": "Walk",
+    "scores": [],
+    "wither": null
+  },
+  {
+    "batter": "Goober Gotrax",
+    "event_type": "NowBatting",
+    "player_swept_away": null,
+    "stats": {
+      "Stats": [
+        {
+          "stat": "HitsForAtBats",
+          "value": {
+            "at_bats": 1,
+            "hits": 0
+          }
+        },
+        {
+          "stat": "HitByPitchs",
+          "value": 1
+        },
+        {
+          "stat": "GroundOuts",
+          "value": 1
+        }
+      ]
+    }
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      0,
+      1
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "event_type": "Foul",
+    "foul": "Ball",
+    "steals": [],
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      0,
+      2
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "ejection": null,
+    "event_type": "Strike",
+    "steals": [],
+    "strike": "Swinging",
+    "surprise_strike": false,
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      1,
+      2
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "ejection": null,
+    "event_type": "Ball",
+    "steals": [],
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "batter": "Goober Gotrax",
+    "cheer": null,
+    "ejection": null,
+    "event_type": "StrikeOut",
+    "foul": null,
+    "steals": [],
+    "strike": "Looking",
+    "wither": null
+  },
+  {
+    "event_type": "MoundVisit",
+    "manager_name": "Luuke Strawberry",
+    "mound_visit_type": "MoundVisit",
+    "team": {
+      "emoji": "🚀",
+      "name": "Houston Lunar Operations Personnel"
+    }
+  },
+  {
+    "event_type": "PitcherRemains",
+    "remaining_pitcher": {
+      "name": "Mildred Ashley",
+      "place": "SP1"
+    }
+  },
+  {
+    "batter": "Himbo Narciso",
+    "event_type": "NowBatting",
+    "player_swept_away": "Doc Petrauskas",
+    "stats": {
+      "Stats": [
+        {
+          "stat": "HitsForAtBats",
+          "value": {
+            "at_bats": 1,
+            "hits": 0
+          }
+        },
+        {
+          "stat": "StrikeOuts",
+          "value": 1
+        }
+      ]
+    }
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      0,
+      1
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "event_type": "Foul",
+    "foul": "Ball",
+    "steals": [],
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "batter": "Himbo Narciso",
+    "cheer": "EveryoneIsChantingTheTeamsName",
+    "destination": "ShortStop",
+    "door_prizes": [],
+    "efflorescence": [],
+    "event_type": "FairBall",
+    "fair_ball_type": "GroundBall"
+  },
+  {
+    "advances": [
+      {
+        "base": "Third",
+        "runner": "Squirrel Benson"
+      },
+      {
+        "base": "Second",
+        "runner": "McBaseball Aguilera"
+      },
+      {
+        "base": "First",
+        "runner": "Himbo Narciso"
+      }
+    ],
+    "batter": "Himbo Narciso",
+    "ejection": null,
+    "event_type": "ForceOut",
+    "fair_ball_type": "GroundBall",
+    "fielders": [
+      {
+        "name": "G. Chauhan",
+        "place": "SS"
+      },
+      {
+        "name": "Cabbage Tóth",
+        "place": "C"
+      }
+    ],
+    "out": {
+      "base": "Home",
+      "runner": "Lester à la Mode"
+    },
+    "scores": []
+  },
+  {
+    "batter": "Grerbert Eyestrain",
+    "event_type": "NowBatting",
+    "player_swept_away": null,
+    "stats": {
+      "Stats": [
+        {
+          "stat": "HitsForAtBats",
+          "value": {
+            "at_bats": 1,
+            "hits": 0
+          }
+        },
+        {
+          "stat": "SacrificeFlies",
+          "value": 1
+        },
+        {
+          "stat": "GroundOuts",
+          "value": 1
+        }
+      ]
+    }
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      1,
+      0
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "ejection": null,
+    "event_type": "Ball",
+    "steals": [],
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      2,
+      0
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "ejection": null,
+    "event_type": "Ball",
+    "steals": [],
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      3,
+      0
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "ejection": null,
+    "event_type": "Ball",
+    "steals": [],
+    "wither": null
+  },
+  {
+    "advances": [
+      {
+        "base": "Third",
+        "runner": "McBaseball Aguilera"
+      },
+      {
+        "base": "Second",
+        "runner": "Himbo Narciso"
+      }
+    ],
+    "assassinations": [],
+    "aurora_photos": null,
+    "batter": "Grerbert Eyestrain",
+    "cheer": null,
+    "ejection": null,
+    "event_type": "Walk",
+    "scores": [
+      "Squirrel Benson"
+    ],
+    "wither": null
+  },
+  {
+    "batter": "Ol' Bauer",
+    "event_type": "NowBatting",
+    "player_swept_away": null,
+    "stats": {
+      "Stats": [
+        {
+          "stat": "HitsForAtBats",
+          "value": {
+            "at_bats": 1,
+            "hits": 0
+          }
+        },
+        {
+          "stat": "GroundOuts",
+          "value": 1
+        }
+      ]
+    }
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      0,
+      1
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "ejection": null,
+    "event_type": "Strike",
+    "steals": [],
+    "strike": "Swinging",
+    "surprise_strike": false,
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      1,
+      1
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "ejection": null,
+    "event_type": "Ball",
+    "steals": [],
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      2,
+      1
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "ejection": null,
+    "event_type": "Ball",
+    "steals": [],
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      3,
+      1
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "ejection": null,
+    "event_type": "Ball",
+    "steals": [],
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      3,
+      2
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "event_type": "Foul",
+    "foul": "Ball",
+    "steals": [],
+    "wither": null
+  },
+  {
+    "advances": [
+      {
+        "base": "Third",
+        "runner": "Himbo Narciso"
+      },
+      {
+        "base": "Second",
+        "runner": "Grerbert Eyestrain"
+      }
+    ],
+    "assassinations": [],
+    "aurora_photos": null,
+    "batter": "Ol' Bauer",
+    "cheer": null,
+    "ejection": null,
+    "event_type": "Walk",
+    "scores": [
+      "McBaseball Aguilera"
+    ],
+    "wither": null
+  },
+  {
+    "event_type": "MoundVisit",
+    "manager_name": "Luuke Strawberry",
+    "mound_visit_type": "PitchingChange",
+    "team": {
+      "emoji": "🚀",
+      "name": "Houston Lunar Operations Personnel"
+    }
+  },
+  {
+    "arriving_pitcher_emoji": "🚀",
+    "arriving_pitcher_name": "Quackers Umar",
+    "arriving_pitcher_place": "RP1",
+    "event_type": "PitcherSwap",
+    "leaving_pitcher": {
+      "name": "Mildred Ashley",
+      "place": "SP1"
+    },
+    "leaving_pitcher_emoji": null
+  },
+  {
+    "batter": "Odysseus Figuereo",
+    "event_type": "NowBatting",
+    "player_swept_away": null,
+    "stats": {
+      "Stats": [
+        {
+          "stat": "HitsForAtBats",
+          "value": {
+            "at_bats": 2,
+            "hits": 0
+          }
+        },
+        {
+          "stat": "PopOuts",
+          "value": 1
+        },
+        {
+          "stat": "ForceOuts",
+          "value": 1
+        }
+      ]
+    }
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      1,
+      0
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "ejection": null,
+    "event_type": "Ball",
+    "steals": [],
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      2,
+      0
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "ejection": null,
+    "event_type": "Ball",
+    "steals": [],
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "batter": "Odysseus Figuereo",
+    "cheer": null,
+    "destination": "SecondBase",
+    "door_prizes": [],
+    "efflorescence": [],
+    "event_type": "FairBall",
+    "fair_ball_type": "GroundBall"
+  },
+  {
+    "advances": [
+      {
+        "base": "Third",
+        "runner": "Grerbert Eyestrain"
+      },
+      {
+        "base": "Second",
+        "runner": "Ol' Bauer"
+      }
+    ],
+    "batter": "Odysseus Figuereo",
+    "ejection": null,
+    "error": "Throwing",
+    "event_type": "ReachOnFieldingError",
+    "fielder": {
+      "name": "Emilio Kowalczyk",
+      "place": "2B"
+    },
+    "scores": [
+      "Himbo Narciso"
+    ]
+  },
+  {
+    "batter": "Lugubrious Sinclair",
+    "event_type": "NowBatting",
+    "player_swept_away": null,
+    "stats": {
+      "Stats": [
+        {
+          "stat": "HitsForAtBats",
+          "value": {
+            "at_bats": 2,
+            "hits": 1
+          }
+        },
+        {
+          "stat": "FirstBases",
+          "value": 1
+        },
+        {
+          "stat": "StrikeOuts",
+          "value": 1
+        }
+      ]
+    }
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      1,
+      0
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "ejection": null,
+    "event_type": "Ball",
+    "steals": [],
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": "TheSupportersFuelTheirTeam",
+    "count": [
+      1,
+      1
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "ejection": null,
+    "event_type": "Strike",
+    "steals": [],
+    "strike": "Looking",
+    "surprise_strike": false,
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      1,
+      2
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "event_type": "Foul",
+    "foul": "Ball",
+    "steals": [],
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "batter": "Lugubrious Sinclair",
+    "cheer": null,
+    "destination": "RightField",
+    "door_prizes": [],
+    "efflorescence": [],
+    "event_type": "FairBall",
+    "fair_ball_type": "FlyBall"
+  },
+  {
+    "advances": [],
+    "batter": "Lugubrious Sinclair",
+    "caught_by": {
+      "name": "Mel Baumgartner",
+      "place": "RF"
+    },
+    "ejection": null,
+    "event_type": "CaughtOut",
+    "fair_ball_type": "FlyBall",
+    "jetpack": false,
+    "perfect": false,
+    "sacrifice": false,
+    "scores": []
+  },
+  {
+    "event_type": "InningEnd",
+    "number": 5,
+    "side": "Bottom"
+  },
+  {
+    "automatic_runner": null,
+    "batting_team": {
+      "emoji": "🚀",
+      "name": "Houston Lunar Operations Personnel"
+    },
+    "event_type": "InningStart",
+    "number": 6,
+    "pitcher_status": {
+      "Same": {
+        "emoji": "🦢",
+        "name": "Quibble Jakobsen"
+      }
+    },
+    "side": "Top"
+  },
+  {
+    "batter": "Emilio Kowalczyk",
+    "event_type": "NowBatting",
+    "player_swept_away": null,
+    "stats": {
+      "Stats": [
+        {
+          "stat": "HitsForAtBats",
+          "value": {
+            "at_bats": 1,
+            "hits": 0
+          }
+        },
+        {
+          "stat": "BaseOnBalls",
+          "value": 1
+        },
+        {
+          "stat": "GroundOuts",
+          "value": 1
+        }
+      ]
+    }
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      1,
+      0
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "ejection": null,
+    "event_type": "Ball",
+    "steals": [],
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      2,
+      0
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "ejection": null,
+    "event_type": "Ball",
+    "steals": [],
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      2,
+      1
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "ejection": null,
+    "event_type": "Strike",
+    "steals": [],
+    "strike": "Swinging",
+    "surprise_strike": false,
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      2,
+      2
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "ejection": null,
+    "event_type": "Strike",
+    "steals": [],
+    "strike": "Looking",
+    "surprise_strike": false,
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "batter": "Emilio Kowalczyk",
+    "cheer": null,
+    "ejection": null,
+    "event_type": "StrikeOut",
+    "foul": null,
+    "steals": [],
+    "strike": "Looking",
+    "wither": null
+  },
+  {
+    "batter": "Cabbage Tóth",
+    "event_type": "NowBatting",
+    "player_swept_away": null,
+    "stats": {
+      "Stats": [
+        {
+          "stat": "HitsForAtBats",
+          "value": {
+            "at_bats": 2,
+            "hits": 1
+          }
+        },
+        {
+          "stat": "SecondBases",
+          "value": 1
+        },
+        {
+          "stat": "StrikeOuts",
+          "value": 1
+        }
+      ]
+    }
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      0,
+      1
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "ejection": null,
+    "event_type": "Strike",
+    "steals": [],
+    "strike": "Swinging",
+    "surprise_strike": false,
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      1,
+      1
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "ejection": null,
+    "event_type": "Ball",
+    "steals": [],
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      2,
+      1
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "ejection": null,
+    "event_type": "Ball",
+    "steals": [],
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "batter": "Cabbage Tóth",
+    "cheer": null,
+    "destination": "RightField",
+    "door_prizes": [],
+    "efflorescence": [],
+    "event_type": "FairBall",
+    "fair_ball_type": "LineDrive"
+  },
+  {
+    "advances": [],
+    "batter": "Cabbage Tóth",
+    "distance": "Single",
+    "ejection": null,
+    "event_type": "BatterToBase",
+    "fair_ball_type": "LineDrive",
+    "fielder": {
+      "name": "Odysseus Figuereo",
+      "place": "RF"
+    },
+    "scores": []
+  },
+  {
+    "batter": "Jackson Khatun",
+    "event_type": "NowBatting",
+    "player_swept_away": null,
+    "stats": {
+      "Stats": [
+        {
+          "stat": "HitsForAtBats",
+          "value": {
+            "at_bats": 2,
+            "hits": 0
+          }
+        },
+        {
+          "stat": "PopOuts",
+          "value": 1
+        },
+        {
+          "stat": "StrikeOuts",
+          "value": 1
+        }
+      ]
+    }
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "batter": "Jackson Khatun",
+    "cheer": null,
+    "destination": "Pitcher",
+    "door_prizes": [],
+    "efflorescence": [],
+    "event_type": "FairBall",
+    "fair_ball_type": "GroundBall"
+  },
+  {
+    "advances": [],
+    "batter": "Jackson Khatun",
+    "double_trouble": null,
+    "ejection": null,
+    "event_type": "DoublePlayGrounded",
+    "fielders": [
+      {
+        "name": "Quibble Jakobsen",
+        "place": "SP1"
+      },
+      {
+        "name": "Ol' Bauer",
+        "place": "SS"
+      },
+      {
+        "name": "Geraldine van der Veen",
+        "place": "1B"
+      }
+    ],
+    "out_one": {
+      "base": "SecondBase",
+      "runner": "Cabbage Tóth"
+    },
+    "out_two": {
+      "base": "FirstBase",
+      "runner": "Jackson Khatun"
+    },
+    "sacrifice": false,
+    "scores": []
+  },
+  {
+    "event_type": "InningEnd",
+    "number": 6,
+    "side": "Top"
+  },
+  {
+    "automatic_runner": null,
+    "batting_team": {
+      "emoji": "🦢",
+      "name": "Kitchener Cobra Chickens"
+    },
+    "event_type": "InningStart",
+    "number": 6,
+    "pitcher_status": {
+      "Same": {
+        "emoji": "🚀",
+        "name": "Quackers Umar"
+      }
+    },
+    "side": "Bottom"
+  },
+  {
+    "batter": "Geraldine van der Veen",
+    "event_type": "NowBatting",
+    "player_swept_away": null,
+    "stats": {
+      "Stats": [
+        {
+          "stat": "BaseOnBalls",
+          "value": 1
+        }
+      ]
+    }
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      1,
+      0
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "ejection": null,
+    "event_type": "Ball",
+    "steals": [],
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "batter": "Geraldine van der Veen",
+    "cheer": null,
+    "destination": "CenterField",
+    "door_prizes": [],
+    "efflorescence": [],
+    "event_type": "FairBall",
+    "fair_ball_type": "FlyBall"
+  },
+  {
+    "advances": [],
+    "batter": "Geraldine van der Veen",
+    "caught_by": {
+      "name": "Ann Naylor",
+      "place": "CF"
+    },
+    "ejection": null,
+    "event_type": "CaughtOut",
+    "fair_ball_type": "FlyBall",
+    "jetpack": false,
+    "perfect": false,
+    "sacrifice": false,
+    "scores": []
+  },
+  {
+    "batter": "Squirrel Benson",
+    "event_type": "NowBatting",
+    "player_swept_away": null,
+    "stats": {
+      "Stats": [
+        {
+          "stat": "HitsForAtBats",
+          "value": {
+            "at_bats": 2,
+            "hits": 1
+          }
+        },
+        {
+          "stat": "HitByPitchs",
+          "value": 1
+        },
+        {
+          "stat": "Fouls",
+          "value": 1
+        },
+        {
+          "stat": "FirstBases",
+          "value": 1
+        }
+      ]
+    }
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      1,
+      0
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "ejection": null,
+    "event_type": "Ball",
+    "steals": [],
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "batter": "Squirrel Benson",
+    "cheer": null,
+    "destination": "FirstBase",
+    "door_prizes": [],
+    "efflorescence": [],
+    "event_type": "FairBall",
+    "fair_ball_type": "GroundBall"
+  },
+  {
+    "advances": [],
+    "amazing": false,
+    "assassinations": [],
+    "batter": "Squirrel Benson",
+    "ejection": null,
+    "event_type": "GroundedOut",
+    "fielders": [
+      {
+        "name": "Jackson Khatun",
+        "place": "1B"
+      }
+    ],
+    "scores": []
+  },
+  {
+    "batter": "McBaseball Aguilera",
+    "event_type": "NowBatting",
+    "player_swept_away": null,
+    "stats": {
+      "Stats": [
+        {
+          "stat": "HitsForAtBats",
+          "value": {
+            "at_bats": 1,
+            "hits": 0
+          }
+        },
+        {
+          "stat": "BaseOnBalls",
+          "value": 2
+        },
+        {
+          "stat": "GroundOuts",
+          "value": 1
+        }
+      ]
+    }
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "batter": "McBaseball Aguilera",
+    "cheer": null,
+    "destination": "SecondBase",
+    "door_prizes": [],
+    "efflorescence": [],
+    "event_type": "FairBall",
+    "fair_ball_type": "GroundBall"
+  },
+  {
+    "advances": [],
+    "amazing": false,
+    "assassinations": [],
+    "batter": "McBaseball Aguilera",
+    "ejection": null,
+    "event_type": "GroundedOut",
+    "fielders": [
+      {
+        "name": "Emilio Kowalczyk",
+        "place": "2B"
+      },
+      {
+        "name": "Jackson Khatun",
+        "place": "1B"
+      }
+    ],
+    "scores": []
+  },
+  {
+    "event_type": "InningEnd",
+    "number": 6,
+    "side": "Bottom"
+  },
+  {
+    "automatic_runner": null,
+    "batting_team": {
+      "emoji": "🚀",
+      "name": "Houston Lunar Operations Personnel"
+    },
+    "event_type": "InningStart",
+    "number": 7,
+    "pitcher_status": {
+      "Same": {
+        "emoji": "🦢",
+        "name": "Quibble Jakobsen"
+      }
+    },
+    "side": "Top"
+  },
+  {
+    "batter": "Myra Voigt",
+    "event_type": "NowBatting",
+    "player_swept_away": null,
+    "stats": {
+      "Stats": [
+        {
+          "stat": "HitsForAtBats",
+          "value": {
+            "at_bats": 1,
+            "hits": 0
+          }
+        },
+        {
+          "stat": "LineOuts",
+          "value": 1
+        },
+        {
+          "stat": "BaseOnBalls",
+          "value": 1
+        }
+      ]
+    }
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      1,
+      0
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "ejection": null,
+    "event_type": "Ball",
+    "steals": [],
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      2,
+      0
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "ejection": null,
+    "event_type": "Ball",
+    "steals": [],
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      2,
+      1
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "ejection": null,
+    "event_type": "Strike",
+    "steals": [],
+    "strike": "Looking",
+    "surprise_strike": false,
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      3,
+      1
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "ejection": null,
+    "event_type": "Ball",
+    "steals": [],
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "batter": "Myra Voigt",
+    "cheer": null,
+    "destination": "LeftField",
+    "door_prizes": [],
+    "efflorescence": [],
+    "event_type": "FairBall",
+    "fair_ball_type": "LineDrive"
+  },
+  {
+    "advances": [],
+    "batter": "Myra Voigt",
+    "distance": "Single",
+    "ejection": null,
+    "event_type": "BatterToBase",
+    "fair_ball_type": "LineDrive",
+    "fielder": {
+      "name": "McBaseball Aguilera",
+      "place": "LF"
+    },
+    "scores": []
+  },
+  {
+    "batter": "Ann Naylor",
+    "event_type": "NowBatting",
+    "player_swept_away": null,
+    "stats": {
+      "Stats": [
+        {
+          "stat": "HitsForAtBats",
+          "value": {
+            "at_bats": 2,
+            "hits": 0
+          }
+        },
+        {
+          "stat": "StrikeOuts",
+          "value": 1
+        },
+        {
+          "stat": "GroundIntoDoublePlays",
+          "value": 1
+        },
+        {
+          "stat": "GroundOuts",
+          "value": 1
+        }
+      ]
+    }
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      0,
+      1
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "ejection": null,
+    "event_type": "Strike",
+    "steals": [],
+    "strike": "Swinging",
+    "surprise_strike": false,
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      0,
+      2
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "ejection": null,
+    "event_type": "Strike",
+    "steals": [],
+    "strike": "Looking",
+    "surprise_strike": false,
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "batter": "Ann Naylor",
+    "cheer": null,
+    "ejection": null,
+    "event_type": "StrikeOut",
+    "foul": null,
+    "steals": [],
+    "strike": "Looking",
+    "wither": null
+  },
+  {
+    "batter": "Sarah Oshima",
+    "event_type": "NowBatting",
+    "player_swept_away": null,
+    "stats": {
+      "Stats": [
+        {
+          "stat": "HitsForAtBats",
+          "value": {
+            "at_bats": 2,
+            "hits": 1
+          }
+        },
+        {
+          "stat": "FirstBases",
+          "value": 1
+        },
+        {
+          "stat": "StrikeOuts",
+          "value": 1
+        }
+      ]
+    }
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "batter": "Sarah Oshima",
+    "cheer": null,
+    "destination": "CenterField",
+    "door_prizes": [],
+    "efflorescence": [],
+    "event_type": "FairBall",
+    "fair_ball_type": "LineDrive"
+  },
+  {
+    "advances": [],
+    "batter": "Sarah Oshima",
+    "caught_by": {
+      "name": "Ol' Bauer",
+      "place": "SS"
+    },
+    "ejection": null,
+    "event_type": "CaughtOut",
+    "fair_ball_type": "LineDrive",
+    "jetpack": false,
+    "perfect": false,
+    "sacrifice": false,
+    "scores": []
+  },
+  {
+    "batter": "Mel Baumgartner",
+    "event_type": "NowBatting",
+    "player_swept_away": null,
+    "stats": {
+      "Stats": [
+        {
+          "stat": "HitsForAtBats",
+          "value": {
+            "at_bats": 2,
+            "hits": 0
+          }
+        },
+        {
+          "stat": "GroundIntoDoublePlays",
+          "value": 1
+        },
+        {
+          "stat": "GroundOuts",
+          "value": 1
+        },
+        {
+          "stat": "StrikeOuts",
+          "value": 1
+        }
+      ]
+    }
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      1,
+      0
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "ejection": null,
+    "event_type": "Ball",
+    "steals": [],
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      2,
+      0
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "ejection": null,
+    "event_type": "Ball",
+    "steals": [],
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "batter": "Mel Baumgartner",
+    "cheer": null,
+    "destination": "CenterField",
+    "door_prizes": [],
+    "efflorescence": [],
+    "event_type": "FairBall",
+    "fair_ball_type": "FlyBall"
+  },
+  {
+    "advances": [],
+    "batter": "Mel Baumgartner",
+    "caught_by": {
+      "name": "Grerbert Eyestrain",
+      "place": "CF"
+    },
+    "ejection": null,
+    "event_type": "CaughtOut",
+    "fair_ball_type": "FlyBall",
+    "jetpack": false,
+    "perfect": false,
+    "sacrifice": false,
+    "scores": []
+  },
+  {
+    "event_type": "InningEnd",
+    "number": 7,
+    "side": "Top"
+  },
+  {
+    "automatic_runner": null,
+    "batting_team": {
+      "emoji": "🦢",
+      "name": "Kitchener Cobra Chickens"
+    },
+    "event_type": "InningStart",
+    "number": 7,
+    "pitcher_status": {
+      "Same": {
+        "emoji": "🚀",
+        "name": "Quackers Umar"
+      }
+    },
+    "side": "Bottom"
+  },
+  {
+    "batter": "Goober Gotrax",
+    "event_type": "NowBatting",
+    "player_swept_away": null,
+    "stats": {
+      "Stats": [
+        {
+          "stat": "HitsForAtBats",
+          "value": {
+            "at_bats": 2,
+            "hits": 0
+          }
+        },
+        {
+          "stat": "HitByPitchs",
+          "value": 1
+        },
+        {
+          "stat": "GroundOuts",
+          "value": 1
+        },
+        {
+          "stat": "StrikeOuts",
+          "value": 1
+        }
+      ]
+    }
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      1,
+      0
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "ejection": null,
+    "event_type": "Ball",
+    "steals": [],
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "batter": "Goober Gotrax",
+    "cheer": null,
+    "destination": "LeftField",
+    "door_prizes": [],
+    "efflorescence": [],
+    "event_type": "FairBall",
+    "fair_ball_type": "LineDrive"
+  },
+  {
+    "advances": [],
+    "batter": "Goober Gotrax",
+    "distance": "Single",
+    "ejection": null,
+    "event_type": "BatterToBase",
+    "fair_ball_type": "LineDrive",
+    "fielder": {
+      "name": "Sarah Oshima",
+      "place": "LF"
+    },
+    "scores": []
+  },
+  {
+    "batter": "Doc Petrauskas",
+    "event_type": "NowBatting",
+    "player_swept_away": null,
+    "stats": {
+      "Stats": [
+        {
+          "stat": "HitsForAtBats",
+          "value": {
+            "at_bats": 2,
+            "hits": 0
+          }
+        },
+        {
+          "stat": "StrikeOuts",
+          "value": 1
+        },
+        {
+          "stat": "GroundOuts",
+          "value": 1
+        }
+      ]
+    }
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      1,
+      0
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "ejection": null,
+    "event_type": "Ball",
+    "steals": [],
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      1,
+      1
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "ejection": null,
+    "event_type": "Strike",
+    "steals": [],
+    "strike": "Looking",
+    "surprise_strike": false,
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      2,
+      1
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "ejection": null,
+    "event_type": "Ball",
+    "steals": [],
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      2,
+      2
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "ejection": null,
+    "event_type": "Strike",
+    "steals": [],
+    "strike": "Swinging",
+    "surprise_strike": false,
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "batter": "Doc Petrauskas",
+    "cheer": "TheFansAreLosingTheirMinds",
+    "ejection": null,
+    "event_type": "StrikeOut",
+    "foul": null,
+    "steals": [
+      {
+        "base": "Second",
+        "caught": false,
+        "runner": "Goober Gotrax"
+      }
+    ],
+    "strike": "Looking",
+    "wither": null
+  },
+  {
+    "batter": "Grerbert Eyestrain",
+    "event_type": "NowBatting",
+    "player_swept_away": null,
+    "stats": {
+      "Stats": [
+        {
+          "stat": "HitsForAtBats",
+          "value": {
+            "at_bats": 1,
+            "hits": 0
+          }
+        },
+        {
+          "stat": "SacrificeFlies",
+          "value": 1
+        },
+        {
+          "stat": "GroundOuts",
+          "value": 1
+        },
+        {
+          "stat": "BaseOnBalls",
+          "value": 1
+        }
+      ]
+    }
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "batter": "Grerbert Eyestrain",
+    "cheer": null,
+    "destination": "ThirdBase",
+    "door_prizes": [],
+    "efflorescence": [],
+    "event_type": "FairBall",
+    "fair_ball_type": "GroundBall"
+  },
+  {
+    "advances": [
+      {
+        "base": "Third",
+        "runner": "Goober Gotrax"
+      }
+    ],
+    "amazing": false,
+    "assassinations": [],
+    "batter": "Grerbert Eyestrain",
+    "ejection": null,
+    "event_type": "GroundedOut",
+    "fielders": [
+      {
+        "name": "April Kovalchuk",
+        "place": "3B"
+      },
+      {
+        "name": "Jackson Khatun",
+        "place": "1B"
+      }
+    ],
+    "scores": []
+  },
+  {
+    "batter": "Julius Naptime",
+    "event_type": "NowBatting",
+    "player_swept_away": "Ol' Bauer",
+    "stats": "FirstPA"
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      1,
+      0
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "ejection": null,
+    "event_type": "Ball",
+    "steals": [],
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      1,
+      1
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "event_type": "Foul",
+    "foul": "Tip",
+    "steals": [],
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      2,
+      1
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "ejection": null,
+    "event_type": "Ball",
+    "steals": [],
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      3,
+      1
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "ejection": null,
+    "event_type": "Ball",
+    "steals": [],
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "batter": "Julius Naptime",
+    "cheer": null,
+    "destination": "RightField",
+    "door_prizes": [],
+    "efflorescence": [],
+    "event_type": "FairBall",
+    "fair_ball_type": "FlyBall"
+  },
+  {
+    "advances": [],
+    "batter": "Julius Naptime",
+    "caught_by": {
+      "name": "Mel Baumgartner",
+      "place": "RF"
+    },
+    "ejection": null,
+    "event_type": "CaughtOut",
+    "fair_ball_type": "FlyBall",
+    "jetpack": false,
+    "perfect": false,
+    "sacrifice": false,
+    "scores": []
+  },
+  {
+    "event_type": "InningEnd",
+    "number": 7,
+    "side": "Bottom"
+  },
+  {
+    "automatic_runner": null,
+    "batting_team": {
+      "emoji": "🚀",
+      "name": "Houston Lunar Operations Personnel"
+    },
+    "event_type": "InningStart",
+    "number": 8,
+    "pitcher_status": {
+      "Same": {
+        "emoji": "🦢",
+        "name": "Quibble Jakobsen"
+      }
+    },
+    "side": "Top"
+  },
+  {
+    "batter": "Taylor Beltre",
+    "event_type": "NowBatting",
+    "player_swept_away": "April Kovalchuk",
+    "stats": "FirstPA"
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      1,
+      0
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "ejection": null,
+    "event_type": "Ball",
+    "steals": [],
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      2,
+      0
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "ejection": null,
+    "event_type": "Ball",
+    "steals": [],
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      3,
+      0
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "ejection": null,
+    "event_type": "Ball",
+    "steals": [],
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      3,
+      1
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "event_type": "Foul",
+    "foul": "Ball",
+    "steals": [],
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      3,
+      2
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "event_type": "Foul",
+    "foul": "Ball",
+    "steals": [],
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "batter": "Taylor Beltre",
+    "cheer": null,
+    "ejection": null,
+    "event_type": "StrikeOut",
+    "foul": null,
+    "steals": [],
+    "strike": "Looking",
+    "wither": null
+  },
+  {
+    "batter": "G. Chauhan",
+    "event_type": "NowBatting",
+    "player_swept_away": null,
+    "stats": {
+      "Stats": [
+        {
+          "stat": "HitsForAtBats",
+          "value": {
+            "at_bats": 2,
+            "hits": 1
+          }
+        },
+        {
+          "stat": "FirstBases",
+          "value": 1
+        },
+        {
+          "stat": "PopOuts",
+          "value": 1
+        }
+      ]
+    }
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      0,
+      1
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "event_type": "Foul",
+    "foul": "Ball",
+    "steals": [],
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      0,
+      2
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "event_type": "Foul",
+    "foul": "Ball",
+    "steals": [],
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "batter": "G. Chauhan",
+    "cheer": null,
+    "destination": "ShortStop",
+    "door_prizes": [],
+    "efflorescence": [],
+    "event_type": "FairBall",
+    "fair_ball_type": "GroundBall"
+  },
+  {
+    "advances": [],
+    "batter": "G. Chauhan",
+    "ejection": null,
+    "error": "Throwing",
+    "event_type": "ReachOnFieldingError",
+    "fielder": {
+      "name": "Ol' Bauer",
+      "place": "SS"
+    },
+    "scores": []
+  },
+  {
+    "batter": "Emilio Kowalczyk",
+    "event_type": "NowBatting",
+    "player_swept_away": null,
+    "stats": {
+      "Stats": [
+        {
+          "stat": "HitsForAtBats",
+          "value": {
+            "at_bats": 2,
+            "hits": 0
+          }
+        },
+        {
+          "stat": "BaseOnBalls",
+          "value": 1
+        },
+        {
+          "stat": "GroundOuts",
+          "value": 1
+        },
+        {
+          "stat": "StrikeOuts",
+          "value": 1
+        }
+      ]
+    }
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "batter": "Emilio Kowalczyk",
+    "cheer": null,
+    "destination": "ThirdBase",
+    "door_prizes": [],
+    "efflorescence": [],
+    "event_type": "FairBall",
+    "fair_ball_type": "Popup"
+  },
+  {
+    "advances": [],
+    "batter": "Emilio Kowalczyk",
+    "caught_by": {
+      "name": "Lugubrious Sinclair",
+      "place": "3B"
+    },
+    "ejection": null,
+    "event_type": "CaughtOut",
+    "fair_ball_type": "Popup",
+    "jetpack": false,
+    "perfect": false,
+    "sacrifice": false,
+    "scores": []
+  },
+  {
+    "batter": "Cabbage Tóth",
+    "event_type": "NowBatting",
+    "player_swept_away": null,
+    "stats": {
+      "Stats": [
+        {
+          "stat": "HitsForAtBats",
+          "value": {
+            "at_bats": 3,
+            "hits": 2
+          }
+        },
+        {
+          "stat": "SecondBases",
+          "value": 1
+        },
+        {
+          "stat": "StrikeOuts",
+          "value": 1
+        },
+        {
+          "stat": "FirstBases",
+          "value": 1
+        }
+      ]
+    }
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      0,
+      1
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "event_type": "Foul",
+    "foul": "Ball",
+    "steals": [],
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      1,
+      1
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "ejection": null,
+    "event_type": "Ball",
+    "steals": [],
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "batter": "Cabbage Tóth",
+    "cheer": null,
+    "destination": "LeftField",
+    "door_prizes": [],
+    "efflorescence": [],
+    "event_type": "FairBall",
+    "fair_ball_type": "FlyBall"
+  },
+  {
+    "advances": [],
+    "batter": "Cabbage Tóth",
+    "caught_by": {
+      "name": "McBaseball Aguilera",
+      "place": "LF"
+    },
+    "ejection": null,
+    "event_type": "CaughtOut",
+    "fair_ball_type": "FlyBall",
+    "jetpack": false,
+    "perfect": false,
+    "sacrifice": false,
+    "scores": []
+  },
+  {
+    "event_type": "InningEnd",
+    "number": 8,
+    "side": "Top"
+  },
+  {
+    "automatic_runner": null,
+    "batting_team": {
+      "emoji": "🦢",
+      "name": "Kitchener Cobra Chickens"
+    },
+    "event_type": "InningStart",
+    "number": 8,
+    "pitcher_status": {
+      "Same": {
+        "emoji": "🚀",
+        "name": "Quackers Umar"
+      }
+    },
+    "side": "Bottom"
+  },
+  {
+    "batter": "Odysseus Figuereo",
+    "event_type": "NowBatting",
+    "player_swept_away": null,
+    "stats": {
+      "Stats": [
+        {
+          "stat": "HitsForAtBats",
+          "value": {
+            "at_bats": 3,
+            "hits": 0
+          }
+        },
+        {
+          "stat": "PopOuts",
+          "value": 1
+        },
+        {
+          "stat": "ForceOuts",
+          "value": 1
+        }
+      ]
+    }
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      1,
+      0
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "ejection": null,
+    "event_type": "Ball",
+    "steals": [],
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      1,
+      1
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "ejection": null,
+    "event_type": "Strike",
+    "steals": [],
+    "strike": "Looking",
+    "surprise_strike": false,
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      1,
+      2
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "ejection": null,
+    "event_type": "Strike",
+    "steals": [],
+    "strike": "Looking",
+    "surprise_strike": false,
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "batter": "Odysseus Figuereo",
+    "cheer": null,
+    "destination": "CenterField",
+    "door_prizes": [],
+    "efflorescence": [],
+    "event_type": "FairBall",
+    "fair_ball_type": "FlyBall"
+  },
+  {
+    "advances": [],
+    "batter": "Odysseus Figuereo",
+    "caught_by": {
+      "name": "Ann Naylor",
+      "place": "CF"
+    },
+    "ejection": null,
+    "event_type": "CaughtOut",
+    "fair_ball_type": "FlyBall",
+    "jetpack": false,
+    "perfect": false,
+    "sacrifice": false,
+    "scores": []
+  },
+  {
+    "batter": "Lugubrious Sinclair",
+    "event_type": "NowBatting",
+    "player_swept_away": null,
+    "stats": {
+      "Stats": [
+        {
+          "stat": "HitsForAtBats",
+          "value": {
+            "at_bats": 3,
+            "hits": 1
+          }
+        },
+        {
+          "stat": "FirstBases",
+          "value": 1
+        },
+        {
+          "stat": "StrikeOuts",
+          "value": 1
+        },
+        {
+          "stat": "ForceOuts",
+          "value": 1
+        }
+      ]
+    }
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      1,
+      0
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "ejection": null,
+    "event_type": "Ball",
+    "steals": [],
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "batter": "Lugubrious Sinclair",
+    "cheer": null,
+    "destination": "RightField",
+    "door_prizes": [],
+    "efflorescence": [],
+    "event_type": "FairBall",
+    "fair_ball_type": "FlyBall"
+  },
+  {
+    "advances": [],
+    "batter": "Lugubrious Sinclair",
+    "caught_by": {
+      "name": "Mel Baumgartner",
+      "place": "RF"
+    },
+    "ejection": null,
+    "event_type": "CaughtOut",
+    "fair_ball_type": "FlyBall",
+    "jetpack": false,
+    "perfect": false,
+    "sacrifice": false,
+    "scores": []
+  },
+  {
+    "batter": "Geraldine van der Veen",
+    "event_type": "NowBatting",
+    "player_swept_away": null,
+    "stats": {
+      "Stats": [
+        {
+          "stat": "HitsForAtBats",
+          "value": {
+            "at_bats": 1,
+            "hits": 0
+          }
+        },
+        {
+          "stat": "BaseOnBalls",
+          "value": 1
+        },
+        {
+          "stat": "ForceOuts",
+          "value": 1
+        }
+      ]
+    }
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      1,
+      0
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "ejection": null,
+    "event_type": "Ball",
+    "steals": [],
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      1,
+      1
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "event_type": "Foul",
+    "foul": "Ball",
+    "steals": [],
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      2,
+      1
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "ejection": null,
+    "event_type": "Ball",
+    "steals": [],
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      3,
+      1
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "ejection": null,
+    "event_type": "Ball",
+    "steals": [],
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      3,
+      2
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "ejection": null,
+    "event_type": "Strike",
+    "steals": [],
+    "strike": "Swinging",
+    "surprise_strike": false,
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      3,
+      2
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "event_type": "Foul",
+    "foul": "Ball",
+    "steals": [],
+    "wither": null
+  },
+  {
+    "advances": [],
+    "assassinations": [],
+    "aurora_photos": null,
+    "batter": "Geraldine van der Veen",
+    "cheer": null,
+    "ejection": null,
+    "event_type": "Walk",
+    "scores": [],
+    "wither": null
+  },
+  {
+    "batter": "Squirrel Benson",
+    "event_type": "NowBatting",
+    "player_swept_away": null,
+    "stats": {
+      "Stats": [
+        {
+          "stat": "HitsForAtBats",
+          "value": {
+            "at_bats": 3,
+            "hits": 1
+          }
+        },
+        {
+          "stat": "HitByPitchs",
+          "value": 1
+        },
+        {
+          "stat": "Fouls",
+          "value": 1
+        },
+        {
+          "stat": "FirstBases",
+          "value": 1
+        },
+        {
+          "stat": "GroundOuts",
+          "value": 1
+        }
+      ]
+    }
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "batter": "Squirrel Benson",
+    "cheer": null,
+    "destination": "LeftField",
+    "door_prizes": [],
+    "efflorescence": [],
+    "event_type": "FairBall",
+    "fair_ball_type": "FlyBall"
+  },
+  {
+    "advances": [],
+    "batter": "Squirrel Benson",
+    "caught_by": {
+      "name": "Sarah Oshima",
+      "place": "LF"
+    },
+    "ejection": null,
+    "event_type": "CaughtOut",
+    "fair_ball_type": "FlyBall",
+    "jetpack": false,
+    "perfect": false,
+    "sacrifice": false,
+    "scores": []
+  },
+  {
+    "event_type": "InningEnd",
+    "number": 8,
+    "side": "Bottom"
+  },
+  {
+    "automatic_runner": null,
+    "batting_team": {
+      "emoji": "🚀",
+      "name": "Houston Lunar Operations Personnel"
+    },
+    "event_type": "InningStart",
+    "number": 9,
+    "pitcher_status": {
+      "Flooded": {
+        "incoming_pitcher_name": "Sticky Doe",
+        "preemption": {
+          "arriving_pitcher": {
+            "name": "Angel Steel",
+            "place": "CL"
+          },
+          "leaving_pitcher": {
+            "name": "Quibble Jakobsen",
+            "place": "SP1"
+          }
+        },
+        "swept_pitcher_name": "Quibble Jakobsen"
+      }
+    },
+    "side": "Top"
+  },
+  {
+    "batter": "Jackson Khatun",
+    "event_type": "NowBatting",
+    "player_swept_away": null,
+    "stats": {
+      "Stats": [
+        {
+          "stat": "HitsForAtBats",
+          "value": {
+            "at_bats": 3,
+            "hits": 0
+          }
+        },
+        {
+          "stat": "PopOuts",
+          "value": 1
+        },
+        {
+          "stat": "StrikeOuts",
+          "value": 1
+        },
+        {
+          "stat": "GroundIntoDoublePlays",
+          "value": 1
+        },
+        {
+          "stat": "GroundOuts",
+          "value": 1
+        }
+      ]
+    }
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      0,
+      1
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "ejection": null,
+    "event_type": "Strike",
+    "steals": [],
+    "strike": "Swinging",
+    "surprise_strike": false,
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      1,
+      1
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "ejection": null,
+    "event_type": "Ball",
+    "steals": [],
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      1,
+      2
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "ejection": null,
+    "event_type": "Strike",
+    "steals": [],
+    "strike": "Swinging",
+    "surprise_strike": false,
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "batter": "Jackson Khatun",
+    "cheer": null,
+    "ejection": null,
+    "event_type": "StrikeOut",
+    "foul": null,
+    "steals": [],
+    "strike": "Looking",
+    "wither": null
+  },
+  {
+    "batter": "Myra Voigt",
+    "event_type": "NowBatting",
+    "player_swept_away": null,
+    "stats": {
+      "Stats": [
+        {
+          "stat": "HitsForAtBats",
+          "value": {
+            "at_bats": 2,
+            "hits": 1
+          }
+        },
+        {
+          "stat": "LineOuts",
+          "value": 1
+        },
+        {
+          "stat": "BaseOnBalls",
+          "value": 1
+        },
+        {
+          "stat": "FirstBases",
+          "value": 1
+        }
+      ]
+    }
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      1,
+      0
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "ejection": null,
+    "event_type": "Ball",
+    "steals": [],
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      1,
+      1
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "event_type": "Foul",
+    "foul": "Ball",
+    "steals": [],
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      1,
+      2
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "ejection": null,
+    "event_type": "Strike",
+    "steals": [],
+    "strike": "Swinging",
+    "surprise_strike": false,
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      1,
+      2
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "event_type": "Foul",
+    "foul": "Ball",
+    "steals": [],
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "batter": "Myra Voigt",
+    "cheer": "TheHomeFansMakeThemselvesHeard",
+    "ejection": null,
+    "event_type": "StrikeOut",
+    "foul": null,
+    "steals": [],
+    "strike": "Looking",
+    "wither": null
+  },
+  {
+    "batter": "Ann Naylor",
+    "event_type": "NowBatting",
+    "player_swept_away": null,
+    "stats": {
+      "Stats": [
+        {
+          "stat": "HitsForAtBats",
+          "value": {
+            "at_bats": 3,
+            "hits": 0
+          }
+        },
+        {
+          "stat": "StrikeOuts",
+          "value": 2
+        },
+        {
+          "stat": "GroundIntoDoublePlays",
+          "value": 1
+        },
+        {
+          "stat": "GroundOuts",
+          "value": 1
+        }
+      ]
+    }
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      0,
+      1
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "event_type": "Foul",
+    "foul": "Ball",
+    "steals": [],
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      1,
+      1
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "ejection": null,
+    "event_type": "Ball",
+    "steals": [],
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      2,
+      1
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "ejection": null,
+    "event_type": "Ball",
+    "steals": [],
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      2,
+      2
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "event_type": "Foul",
+    "foul": "Ball",
+    "steals": [],
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      3,
+      2
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "ejection": null,
+    "event_type": "Ball",
+    "steals": [],
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      3,
+      2
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "event_type": "Foul",
+    "foul": "Ball",
+    "steals": [],
+    "wither": null
+  },
+  {
+    "advances": [],
+    "assassinations": [],
+    "aurora_photos": null,
+    "batter": "Ann Naylor",
+    "cheer": "EveryoneCheersAtOnce",
+    "ejection": null,
+    "event_type": "Walk",
+    "scores": [],
+    "wither": null
+  },
+  {
+    "batter": "Sarah Oshima",
+    "event_type": "NowBatting",
+    "player_swept_away": null,
+    "stats": {
+      "Stats": [
+        {
+          "stat": "HitsForAtBats",
+          "value": {
+            "at_bats": 3,
+            "hits": 1
+          }
+        },
+        {
+          "stat": "FirstBases",
+          "value": 1
+        },
+        {
+          "stat": "StrikeOuts",
+          "value": 1
+        },
+        {
+          "stat": "LineOuts",
+          "value": 1
+        }
+      ]
+    }
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      0,
+      1
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "event_type": "Foul",
+    "foul": "Ball",
+    "steals": [],
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "batter": "Sarah Oshima",
+    "cheer": null,
+    "destination": "ShortStop",
+    "door_prizes": [],
+    "efflorescence": [],
+    "event_type": "FairBall",
+    "fair_ball_type": "GroundBall"
+  },
+  {
+    "advances": [],
+    "amazing": false,
+    "assassinations": [],
+    "batter": "Sarah Oshima",
+    "ejection": null,
+    "event_type": "GroundedOut",
+    "fielders": [
+      {
+        "name": "Ol' Bauer",
+        "place": "SS"
+      },
+      {
+        "name": "Geraldine van der Veen",
+        "place": "1B"
+      }
+    ],
+    "scores": []
+  },
+  {
+    "event_type": "InningEnd",
+    "number": 9,
+    "side": "Top"
+  },
+  {
+    "event_type": "GameOver",
+    "message": "QuotedGAMEOVER"
+  },
+  {
+    "event_type": "EndGameIncome",
+    "losing_team": {
+      "emoji": "🚀",
+      "name": "Houston Lunar Operations Personnel"
+    },
+    "losing_team_income": 240,
+    "winning_team": {
+      "emoji": "🦢",
+      "name": "Kitchener Cobra Chickens"
+    },
+    "winning_team_income": 120
+  },
+  {
+    "event_type": "Recordkeeping",
+    "losing_score": 2,
+    "losing_team": {
+      "emoji": "🚀",
+      "name": "Houston Lunar Operations Personnel"
+    },
+    "winning_score": 4,
+    "winning_team": {
+      "emoji": "🦢",
+      "name": "Kitchener Cobra Chickens"
+    }
+  }
+]

@@ -504,7 +504,7 @@ fn game_inner(game: Game, id: &str, test_data_folder: &Path) {
     match File::create(path) {
         Ok(f) => {
             let parsed_events = serde_json::value::Value::Array(parsed_events);
-            serde_json::to_writer(f, &parsed_events).unwrap();
+            serde_json::to_writer_pretty(f, &parsed_events).unwrap();
         }
         Err(e) => {
             tracing::error!("Error creating processed file: {e}");
