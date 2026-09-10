@@ -1,4 +1,4 @@
-#![allow(clippy::module_inception)]
+#![allow(clippy::module_inception, clippy::type_complexity)]
 
 pub(crate) mod game_time;
 pub(crate) mod utils;

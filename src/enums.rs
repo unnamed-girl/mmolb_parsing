@@ -2829,6 +2829,25 @@ pub enum PollenCount {
     Extreme,
 }
 
+#[derive(Clone, Debug, Serialize, Deserialize, PartialEq)]
+pub enum PurifiedOutcome {
+    Payment(u32),
+    PaymentAndImmunityRemoved(u32),
+    NoCorruption,
+    None,
+}
+
+impl PurifiedOutcome {
+    pub fn unparse<S: Display>(&self, player_name: S) -> String {
+        match self {
+            PurifiedOutcome::Payment(payment) => format!("{player_name} was Purified of 🫀 Corruption and earned {payment} 🪙."),
+            PurifiedOutcome::PaymentAndImmunityRemoved(payment) => format!("{player_name} was Purified of 🌹 Efflorescence, earned {payment} 🪙, and gained 🦠 Immunity."),
+            PurifiedOutcome::NoCorruption => format!("{player_name} was Purified of 🫀 Corruption. {player_name} had no Corruption to remove."),
+            PurifiedOutcome::None => format!("{player_name} was Purified of 🫀 Corruption."),
+        }
+    }
+}
+
 #[cfg(test)]
 mod test {
     use std::fmt::Debug;

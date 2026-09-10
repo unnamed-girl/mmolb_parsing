@@ -29,7 +29,7 @@ use uuid::Uuid;
 
 // Needed for skip_serializing_if
 fn is_false(b: &bool) -> bool {
-    *b == false
+    !*b
 }
 
 #[serde_as]
