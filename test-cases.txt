@@ -40,6 +40,8 @@ Games:
 - 69f398e0c34ec2f6f81d1197
 // and Joe II
 - 6a92f4205ba4c460e7337547
+// party_for_attributes
+- 68b0c39c318f19d3018e22f1
 Team Feeds:
 - 680830e55859fc1c88efd232
 - 6806ee0fee9f269dec724d24
