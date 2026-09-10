@@ -541,21 +541,6 @@ where
 /// Parse until tag is found, then discard that tag.
 pub(super) fn parse_terminated(tag_content: &str) -> impl Fn(&str) -> IResult<&str, &str> + '_ {
     move |input| {
-        // There's an "and Friends" name now
-        if tag_content == " and " {
-            let (new_input, prefix_and_name) = opt(alt((
-                parse_terminated(" and Friends and ").map(|prefix| (prefix, " and Friends")),
-                parse_terminated(" and Joe and ").map(|prefix| (prefix, " and Joe")),
-            )))
-            .parse(input)?;
-            if let Some((prefix, name)) = prefix_and_name {
-                // Extend val by the length of " and Friends"
-                let name_len = prefix.len() + name.len();
-                let full_match = &input[..name_len];
-                return Ok((new_input, full_match));
-            }
-        }
-
         let (input, parsed_value) = if tag_content == "." {
             alt((
                 // The Kaj Statter Jr. rule
@@ -923,28 +908,32 @@ pub(super) fn aurora_players<'parse, 'output: 'parse>(
         PlacedPlayer<&'output str>,
     ),
 > + 'parse {
-    move |input| {
+    move |input: &'output str| {
         let (input, first_team_emoji) = tag(first.emoji).parse(input)?;
         let (input, _) = tag(" ").parse(input)?;
-        let (input, first_player) = parse_terminated(" and ")
-            .and_then(placed_player_eof)
-            .parse(input)?;
 
-        let (input, second_team_emoji) = tag(second.emoji).parse(input)?;
-        let (input, _) = tag(" ").parse(input)?;
-        let (input, second_player) = parse_terminated(" snapped photos of the aurora.")
-            .and_then(placed_player_eof)
-            .parse(input)?;
+        try_all_consuming_splits_str(
+            " and ",
+            |name| placed_player_eof(name),
+            move |first_player, input| {
+                let (input, second_team_emoji) = tag(second.emoji).parse(input)?;
+                let (input, _) = tag(" ").parse(input)?;
+                let (input, second_player) = parse_terminated(" snapped photos of the aurora.")
+                    .and_then(placed_player_eof)
+                    .parse(input)?;
 
-        Ok((
-            input,
-            (
-                first_team_emoji,
-                first_player,
-                second_team_emoji,
-                second_player,
-            ),
-        ))
+                Ok((
+                    input,
+                    (
+                        first_team_emoji,
+                        first_player,
+                        second_team_emoji,
+                        second_player,
+                    ),
+                ))
+            },
+        )
+        .parse(input)
     }
 }
 
