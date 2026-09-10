@@ -2,28 +2,24 @@ use itertools::Itertools;
 use serde::{Deserialize, Serialize};
 use std::{
     convert::Infallible,
-    fmt::{Display, Write},
+    fmt::{self, Display, Write},
     iter::once,
     str::FromStr,
 };
 use strum::{Display, EnumDiscriminants, EnumString, IntoStaticStr};
 use thiserror::Error;
 
-use crate::enums::{Attribute, FoodName};
-use crate::nom_parsing::shared::{discarded_text, received_text};
-use crate::UnparsingContext;
 use crate::{
     enums::{
-        Base, BaseNameVariant, BatterStat, Distance, EventType, FairBallDestination, FairBallType,
-        FieldingErrorType, FoulType, GameOverMessage, HomeAway, ItemName, ItemPrefix, ItemSuffix,
-        MoundVisitType, NowBattingStats, Place, PollenCount, StrikeType, TopBottom,
+        Attribute, Base, BaseNameVariant, BatterStat, Distance, EventType, FairBallDestination,
+        FairBallType, FieldingErrorType, FoodName, FoulType, GameOverMessage, HomeAway, ItemName,
+        ItemPrefix, ItemSuffix, MoundVisitType, NowBattingStats, Place, PollenCount, StrikeType,
+        TopBottom,
     },
     game_time::Breakpoints,
-    nom_parsing::shared::{hit_by_pitch_text, strike_out_text},
-    NotRecognized,
+    nom_parsing::shared::{discarded_text, hit_by_pitch_text, received_text, strike_out_text},
+    NotRecognized, UnparsingContext,
 };
-
-pub use crate::nom_parsing::shared::GrowAttributeChange;
 
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Error)]
 pub enum GameEventParseError {
@@ -3399,6 +3395,18 @@ impl<S: AsRef<str>> AugmentedWeather<S> {
             AugmentedWeather::Pollen { .. } => "Pollen",
             AugmentedWeather::WeatherName(name) => name.as_ref(),
         }
+    }
+}
+
+#[derive(Clone, Copy, Debug, Serialize, Deserialize, PartialEq)]
+pub struct GrowAttributeChange {
+    pub attribute: Attribute,
+    pub amount: f64,
+}
+
+impl Display for GrowAttributeChange {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> std::fmt::Result {
+        write!(f, "{:+} {}", self.amount, self.attribute)
     }
 }
 

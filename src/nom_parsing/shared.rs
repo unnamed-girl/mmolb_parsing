@@ -1,43 +1,35 @@
-use crate::enums::{
-    Attribute, BenchSlot, BenchSlotLabel, CelestialEnergyTier, FoodName, FullSlotLabel,
-    ModificationType, PurifiedOutcome, Slot,
-};
-use crate::feed_event::FeedFallingStarOutcome;
-use crate::game::EventPitcherVersions;
-use crate::parsed_event::{
-    Assassination, Efflorescence, EfflorescenceOutcome, EjectionReplacement, EmojiFood,
-    EmojiPlayer, ItemEquip, ItemPrize, WitherStruggle,
-};
-use crate::player::{Deserialize, Serialize};
 use crate::{
     enums::{
-        Base, BatterStat, Day, FairBallDestination, FairBallType, HomeAway, NowBattingStats, Place,
+        Attribute, Base, BatterStat, BenchSlot, BenchSlotLabel, CelestialEnergyTier, Day,
+        FairBallDestination, FairBallType, FoodName, FullSlotLabel, HomeAway, ModificationType,
+        NowBattingStats, Place, Slot,
     },
-    feed_event::{EmojilessItem, FeedDelivery, FeedEvent},
-    game::Event,
+    feed_event::{
+        EmojilessItem, FeedDelivery, FeedEvent, FeedEventDoorPrize, FeedEventParty,
+        FeedFallingStarOutcome, GainedImmovable, Grow, PositionSwap, PurifiedOutcome,
+    },
+    game::{Event, EventPitcherVersions},
     game_time::{Breakpoints, GameTime},
     parsed_event::{
-        BaseSteal, Cheer, Delivery, DoorPrize, Ejection, EjectionReason, EmojiTeam, Item,
-        ItemAffixes, PlacedPlayer, Prize, RunnerAdvance, RunnerOut, SnappedPhotos, ViolationType,
+        Assassination, BaseSteal, Cheer, Delivery, DoorPrize, Efflorescence, EfflorescenceOutcome,
+        Ejection, EjectionReason, EjectionReplacement, EmojiFood, EmojiPlayer, EmojiTeam,
+        GrowAttributeChange, Item, ItemAffixes, ItemEquip, ItemPrize, PlacedPlayer, Prize,
+        RunnerAdvance, RunnerOut, SnappedPhotos, ViolationType, WitherStruggle,
     },
     Game,
 };
-use nom::bytes::complete::is_not;
-use nom::character::complete::{i32, u32};
-use nom::combinator::eof;
-use nom::number::double;
 use nom::{
     branch::alt,
-    bytes::complete::{tag, take, take_till, take_until, take_until1, take_while},
-    character::complete::{one_of, space0, u16, u8},
-    combinator::{all_consuming, fail, opt, recognize, rest, value, verify},
+    bytes::complete::{is_not, tag, take, take_till, take_until, take_until1, take_while},
+    character::complete::{i32, one_of, space0, u16, u32, u8},
+    combinator::{all_consuming, eof, fail, opt, recognize, rest, value, verify},
     error::{ErrorKind, ParseError},
     multi::{count, many0, many1, separated_list1},
+    number::double,
     sequence::{delimited, preceded, separated_pair, terminated},
     AsChar, Input, Parser,
 };
 use nom_language::error::VerboseError;
-use std::fmt::{Display, Formatter};
 use std::{fmt::Debug, str::FromStr};
 use strum::IntoEnumIterator;
 
@@ -1281,30 +1273,6 @@ pub(super) fn swept_away(input: &str) -> IResult<'_, &str, &str> {
     parse_terminated(" was swept away in the 🌊 Flood!").parse(input)
 }
 
-#[derive(Clone, Debug, Serialize, Deserialize, PartialEq)]
-pub struct FeedEventParty<S> {
-    pub player_name: S,
-    pub amount_gained: u8,
-    pub attribute: Attribute,
-    // As of this writing, the Prolific boon is the only way to not lose durability
-    pub durability_lost: Option<u8>,
-}
-
-impl<S: Display> Display for FeedEventParty<S> {
-    fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
-        write!(
-            f,
-            "{} is Partying! {} gained +{} {} and ",
-            self.player_name, self.player_name, self.amount_gained, self.attribute,
-        )?;
-
-        match self.durability_lost {
-            None => write!(f, "their Prolific Greater Boon resisted Durability loss."),
-            Some(durability_lost) => write!(f, "lost {durability_lost} Durability."),
-        }
-    }
-}
-
 pub(super) fn feed_event_party(input: &str) -> IResult<'_, &str, FeedEventParty<&str>> {
     let (input, player_name) = parse_terminated(" is Partying! ").parse(input)?;
     let (input, _) = tag(player_name).parse(input)?;
@@ -1344,27 +1312,6 @@ pub(super) fn feed_event_delivery_discarded(input: &str) -> IResult<'_, &str, It
     let (_, item) = item.parse(item_str)?;
 
     Ok((input, item))
-}
-
-#[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
-pub struct FeedEventDoorPrize<S> {
-    pub player_name: S,
-    pub prize: Prize<S>,
-}
-
-impl<S: Display> Display for FeedEventDoorPrize<S> {
-    fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
-        let punct = match &self.prize {
-            Prize::Items(i) if i.iter().any(|prize| !prize.equip.is_none()) => "!",
-            _ => ":",
-        };
-        write!(
-            f,
-            "{} won a Door Prize{punct} {}.",
-            self.player_name,
-            self.prize.unparse()
-        )
-    }
 }
 
 pub(super) fn feed_event_door_prize(input: &str) -> IResult<'_, &str, FeedEventDoorPrize<&str>> {
@@ -1615,32 +1562,6 @@ pub fn augmented_roster_group(
     }
 }
 
-#[derive(Clone, Debug, Serialize, Deserialize, PartialEq)]
-pub struct PositionSwap<S> {
-    first_player_name: S,
-    first_player_new_slot: FullSlotLabel,
-    second_player_name: S,
-    second_player_new_slot: FullSlotLabel,
-}
-
-impl<S: Display> Display for PositionSwap<S> {
-    fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
-        let PositionSwap {
-            first_player_name,
-            first_player_new_slot,
-            second_player_name,
-            second_player_new_slot,
-        } = self;
-
-        write!(
-            f,
-            "{first_player_name} and {second_player_name} swapped positions: \
-            {first_player_name} moved to {first_player_new_slot}, \
-            {second_player_name} moved to {second_player_new_slot}."
-        )
-    }
-}
-
 pub(super) fn player_positions_swapped(input: &str) -> IResult<'_, &str, PositionSwap<&str>> {
     // I am not willing to bet on " and " being a reliable name separator, and we can
     // parse names reliably later in the message. So we're going to parse the combination
@@ -1688,63 +1609,6 @@ pub(super) fn team_election_purified(input: &str) -> IResult<'_, &str, (EmojiTea
     let (input, _) = tag(" player(s) of Corruption.").parse(input)?;
 
     Ok((input, (team, players_cleansed)))
-}
-
-#[derive(Clone, Copy, Debug, Serialize, Deserialize, PartialEq)]
-pub struct GrowAttributeChange {
-    pub attribute: Attribute,
-    pub amount: f64,
-}
-
-impl Display for GrowAttributeChange {
-    fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
-        write!(f, "{:+} {}", self.amount, self.attribute)
-    }
-}
-
-#[derive(Clone, Debug, Serialize, Deserialize, PartialEq)]
-pub enum GainedImmovable {
-    No,
-    Yes,
-    YesReplacing(ModificationType),
-    BenchPlayerImmune,
-}
-
-#[derive(Clone, Debug, Serialize, Deserialize, PartialEq)]
-pub struct Grow<S> {
-    player_name: S,
-    attribute_changes: [GrowAttributeChange; 3],
-    immovable_granted: GainedImmovable,
-}
-
-impl<S: Display> Display for Grow<S> {
-    fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
-        write!(f, "{}'s Corruption grew: ", self.player_name)?;
-        for (i, change) in self.attribute_changes.iter().enumerate() {
-            let prefix = if i == 0 { "" } else { ", " };
-            // Don't use GrowAttributeChange's Display implementation because it's the
-            // wrong number of decimal places
-            write!(f, "{prefix}{:+.1} {}", change.amount, change.attribute)?;
-        }
-        match &self.immovable_granted {
-            GainedImmovable::No => write!(f, "."),
-            GainedImmovable::Yes => write!(
-                f,
-                ". {} gained the Immovable Greater Boon.",
-                self.player_name
-            ),
-            GainedImmovable::YesReplacing(replaced) => write!(
-                f,
-                ". {} gained the Immovable Greater Boon, replacing {replaced}.",
-                self.player_name
-            ),
-            GainedImmovable::BenchPlayerImmune => write!(
-                f,
-                ". {} could not gain Immovable while on the Bench.",
-                self.player_name
-            ),
-        }
-    }
 }
 
 fn grow_attribute_change(input: &str) -> IResult<'_, &str, GrowAttributeChange> {

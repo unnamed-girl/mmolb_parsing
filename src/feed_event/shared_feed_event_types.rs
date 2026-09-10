@@ -1,14 +1,14 @@
-use std::fmt::Display;
+use std::fmt::{Display, Formatter};
 
 use serde::{Deserialize, Serialize};
 use thiserror::Error;
 
-use crate::enums::{BenchSlot, CelestialEnergyTier};
+use crate::enums::{BenchSlot, CelestialEnergyTier, FullSlotLabel, ModificationType};
 use crate::{
     enums::{Attribute, FeedEventType, ItemName, ItemPrefix, ItemSuffix},
     feed_event::FeedEvent,
     game_time::Breakpoints,
-    parsed_event::Item,
+    parsed_event::{GrowAttributeChange, Item, Prize},
     NotRecognized,
 };
 
@@ -178,5 +178,140 @@ impl FeedFallingStarOutcome {
                 }
             }
         }
+    }
+}
+
+#[derive(Clone, Debug, Serialize, Deserialize, PartialEq)]
+pub enum PurifiedOutcome {
+    Payment(u32),
+    PaymentAndImmunityRemoved(u32),
+    NoCorruption,
+    None,
+}
+
+impl PurifiedOutcome {
+    pub fn unparse<S: Display>(&self, player_name: S) -> String {
+        match self {
+            PurifiedOutcome::Payment(payment) => format!("{player_name} was Purified of 🫀 Corruption and earned {payment} 🪙."),
+            PurifiedOutcome::PaymentAndImmunityRemoved(payment) => format!("{player_name} was Purified of 🌹 Efflorescence, earned {payment} 🪙, and gained 🦠 Immunity."),
+            PurifiedOutcome::NoCorruption => format!("{player_name} was Purified of 🫀 Corruption. {player_name} had no Corruption to remove."),
+            PurifiedOutcome::None => format!("{player_name} was Purified of 🫀 Corruption."),
+        }
+    }
+}
+
+#[derive(Clone, Debug, Serialize, Deserialize, PartialEq)]
+pub struct PositionSwap<S> {
+    pub first_player_name: S,
+    pub first_player_new_slot: FullSlotLabel,
+    pub second_player_name: S,
+    pub second_player_new_slot: FullSlotLabel,
+}
+
+impl<S: Display> Display for PositionSwap<S> {
+    fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
+        let PositionSwap {
+            first_player_name,
+            first_player_new_slot,
+            second_player_name,
+            second_player_new_slot,
+        } = self;
+
+        write!(
+            f,
+            "{first_player_name} and {second_player_name} swapped positions: \
+            {first_player_name} moved to {first_player_new_slot}, \
+            {second_player_name} moved to {second_player_new_slot}."
+        )
+    }
+}
+
+#[derive(Clone, Debug, Serialize, Deserialize, PartialEq)]
+pub struct FeedEventParty<S> {
+    pub player_name: S,
+    pub amount_gained: u8,
+    pub attribute: Attribute,
+    // As of this writing, the Prolific boon is the only way to not lose durability
+    pub durability_lost: Option<u8>,
+}
+
+impl<S: Display> Display for FeedEventParty<S> {
+    fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
+        write!(
+            f,
+            "{} is Partying! {} gained +{} {} and ",
+            self.player_name, self.player_name, self.amount_gained, self.attribute,
+        )?;
+
+        match self.durability_lost {
+            None => write!(f, "their Prolific Greater Boon resisted Durability loss."),
+            Some(durability_lost) => write!(f, "lost {durability_lost} Durability."),
+        }
+    }
+}
+
+#[derive(Clone, Debug, Serialize, Deserialize, PartialEq)]
+pub enum GainedImmovable {
+    No,
+    Yes,
+    YesReplacing(ModificationType),
+    BenchPlayerImmune,
+}
+
+#[derive(Clone, Debug, Serialize, Deserialize, PartialEq)]
+pub struct Grow<S> {
+    pub player_name: S,
+    pub attribute_changes: [GrowAttributeChange; 3],
+    pub immovable_granted: GainedImmovable,
+}
+
+impl<S: Display> Display for Grow<S> {
+    fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
+        write!(f, "{}'s Corruption grew: ", self.player_name)?;
+        for (i, change) in self.attribute_changes.iter().enumerate() {
+            let prefix = if i == 0 { "" } else { ", " };
+            // Don't use GrowAttributeChange's Display implementation because it's the
+            // wrong number of decimal places
+            write!(f, "{prefix}{:+.1} {}", change.amount, change.attribute)?;
+        }
+        match &self.immovable_granted {
+            GainedImmovable::No => write!(f, "."),
+            GainedImmovable::Yes => write!(
+                f,
+                ". {} gained the Immovable Greater Boon.",
+                self.player_name
+            ),
+            GainedImmovable::YesReplacing(replaced) => write!(
+                f,
+                ". {} gained the Immovable Greater Boon, replacing {replaced}.",
+                self.player_name
+            ),
+            GainedImmovable::BenchPlayerImmune => write!(
+                f,
+                ". {} could not gain Immovable while on the Bench.",
+                self.player_name
+            ),
+        }
+    }
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
+pub struct FeedEventDoorPrize<S> {
+    pub player_name: S,
+    pub prize: Prize<S>,
+}
+
+impl<S: Display> Display for FeedEventDoorPrize<S> {
+    fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
+        let punct = match &self.prize {
+            Prize::Items(i) if i.iter().any(|prize| !prize.equip.is_none()) => "!",
+            _ => ":",
+        };
+        write!(
+            f,
+            "{} won a Door Prize{punct} {}.",
+            self.player_name,
+            self.prize.unparse()
+        )
     }
 }

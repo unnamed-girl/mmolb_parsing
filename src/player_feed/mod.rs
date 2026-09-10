@@ -5,12 +5,12 @@ use serde_with::serde_as;
 
 use crate::enums::{BenchSlot, Day, DurabilityType, Slot};
 use crate::feed_event::PlayerGreaterAugment;
-use crate::nom_parsing::shared::{FeedEventDoorPrize, FeedEventParty, Grow, PositionSwap};
 use crate::parsed_event::{EmojiTeam, GrowAttributeChange, Item};
 use crate::{
-    enums::{Attribute, FeedEventType, ModificationType, PurifiedOutcome},
+    enums::{Attribute, FeedEventType, ModificationType},
     feed_event::{
-        EmojilessItem, FeedDelivery, FeedEvent, FeedEventParseError, FeedFallingStarOutcome,
+        EmojilessItem, FeedDelivery, FeedEvent, FeedEventDoorPrize, FeedEventParseError,
+        FeedEventParty, FeedFallingStarOutcome, Grow, PositionSwap, PurifiedOutcome,
     },
     game_time::{Breakpoints, Timestamp},
     utils::extra_fields_deserialize,
