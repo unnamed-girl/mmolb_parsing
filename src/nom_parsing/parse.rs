@@ -7,17 +7,17 @@ use super::{
     },
     ParsingContext,
 };
-use crate::enums::PollenCount;
 use crate::nom_parsing::shared::{
     assassination, double_trouble, efflorescences, either_team_emoji, failed_ejection_tail,
     parse_until_exclamation_point_eof, parse_until_period_eof, side_team, swept_away, wither,
-    IResult,
+    Error, IResult,
 };
 use crate::parsed_event::{
     AugmentedWeather, BasicPitcherSwap, ContainResult, PartyDurabilityLoss, PlacedPlayer,
     WitherResult,
 };
-use crate::{enums::Place, nom_parsing::shared::try_all_consuming_splits};
+use crate::{enums::Place, nom_parsing::shared::try_all_consuming_splits_char};
+use crate::{enums::PollenCount, nom_parsing::shared::try_all_consuming_splits_str};
 use crate::{
     enums::{EventType, GameOverMessage, HomeAway, MoundVisitType, NowBattingStats},
     game::Event,
@@ -44,7 +44,7 @@ use nom::{
     bytes::complete::{tag, take_until},
     character::complete::{digit1, u16, u8},
     combinator::{all_consuming, cut, fail, opt, rest, value, verify},
-    error::context,
+    error::{context, ParseError},
     multi::{many0, many1, separated_list1},
     sequence::{delimited, preceded, separated_pair, terminated},
     Finish, Parser,
@@ -272,70 +272,73 @@ fn party<'parse, 'output: 'parse>(
 
 fn party_for_attributes<'parse, 'output: 'parse>(
 ) -> impl MyParser<'output, ParsedEventMessage<&'output str>> + 'parse {
-    context(
-        "Party",
-        all_consuming(verify(
-            preceded(
-                tag("<strong>🥳 "),
-                (
-                    parse_terminated(" and ").and_then(verify_name),
-                    parse_terminated(" are Partying!</strong> ").and_then(verify_name),
-                    parse_terminated(" gained +").and_then(verify_name),
-                    terminated(u8, tag(" ")),
-                    terminated(try_from_word, tag(". ")), // attribute
-                    parse_terminated(" gained +").and_then(verify_name),
-                    terminated(u8, tag(" ")),
-                    try_from_word, // attribute
-                    party_durability_loss(),
-                ),
-            ),
-            |(pitcher_name_1, batter_name_1, pitcher_name_2, _, _, batter_name_2, _, _, _)| {
-                pitcher_name_1 == pitcher_name_2 && batter_name_1 == batter_name_2
+    context("Party", |input: &'output str| {
+        let outer_input = input;
+        let (input, _) = tag("<strong>🥳 ").parse(input)?;
+        try_all_consuming_splits_str(
+            " and ",
+            |name| verify_name(name),
+            |pitcher_name_1, input| {
+                let (input, batter_name_1) = parse_terminated(" are Partying!</strong> ")
+                    .and_then(verify_name)
+                    .parse(input)?;
+
+                let (input, pitcher_name_2) = parse_terminated(" gained +")
+                    .and_then(verify_name)
+                    .parse(input)?;
+                let (input, pitcher_amount_gained) = terminated(u8, tag(" ")).parse(input)?;
+                let (input, pitcher_attribute) =
+                    terminated(try_from_word, tag(". ")).parse(input)?;
+                let (input, batter_name_2) = parse_terminated(" gained +")
+                    .and_then(verify_name)
+                    .parse(input)?;
+                let (input, batter_amount_gained) = terminated(u8, tag(" ")).parse(input)?;
+                let (input, batter_attribute) = try_from_word.parse(input)?;
+                let (input, durability_loss) = party_durability_loss().parse(input)?;
+
+                if pitcher_name_1 != pitcher_name_2 || batter_name_1 != batter_name_2 {
+                    return Err(nom::Err::Error(Error::from_error_kind(
+                        outer_input,
+                        ErrorKind::Verify,
+                    )));
+                }
+
+                Ok((
+                    input,
+                    ParsedEventMessage::Party {
+                        pitcher_name: pitcher_name_1,
+                        pitcher_amount_gained,
+                        pitcher_attribute,
+                        batter_name: batter_name_1,
+                        batter_amount_gained,
+                        batter_attribute,
+                        durability_loss,
+                    },
+                ))
             },
-        )),
-    )
-    .map(
-        |(
-            _,
-            _,
-            pitcher_name,
-            pitcher_amount_gained,
-            pitcher_attribute,
-            batter_name,
-            batter_amount_gained,
-            batter_attribute,
-            durability_loss,
-        )| ParsedEventMessage::Party {
-            pitcher_name,
-            pitcher_amount_gained,
-            pitcher_attribute,
-            batter_name,
-            batter_amount_gained,
-            batter_attribute,
-            durability_loss,
-        },
-    )
+        )
+        .parse(input)
+    })
 }
 
 fn party_for_friends<'parse, 'output: 'parse>(
 ) -> impl MyParser<'output, ParsedEventMessage<&'output str>> + 'parse {
-    context(
-        "Party",
-        all_consuming(preceded(
-            tag("<strong>🥳 "),
-            (
-                parse_terminated(" and ").and_then(verify_name),
-                parse_terminated(" are Partying!</strong> They became Friends!")
-                    .and_then(verify_name),
-            ),
-        )),
-    )
-    .map(
-        |(pitcher_name, batter_name)| ParsedEventMessage::PartyFriendship {
-            pitcher_name,
-            batter_name,
-        },
-    )
+    context("Party", |input: &'output str| {
+        let (input, _) = tag("<strong>🥳 ").parse(input)?;
+        let (input, pitcher_name) = parse_terminated(" and ")
+            .and_then(verify_name)
+            .parse(input)?;
+        let (input, batter_name) = parse_terminated(" are Partying!</strong> They became Friends!")
+            .and_then(verify_name)
+            .parse(input)?;
+        Ok((
+            input,
+            ParsedEventMessage::PartyFriendship {
+                pitcher_name,
+                batter_name,
+            },
+        ))
+    })
 }
 
 fn balk<'parse, 'output: 'parse>(
@@ -733,7 +736,7 @@ fn field<'parse, 'output: 'parse>(
         },
     );
 
-    let caught_out = try_all_consuming_splits(
+    let caught_out = try_all_consuming_splits_char(
         &['.', '!'],
         |sentence| {
             let (sentence, (batter, fair_ball_type)) =

@@ -443,7 +443,7 @@ pub(super) fn all_consuming_sentence_and<
 /// Effectively calls all_consuming(f) on the first half, then all_consuming(f2) on f's result and the second half.
 ///
 /// The first time f2 returns Ok(), this function returns Ok(), else it returns Err()
-pub(super) fn try_all_consuming_splits<'parse, 'output, F, F2, O, O2>(
+pub(super) fn try_all_consuming_splits_char<'parse, 'output, F, F2, O, O2>(
     delimiters: &'parse [char],
     f: F,
     f2: F2,
@@ -458,6 +458,39 @@ where
             .filter_map(|(i, _)| match f(&input[..i]) {
                 // Effectively all_consuming
                 Ok(("", r)) => match f2(r, &input[i + 1..]) {
+                    // 1 is the delimiter length
+                    // Effectively all_consuming
+                    Ok(("", r2)) => Some(Ok(("", r2))),
+                    _ => None,
+                },
+                _ => None,
+            })
+            .next()
+            .unwrap_or_else(|| {
+                IResult::Err(nom::Err::Error(VerboseError::from_error_kind(
+                    input,
+                    ErrorKind::Tag,
+                )))
+            })
+    }
+}
+
+/// See [`try_all_consuming_splits_char`].
+pub(super) fn try_all_consuming_splits_str<'parse, 'output, F, F2, O, O2>(
+    delimiter: &'parse str,
+    f: F,
+    f2: F2,
+) -> impl Parser<&'output str, Output = O2, Error = Error<'output>> + use<'parse, 'output, F, F2, O, O2>
+where
+    F: Fn(&'output str) -> IResult<'output, &'output str, O>,
+    F2: Fn(O, &'output str) -> IResult<'output, &'output str, O2>,
+{
+    move |input: &'output str| {
+        input
+            .match_indices(delimiter)
+            .filter_map(|(i, _)| match f(&input[..i]) {
+                // Effectively all_consuming
+                Ok(("", r)) => match f2(r, &input[i + delimiter.len()..]) {
                     // Effectively all_consuming
                     Ok(("", r2)) => Some(Ok(("", r2))),
                     _ => None,
