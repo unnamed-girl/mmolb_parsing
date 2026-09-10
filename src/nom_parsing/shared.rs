@@ -918,7 +918,7 @@ pub(super) fn aurora_players<'parse, 'output: 'parse>(
 
         try_all_consuming_splits_str(
             " and ",
-            |name| placed_player_eof(name),
+            |first_player| placed_player_eof(first_player),
             move |first_player, input| {
                 let (input, second_team_emoji) = tag(second.emoji).parse(input)?;
                 let (input, _) = tag(" ").parse(input)?;

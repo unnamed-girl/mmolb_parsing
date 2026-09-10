@@ -277,7 +277,7 @@ fn party_for_attributes<'parse, 'output: 'parse>(
         let (input, _) = tag("<strong>🥳 ").parse(input)?;
         try_all_consuming_splits_str(
             " and ",
-            |name| verify_name(name),
+            |pitcher_name_1| verify_name(pitcher_name_1),
             |pitcher_name_1, input| {
                 let (input, batter_name_1) = parse_terminated(" are Partying!</strong> ")
                     .and_then(verify_name)
@@ -327,7 +327,7 @@ fn party_for_friends<'parse, 'output: 'parse>(
         let (input, _) = tag("<strong>🥳 ").parse(input)?;
         try_all_consuming_splits_str(
             " and ",
-            |name| verify_name(name),
+            |pitcher_name| verify_name(pitcher_name),
             |pitcher_name, input| {
                 let (input, batter_name) =
                     parse_terminated(" are Partying!</strong> They became Friends!")
