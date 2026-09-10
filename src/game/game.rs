@@ -72,7 +72,8 @@ pub struct Game {
         skip_serializing_if = "AddedLaterResult::is_err"
     )]
     #[serde_as(as = "SometimesMissingHelper<HashMap<_, HashMap<MaybeRecognizedHelper<_>, _>>>")]
-    pub team_stats: AddedLaterResult<HashMap<String, HashMap<MaybeRecognizedResult<GameStat>, i32>>>,
+    pub team_stats:
+        AddedLaterResult<HashMap<String, HashMap<MaybeRecognizedResult<GameStat>, i32>>>,
 
     /// PitcherEntries were not retroactively added to old games
     ///

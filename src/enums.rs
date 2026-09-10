@@ -1349,7 +1349,7 @@ pub enum SeasonStatus {
     Preseason,
     PostseasonPreview,
     Offseason,
-    Super16Tournament
+    Super16Tournament,
 }
 impl FromStr for SeasonStatus {
     type Err = &'static str;
@@ -1448,7 +1448,8 @@ where
     } else {
         (s, false)
     };
-    let num = s.strip_prefix("Superstar Day ")
+    let num = s
+        .strip_prefix("Superstar Day ")
         .ok_or(D::Error::custom("Didn't start with \"Superstar Day\""))?
         .parse::<u8>()
         .map_err(|_| D::Error::custom("Expected a number"))?;

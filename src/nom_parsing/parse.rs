@@ -908,23 +908,18 @@ fn field<'parse, 'output: 'parse>(
             parse_terminated(" reaches on a fielder's choice, fielded by ").and_then(verify_name),
             placed_player_eof,
         ),
-        (
-            scores_and_advances,
-            opt(ejection(parsing_context)),
-        ),
+        (scores_and_advances, opt(ejection(parsing_context))),
     )
-    .map(
-        |((batter, fielder), ((scores, advances), ejection))| {
-            ParsedEventMessage::ReachOnFieldersChoice {
-                batter,
-                fielders: vec![fielder],
-                result: FieldingAttempt::NoOut,
-                scores,
-                advances,
-                ejection,
-            }
-        },
-    );
+    .map(|((batter, fielder), ((scores, advances), ejection))| {
+        ParsedEventMessage::ReachOnFieldersChoice {
+            batter,
+            fielders: vec![fielder],
+            result: FieldingAttempt::NoOut,
+            scores,
+            advances,
+            ejection,
+        }
+    });
 
     let reaches_on_error = all_consuming_sentence_and(
         (
