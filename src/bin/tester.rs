@@ -362,7 +362,7 @@ fn round_trip(global_opts: GlobalOpts, round_trip_args: RoundTripArgs) {
                 &global_opts.test_data_folder,
                 Kind::Game,
                 &game.id,
-                game_inner,
+                |game, inner| game_inner(game, inner, &global_opts.test_data_folder),
             );
         }
     }
@@ -380,7 +380,7 @@ fn round_trip(global_opts: GlobalOpts, round_trip_args: RoundTripArgs) {
         }
     }
 
-    if round_trip_args.test_kind(Kind::Game) {
+    if round_trip_args.test_kind(Kind::Player) {
         tracing::info!("Testing players");
         for player in test_cases.players {
             let _guard = info_span!("Player", id = player.id).entered();
@@ -458,7 +458,7 @@ fn _round_trip<T: DeserializeOwned + Serialize>(
     inner(t, id)
 }
 
-fn game_inner(game: Game, id: &str) {
+fn game_inner(game: Game, id: &str, test_data_folder: &Path) {
     let _game_guard = tracing::span!(
         Level::INFO,
         "Game",
@@ -467,6 +467,8 @@ fn game_inner(game: Game, id: &str) {
         scale = format!("{:?}", game.league_scale)
     )
     .entered();
+
+    let mut parsed_events = Vec::new();
 
     for event in &game.event_log {
         let _event_span_guard = tracing::span!(
@@ -479,6 +481,7 @@ fn game_inner(game: Game, id: &str) {
         .entered();
 
         let parsed_event_message = process_event(event, &game, id);
+        parsed_events.push(serde_json::to_value(&parsed_event_message).unwrap());
         if tracing::enabled!(Level::WARN) {
             let unparsed = parsed_event_message.unparse(&game, event.index);
             if event.message != unparsed {
@@ -491,6 +494,21 @@ fn game_inner(game: Game, id: &str) {
         }
 
         drop(_event_span_guard);
+    }
+
+    let path = test_data_folder
+        .join("processed")
+        .join("game_events")
+        .join(id)
+        .with_extension("json");
+    match File::create(path) {
+        Ok(f) => {
+            let parsed_events = serde_json::value::Value::Array(parsed_events);
+            serde_json::to_writer(f, &parsed_events).unwrap();
+        }
+        Err(e) => {
+            tracing::error!("Error creating processed file: {e}");
+        }
     }
 }
 
