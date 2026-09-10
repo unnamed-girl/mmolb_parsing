@@ -1,0 +1,6550 @@
+[
+  {
+    "away_team": {
+      "emoji": "💪",
+      "name": "Brosville Dudes"
+    },
+    "event_type": "LiveNow",
+    "home_team": {
+      "emoji": "🌈",
+      "name": "Nowhere Else Like Yonder"
+    },
+    "stadium": "Field",
+    "weather": null
+  },
+  {
+    "away_pitcher": "Jackson Koval",
+    "away_team": {
+      "emoji": "💪",
+      "name": "Brosville Dudes"
+    },
+    "event_type": "PitchingMatchup",
+    "home_pitcher": "Kate Triples",
+    "home_team": {
+      "emoji": "🌈",
+      "name": "Nowhere Else Like Yonder"
+    }
+  },
+  {
+    "event_type": "Lineup",
+    "manager_name": null,
+    "players": [
+      {
+        "name": "Nice Tanner",
+        "place": "LF"
+      },
+      {
+        "name": "Cecilia Ogden",
+        "place": "1B"
+      },
+      {
+        "name": "Fizz Cartwright",
+        "place": "3B"
+      },
+      {
+        "name": "Rodney Kumar",
+        "place": "RF"
+      },
+      {
+        "name": "Luke Petrosyan",
+        "place": "CF"
+      },
+      {
+        "name": "Voicemail Skov",
+        "place": "SS"
+      },
+      {
+        "name": "Dora Castaneda",
+        "place": "DH"
+      },
+      {
+        "name": "Gladys Ivanov",
+        "place": "C"
+      },
+      {
+        "name": "Casey McNally",
+        "place": "2B"
+      }
+    ],
+    "side": "Away"
+  },
+  {
+    "event_type": "Lineup",
+    "manager_name": null,
+    "players": [
+      {
+        "name": "McBaseball Hubbard",
+        "place": "2B"
+      },
+      {
+        "name": "Vernon Marshfield",
+        "place": "CF"
+      },
+      {
+        "name": "Jessica Lincolnshire",
+        "place": "SS"
+      },
+      {
+        "name": "Samuel Hunt",
+        "place": "LF"
+      },
+      {
+        "name": "Roberto Marks",
+        "place": "3B"
+      },
+      {
+        "name": "Violet Castle",
+        "place": "RF"
+      },
+      {
+        "name": "Lifen Ally",
+        "place": "DH"
+      },
+      {
+        "name": "Odysseus Chen",
+        "place": "1B"
+      },
+      {
+        "name": "Elena Magras",
+        "place": "C"
+      }
+    ],
+    "side": "Home"
+  },
+  {
+    "event_type": "PlayBall"
+  },
+  {
+    "automatic_runner": null,
+    "batting_team": {
+      "emoji": "💪",
+      "name": "Brosville Dudes"
+    },
+    "event_type": "InningStart",
+    "number": 1,
+    "pitcher_status": {
+      "Same": {
+        "emoji": "🌈",
+        "name": "Kate Triples"
+      }
+    },
+    "side": "Top"
+  },
+  {
+    "batter": "Nice Tanner",
+    "event_type": "NowBatting",
+    "player_swept_away": null,
+    "stats": "FirstPA"
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      1,
+      0
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "ejection": null,
+    "event_type": "Ball",
+    "steals": [],
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      2,
+      0
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "ejection": null,
+    "event_type": "Ball",
+    "steals": [],
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      3,
+      0
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "ejection": null,
+    "event_type": "Ball",
+    "steals": [],
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      3,
+      1
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "event_type": "Foul",
+    "foul": "Ball",
+    "steals": [],
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      3,
+      2
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "ejection": null,
+    "event_type": "Strike",
+    "steals": [],
+    "strike": "Swinging",
+    "surprise_strike": false,
+    "wither": null
+  },
+  {
+    "advances": [],
+    "assassinations": [],
+    "aurora_photos": null,
+    "batter": "Nice Tanner",
+    "cheer": null,
+    "ejection": null,
+    "event_type": "Walk",
+    "scores": [],
+    "wither": null
+  },
+  {
+    "batter": "Cecilia Ogden",
+    "event_type": "NowBatting",
+    "player_swept_away": null,
+    "stats": "FirstPA"
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      0,
+      1
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "ejection": null,
+    "event_type": "Strike",
+    "steals": [],
+    "strike": "Swinging",
+    "surprise_strike": false,
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      1,
+      1
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "ejection": null,
+    "event_type": "Ball",
+    "steals": [],
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "batter": "Cecilia Ogden",
+    "cheer": null,
+    "destination": "Pitcher",
+    "door_prizes": [],
+    "efflorescence": [],
+    "event_type": "FairBall",
+    "fair_ball_type": "LineDrive"
+  },
+  {
+    "advances": [
+      {
+        "base": "Third",
+        "runner": "Nice Tanner"
+      }
+    ],
+    "batter": "Cecilia Ogden",
+    "distance": "Single",
+    "ejection": null,
+    "event_type": "BatterToBase",
+    "fair_ball_type": "LineDrive",
+    "fielder": {
+      "name": "Kate Triples",
+      "place": "P"
+    },
+    "scores": []
+  },
+  {
+    "batter": "Fizz Cartwright",
+    "event_type": "NowBatting",
+    "player_swept_away": null,
+    "stats": "FirstPA"
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      0,
+      1
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "event_type": "Foul",
+    "foul": "Ball",
+    "steals": [],
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "batter": "Fizz Cartwright",
+    "cheer": "ChantsThunderAroundTheStadium",
+    "destination": "Pitcher",
+    "door_prizes": [],
+    "efflorescence": [],
+    "event_type": "FairBall",
+    "fair_ball_type": "GroundBall"
+  },
+  {
+    "advances": [
+      {
+        "base": "Second",
+        "runner": "Cecilia Ogden"
+      }
+    ],
+    "batter": "Fizz Cartwright",
+    "ejection": null,
+    "error": "Fielding",
+    "event_type": "ReachOnFieldingError",
+    "fielder": {
+      "name": "Kate Triples",
+      "place": "SP1"
+    },
+    "scores": [
+      "Nice Tanner"
+    ]
+  },
+  {
+    "batter": "Rodney Kumar",
+    "event_type": "NowBatting",
+    "player_swept_away": null,
+    "stats": "FirstPA"
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      0,
+      1
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "event_type": "Foul",
+    "foul": "Ball",
+    "steals": [],
+    "wither": null
+  },
+  {
+    "advances": [
+      {
+        "base": "Third",
+        "runner": "Cecilia Ogden"
+      },
+      {
+        "base": "Second",
+        "runner": "Fizz Cartwright"
+      }
+    ],
+    "aurora_photos": null,
+    "batter": "Rodney Kumar",
+    "cheer": null,
+    "door_prizes": [],
+    "efflorescence": [],
+    "ejection": null,
+    "event_type": "HitByPitch",
+    "scores": [],
+    "wither": null
+  },
+  {
+    "batter": "Luke Petrosyan",
+    "event_type": "NowBatting",
+    "player_swept_away": null,
+    "stats": "FirstPA"
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": "TheHometownFaithfulAreLovingThis",
+    "count": [
+      0,
+      1
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "ejection": null,
+    "event_type": "Strike",
+    "steals": [],
+    "strike": "Looking",
+    "surprise_strike": false,
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "batter": "Luke Petrosyan",
+    "cheer": null,
+    "destination": "SecondBase",
+    "door_prizes": [],
+    "efflorescence": [],
+    "event_type": "FairBall",
+    "fair_ball_type": "GroundBall"
+  },
+  {
+    "advances": [
+      {
+        "base": "Third",
+        "runner": "Fizz Cartwright"
+      },
+      {
+        "base": "Second",
+        "runner": "Rodney Kumar"
+      }
+    ],
+    "batter": "Luke Petrosyan",
+    "double_trouble": null,
+    "ejection": null,
+    "event_type": "DoublePlayGrounded",
+    "fielders": [
+      {
+        "name": "McBaseball Hubbard",
+        "place": "2B"
+      },
+      {
+        "name": "Elena Magras",
+        "place": "C"
+      },
+      {
+        "name": "Odysseus Chen",
+        "place": "1B"
+      }
+    ],
+    "out_one": {
+      "base": "Home",
+      "runner": "Cecilia Ogden"
+    },
+    "out_two": {
+      "base": "FirstBase",
+      "runner": "Luke Petrosyan"
+    },
+    "sacrifice": false,
+    "scores": []
+  },
+  {
+    "batter": "Voicemail Skov",
+    "event_type": "NowBatting",
+    "player_swept_away": null,
+    "stats": "FirstPA"
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      1,
+      0
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "ejection": null,
+    "event_type": "Ball",
+    "steals": [],
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      1,
+      1
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "ejection": null,
+    "event_type": "Strike",
+    "steals": [],
+    "strike": "Looking",
+    "surprise_strike": false,
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      1,
+      2
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "ejection": null,
+    "event_type": "Strike",
+    "steals": [],
+    "strike": "Swinging",
+    "surprise_strike": false,
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "batter": "Voicemail Skov",
+    "cheer": null,
+    "ejection": null,
+    "event_type": "StrikeOut",
+    "foul": null,
+    "steals": [],
+    "strike": "Looking",
+    "wither": null
+  },
+  {
+    "event_type": "InningEnd",
+    "number": 1,
+    "side": "Top"
+  },
+  {
+    "automatic_runner": null,
+    "batting_team": {
+      "emoji": "🌈",
+      "name": "Nowhere Else Like Yonder"
+    },
+    "event_type": "InningStart",
+    "number": 1,
+    "pitcher_status": {
+      "Same": {
+        "emoji": "💪",
+        "name": "Jackson Koval"
+      }
+    },
+    "side": "Bottom"
+  },
+  {
+    "batter": "McBaseball Hubbard",
+    "event_type": "NowBatting",
+    "player_swept_away": null,
+    "stats": "FirstPA"
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      0,
+      1
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "event_type": "Foul",
+    "foul": "Ball",
+    "steals": [],
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      0,
+      2
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "ejection": null,
+    "event_type": "Strike",
+    "steals": [],
+    "strike": "Swinging",
+    "surprise_strike": false,
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "batter": "McBaseball Hubbard",
+    "cheer": null,
+    "ejection": null,
+    "event_type": "StrikeOut",
+    "foul": null,
+    "steals": [],
+    "strike": "Looking",
+    "wither": null
+  },
+  {
+    "batter": "Vernon Marshfield",
+    "event_type": "NowBatting",
+    "player_swept_away": null,
+    "stats": "FirstPA"
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      0,
+      1
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "ejection": null,
+    "event_type": "Strike",
+    "steals": [],
+    "strike": "Swinging",
+    "surprise_strike": false,
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "batter": "Vernon Marshfield",
+    "cheer": null,
+    "destination": "Pitcher",
+    "door_prizes": [],
+    "efflorescence": [],
+    "event_type": "FairBall",
+    "fair_ball_type": "GroundBall"
+  },
+  {
+    "advances": [],
+    "amazing": false,
+    "assassinations": [],
+    "batter": "Vernon Marshfield",
+    "ejection": null,
+    "event_type": "GroundedOut",
+    "fielders": [
+      {
+        "name": "Jackson Koval",
+        "place": "P"
+      },
+      {
+        "name": "Cecilia Ogden",
+        "place": "1B"
+      }
+    ],
+    "scores": []
+  },
+  {
+    "batter": "Jessica Lincolnshire",
+    "event_type": "NowBatting",
+    "player_swept_away": null,
+    "stats": "FirstPA"
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      0,
+      1
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "event_type": "Foul",
+    "foul": "Ball",
+    "steals": [],
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      1,
+      1
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "ejection": null,
+    "event_type": "Ball",
+    "steals": [],
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "batter": "Jessica Lincolnshire",
+    "cheer": null,
+    "destination": "CenterField",
+    "door_prizes": [],
+    "efflorescence": [],
+    "event_type": "FairBall",
+    "fair_ball_type": "LineDrive"
+  },
+  {
+    "advances": [],
+    "batter": "Jessica Lincolnshire",
+    "caught_by": {
+      "name": "Luke Petrosyan",
+      "place": "CF"
+    },
+    "ejection": null,
+    "event_type": "CaughtOut",
+    "fair_ball_type": "LineDrive",
+    "jetpack": false,
+    "perfect": false,
+    "sacrifice": false,
+    "scores": []
+  },
+  {
+    "event_type": "InningEnd",
+    "number": 1,
+    "side": "Bottom"
+  },
+  {
+    "automatic_runner": null,
+    "batting_team": {
+      "emoji": "💪",
+      "name": "Brosville Dudes"
+    },
+    "event_type": "InningStart",
+    "number": 2,
+    "pitcher_status": {
+      "Same": {
+        "emoji": "🌈",
+        "name": "Kate Triples"
+      }
+    },
+    "side": "Top"
+  },
+  {
+    "batter": "Dora Castaneda",
+    "event_type": "NowBatting",
+    "player_swept_away": null,
+    "stats": "FirstPA"
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "batter": "Dora Castaneda",
+    "cheer": null,
+    "destination": "LeftField",
+    "door_prizes": [],
+    "efflorescence": [],
+    "event_type": "FairBall",
+    "fair_ball_type": "GroundBall"
+  },
+  {
+    "advances": [],
+    "batter": "Dora Castaneda",
+    "distance": "Single",
+    "ejection": null,
+    "event_type": "BatterToBase",
+    "fair_ball_type": "GroundBall",
+    "fielder": {
+      "name": "Samuel Hunt",
+      "place": "LF"
+    },
+    "scores": []
+  },
+  {
+    "batter": "Gladys Ivanov",
+    "event_type": "NowBatting",
+    "player_swept_away": null,
+    "stats": "FirstPA"
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      1,
+      0
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "ejection": null,
+    "event_type": "Ball",
+    "steals": [],
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      1,
+      1
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "event_type": "Foul",
+    "foul": "Ball",
+    "steals": [],
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": "TheCrowdIsPumpedUp",
+    "count": [
+      2,
+      1
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "ejection": null,
+    "event_type": "Ball",
+    "steals": [
+      {
+        "base": "Second",
+        "caught": false,
+        "runner": "Dora Castaneda"
+      }
+    ],
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      2,
+      2
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "ejection": null,
+    "event_type": "Strike",
+    "steals": [],
+    "strike": "Looking",
+    "surprise_strike": false,
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      2,
+      2
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "event_type": "Foul",
+    "foul": "Ball",
+    "steals": [],
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "batter": "Gladys Ivanov",
+    "cheer": null,
+    "ejection": null,
+    "event_type": "StrikeOut",
+    "foul": null,
+    "steals": [],
+    "strike": "Swinging",
+    "wither": null
+  },
+  {
+    "batter": "Casey McNally",
+    "event_type": "NowBatting",
+    "player_swept_away": null,
+    "stats": "FirstPA"
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      1,
+      0
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "ejection": null,
+    "event_type": "Ball",
+    "steals": [],
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": "HomeSupportersWhistleAndCheer",
+    "count": [
+      2,
+      0
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "ejection": null,
+    "event_type": "Ball",
+    "steals": [],
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      2,
+      1
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "ejection": null,
+    "event_type": "Strike",
+    "steals": [],
+    "strike": "Looking",
+    "surprise_strike": false,
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "batter": "Casey McNally",
+    "cheer": null,
+    "destination": "RightField",
+    "door_prizes": [],
+    "efflorescence": [],
+    "event_type": "FairBall",
+    "fair_ball_type": "FlyBall"
+  },
+  {
+    "advances": [],
+    "batter": "Casey McNally",
+    "distance": "Double",
+    "ejection": null,
+    "event_type": "BatterToBase",
+    "fair_ball_type": "FlyBall",
+    "fielder": {
+      "name": "Violet Castle",
+      "place": "RF"
+    },
+    "scores": [
+      "Dora Castaneda"
+    ]
+  },
+  {
+    "batter": "Nice Tanner",
+    "event_type": "NowBatting",
+    "player_swept_away": null,
+    "stats": {
+      "Stats": [
+        {
+          "stat": "BaseOnBalls",
+          "value": 1
+        }
+      ]
+    }
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      0,
+      1
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "ejection": null,
+    "event_type": "Strike",
+    "steals": [],
+    "strike": "Looking",
+    "surprise_strike": false,
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      0,
+      2
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "ejection": null,
+    "event_type": "Strike",
+    "steals": [],
+    "strike": "Looking",
+    "surprise_strike": false,
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      0,
+      2
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "event_type": "Foul",
+    "foul": "Ball",
+    "steals": [],
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "batter": "Nice Tanner",
+    "cheer": null,
+    "ejection": null,
+    "event_type": "StrikeOut",
+    "foul": null,
+    "steals": [],
+    "strike": "Looking",
+    "wither": null
+  },
+  {
+    "batter": "Cecilia Ogden",
+    "event_type": "NowBatting",
+    "player_swept_away": null,
+    "stats": {
+      "Stats": [
+        {
+          "stat": "HitsForAtBats",
+          "value": {
+            "at_bats": 1,
+            "hits": 1
+          }
+        },
+        {
+          "stat": "FirstBases",
+          "value": 1
+        }
+      ]
+    }
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "batter": "Cecilia Ogden",
+    "cheer": null,
+    "destination": "SecondBase",
+    "door_prizes": [],
+    "efflorescence": [],
+    "event_type": "FairBall",
+    "fair_ball_type": "GroundBall"
+  },
+  {
+    "advances": [],
+    "amazing": false,
+    "assassinations": [],
+    "batter": "Cecilia Ogden",
+    "ejection": null,
+    "event_type": "GroundedOut",
+    "fielders": [
+      {
+        "name": "McBaseball Hubbard",
+        "place": "2B"
+      },
+      {
+        "name": "Odysseus Chen",
+        "place": "1B"
+      }
+    ],
+    "scores": []
+  },
+  {
+    "event_type": "InningEnd",
+    "number": 2,
+    "side": "Top"
+  },
+  {
+    "automatic_runner": null,
+    "batting_team": {
+      "emoji": "🌈",
+      "name": "Nowhere Else Like Yonder"
+    },
+    "event_type": "InningStart",
+    "number": 2,
+    "pitcher_status": {
+      "Same": {
+        "emoji": "💪",
+        "name": "Jackson Koval"
+      }
+    },
+    "side": "Bottom"
+  },
+  {
+    "batter": "Samuel Hunt",
+    "event_type": "NowBatting",
+    "player_swept_away": null,
+    "stats": "FirstPA"
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "batter": "Samuel Hunt",
+    "cheer": null,
+    "destination": "ShortStop",
+    "door_prizes": [],
+    "efflorescence": [],
+    "event_type": "FairBall",
+    "fair_ball_type": "GroundBall"
+  },
+  {
+    "advances": [],
+    "amazing": false,
+    "assassinations": [],
+    "batter": "Samuel Hunt",
+    "ejection": null,
+    "event_type": "GroundedOut",
+    "fielders": [
+      {
+        "name": "Voicemail Skov",
+        "place": "SS"
+      },
+      {
+        "name": "Cecilia Ogden",
+        "place": "1B"
+      }
+    ],
+    "scores": []
+  },
+  {
+    "batter": "Roberto Marks",
+    "event_type": "NowBatting",
+    "player_swept_away": null,
+    "stats": "FirstPA"
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      1,
+      0
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "ejection": null,
+    "event_type": "Ball",
+    "steals": [],
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      1,
+      1
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "event_type": "Foul",
+    "foul": "Ball",
+    "steals": [],
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      2,
+      1
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "ejection": null,
+    "event_type": "Ball",
+    "steals": [],
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      3,
+      1
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "ejection": null,
+    "event_type": "Ball",
+    "steals": [],
+    "wither": null
+  },
+  {
+    "advances": [],
+    "assassinations": [],
+    "aurora_photos": null,
+    "batter": "Roberto Marks",
+    "cheer": null,
+    "ejection": null,
+    "event_type": "Walk",
+    "scores": [],
+    "wither": null
+  },
+  {
+    "batter": "Violet Castle",
+    "event_type": "NowBatting",
+    "player_swept_away": null,
+    "stats": "FirstPA"
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      0,
+      1
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "ejection": null,
+    "event_type": "Strike",
+    "steals": [],
+    "strike": "Swinging",
+    "surprise_strike": false,
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      0,
+      2
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "event_type": "Foul",
+    "foul": "Ball",
+    "steals": [],
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      1,
+      2
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "ejection": null,
+    "event_type": "Ball",
+    "steals": [],
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      2,
+      2
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "ejection": null,
+    "event_type": "Ball",
+    "steals": [],
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      3,
+      2
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "ejection": null,
+    "event_type": "Ball",
+    "steals": [],
+    "wither": null
+  },
+  {
+    "advances": [
+      {
+        "base": "Second",
+        "runner": "Roberto Marks"
+      }
+    ],
+    "assassinations": [],
+    "aurora_photos": null,
+    "batter": "Violet Castle",
+    "cheer": null,
+    "ejection": null,
+    "event_type": "Walk",
+    "scores": [],
+    "wither": null
+  },
+  {
+    "batter": "Lifen Ally",
+    "event_type": "NowBatting",
+    "player_swept_away": null,
+    "stats": "FirstPA"
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      0,
+      1
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "ejection": null,
+    "event_type": "Strike",
+    "steals": [],
+    "strike": "Looking",
+    "surprise_strike": false,
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      1,
+      1
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "ejection": null,
+    "event_type": "Ball",
+    "steals": [],
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      1,
+      2
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "ejection": null,
+    "event_type": "Strike",
+    "steals": [],
+    "strike": "Swinging",
+    "surprise_strike": false,
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "batter": "Lifen Ally",
+    "cheer": null,
+    "ejection": null,
+    "event_type": "StrikeOut",
+    "foul": null,
+    "steals": [],
+    "strike": "Swinging",
+    "wither": null
+  },
+  {
+    "batter": "Odysseus Chen",
+    "event_type": "NowBatting",
+    "player_swept_away": null,
+    "stats": "FirstPA"
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      0,
+      1
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "ejection": null,
+    "event_type": "Strike",
+    "steals": [],
+    "strike": "Swinging",
+    "surprise_strike": false,
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      1,
+      1
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "ejection": null,
+    "event_type": "Ball",
+    "steals": [
+      {
+        "base": "Third",
+        "caught": true,
+        "runner": "Roberto Marks"
+      }
+    ],
+    "wither": null
+  },
+  {
+    "event_type": "InningEnd",
+    "number": 2,
+    "side": "Bottom"
+  },
+  {
+    "automatic_runner": null,
+    "batting_team": {
+      "emoji": "💪",
+      "name": "Brosville Dudes"
+    },
+    "event_type": "InningStart",
+    "number": 3,
+    "pitcher_status": {
+      "Same": {
+        "emoji": "🌈",
+        "name": "Kate Triples"
+      }
+    },
+    "side": "Top"
+  },
+  {
+    "batter": "Fizz Cartwright",
+    "event_type": "NowBatting",
+    "player_swept_away": null,
+    "stats": {
+      "Stats": [
+        {
+          "stat": "HitsForAtBats",
+          "value": {
+            "at_bats": 1,
+            "hits": 0
+          }
+        }
+      ]
+    }
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "batter": "Fizz Cartwright",
+    "cheer": null,
+    "destination": "CenterField",
+    "door_prizes": [],
+    "efflorescence": [],
+    "event_type": "FairBall",
+    "fair_ball_type": "FlyBall"
+  },
+  {
+    "advances": [],
+    "batter": "Fizz Cartwright",
+    "caught_by": {
+      "name": "Vernon Marshfield",
+      "place": "CF"
+    },
+    "ejection": null,
+    "event_type": "CaughtOut",
+    "fair_ball_type": "FlyBall",
+    "jetpack": false,
+    "perfect": false,
+    "sacrifice": false,
+    "scores": []
+  },
+  {
+    "batter": "Rodney Kumar",
+    "event_type": "NowBatting",
+    "player_swept_away": null,
+    "stats": {
+      "Stats": [
+        {
+          "stat": "HitByPitchs",
+          "value": 1
+        }
+      ]
+    }
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      0,
+      1
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "ejection": null,
+    "event_type": "Strike",
+    "steals": [],
+    "strike": "Swinging",
+    "surprise_strike": false,
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      0,
+      2
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "event_type": "Foul",
+    "foul": "Ball",
+    "steals": [],
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      0,
+      2
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "event_type": "Foul",
+    "foul": "Ball",
+    "steals": [],
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "batter": "Rodney Kumar",
+    "cheer": null,
+    "ejection": null,
+    "event_type": "StrikeOut",
+    "foul": null,
+    "steals": [],
+    "strike": "Swinging",
+    "wither": null
+  },
+  {
+    "batter": "Luke Petrosyan",
+    "event_type": "NowBatting",
+    "player_swept_away": null,
+    "stats": {
+      "Stats": [
+        {
+          "stat": "HitsForAtBats",
+          "value": {
+            "at_bats": 1,
+            "hits": 0
+          }
+        },
+        {
+          "stat": "GroundIntoDoublePlays",
+          "value": 1
+        },
+        {
+          "stat": "GroundOuts",
+          "value": 1
+        }
+      ]
+    }
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "batter": "Luke Petrosyan",
+    "cheer": null,
+    "destination": "FirstBase",
+    "door_prizes": [],
+    "efflorescence": [],
+    "event_type": "FairBall",
+    "fair_ball_type": "GroundBall"
+  },
+  {
+    "advances": [],
+    "amazing": false,
+    "assassinations": [],
+    "batter": "Luke Petrosyan",
+    "ejection": null,
+    "event_type": "GroundedOut",
+    "fielders": [
+      {
+        "name": "Odysseus Chen",
+        "place": "1B"
+      }
+    ],
+    "scores": []
+  },
+  {
+    "event_type": "InningEnd",
+    "number": 3,
+    "side": "Top"
+  },
+  {
+    "automatic_runner": null,
+    "batting_team": {
+      "emoji": "🌈",
+      "name": "Nowhere Else Like Yonder"
+    },
+    "event_type": "InningStart",
+    "number": 3,
+    "pitcher_status": {
+      "Same": {
+        "emoji": "💪",
+        "name": "Jackson Koval"
+      }
+    },
+    "side": "Bottom"
+  },
+  {
+    "batter": "Odysseus Chen",
+    "event_type": "NowBatting",
+    "player_swept_away": null,
+    "stats": "FirstPA"
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      0,
+      1
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "ejection": null,
+    "event_type": "Strike",
+    "steals": [],
+    "strike": "Looking",
+    "surprise_strike": false,
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      0,
+      2
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "ejection": null,
+    "event_type": "Strike",
+    "steals": [],
+    "strike": "Looking",
+    "surprise_strike": false,
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      0,
+      2
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "event_type": "Foul",
+    "foul": "Ball",
+    "steals": [],
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      1,
+      2
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "ejection": null,
+    "event_type": "Ball",
+    "steals": [],
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      1,
+      2
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "event_type": "Foul",
+    "foul": "Ball",
+    "steals": [],
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "batter": "Odysseus Chen",
+    "cheer": null,
+    "ejection": null,
+    "event_type": "StrikeOut",
+    "foul": null,
+    "steals": [],
+    "strike": "Looking",
+    "wither": null
+  },
+  {
+    "batter": "Elena Magras",
+    "event_type": "NowBatting",
+    "player_swept_away": null,
+    "stats": "FirstPA"
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      1,
+      0
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "ejection": null,
+    "event_type": "Ball",
+    "steals": [],
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      2,
+      0
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "ejection": null,
+    "event_type": "Ball",
+    "steals": [],
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      2,
+      1
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "ejection": null,
+    "event_type": "Strike",
+    "steals": [],
+    "strike": "Looking",
+    "surprise_strike": false,
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      3,
+      1
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "ejection": null,
+    "event_type": "Ball",
+    "steals": [],
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      3,
+      2
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "ejection": null,
+    "event_type": "Strike",
+    "steals": [],
+    "strike": "Looking",
+    "surprise_strike": false,
+    "wither": null
+  },
+  {
+    "advances": [],
+    "assassinations": [],
+    "aurora_photos": null,
+    "batter": "Elena Magras",
+    "cheer": null,
+    "ejection": null,
+    "event_type": "Walk",
+    "scores": [],
+    "wither": null
+  },
+  {
+    "batter": "McBaseball Hubbard",
+    "event_type": "NowBatting",
+    "player_swept_away": null,
+    "stats": {
+      "Stats": [
+        {
+          "stat": "HitsForAtBats",
+          "value": {
+            "at_bats": 1,
+            "hits": 0
+          }
+        },
+        {
+          "stat": "StrikeOuts",
+          "value": 1
+        }
+      ]
+    }
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      1,
+      0
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "ejection": null,
+    "event_type": "Ball",
+    "steals": [],
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      2,
+      0
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "ejection": null,
+    "event_type": "Ball",
+    "steals": [],
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      2,
+      1
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "ejection": null,
+    "event_type": "Strike",
+    "steals": [],
+    "strike": "Swinging",
+    "surprise_strike": false,
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      2,
+      2
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "event_type": "Foul",
+    "foul": "Ball",
+    "steals": [],
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      3,
+      2
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "ejection": null,
+    "event_type": "Ball",
+    "steals": [],
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "batter": "McBaseball Hubbard",
+    "cheer": null,
+    "ejection": null,
+    "event_type": "StrikeOut",
+    "foul": null,
+    "steals": [
+      {
+        "base": "Second",
+        "caught": false,
+        "runner": "Elena Magras"
+      }
+    ],
+    "strike": "Looking",
+    "wither": null
+  },
+  {
+    "batter": "Vernon Marshfield",
+    "event_type": "NowBatting",
+    "player_swept_away": null,
+    "stats": {
+      "Stats": [
+        {
+          "stat": "HitsForAtBats",
+          "value": {
+            "at_bats": 1,
+            "hits": 0
+          }
+        },
+        {
+          "stat": "GroundOuts",
+          "value": 1
+        }
+      ]
+    }
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      0,
+      1
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "ejection": null,
+    "event_type": "Strike",
+    "steals": [],
+    "strike": "Swinging",
+    "surprise_strike": false,
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": "TheCrowdIsEcstatic",
+    "count": [
+      1,
+      1
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "ejection": null,
+    "event_type": "Ball",
+    "steals": [],
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      1,
+      2
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "ejection": null,
+    "event_type": "Strike",
+    "steals": [],
+    "strike": "Looking",
+    "surprise_strike": false,
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "batter": "Vernon Marshfield",
+    "cheer": null,
+    "destination": "LeftField",
+    "door_prizes": [],
+    "efflorescence": [],
+    "event_type": "FairBall",
+    "fair_ball_type": "LineDrive"
+  },
+  {
+    "advances": [],
+    "batter": "Vernon Marshfield",
+    "distance": "Double",
+    "ejection": null,
+    "event_type": "BatterToBase",
+    "fair_ball_type": "LineDrive",
+    "fielder": {
+      "name": "Nice Tanner",
+      "place": "LF"
+    },
+    "scores": [
+      "Elena Magras"
+    ]
+  },
+  {
+    "batter": "Jessica Lincolnshire",
+    "event_type": "NowBatting",
+    "player_swept_away": null,
+    "stats": {
+      "Stats": [
+        {
+          "stat": "HitsForAtBats",
+          "value": {
+            "at_bats": 1,
+            "hits": 0
+          }
+        },
+        {
+          "stat": "LineOuts",
+          "value": 1
+        }
+      ]
+    }
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      1,
+      0
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "ejection": null,
+    "event_type": "Ball",
+    "steals": [],
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": "TheNoiseLevelSkyrockets",
+    "count": [
+      1,
+      1
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "ejection": null,
+    "event_type": "Strike",
+    "steals": [],
+    "strike": "Looking",
+    "surprise_strike": false,
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "batter": "Jessica Lincolnshire",
+    "cheer": null,
+    "destination": "CenterField",
+    "door_prizes": [],
+    "efflorescence": [],
+    "event_type": "FairBall",
+    "fair_ball_type": "FlyBall"
+  },
+  {
+    "advances": [],
+    "batter": "Jessica Lincolnshire",
+    "caught_by": {
+      "name": "Luke Petrosyan",
+      "place": "CF"
+    },
+    "ejection": null,
+    "event_type": "CaughtOut",
+    "fair_ball_type": "FlyBall",
+    "jetpack": false,
+    "perfect": false,
+    "sacrifice": false,
+    "scores": []
+  },
+  {
+    "event_type": "InningEnd",
+    "number": 3,
+    "side": "Bottom"
+  },
+  {
+    "automatic_runner": null,
+    "batting_team": {
+      "emoji": "💪",
+      "name": "Brosville Dudes"
+    },
+    "event_type": "InningStart",
+    "number": 4,
+    "pitcher_status": {
+      "Same": {
+        "emoji": "🌈",
+        "name": "Kate Triples"
+      }
+    },
+    "side": "Top"
+  },
+  {
+    "batter": "Voicemail Skov",
+    "event_type": "NowBatting",
+    "player_swept_away": null,
+    "stats": {
+      "Stats": [
+        {
+          "stat": "HitsForAtBats",
+          "value": {
+            "at_bats": 1,
+            "hits": 0
+          }
+        },
+        {
+          "stat": "StrikeOuts",
+          "value": 1
+        }
+      ]
+    }
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "batter": "Voicemail Skov",
+    "cheer": null,
+    "destination": "RightField",
+    "door_prizes": [],
+    "efflorescence": [],
+    "event_type": "FairBall",
+    "fair_ball_type": "FlyBall"
+  },
+  {
+    "batter": "Voicemail Skov",
+    "destination": "RightField",
+    "ejection": null,
+    "event_type": "HomeRun",
+    "fair_ball_type": "FlyBall",
+    "grand_slam": false,
+    "scores": []
+  },
+  {
+    "batter": "Dora Castaneda",
+    "event_type": "NowBatting",
+    "player_swept_away": null,
+    "stats": {
+      "Stats": [
+        {
+          "stat": "HitsForAtBats",
+          "value": {
+            "at_bats": 1,
+            "hits": 1
+          }
+        },
+        {
+          "stat": "FirstBases",
+          "value": 1
+        }
+      ]
+    }
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      0,
+      1
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "event_type": "Foul",
+    "foul": "Ball",
+    "steals": [],
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "batter": "Dora Castaneda",
+    "cheer": null,
+    "destination": "ShortStop",
+    "door_prizes": [],
+    "efflorescence": [],
+    "event_type": "FairBall",
+    "fair_ball_type": "GroundBall"
+  },
+  {
+    "advances": [],
+    "amazing": false,
+    "assassinations": [],
+    "batter": "Dora Castaneda",
+    "ejection": null,
+    "event_type": "GroundedOut",
+    "fielders": [
+      {
+        "name": "Jessica Lincolnshire",
+        "place": "SS"
+      },
+      {
+        "name": "Odysseus Chen",
+        "place": "1B"
+      }
+    ],
+    "scores": []
+  },
+  {
+    "batter": "Gladys Ivanov",
+    "event_type": "NowBatting",
+    "player_swept_away": null,
+    "stats": {
+      "Stats": [
+        {
+          "stat": "HitsForAtBats",
+          "value": {
+            "at_bats": 1,
+            "hits": 0
+          }
+        },
+        {
+          "stat": "StrikeOuts",
+          "value": 1
+        }
+      ]
+    }
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      0,
+      1
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "ejection": null,
+    "event_type": "Strike",
+    "steals": [],
+    "strike": "Swinging",
+    "surprise_strike": false,
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      1,
+      1
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "ejection": null,
+    "event_type": "Ball",
+    "steals": [],
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "batter": "Gladys Ivanov",
+    "cheer": null,
+    "destination": "ShortStop",
+    "door_prizes": [],
+    "efflorescence": [],
+    "event_type": "FairBall",
+    "fair_ball_type": "GroundBall"
+  },
+  {
+    "advances": [],
+    "amazing": false,
+    "assassinations": [],
+    "batter": "Gladys Ivanov",
+    "ejection": null,
+    "event_type": "GroundedOut",
+    "fielders": [
+      {
+        "name": "Jessica Lincolnshire",
+        "place": "SS"
+      },
+      {
+        "name": "Odysseus Chen",
+        "place": "1B"
+      }
+    ],
+    "scores": []
+  },
+  {
+    "batter": "Casey McNally",
+    "event_type": "NowBatting",
+    "player_swept_away": null,
+    "stats": {
+      "Stats": [
+        {
+          "stat": "HitsForAtBats",
+          "value": {
+            "at_bats": 1,
+            "hits": 1
+          }
+        },
+        {
+          "stat": "SecondBases",
+          "value": 1
+        }
+      ]
+    }
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      1,
+      0
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "ejection": null,
+    "event_type": "Ball",
+    "steals": [],
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      2,
+      0
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "ejection": null,
+    "event_type": "Ball",
+    "steals": [],
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "batter": "Casey McNally",
+    "cheer": null,
+    "destination": "Pitcher",
+    "door_prizes": [],
+    "efflorescence": [],
+    "event_type": "FairBall",
+    "fair_ball_type": "GroundBall"
+  },
+  {
+    "advances": [],
+    "amazing": false,
+    "assassinations": [],
+    "batter": "Casey McNally",
+    "ejection": null,
+    "event_type": "GroundedOut",
+    "fielders": [
+      {
+        "name": "Kate Triples",
+        "place": "P"
+      },
+      {
+        "name": "Odysseus Chen",
+        "place": "1B"
+      }
+    ],
+    "scores": []
+  },
+  {
+    "event_type": "InningEnd",
+    "number": 4,
+    "side": "Top"
+  },
+  {
+    "automatic_runner": null,
+    "batting_team": {
+      "emoji": "🌈",
+      "name": "Nowhere Else Like Yonder"
+    },
+    "event_type": "InningStart",
+    "number": 4,
+    "pitcher_status": {
+      "Same": {
+        "emoji": "💪",
+        "name": "Jackson Koval"
+      }
+    },
+    "side": "Bottom"
+  },
+  {
+    "batter": "Samuel Hunt",
+    "event_type": "NowBatting",
+    "player_swept_away": null,
+    "stats": {
+      "Stats": [
+        {
+          "stat": "HitsForAtBats",
+          "value": {
+            "at_bats": 1,
+            "hits": 0
+          }
+        },
+        {
+          "stat": "GroundOuts",
+          "value": 1
+        }
+      ]
+    }
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      1,
+      0
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "ejection": null,
+    "event_type": "Ball",
+    "steals": [],
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      2,
+      0
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "ejection": null,
+    "event_type": "Ball",
+    "steals": [],
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      2,
+      1
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "event_type": "Foul",
+    "foul": "Ball",
+    "steals": [],
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      3,
+      1
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "ejection": null,
+    "event_type": "Ball",
+    "steals": [],
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      3,
+      2
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "event_type": "Foul",
+    "foul": "Ball",
+    "steals": [],
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      3,
+      2
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "event_type": "Foul",
+    "foul": "Ball",
+    "steals": [],
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "batter": "Samuel Hunt",
+    "cheer": null,
+    "ejection": null,
+    "event_type": "StrikeOut",
+    "foul": null,
+    "steals": [],
+    "strike": "Looking",
+    "wither": null
+  },
+  {
+    "batter": "Roberto Marks",
+    "event_type": "NowBatting",
+    "player_swept_away": null,
+    "stats": {
+      "Stats": [
+        {
+          "stat": "BaseOnBalls",
+          "value": 1
+        }
+      ]
+    }
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      1,
+      0
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "ejection": null,
+    "event_type": "Ball",
+    "steals": [],
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      1,
+      1
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "ejection": null,
+    "event_type": "Strike",
+    "steals": [],
+    "strike": "Swinging",
+    "surprise_strike": false,
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      2,
+      1
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "ejection": null,
+    "event_type": "Ball",
+    "steals": [],
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      3,
+      1
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "ejection": null,
+    "event_type": "Ball",
+    "steals": [],
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      3,
+      2
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "ejection": null,
+    "event_type": "Strike",
+    "steals": [],
+    "strike": "Looking",
+    "surprise_strike": false,
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "batter": "Roberto Marks",
+    "cheer": null,
+    "destination": "CenterField",
+    "door_prizes": [],
+    "efflorescence": [],
+    "event_type": "FairBall",
+    "fair_ball_type": "FlyBall"
+  },
+  {
+    "advances": [],
+    "batter": "Roberto Marks",
+    "caught_by": {
+      "name": "Luke Petrosyan",
+      "place": "CF"
+    },
+    "ejection": null,
+    "event_type": "CaughtOut",
+    "fair_ball_type": "FlyBall",
+    "jetpack": false,
+    "perfect": false,
+    "sacrifice": false,
+    "scores": []
+  },
+  {
+    "batter": "Violet Castle",
+    "event_type": "NowBatting",
+    "player_swept_away": null,
+    "stats": {
+      "Stats": [
+        {
+          "stat": "BaseOnBalls",
+          "value": 1
+        }
+      ]
+    }
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      0,
+      1
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "event_type": "Foul",
+    "foul": "Ball",
+    "steals": [],
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      1,
+      1
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "ejection": null,
+    "event_type": "Ball",
+    "steals": [],
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      1,
+      2
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "event_type": "Foul",
+    "foul": "Ball",
+    "steals": [],
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      1,
+      2
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "event_type": "Foul",
+    "foul": "Ball",
+    "steals": [],
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "batter": "Violet Castle",
+    "cheer": null,
+    "ejection": null,
+    "event_type": "StrikeOut",
+    "foul": null,
+    "steals": [],
+    "strike": "Looking",
+    "wither": null
+  },
+  {
+    "event_type": "InningEnd",
+    "number": 4,
+    "side": "Bottom"
+  },
+  {
+    "automatic_runner": null,
+    "batting_team": {
+      "emoji": "💪",
+      "name": "Brosville Dudes"
+    },
+    "event_type": "InningStart",
+    "number": 5,
+    "pitcher_status": {
+      "Same": {
+        "emoji": "🌈",
+        "name": "Kate Triples"
+      }
+    },
+    "side": "Top"
+  },
+  {
+    "batter": "Nice Tanner",
+    "event_type": "NowBatting",
+    "player_swept_away": null,
+    "stats": {
+      "Stats": [
+        {
+          "stat": "HitsForAtBats",
+          "value": {
+            "at_bats": 1,
+            "hits": 0
+          }
+        },
+        {
+          "stat": "BaseOnBalls",
+          "value": 1
+        },
+        {
+          "stat": "StrikeOuts",
+          "value": 1
+        }
+      ]
+    }
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "batter": "Nice Tanner",
+    "cheer": null,
+    "destination": "RightField",
+    "door_prizes": [],
+    "efflorescence": [],
+    "event_type": "FairBall",
+    "fair_ball_type": "FlyBall"
+  },
+  {
+    "advances": [],
+    "batter": "Nice Tanner",
+    "caught_by": {
+      "name": "Violet Castle",
+      "place": "RF"
+    },
+    "ejection": null,
+    "event_type": "CaughtOut",
+    "fair_ball_type": "FlyBall",
+    "jetpack": false,
+    "perfect": false,
+    "sacrifice": false,
+    "scores": []
+  },
+  {
+    "batter": "Cecilia Ogden",
+    "event_type": "NowBatting",
+    "player_swept_away": null,
+    "stats": {
+      "Stats": [
+        {
+          "stat": "HitsForAtBats",
+          "value": {
+            "at_bats": 2,
+            "hits": 1
+          }
+        },
+        {
+          "stat": "FirstBases",
+          "value": 1
+        },
+        {
+          "stat": "GroundOuts",
+          "value": 1
+        }
+      ]
+    }
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      0,
+      1
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "ejection": null,
+    "event_type": "Strike",
+    "steals": [],
+    "strike": "Swinging",
+    "surprise_strike": false,
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      1,
+      1
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "ejection": null,
+    "event_type": "Ball",
+    "steals": [],
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "batter": "Cecilia Ogden",
+    "cheer": null,
+    "destination": "SecondBase",
+    "door_prizes": [],
+    "efflorescence": [],
+    "event_type": "FairBall",
+    "fair_ball_type": "GroundBall"
+  },
+  {
+    "advances": [],
+    "amazing": false,
+    "assassinations": [],
+    "batter": "Cecilia Ogden",
+    "ejection": null,
+    "event_type": "GroundedOut",
+    "fielders": [
+      {
+        "name": "McBaseball Hubbard",
+        "place": "2B"
+      },
+      {
+        "name": "Odysseus Chen",
+        "place": "1B"
+      }
+    ],
+    "scores": []
+  },
+  {
+    "batter": "Fizz Cartwright",
+    "event_type": "NowBatting",
+    "player_swept_away": null,
+    "stats": {
+      "Stats": [
+        {
+          "stat": "HitsForAtBats",
+          "value": {
+            "at_bats": 2,
+            "hits": 0
+          }
+        },
+        {
+          "stat": "ForceOuts",
+          "value": 1
+        }
+      ]
+    }
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      0,
+      1
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "ejection": null,
+    "event_type": "Strike",
+    "steals": [],
+    "strike": "Looking",
+    "surprise_strike": false,
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "batter": "Fizz Cartwright",
+    "cheer": null,
+    "destination": "ShortStop",
+    "door_prizes": [],
+    "efflorescence": [],
+    "event_type": "FairBall",
+    "fair_ball_type": "GroundBall"
+  },
+  {
+    "advances": [],
+    "amazing": false,
+    "assassinations": [],
+    "batter": "Fizz Cartwright",
+    "ejection": null,
+    "event_type": "GroundedOut",
+    "fielders": [
+      {
+        "name": "Jessica Lincolnshire",
+        "place": "SS"
+      },
+      {
+        "name": "Odysseus Chen",
+        "place": "1B"
+      }
+    ],
+    "scores": []
+  },
+  {
+    "event_type": "InningEnd",
+    "number": 5,
+    "side": "Top"
+  },
+  {
+    "automatic_runner": null,
+    "batting_team": {
+      "emoji": "🌈",
+      "name": "Nowhere Else Like Yonder"
+    },
+    "event_type": "InningStart",
+    "number": 5,
+    "pitcher_status": {
+      "Same": {
+        "emoji": "💪",
+        "name": "Jackson Koval"
+      }
+    },
+    "side": "Bottom"
+  },
+  {
+    "batter": "Lifen Ally",
+    "event_type": "NowBatting",
+    "player_swept_away": null,
+    "stats": {
+      "Stats": [
+        {
+          "stat": "HitsForAtBats",
+          "value": {
+            "at_bats": 1,
+            "hits": 0
+          }
+        },
+        {
+          "stat": "StrikeOuts",
+          "value": 1
+        }
+      ]
+    }
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      0,
+      1
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "event_type": "Foul",
+    "foul": "Ball",
+    "steals": [],
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      0,
+      2
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "ejection": null,
+    "event_type": "Strike",
+    "steals": [],
+    "strike": "Swinging",
+    "surprise_strike": false,
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "batter": "Lifen Ally",
+    "cheer": null,
+    "ejection": null,
+    "event_type": "StrikeOut",
+    "foul": null,
+    "steals": [],
+    "strike": "Swinging",
+    "wither": null
+  },
+  {
+    "batter": "Odysseus Chen",
+    "event_type": "NowBatting",
+    "player_swept_away": null,
+    "stats": {
+      "Stats": [
+        {
+          "stat": "HitsForAtBats",
+          "value": {
+            "at_bats": 1,
+            "hits": 0
+          }
+        },
+        {
+          "stat": "StrikeOuts",
+          "value": 1
+        }
+      ]
+    }
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      1,
+      0
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "ejection": null,
+    "event_type": "Ball",
+    "steals": [],
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      1,
+      1
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "event_type": "Foul",
+    "foul": "Ball",
+    "steals": [],
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      2,
+      1
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "ejection": null,
+    "event_type": "Ball",
+    "steals": [],
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      3,
+      1
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "ejection": null,
+    "event_type": "Ball",
+    "steals": [],
+    "wither": null
+  },
+  {
+    "advances": [],
+    "assassinations": [],
+    "aurora_photos": null,
+    "batter": "Odysseus Chen",
+    "cheer": null,
+    "ejection": null,
+    "event_type": "Walk",
+    "scores": [],
+    "wither": null
+  },
+  {
+    "batter": "Elena Magras",
+    "event_type": "NowBatting",
+    "player_swept_away": null,
+    "stats": {
+      "Stats": [
+        {
+          "stat": "BaseOnBalls",
+          "value": 1
+        }
+      ]
+    }
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      0,
+      1
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "ejection": null,
+    "event_type": "Strike",
+    "steals": [],
+    "strike": "Swinging",
+    "surprise_strike": false,
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      0,
+      2
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "event_type": "Foul",
+    "foul": "Ball",
+    "steals": [],
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      1,
+      2
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "ejection": null,
+    "event_type": "Ball",
+    "steals": [],
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      1,
+      2
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "event_type": "Foul",
+    "foul": "Ball",
+    "steals": [],
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      1,
+      2
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "event_type": "Foul",
+    "foul": "Ball",
+    "steals": [],
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      1,
+      2
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "event_type": "Foul",
+    "foul": "Ball",
+    "steals": [],
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "batter": "Elena Magras",
+    "cheer": null,
+    "ejection": null,
+    "event_type": "StrikeOut",
+    "foul": null,
+    "steals": [],
+    "strike": "Looking",
+    "wither": null
+  },
+  {
+    "batter": "McBaseball Hubbard",
+    "event_type": "NowBatting",
+    "player_swept_away": null,
+    "stats": {
+      "Stats": [
+        {
+          "stat": "HitsForAtBats",
+          "value": {
+            "at_bats": 2,
+            "hits": 0
+          }
+        },
+        {
+          "stat": "StrikeOuts",
+          "value": 2
+        }
+      ]
+    }
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      1,
+      0
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "ejection": null,
+    "event_type": "Ball",
+    "steals": [],
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "batter": "McBaseball Hubbard",
+    "cheer": null,
+    "destination": "Pitcher",
+    "door_prizes": [],
+    "efflorescence": [],
+    "event_type": "FairBall",
+    "fair_ball_type": "GroundBall"
+  },
+  {
+    "advances": [],
+    "amazing": false,
+    "assassinations": [],
+    "batter": "McBaseball Hubbard",
+    "ejection": null,
+    "event_type": "GroundedOut",
+    "fielders": [
+      {
+        "name": "Jackson Koval",
+        "place": "P"
+      },
+      {
+        "name": "Cecilia Ogden",
+        "place": "1B"
+      }
+    ],
+    "scores": []
+  },
+  {
+    "event_type": "InningEnd",
+    "number": 5,
+    "side": "Bottom"
+  },
+  {
+    "automatic_runner": null,
+    "batting_team": {
+      "emoji": "💪",
+      "name": "Brosville Dudes"
+    },
+    "event_type": "InningStart",
+    "number": 6,
+    "pitcher_status": {
+      "Same": {
+        "emoji": "🌈",
+        "name": "Kate Triples"
+      }
+    },
+    "side": "Top"
+  },
+  {
+    "batter": "Rodney Kumar",
+    "event_type": "NowBatting",
+    "player_swept_away": null,
+    "stats": {
+      "Stats": [
+        {
+          "stat": "HitsForAtBats",
+          "value": {
+            "at_bats": 1,
+            "hits": 0
+          }
+        },
+        {
+          "stat": "HitByPitchs",
+          "value": 1
+        },
+        {
+          "stat": "StrikeOuts",
+          "value": 1
+        }
+      ]
+    }
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      1,
+      0
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "ejection": null,
+    "event_type": "Ball",
+    "steals": [],
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      1,
+      1
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "event_type": "Foul",
+    "foul": "Ball",
+    "steals": [],
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      2,
+      1
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "ejection": null,
+    "event_type": "Ball",
+    "steals": [],
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      3,
+      1
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "ejection": null,
+    "event_type": "Ball",
+    "steals": [],
+    "wither": null
+  },
+  {
+    "advances": [],
+    "assassinations": [],
+    "aurora_photos": null,
+    "batter": "Rodney Kumar",
+    "cheer": null,
+    "ejection": null,
+    "event_type": "Walk",
+    "scores": [],
+    "wither": null
+  },
+  {
+    "batter": "Luke Petrosyan",
+    "event_type": "NowBatting",
+    "player_swept_away": null,
+    "stats": {
+      "Stats": [
+        {
+          "stat": "HitsForAtBats",
+          "value": {
+            "at_bats": 2,
+            "hits": 0
+          }
+        },
+        {
+          "stat": "GroundIntoDoublePlays",
+          "value": 1
+        },
+        {
+          "stat": "GroundOuts",
+          "value": 2
+        }
+      ]
+    }
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      1,
+      0
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "ejection": null,
+    "event_type": "Ball",
+    "steals": [],
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "batter": "Luke Petrosyan",
+    "cheer": null,
+    "destination": "LeftField",
+    "door_prizes": [],
+    "efflorescence": [],
+    "event_type": "FairBall",
+    "fair_ball_type": "FlyBall"
+  },
+  {
+    "advances": [],
+    "batter": "Luke Petrosyan",
+    "caught_by": {
+      "name": "Samuel Hunt",
+      "place": "LF"
+    },
+    "ejection": null,
+    "event_type": "CaughtOut",
+    "fair_ball_type": "FlyBall",
+    "jetpack": false,
+    "perfect": false,
+    "sacrifice": false,
+    "scores": []
+  },
+  {
+    "batter": "Voicemail Skov",
+    "event_type": "NowBatting",
+    "player_swept_away": null,
+    "stats": {
+      "Stats": [
+        {
+          "stat": "HitsForAtBats",
+          "value": {
+            "at_bats": 2,
+            "hits": 1
+          }
+        },
+        {
+          "stat": "StrikeOuts",
+          "value": 1
+        },
+        {
+          "stat": "HomeRuns",
+          "value": 1
+        }
+      ]
+    }
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      0,
+      1
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "event_type": "Foul",
+    "foul": "Ball",
+    "steals": [],
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      0,
+      2
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "ejection": null,
+    "event_type": "Strike",
+    "steals": [],
+    "strike": "Looking",
+    "surprise_strike": false,
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "batter": "Voicemail Skov",
+    "cheer": null,
+    "ejection": null,
+    "event_type": "StrikeOut",
+    "foul": null,
+    "steals": [],
+    "strike": "Swinging",
+    "wither": null
+  },
+  {
+    "batter": "Dora Castaneda",
+    "event_type": "NowBatting",
+    "player_swept_away": null,
+    "stats": {
+      "Stats": [
+        {
+          "stat": "HitsForAtBats",
+          "value": {
+            "at_bats": 2,
+            "hits": 1
+          }
+        },
+        {
+          "stat": "FirstBases",
+          "value": 1
+        },
+        {
+          "stat": "GroundOuts",
+          "value": 1
+        }
+      ]
+    }
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      1,
+      0
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "ejection": null,
+    "event_type": "Ball",
+    "steals": [],
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      2,
+      0
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "ejection": null,
+    "event_type": "Ball",
+    "steals": [
+      {
+        "base": "Second",
+        "caught": false,
+        "runner": "Rodney Kumar"
+      }
+    ],
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      3,
+      0
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "ejection": null,
+    "event_type": "Ball",
+    "steals": [],
+    "wither": null
+  },
+  {
+    "advances": [],
+    "assassinations": [],
+    "aurora_photos": null,
+    "batter": "Dora Castaneda",
+    "cheer": "ChantsThunderAroundTheStadium",
+    "ejection": null,
+    "event_type": "Walk",
+    "scores": [],
+    "wither": null
+  },
+  {
+    "batter": "Gladys Ivanov",
+    "event_type": "NowBatting",
+    "player_swept_away": null,
+    "stats": {
+      "Stats": [
+        {
+          "stat": "HitsForAtBats",
+          "value": {
+            "at_bats": 2,
+            "hits": 0
+          }
+        },
+        {
+          "stat": "StrikeOuts",
+          "value": 1
+        },
+        {
+          "stat": "GroundOuts",
+          "value": 1
+        }
+      ]
+    }
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      1,
+      0
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "ejection": null,
+    "event_type": "Ball",
+    "steals": [],
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      1,
+      1
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "ejection": null,
+    "event_type": "Strike",
+    "steals": [],
+    "strike": "Swinging",
+    "surprise_strike": false,
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      1,
+      2
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "ejection": null,
+    "event_type": "Strike",
+    "steals": [],
+    "strike": "Swinging",
+    "surprise_strike": false,
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "batter": "Gladys Ivanov",
+    "cheer": null,
+    "ejection": null,
+    "event_type": "StrikeOut",
+    "foul": null,
+    "steals": [],
+    "strike": "Swinging",
+    "wither": null
+  },
+  {
+    "event_type": "InningEnd",
+    "number": 6,
+    "side": "Top"
+  },
+  {
+    "automatic_runner": null,
+    "batting_team": {
+      "emoji": "🌈",
+      "name": "Nowhere Else Like Yonder"
+    },
+    "event_type": "InningStart",
+    "number": 6,
+    "pitcher_status": {
+      "Same": {
+        "emoji": "💪",
+        "name": "Jackson Koval"
+      }
+    },
+    "side": "Bottom"
+  },
+  {
+    "batter": "Vernon Marshfield",
+    "event_type": "NowBatting",
+    "player_swept_away": null,
+    "stats": {
+      "Stats": [
+        {
+          "stat": "HitsForAtBats",
+          "value": {
+            "at_bats": 2,
+            "hits": 1
+          }
+        },
+        {
+          "stat": "GroundOuts",
+          "value": 1
+        },
+        {
+          "stat": "SecondBases",
+          "value": 1
+        }
+      ]
+    }
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      0,
+      1
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "ejection": null,
+    "event_type": "Strike",
+    "steals": [],
+    "strike": "Looking",
+    "surprise_strike": false,
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      0,
+      2
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "event_type": "Foul",
+    "foul": "Ball",
+    "steals": [],
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      0,
+      2
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "event_type": "Foul",
+    "foul": "Ball",
+    "steals": [],
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "batter": "Vernon Marshfield",
+    "cheer": null,
+    "ejection": null,
+    "event_type": "StrikeOut",
+    "foul": null,
+    "steals": [],
+    "strike": "Swinging",
+    "wither": null
+  },
+  {
+    "batter": "Jessica Lincolnshire",
+    "event_type": "NowBatting",
+    "player_swept_away": null,
+    "stats": {
+      "Stats": [
+        {
+          "stat": "HitsForAtBats",
+          "value": {
+            "at_bats": 2,
+            "hits": 0
+          }
+        },
+        {
+          "stat": "LineOuts",
+          "value": 1
+        },
+        {
+          "stat": "ForceOuts",
+          "value": 1
+        }
+      ]
+    }
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      1,
+      0
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "ejection": null,
+    "event_type": "Ball",
+    "steals": [],
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      2,
+      0
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "ejection": null,
+    "event_type": "Ball",
+    "steals": [],
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      2,
+      1
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "event_type": "Foul",
+    "foul": "Ball",
+    "steals": [],
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      2,
+      2
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "ejection": null,
+    "event_type": "Strike",
+    "steals": [],
+    "strike": "Swinging",
+    "surprise_strike": false,
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      2,
+      2
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "event_type": "Foul",
+    "foul": "Ball",
+    "steals": [],
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      2,
+      2
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "event_type": "Foul",
+    "foul": "Ball",
+    "steals": [],
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "batter": "Jessica Lincolnshire",
+    "cheer": null,
+    "destination": "ThirdBase",
+    "door_prizes": [],
+    "efflorescence": [],
+    "event_type": "FairBall",
+    "fair_ball_type": "Popup"
+  },
+  {
+    "advances": [],
+    "batter": "Jessica Lincolnshire",
+    "caught_by": {
+      "name": "Fizz Cartwright",
+      "place": "3B"
+    },
+    "ejection": null,
+    "event_type": "CaughtOut",
+    "fair_ball_type": "Popup",
+    "jetpack": false,
+    "perfect": false,
+    "sacrifice": false,
+    "scores": []
+  },
+  {
+    "batter": "Samuel Hunt",
+    "event_type": "NowBatting",
+    "player_swept_away": null,
+    "stats": {
+      "Stats": [
+        {
+          "stat": "HitsForAtBats",
+          "value": {
+            "at_bats": 2,
+            "hits": 0
+          }
+        },
+        {
+          "stat": "GroundOuts",
+          "value": 1
+        },
+        {
+          "stat": "StrikeOuts",
+          "value": 1
+        }
+      ]
+    }
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      0,
+      1
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "event_type": "Foul",
+    "foul": "Ball",
+    "steals": [],
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      0,
+      2
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "event_type": "Foul",
+    "foul": "Ball",
+    "steals": [],
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "batter": "Samuel Hunt",
+    "cheer": null,
+    "ejection": null,
+    "event_type": "StrikeOut",
+    "foul": null,
+    "steals": [],
+    "strike": "Looking",
+    "wither": null
+  },
+  {
+    "event_type": "InningEnd",
+    "number": 6,
+    "side": "Bottom"
+  },
+  {
+    "automatic_runner": null,
+    "batting_team": {
+      "emoji": "💪",
+      "name": "Brosville Dudes"
+    },
+    "event_type": "InningStart",
+    "number": 7,
+    "pitcher_status": {
+      "Same": {
+        "emoji": "🌈",
+        "name": "Kate Triples"
+      }
+    },
+    "side": "Top"
+  },
+  {
+    "batter": "Casey McNally",
+    "event_type": "NowBatting",
+    "player_swept_away": null,
+    "stats": {
+      "Stats": [
+        {
+          "stat": "HitsForAtBats",
+          "value": {
+            "at_bats": 2,
+            "hits": 1
+          }
+        },
+        {
+          "stat": "SecondBases",
+          "value": 1
+        },
+        {
+          "stat": "GroundOuts",
+          "value": 1
+        }
+      ]
+    }
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      0,
+      1
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "ejection": null,
+    "event_type": "Strike",
+    "steals": [],
+    "strike": "Looking",
+    "surprise_strike": false,
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      0,
+      2
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "event_type": "Foul",
+    "foul": "Ball",
+    "steals": [],
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      0,
+      2
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "event_type": "Foul",
+    "foul": "Ball",
+    "steals": [],
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "batter": "Casey McNally",
+    "cheer": null,
+    "destination": "RightField",
+    "door_prizes": [],
+    "efflorescence": [],
+    "event_type": "FairBall",
+    "fair_ball_type": "LineDrive"
+  },
+  {
+    "advances": [],
+    "batter": "Casey McNally",
+    "distance": "Single",
+    "ejection": null,
+    "event_type": "BatterToBase",
+    "fair_ball_type": "LineDrive",
+    "fielder": {
+      "name": "Violet Castle",
+      "place": "RF"
+    },
+    "scores": []
+  },
+  {
+    "batter": "Nice Tanner",
+    "event_type": "NowBatting",
+    "player_swept_away": null,
+    "stats": {
+      "Stats": [
+        {
+          "stat": "HitsForAtBats",
+          "value": {
+            "at_bats": 2,
+            "hits": 0
+          }
+        },
+        {
+          "stat": "BaseOnBalls",
+          "value": 1
+        },
+        {
+          "stat": "StrikeOuts",
+          "value": 1
+        },
+        {
+          "stat": "ForceOuts",
+          "value": 1
+        }
+      ]
+    }
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      1,
+      0
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "ejection": null,
+    "event_type": "Ball",
+    "steals": [],
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      1,
+      1
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "ejection": null,
+    "event_type": "Strike",
+    "steals": [],
+    "strike": "Swinging",
+    "surprise_strike": false,
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      1,
+      2
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "ejection": null,
+    "event_type": "Strike",
+    "steals": [],
+    "strike": "Swinging",
+    "surprise_strike": false,
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "batter": "Nice Tanner",
+    "cheer": null,
+    "ejection": null,
+    "event_type": "StrikeOut",
+    "foul": null,
+    "steals": [],
+    "strike": "Swinging",
+    "wither": null
+  },
+  {
+    "batter": "Cecilia Ogden",
+    "event_type": "NowBatting",
+    "player_swept_away": null,
+    "stats": {
+      "Stats": [
+        {
+          "stat": "HitsForAtBats",
+          "value": {
+            "at_bats": 3,
+            "hits": 1
+          }
+        },
+        {
+          "stat": "FirstBases",
+          "value": 1
+        },
+        {
+          "stat": "GroundOuts",
+          "value": 2
+        }
+      ]
+    }
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      1,
+      0
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "ejection": null,
+    "event_type": "Ball",
+    "steals": [],
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      1,
+      1
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "ejection": null,
+    "event_type": "Strike",
+    "steals": [],
+    "strike": "Swinging",
+    "surprise_strike": false,
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      2,
+      1
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "ejection": null,
+    "event_type": "Ball",
+    "steals": [],
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      2,
+      2
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "event_type": "Foul",
+    "foul": "Ball",
+    "steals": [],
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "batter": "Cecilia Ogden",
+    "cheer": null,
+    "ejection": null,
+    "event_type": "StrikeOut",
+    "foul": null,
+    "steals": [],
+    "strike": "Looking",
+    "wither": null
+  },
+  {
+    "batter": "Fizz Cartwright",
+    "event_type": "NowBatting",
+    "player_swept_away": null,
+    "stats": {
+      "Stats": [
+        {
+          "stat": "HitsForAtBats",
+          "value": {
+            "at_bats": 3,
+            "hits": 0
+          }
+        },
+        {
+          "stat": "ForceOuts",
+          "value": 1
+        },
+        {
+          "stat": "GroundOuts",
+          "value": 1
+        }
+      ]
+    }
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      1,
+      0
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "ejection": null,
+    "event_type": "Ball",
+    "steals": [],
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      1,
+      1
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "event_type": "Foul",
+    "foul": "Ball",
+    "steals": [],
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      2,
+      1
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "ejection": null,
+    "event_type": "Ball",
+    "steals": [],
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      2,
+      2
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "event_type": "Foul",
+    "foul": "Ball",
+    "steals": [],
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      3,
+      2
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "ejection": null,
+    "event_type": "Ball",
+    "steals": [],
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      3,
+      2
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "event_type": "Foul",
+    "foul": "Ball",
+    "steals": [],
+    "wither": null
+  },
+  {
+    "advances": [
+      {
+        "base": "Second",
+        "runner": "Casey McNally"
+      }
+    ],
+    "assassinations": [],
+    "aurora_photos": null,
+    "batter": "Fizz Cartwright",
+    "cheer": null,
+    "ejection": null,
+    "event_type": "Walk",
+    "scores": [],
+    "wither": null
+  },
+  {
+    "event_type": "MoundVisit",
+    "manager_name": null,
+    "mound_visit_type": "MoundVisit",
+    "team": {
+      "emoji": "🌈",
+      "name": "Nowhere Else Like Yonder"
+    }
+  },
+  {
+    "event_type": "PitcherRemains",
+    "remaining_pitcher": {
+      "name": "Kate Triples",
+      "place": "SP1"
+    }
+  },
+  {
+    "batter": "Rodney Kumar",
+    "event_type": "NowBatting",
+    "player_swept_away": null,
+    "stats": {
+      "Stats": [
+        {
+          "stat": "HitsForAtBats",
+          "value": {
+            "at_bats": 1,
+            "hits": 0
+          }
+        },
+        {
+          "stat": "HitByPitchs",
+          "value": 1
+        },
+        {
+          "stat": "StrikeOuts",
+          "value": 1
+        },
+        {
+          "stat": "BaseOnBalls",
+          "value": 1
+        }
+      ]
+    }
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": "TheyCheerLikeTheresNoTomorrow",
+    "count": [
+      0,
+      1
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "ejection": null,
+    "event_type": "Strike",
+    "steals": [],
+    "strike": "Swinging",
+    "surprise_strike": false,
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      0,
+      2
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "event_type": "Foul",
+    "foul": "Ball",
+    "steals": [],
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "batter": "Rodney Kumar",
+    "cheer": null,
+    "destination": "RightField",
+    "door_prizes": [],
+    "efflorescence": [],
+    "event_type": "FairBall",
+    "fair_ball_type": "GroundBall"
+  },
+  {
+    "advances": [
+      {
+        "base": "Third",
+        "runner": "Fizz Cartwright"
+      }
+    ],
+    "batter": "Rodney Kumar",
+    "distance": "Double",
+    "ejection": null,
+    "event_type": "BatterToBase",
+    "fair_ball_type": "GroundBall",
+    "fielder": {
+      "name": "Violet Castle",
+      "place": "RF"
+    },
+    "scores": [
+      "Casey McNally"
+    ]
+  },
+  {
+    "batter": "Luke Petrosyan",
+    "event_type": "NowBatting",
+    "player_swept_away": null,
+    "stats": {
+      "Stats": [
+        {
+          "stat": "HitsForAtBats",
+          "value": {
+            "at_bats": 3,
+            "hits": 0
+          }
+        },
+        {
+          "stat": "GroundIntoDoublePlays",
+          "value": 1
+        },
+        {
+          "stat": "GroundOuts",
+          "value": 2
+        },
+        {
+          "stat": "ForceOuts",
+          "value": 1
+        }
+      ]
+    }
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      0,
+      1
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "ejection": null,
+    "event_type": "Strike",
+    "steals": [],
+    "strike": "Looking",
+    "surprise_strike": false,
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      0,
+      2
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "event_type": "Foul",
+    "foul": "Ball",
+    "steals": [],
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      1,
+      2
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "ejection": null,
+    "event_type": "Ball",
+    "steals": [],
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "batter": "Luke Petrosyan",
+    "cheer": "TheParkVibratesWithNoise",
+    "destination": "SecondBase",
+    "door_prizes": [],
+    "efflorescence": [],
+    "event_type": "FairBall",
+    "fair_ball_type": "GroundBall"
+  },
+  {
+    "advances": [],
+    "amazing": false,
+    "assassinations": [],
+    "batter": "Luke Petrosyan",
+    "ejection": null,
+    "event_type": "GroundedOut",
+    "fielders": [
+      {
+        "name": "McBaseball Hubbard",
+        "place": "2B"
+      },
+      {
+        "name": "Odysseus Chen",
+        "place": "1B"
+      }
+    ],
+    "scores": []
+  },
+  {
+    "event_type": "InningEnd",
+    "number": 7,
+    "side": "Top"
+  },
+  {
+    "automatic_runner": null,
+    "batting_team": {
+      "emoji": "🌈",
+      "name": "Nowhere Else Like Yonder"
+    },
+    "event_type": "InningStart",
+    "number": 7,
+    "pitcher_status": {
+      "Same": {
+        "emoji": "💪",
+        "name": "Jackson Koval"
+      }
+    },
+    "side": "Bottom"
+  },
+  {
+    "batter": "Roberto Marks",
+    "event_type": "NowBatting",
+    "player_swept_away": null,
+    "stats": {
+      "Stats": [
+        {
+          "stat": "HitsForAtBats",
+          "value": {
+            "at_bats": 1,
+            "hits": 0
+          }
+        },
+        {
+          "stat": "BaseOnBalls",
+          "value": 1
+        },
+        {
+          "stat": "ForceOuts",
+          "value": 1
+        }
+      ]
+    }
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      1,
+      0
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "ejection": null,
+    "event_type": "Ball",
+    "steals": [],
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      2,
+      0
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "ejection": null,
+    "event_type": "Ball",
+    "steals": [],
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      3,
+      0
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "ejection": null,
+    "event_type": "Ball",
+    "steals": [],
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      3,
+      1
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "ejection": null,
+    "event_type": "Strike",
+    "steals": [],
+    "strike": "Looking",
+    "surprise_strike": false,
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      3,
+      2
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "ejection": null,
+    "event_type": "Strike",
+    "steals": [],
+    "strike": "Swinging",
+    "surprise_strike": false,
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "batter": "Roberto Marks",
+    "cheer": null,
+    "destination": "RightField",
+    "door_prizes": [],
+    "efflorescence": [],
+    "event_type": "FairBall",
+    "fair_ball_type": "FlyBall"
+  },
+  {
+    "batter": "Roberto Marks",
+    "destination": "RightField",
+    "ejection": null,
+    "event_type": "HomeRun",
+    "fair_ball_type": "FlyBall",
+    "grand_slam": false,
+    "scores": []
+  },
+  {
+    "batter": "Violet Castle",
+    "event_type": "NowBatting",
+    "player_swept_away": null,
+    "stats": {
+      "Stats": [
+        {
+          "stat": "HitsForAtBats",
+          "value": {
+            "at_bats": 1,
+            "hits": 0
+          }
+        },
+        {
+          "stat": "BaseOnBalls",
+          "value": 1
+        },
+        {
+          "stat": "StrikeOuts",
+          "value": 1
+        }
+      ]
+    }
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      0,
+      1
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "ejection": null,
+    "event_type": "Strike",
+    "steals": [],
+    "strike": "Swinging",
+    "surprise_strike": false,
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      0,
+      2
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "ejection": null,
+    "event_type": "Strike",
+    "steals": [],
+    "strike": "Looking",
+    "surprise_strike": false,
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "batter": "Violet Castle",
+    "cheer": null,
+    "destination": "LeftField",
+    "door_prizes": [],
+    "efflorescence": [],
+    "event_type": "FairBall",
+    "fair_ball_type": "FlyBall"
+  },
+  {
+    "advances": [],
+    "batter": "Violet Castle",
+    "caught_by": {
+      "name": "Nice Tanner",
+      "place": "LF"
+    },
+    "ejection": null,
+    "event_type": "CaughtOut",
+    "fair_ball_type": "FlyBall",
+    "jetpack": false,
+    "perfect": false,
+    "sacrifice": false,
+    "scores": []
+  },
+  {
+    "batter": "Lifen Ally",
+    "event_type": "NowBatting",
+    "player_swept_away": null,
+    "stats": {
+      "Stats": [
+        {
+          "stat": "HitsForAtBats",
+          "value": {
+            "at_bats": 2,
+            "hits": 0
+          }
+        },
+        {
+          "stat": "StrikeOuts",
+          "value": 2
+        }
+      ]
+    }
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      0,
+      1
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "event_type": "Foul",
+    "foul": "Ball",
+    "steals": [],
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "batter": "Lifen Ally",
+    "cheer": null,
+    "destination": "FirstBase",
+    "door_prizes": [],
+    "efflorescence": [],
+    "event_type": "FairBall",
+    "fair_ball_type": "Popup"
+  },
+  {
+    "advances": [],
+    "batter": "Lifen Ally",
+    "caught_by": {
+      "name": "Cecilia Ogden",
+      "place": "1B"
+    },
+    "ejection": null,
+    "event_type": "CaughtOut",
+    "fair_ball_type": "Popup",
+    "jetpack": false,
+    "perfect": false,
+    "sacrifice": false,
+    "scores": []
+  },
+  {
+    "batter": "Odysseus Chen",
+    "event_type": "NowBatting",
+    "player_swept_away": null,
+    "stats": {
+      "Stats": [
+        {
+          "stat": "HitsForAtBats",
+          "value": {
+            "at_bats": 1,
+            "hits": 0
+          }
+        },
+        {
+          "stat": "StrikeOuts",
+          "value": 1
+        },
+        {
+          "stat": "BaseOnBalls",
+          "value": 1
+        }
+      ]
+    }
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      1,
+      0
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "ejection": null,
+    "event_type": "Ball",
+    "steals": [],
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      1,
+      1
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "ejection": null,
+    "event_type": "Strike",
+    "steals": [],
+    "strike": "Swinging",
+    "surprise_strike": false,
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      2,
+      1
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "ejection": null,
+    "event_type": "Ball",
+    "steals": [],
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      2,
+      2
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "event_type": "Foul",
+    "foul": "Ball",
+    "steals": [],
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      3,
+      2
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "ejection": null,
+    "event_type": "Ball",
+    "steals": [],
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "batter": "Odysseus Chen",
+    "cheer": null,
+    "ejection": null,
+    "event_type": "StrikeOut",
+    "foul": null,
+    "steals": [],
+    "strike": "Looking",
+    "wither": null
+  },
+  {
+    "event_type": "InningEnd",
+    "number": 7,
+    "side": "Bottom"
+  },
+  {
+    "automatic_runner": null,
+    "batting_team": {
+      "emoji": "💪",
+      "name": "Brosville Dudes"
+    },
+    "event_type": "InningStart",
+    "number": 8,
+    "pitcher_status": {
+      "Same": {
+        "emoji": "🌈",
+        "name": "Kate Triples"
+      }
+    },
+    "side": "Top"
+  },
+  {
+    "batter": "Voicemail Skov",
+    "event_type": "NowBatting",
+    "player_swept_away": null,
+    "stats": {
+      "Stats": [
+        {
+          "stat": "HitsForAtBats",
+          "value": {
+            "at_bats": 3,
+            "hits": 1
+          }
+        },
+        {
+          "stat": "StrikeOuts",
+          "value": 2
+        },
+        {
+          "stat": "HomeRuns",
+          "value": 1
+        }
+      ]
+    }
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      1,
+      0
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "ejection": null,
+    "event_type": "Ball",
+    "steals": [],
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      2,
+      0
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "ejection": null,
+    "event_type": "Ball",
+    "steals": [],
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      3,
+      0
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "ejection": null,
+    "event_type": "Ball",
+    "steals": [],
+    "wither": null
+  },
+  {
+    "advances": [],
+    "assassinations": [],
+    "aurora_photos": null,
+    "batter": "Voicemail Skov",
+    "cheer": null,
+    "ejection": null,
+    "event_type": "Walk",
+    "scores": [],
+    "wither": null
+  },
+  {
+    "batter": "Dora Castaneda",
+    "event_type": "NowBatting",
+    "player_swept_away": null,
+    "stats": {
+      "Stats": [
+        {
+          "stat": "HitsForAtBats",
+          "value": {
+            "at_bats": 2,
+            "hits": 1
+          }
+        },
+        {
+          "stat": "FirstBases",
+          "value": 1
+        },
+        {
+          "stat": "GroundOuts",
+          "value": 1
+        },
+        {
+          "stat": "BaseOnBalls",
+          "value": 1
+        }
+      ]
+    }
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      1,
+      0
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "ejection": null,
+    "event_type": "Ball",
+    "steals": [],
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      2,
+      0
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "ejection": null,
+    "event_type": "Ball",
+    "steals": [],
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": "ARumbleOfExcitementRollsThroughTheStadium",
+    "count": [
+      2,
+      1
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "ejection": null,
+    "event_type": "Strike",
+    "steals": [
+      {
+        "base": "Second",
+        "caught": false,
+        "runner": "Voicemail Skov"
+      }
+    ],
+    "strike": "Swinging",
+    "surprise_strike": false,
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      3,
+      1
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "ejection": null,
+    "event_type": "Ball",
+    "steals": [],
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      3,
+      2
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "event_type": "Foul",
+    "foul": "Ball",
+    "steals": [],
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "batter": "Dora Castaneda",
+    "cheer": null,
+    "ejection": null,
+    "event_type": "StrikeOut",
+    "foul": null,
+    "steals": [],
+    "strike": "Swinging",
+    "wither": null
+  },
+  {
+    "batter": "Gladys Ivanov",
+    "event_type": "NowBatting",
+    "player_swept_away": null,
+    "stats": {
+      "Stats": [
+        {
+          "stat": "HitsForAtBats",
+          "value": {
+            "at_bats": 3,
+            "hits": 0
+          }
+        },
+        {
+          "stat": "StrikeOuts",
+          "value": 2
+        },
+        {
+          "stat": "GroundOuts",
+          "value": 1
+        }
+      ]
+    }
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      0,
+      1
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "ejection": null,
+    "event_type": "Strike",
+    "steals": [],
+    "strike": "Looking",
+    "surprise_strike": false,
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "batter": "Gladys Ivanov",
+    "cheer": null,
+    "destination": "CenterField",
+    "door_prizes": [],
+    "efflorescence": [],
+    "event_type": "FairBall",
+    "fair_ball_type": "FlyBall"
+  },
+  {
+    "advances": [],
+    "batter": "Gladys Ivanov",
+    "caught_by": {
+      "name": "Vernon Marshfield",
+      "place": "CF"
+    },
+    "ejection": null,
+    "event_type": "CaughtOut",
+    "fair_ball_type": "FlyBall",
+    "jetpack": false,
+    "perfect": false,
+    "sacrifice": false,
+    "scores": []
+  },
+  {
+    "batter": "Casey McNally",
+    "event_type": "NowBatting",
+    "player_swept_away": null,
+    "stats": {
+      "Stats": [
+        {
+          "stat": "HitsForAtBats",
+          "value": {
+            "at_bats": 3,
+            "hits": 2
+          }
+        },
+        {
+          "stat": "SecondBases",
+          "value": 1
+        },
+        {
+          "stat": "GroundOuts",
+          "value": 1
+        },
+        {
+          "stat": "FirstBases",
+          "value": 1
+        }
+      ]
+    }
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      1,
+      0
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "ejection": null,
+    "event_type": "Ball",
+    "steals": [],
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "batter": "Casey McNally",
+    "cheer": null,
+    "destination": "SecondBase",
+    "door_prizes": [],
+    "efflorescence": [],
+    "event_type": "FairBall",
+    "fair_ball_type": "GroundBall"
+  },
+  {
+    "advances": [],
+    "amazing": false,
+    "assassinations": [],
+    "batter": "Casey McNally",
+    "ejection": null,
+    "event_type": "GroundedOut",
+    "fielders": [
+      {
+        "name": "McBaseball Hubbard",
+        "place": "2B"
+      },
+      {
+        "name": "Odysseus Chen",
+        "place": "1B"
+      }
+    ],
+    "scores": []
+  },
+  {
+    "event_type": "InningEnd",
+    "number": 8,
+    "side": "Top"
+  },
+  {
+    "automatic_runner": null,
+    "batting_team": {
+      "emoji": "🌈",
+      "name": "Nowhere Else Like Yonder"
+    },
+    "event_type": "InningStart",
+    "number": 8,
+    "pitcher_status": {
+      "Same": {
+        "emoji": "💪",
+        "name": "Jackson Koval"
+      }
+    },
+    "side": "Bottom"
+  },
+  {
+    "batter": "Elena Magras",
+    "event_type": "NowBatting",
+    "player_swept_away": null,
+    "stats": {
+      "Stats": [
+        {
+          "stat": "HitsForAtBats",
+          "value": {
+            "at_bats": 1,
+            "hits": 0
+          }
+        },
+        {
+          "stat": "BaseOnBalls",
+          "value": 1
+        },
+        {
+          "stat": "StrikeOuts",
+          "value": 1
+        }
+      ]
+    }
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      1,
+      0
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "ejection": null,
+    "event_type": "Ball",
+    "steals": [],
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "batter": "Elena Magras",
+    "cheer": null,
+    "destination": "CenterField",
+    "door_prizes": [],
+    "efflorescence": [],
+    "event_type": "FairBall",
+    "fair_ball_type": "FlyBall"
+  },
+  {
+    "advances": [],
+    "batter": "Elena Magras",
+    "caught_by": {
+      "name": "Luke Petrosyan",
+      "place": "CF"
+    },
+    "ejection": null,
+    "event_type": "CaughtOut",
+    "fair_ball_type": "FlyBall",
+    "jetpack": false,
+    "perfect": false,
+    "sacrifice": false,
+    "scores": []
+  },
+  {
+    "batter": "McBaseball Hubbard",
+    "event_type": "NowBatting",
+    "player_swept_away": null,
+    "stats": {
+      "Stats": [
+        {
+          "stat": "HitsForAtBats",
+          "value": {
+            "at_bats": 3,
+            "hits": 0
+          }
+        },
+        {
+          "stat": "StrikeOuts",
+          "value": 2
+        },
+        {
+          "stat": "GroundOuts",
+          "value": 1
+        }
+      ]
+    }
+  },
+  {
+    "advances": [],
+    "aurora_photos": null,
+    "batter": "McBaseball Hubbard",
+    "cheer": null,
+    "door_prizes": [],
+    "efflorescence": [],
+    "ejection": null,
+    "event_type": "HitByPitch",
+    "scores": [],
+    "wither": null
+  },
+  {
+    "batter": "Vernon Marshfield",
+    "event_type": "NowBatting",
+    "player_swept_away": null,
+    "stats": {
+      "Stats": [
+        {
+          "stat": "HitsForAtBats",
+          "value": {
+            "at_bats": 3,
+            "hits": 1
+          }
+        },
+        {
+          "stat": "GroundOuts",
+          "value": 1
+        },
+        {
+          "stat": "SecondBases",
+          "value": 1
+        },
+        {
+          "stat": "StrikeOuts",
+          "value": 1
+        }
+      ]
+    }
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      1,
+      0
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "ejection": null,
+    "event_type": "Ball",
+    "steals": [],
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      1,
+      1
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "event_type": "Foul",
+    "foul": "Ball",
+    "steals": [],
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      1,
+      2
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "event_type": "Foul",
+    "foul": "Ball",
+    "steals": [],
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "batter": "Vernon Marshfield",
+    "cheer": null,
+    "destination": "ShortStop",
+    "door_prizes": [],
+    "efflorescence": [],
+    "event_type": "FairBall",
+    "fair_ball_type": "GroundBall"
+  },
+  {
+    "advances": [],
+    "batter": "Vernon Marshfield",
+    "ejection": null,
+    "event_type": "ForceOut",
+    "fair_ball_type": "GroundBall",
+    "fielders": [
+      {
+        "name": "Voicemail Skov",
+        "place": "SS"
+      },
+      {
+        "name": "Casey McNally",
+        "place": "2B"
+      }
+    ],
+    "out": {
+      "base": "Second",
+      "runner": "McBaseball Hubbard"
+    },
+    "scores": []
+  },
+  {
+    "batter": "Jessica Lincolnshire",
+    "event_type": "NowBatting",
+    "player_swept_away": null,
+    "stats": {
+      "Stats": [
+        {
+          "stat": "HitsForAtBats",
+          "value": {
+            "at_bats": 3,
+            "hits": 0
+          }
+        },
+        {
+          "stat": "LineOuts",
+          "value": 1
+        },
+        {
+          "stat": "ForceOuts",
+          "value": 1
+        },
+        {
+          "stat": "PopOuts",
+          "value": 1
+        }
+      ]
+    }
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      0,
+      1
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "ejection": null,
+    "event_type": "Strike",
+    "steals": [],
+    "strike": "Swinging",
+    "surprise_strike": false,
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      0,
+      2
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "ejection": null,
+    "event_type": "Strike",
+    "steals": [
+      {
+        "base": "Second",
+        "caught": false,
+        "runner": "Vernon Marshfield"
+      }
+    ],
+    "strike": "Looking",
+    "surprise_strike": false,
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": "ThePlaceIsRocking",
+    "count": [
+      0,
+      2
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "event_type": "Foul",
+    "foul": "Ball",
+    "steals": [],
+    "wither": null
+  },
+  {
+    "advances": [],
+    "aurora_photos": null,
+    "batter": "Jessica Lincolnshire",
+    "cheer": null,
+    "door_prizes": [],
+    "efflorescence": [],
+    "ejection": null,
+    "event_type": "HitByPitch",
+    "scores": [],
+    "wither": null
+  },
+  {
+    "batter": "Samuel Hunt",
+    "event_type": "NowBatting",
+    "player_swept_away": null,
+    "stats": {
+      "Stats": [
+        {
+          "stat": "HitsForAtBats",
+          "value": {
+            "at_bats": 3,
+            "hits": 0
+          }
+        },
+        {
+          "stat": "GroundOuts",
+          "value": 1
+        },
+        {
+          "stat": "StrikeOuts",
+          "value": 2
+        }
+      ]
+    }
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "batter": "Samuel Hunt",
+    "cheer": null,
+    "destination": "LeftField",
+    "door_prizes": [],
+    "efflorescence": [],
+    "event_type": "FairBall",
+    "fair_ball_type": "FlyBall"
+  },
+  {
+    "batter": "Samuel Hunt",
+    "destination": "LeftField",
+    "ejection": null,
+    "event_type": "HomeRun",
+    "fair_ball_type": "FlyBall",
+    "grand_slam": false,
+    "scores": [
+      "Vernon Marshfield",
+      "Jessica Lincolnshire"
+    ]
+  },
+  {
+    "batter": "Roberto Marks",
+    "event_type": "NowBatting",
+    "player_swept_away": null,
+    "stats": {
+      "Stats": [
+        {
+          "stat": "HitsForAtBats",
+          "value": {
+            "at_bats": 2,
+            "hits": 1
+          }
+        },
+        {
+          "stat": "BaseOnBalls",
+          "value": 1
+        },
+        {
+          "stat": "ForceOuts",
+          "value": 1
+        },
+        {
+          "stat": "HomeRuns",
+          "value": 1
+        }
+      ]
+    }
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      0,
+      1
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "ejection": null,
+    "event_type": "Strike",
+    "steals": [],
+    "strike": "Looking",
+    "surprise_strike": false,
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      0,
+      2
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "event_type": "Foul",
+    "foul": "Ball",
+    "steals": [],
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      1,
+      2
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "ejection": null,
+    "event_type": "Ball",
+    "steals": [],
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "batter": "Roberto Marks",
+    "cheer": null,
+    "ejection": null,
+    "event_type": "StrikeOut",
+    "foul": null,
+    "steals": [],
+    "strike": "Swinging",
+    "wither": null
+  },
+  {
+    "event_type": "InningEnd",
+    "number": 8,
+    "side": "Bottom"
+  },
+  {
+    "automatic_runner": null,
+    "batting_team": {
+      "emoji": "💪",
+      "name": "Brosville Dudes"
+    },
+    "event_type": "InningStart",
+    "number": 9,
+    "pitcher_status": {
+      "Different": {
+        "arriving_emoji": "🌈",
+        "arriving_pitcher": {
+          "name": "Uncle Marichal",
+          "place": "CL"
+        },
+        "leaving_emoji": null,
+        "leaving_pitcher": {
+          "name": "Kate Triples",
+          "place": "SP1"
+        }
+      }
+    },
+    "side": "Top"
+  },
+  {
+    "batter": "Nice Tanner",
+    "event_type": "NowBatting",
+    "player_swept_away": null,
+    "stats": {
+      "Stats": [
+        {
+          "stat": "HitsForAtBats",
+          "value": {
+            "at_bats": 3,
+            "hits": 0
+          }
+        },
+        {
+          "stat": "BaseOnBalls",
+          "value": 1
+        },
+        {
+          "stat": "StrikeOuts",
+          "value": 2
+        },
+        {
+          "stat": "ForceOuts",
+          "value": 1
+        }
+      ]
+    }
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": "TheDecibelsRiseToAFrenzy",
+    "count": [
+      0,
+      1
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "ejection": null,
+    "event_type": "Strike",
+    "steals": [],
+    "strike": "Swinging",
+    "surprise_strike": false,
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      0,
+      2
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "event_type": "Foul",
+    "foul": "Ball",
+    "steals": [],
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      1,
+      2
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "ejection": null,
+    "event_type": "Ball",
+    "steals": [],
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      2,
+      2
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "ejection": null,
+    "event_type": "Ball",
+    "steals": [],
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "batter": "Nice Tanner",
+    "cheer": null,
+    "ejection": null,
+    "event_type": "StrikeOut",
+    "foul": null,
+    "steals": [],
+    "strike": "Looking",
+    "wither": null
+  },
+  {
+    "batter": "Cecilia Ogden",
+    "event_type": "NowBatting",
+    "player_swept_away": null,
+    "stats": {
+      "Stats": [
+        {
+          "stat": "HitsForAtBats",
+          "value": {
+            "at_bats": 4,
+            "hits": 1
+          }
+        },
+        {
+          "stat": "FirstBases",
+          "value": 1
+        },
+        {
+          "stat": "GroundOuts",
+          "value": 2
+        },
+        {
+          "stat": "StrikeOuts",
+          "value": 1
+        }
+      ]
+    }
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      0,
+      1
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "ejection": null,
+    "event_type": "Strike",
+    "steals": [],
+    "strike": "Swinging",
+    "surprise_strike": false,
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "batter": "Cecilia Ogden",
+    "cheer": "TheCheersEchoOffTheWalls",
+    "destination": "LeftField",
+    "door_prizes": [],
+    "efflorescence": [],
+    "event_type": "FairBall",
+    "fair_ball_type": "LineDrive"
+  },
+  {
+    "advances": [],
+    "batter": "Cecilia Ogden",
+    "distance": "Single",
+    "ejection": null,
+    "event_type": "BatterToBase",
+    "fair_ball_type": "LineDrive",
+    "fielder": {
+      "name": "Samuel Hunt",
+      "place": "LF"
+    },
+    "scores": []
+  },
+  {
+    "batter": "Fizz Cartwright",
+    "event_type": "NowBatting",
+    "player_swept_away": null,
+    "stats": {
+      "Stats": [
+        {
+          "stat": "HitsForAtBats",
+          "value": {
+            "at_bats": 3,
+            "hits": 0
+          }
+        },
+        {
+          "stat": "ForceOuts",
+          "value": 1
+        },
+        {
+          "stat": "GroundOuts",
+          "value": 1
+        },
+        {
+          "stat": "BaseOnBalls",
+          "value": 1
+        }
+      ]
+    }
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      0,
+      1
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "event_type": "Foul",
+    "foul": "Ball",
+    "steals": [],
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      0,
+      2
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "ejection": null,
+    "event_type": "Strike",
+    "steals": [],
+    "strike": "Swinging",
+    "surprise_strike": false,
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      1,
+      2
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "ejection": null,
+    "event_type": "Ball",
+    "steals": [],
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "batter": "Fizz Cartwright",
+    "cheer": "TheFansAreFiredUp",
+    "destination": "CenterField",
+    "door_prizes": [],
+    "efflorescence": [],
+    "event_type": "FairBall",
+    "fair_ball_type": "FlyBall"
+  },
+  {
+    "advances": [
+      {
+        "base": "Third",
+        "runner": "Cecilia Ogden"
+      }
+    ],
+    "batter": "Fizz Cartwright",
+    "distance": "Single",
+    "ejection": null,
+    "event_type": "BatterToBase",
+    "fair_ball_type": "FlyBall",
+    "fielder": {
+      "name": "Vernon Marshfield",
+      "place": "CF"
+    },
+    "scores": []
+  },
+  {
+    "batter": "Rodney Kumar",
+    "event_type": "NowBatting",
+    "player_swept_away": null,
+    "stats": {
+      "Stats": [
+        {
+          "stat": "HitsForAtBats",
+          "value": {
+            "at_bats": 2,
+            "hits": 1
+          }
+        },
+        {
+          "stat": "HitByPitchs",
+          "value": 1
+        },
+        {
+          "stat": "StrikeOuts",
+          "value": 1
+        },
+        {
+          "stat": "BaseOnBalls",
+          "value": 1
+        },
+        {
+          "stat": "SecondBases",
+          "value": 1
+        }
+      ]
+    }
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      1,
+      0
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "ejection": null,
+    "event_type": "Ball",
+    "steals": [],
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      1,
+      1
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "event_type": "Foul",
+    "foul": "Ball",
+    "steals": [],
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      1,
+      2
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "ejection": null,
+    "event_type": "Strike",
+    "steals": [
+      {
+        "base": "Second",
+        "caught": false,
+        "runner": "Fizz Cartwright"
+      }
+    ],
+    "strike": "Looking",
+    "surprise_strike": false,
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      2,
+      2
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "ejection": null,
+    "event_type": "Ball",
+    "steals": [],
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": "TheFansAreLosingTheirMinds",
+    "count": [
+      2,
+      2
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "event_type": "Foul",
+    "foul": "Ball",
+    "steals": [],
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "batter": "Rodney Kumar",
+    "cheer": null,
+    "ejection": null,
+    "event_type": "StrikeOut",
+    "foul": null,
+    "steals": [],
+    "strike": "Swinging",
+    "wither": null
+  },
+  {
+    "batter": "Luke Petrosyan",
+    "event_type": "NowBatting",
+    "player_swept_away": null,
+    "stats": {
+      "Stats": [
+        {
+          "stat": "HitsForAtBats",
+          "value": {
+            "at_bats": 4,
+            "hits": 0
+          }
+        },
+        {
+          "stat": "GroundIntoDoublePlays",
+          "value": 1
+        },
+        {
+          "stat": "GroundOuts",
+          "value": 3
+        },
+        {
+          "stat": "ForceOuts",
+          "value": 1
+        }
+      ]
+    }
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      0,
+      1
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "ejection": null,
+    "event_type": "Strike",
+    "steals": [],
+    "strike": "Looking",
+    "surprise_strike": false,
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      1,
+      1
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "ejection": null,
+    "event_type": "Ball",
+    "steals": [],
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      1,
+      2
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "event_type": "Foul",
+    "foul": "Tip",
+    "steals": [],
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "batter": "Luke Petrosyan",
+    "cheer": null,
+    "destination": "LeftField",
+    "door_prizes": [],
+    "efflorescence": [],
+    "event_type": "FairBall",
+    "fair_ball_type": "FlyBall"
+  },
+  {
+    "advances": [],
+    "batter": "Luke Petrosyan",
+    "caught_by": {
+      "name": "Samuel Hunt",
+      "place": "LF"
+    },
+    "ejection": null,
+    "event_type": "CaughtOut",
+    "fair_ball_type": "FlyBall",
+    "jetpack": false,
+    "perfect": false,
+    "sacrifice": false,
+    "scores": []
+  },
+  {
+    "event_type": "InningEnd",
+    "number": 9,
+    "side": "Top"
+  },
+  {
+    "event_type": "GameOver",
+    "message": "QuotedGAMEOVER"
+  },
+  {
+    "deliveries": [
+      {
+        "Successful": {
+          "discarded": null,
+          "equipped": false,
+          "item": {
+            "affixes": {
+              "PrefixSuffix": [
+                [
+                  "Scheming"
+                ],
+                [
+                  "of the Cat"
+                ]
+              ]
+            },
+            "item": "Slugger's Mitts",
+            "item_emoji": "🥊"
+          },
+          "player": null,
+          "team": {
+            "emoji": "🌈",
+            "name": "Nowhere Else Like Yonder"
+          }
+        }
+      },
+      {
+        "Successful": {
+          "discarded": null,
+          "equipped": false,
+          "item": {
+            "affixes": {
+              "PrefixSuffix": [
+                [
+                  "Lightning"
+                ],
+                [
+                  "of the Gale"
+                ]
+              ]
+            },
+            "item": "Ring",
+            "item_emoji": "💍"
+          },
+          "player": null,
+          "team": {
+            "emoji": "💪",
+            "name": "Brosville Dudes"
+          }
+        }
+      },
+      {
+        "Successful": {
+          "discarded": null,
+          "equipped": false,
+          "item": {
+            "affixes": {
+              "PrefixSuffix": [
+                [
+                  "Whirling"
+                ],
+                [
+                  "of the Cannon"
+                ]
+              ]
+            },
+            "item": "Pitcher's Sleeve",
+            "item_emoji": "🦾"
+          },
+          "player": null,
+          "team": {
+            "emoji": "💪",
+            "name": "Brosville Dudes"
+          }
+        }
+      }
+    ],
+    "event_type": "WeatherShipment"
+  },
+  {
+    "event_type": "Recordkeeping",
+    "losing_score": 4,
+    "losing_team": {
+      "emoji": "💪",
+      "name": "Brosville Dudes"
+    },
+    "winning_score": 5,
+    "winning_team": {
+      "emoji": "🌈",
+      "name": "Nowhere Else Like Yonder"
+    }
+  }
+]

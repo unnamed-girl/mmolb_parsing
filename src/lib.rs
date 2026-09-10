@@ -1,6 +1,6 @@
-#![allow(clippy::module_inception)]
+#![allow(clippy::module_inception, clippy::type_complexity)]
 
-pub(crate) mod time;
+pub(crate) mod game_time;
 pub(crate) mod utils;
 
 pub mod enums;
@@ -13,6 +13,7 @@ pub mod player;
 pub mod player_feed;
 pub mod team;
 pub mod team_feed;
+pub mod time;
 
 pub use game::Game;
 pub use parsed_event::ParsedEventMessage;
@@ -23,7 +24,7 @@ pub use utils::{
     RemovedLaterResult,
 };
 
-use crate::{enums::Day, parsed_event::EmojiTeam, time::Time};
+use crate::{enums::Day, game_time::GameTime, parsed_event::EmojiTeam};
 
 #[derive(Clone, Copy)]
 pub struct UnparsingContext<'a> {
@@ -61,12 +62,13 @@ impl<'a> From<&'a Game> for UnparsingContext<'a> {
 
 impl<'a> UnparsingContext<'a> {
     /// Whether this event is before the given time
-    pub(crate) fn before(&self, event_index: Option<u16>, time: impl Into<Time>) -> bool {
+    pub(crate) fn before(&self, event_index: Option<u16>, time: impl Into<GameTime>) -> bool {
         time.into().before(self.season, self.day, event_index)
     }
 
     /// Whether this event is after the given time
-    pub(crate) fn after(&self, event_index: Option<u16>, time: impl Into<Time>) -> bool {
+    #[allow(unused)]
+    pub(crate) fn after(&self, event_index: Option<u16>, time: impl Into<GameTime>) -> bool {
         time.into().after(self.season, self.day, event_index)
     }
 }

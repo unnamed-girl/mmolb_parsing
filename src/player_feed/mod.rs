@@ -3,18 +3,20 @@ use std::fmt::Display;
 use serde::{Deserialize, Serialize};
 use serde_with::serde_as;
 
+use crate::enums::{BenchSlot, Day, DurabilityType, Slot};
 use crate::feed_event::PlayerGreaterAugment;
-pub use crate::nom_parsing::parse_player_feed_event::parse_player_feed_event;
-use crate::nom_parsing::shared::{FeedEventDoorPrize, FeedEventParty, Grow, PositionSwap};
-use crate::team_feed::PurifiedOutcome;
+use crate::parsed_event::{EmojiTeam, GrowAttributeChange, Item};
 use crate::{
     enums::{Attribute, FeedEventType, ModificationType},
     feed_event::{
-        EmojilessItem, FeedDelivery, FeedEvent, FeedEventParseError, FeedFallingStarOutcome,
+        EmojilessItem, FeedDelivery, FeedEvent, FeedEventDoorPrize, FeedEventParseError,
+        FeedEventParty, FeedFallingStarOutcome, Grow, PositionSwap, PurifiedOutcome,
     },
-    time::{Breakpoints, Timestamp},
+    game_time::{Breakpoints, Timestamp},
     utils::extra_fields_deserialize,
 };
+
+pub use crate::nom_parsing::parse_player_feed_event::parse_player_feed_event;
 
 #[serde_as]
 #[derive(Serialize, Deserialize, Debug, Clone)]
@@ -87,7 +89,8 @@ pub enum ParsedPlayerFeedEventText<S> {
     Released {
         team: S,
     },
-    Retirement {
+    // This type of retirement has a replacement player
+    OldRetirement {
         previous: S,
         new: Option<S>,
     },
@@ -98,6 +101,10 @@ pub enum ParsedPlayerFeedEventText<S> {
     },
     SeasonalDurabilityLoss {
         player_name: S,
+        // None means this event was from before durability types were split,
+        // or if the Prolific boon is reintroduced post-s11 it may indicate that
+        // the player resisted the durability loss (check `durability_lost`)
+        durability_type: Option<DurabilityType>,
         // None means that the Prolific boon resisted the durability loss
         durability_lost: Option<u32>,
         season: u32,
@@ -115,6 +122,13 @@ pub enum ParsedPlayerFeedEventText<S> {
     PlayerContained {
         contained_player_name: S,
         container_player_name: S,
+    },
+    PlayerGrewInEfflorescence {
+        player_name: S,
+        growths: [GrowAttributeChange; 2],
+    },
+    PlayerEffloresce {
+        player_name: S,
     },
     PlayerPositionsSwapped {
         swap: PositionSwap<S>,
@@ -145,6 +159,85 @@ pub enum ParsedPlayerFeedEventText<S> {
     PlayerMoved {
         team_emoji: S,
         player_name: S,
+    },
+    Restyle {
+        old_name: S,
+        new_name: S,
+    },
+    // This only happens for s10-and-later augments
+    Augment {
+        player_name: S,
+        attribute: Attribute,
+        amount: u32,
+        a_previous_augment_faded: bool,
+    },
+    BoonRecombobulated {
+        player_name: S,
+        old_mod: ModificationType,
+        new_mod: ModificationType,
+    },
+    PlayersSwapped {
+        players: [S; 2],
+        slot: Slot,
+    },
+    ConsumptionContestDelivery {
+        delivery: FeedDelivery<S>,
+    },
+    ConsumptionContestToTeam {
+        /// `None` indicates no tie. `Some` indicates a tie with the score being
+        /// the contained value.
+        ///
+        /// As of this writing the score is always equal to earned_coins, but
+        /// I've been through too many economy rebalances to assume that will
+        /// always be the case.
+        tied: Option<u32 /* score */>,
+        team: EmojiTeam<S>,
+        earned_coins: Option<u32>,
+        item: Option<Item<S>>,
+        // TODO Delete this commented-out field if it's not necessary
+        // discarded: Option<Item<S>>,
+    },
+    PlayerReflected {
+        new_name: S,
+        old_name: S,
+        replacement_name: S,
+    },
+    ElectionAppliedLevelUps {
+        player_name: S,
+        num_level_ups: u32,
+    },
+    LesserBoon {
+        player_name: S,
+        boon_emoji: S,
+        boon: ModificationType,
+    },
+    ResumedHolidayProcessingReplacement {
+        replaced_player_name: S,
+        replacement_player_name: S,
+    },
+    GainedModificationFromGreaterAugment {
+        player_name: S,
+        modification: ModificationType,
+        augment_name: S,
+    },
+    PlayersBecameFriends {
+        player_names: [S; 2],
+    },
+    PlayerTrained {
+        player_name: S,
+        bench_slot: BenchSlot,
+    },
+    NewRetirement {
+        player_name: S,
+    },
+    SweetRelief {
+        player_names: [S; 2],
+    },
+    DefensiveShift {
+        player_names: [S; 2],
+    },
+    GoingHome {
+        player_names: [S; 2],
     },
 }
 
@@ -211,16 +304,29 @@ impl<S: Display> ParsedPlayerFeedEventText<S> {
                     None => format!("{player_name} gained the {modification} Modification.")
                 }
             },
-            ParsedPlayerFeedEventText::Retirement { previous, new } => {
+            ParsedPlayerFeedEventText::OldRetirement { previous, new } => {
                 let new = new.as_ref().map(|new| format!(" {new} was called up to take their place.")).unwrap_or_default();
                 let emoji = (matches!(event.event_type, Ok(FeedEventType::Game))).then_some("😇 ").unwrap_or_default();
                 format!("{emoji}{previous} retired from MMOLB!{new}")
             }
-            ParsedPlayerFeedEventText::SeasonalDurabilityLoss { player_name, durability_lost, season } => {
-                if let Some(durability_lost) = durability_lost {
-                    format!("{player_name} lost {durability_lost} durability for playing in Season {season}.")
+            ParsedPlayerFeedEventText::SeasonalDurabilityLoss { player_name, durability_type, durability_lost, season } => {
+                let durability_str = match durability_type {
+                    None if durability_lost.is_none() => "Durability",
+                    None => "durability",
+                    Some(DurabilityType::Lesser) if event.season < 13 => "LesserDurability in the Lesser League",
+                    Some(DurabilityType::Lesser) => "Lesser Durability in the Lesser League",
+                    Some(DurabilityType::Greater) if event.season < 13 => "GreaterDurability in the Greater League",
+                    Some(DurabilityType::Greater) => "Greater Durability in the Greater League",
+                };
+                let durability_why = if event.season < 14 && event.day == Ok(Day::Preseason) {
+                    "for playing in Season"
                 } else {
-                    format!("{player_name}'s Prolific Greater Boon resisted Durability loss for Season {season}.")
+                    "for being on the roster in Season"
+                };
+                if let Some(durability_lost) = durability_lost {
+                    format!("{player_name} lost {durability_lost} {durability_str} {durability_why} {season}.")
+                } else {
+                    format!("{player_name}'s Prolific Greater Boon resisted {durability_str} loss for Season {season}.")
                 }
             }
             ParsedPlayerFeedEventText::CorruptedByWither { player_name } => {
@@ -239,6 +345,12 @@ impl<S: Display> ParsedPlayerFeedEventText<S> {
                     🥀 Wither.",
                 )
             }
+            ParsedPlayerFeedEventText::PlayerGrewInEfflorescence { player_name, growths: [grow_1, grow_2] } => {
+                format!("{player_name} grew in the 🌹 Efflorescence: {grow_1}, {grow_2}.")
+            }
+            ParsedPlayerFeedEventText::PlayerEffloresce { player_name} => {
+                format!("{player_name} is Efflorescing and sheds their Corruption!")
+            }
             ParsedPlayerFeedEventText::PlayerPositionsSwapped { swap } => {
                 format!("{swap}")
             }
@@ -249,16 +361,16 @@ impl<S: Display> ParsedPlayerFeedEventText<S> {
                 match greater_augment {
                     PlayerGreaterAugment::Headliners { attribute } => format!("{player_name} gained +75 {attribute}."),
                     PlayerGreaterAugment::StartSmall { attribute } => format!("{player_name} gained +50 {attribute}."),
-                    PlayerGreaterAugment::Plating => format!("{player_name} gained +10 to all Defense Attributes"),
-                    PlayerGreaterAugment::LuckyDelivery => format!("{player_name} gained +10 to all Defense Attributes"),
+                    PlayerGreaterAugment::Plating => format!("{player_name} gained +10 to all Defense Attributes."),
+                    PlayerGreaterAugment::LuckyDelivery => format!("{player_name} gained +10 to all Defense Attributes."),
                 }
             }
             ParsedPlayerFeedEventText::RetractedGreaterAugment { player_name, greater_augment } => {
                 match greater_augment {
                     PlayerGreaterAugment::Headliners { attribute } => format!("{player_name} lost 0.75 from {attribute}."),
                     PlayerGreaterAugment::StartSmall { attribute } => format!("{player_name} lost 0.5 from {attribute}."),
-                    PlayerGreaterAugment::Plating => format!("{player_name} lost 0.1 to all Defense Attributes"),
-                    PlayerGreaterAugment::LuckyDelivery => format!("{player_name} lost 0.1 to all Defense Attributes"),
+                    PlayerGreaterAugment::Plating => format!("{player_name} lost 0.1 from all Defense Attributes."),
+                    PlayerGreaterAugment::LuckyDelivery => format!("{player_name} lost 0.1 from all Defense Attributes."),
                 }
             }
             ParsedPlayerFeedEventText::RetroactiveGreaterAugment { player_name, greater_augment } => {
@@ -274,6 +386,74 @@ impl<S: Display> ParsedPlayerFeedEventText<S> {
             },
             ParsedPlayerFeedEventText::PlayerMoved { team_emoji, player_name } => {
                 format!("{team_emoji} {player_name} was moved to the Bench.")
+            },
+            ParsedPlayerFeedEventText::Restyle { old_name, new_name } => {
+                format!("{old_name} visited the Restylist Salon and emerged as {new_name} with fresh tastes.")
+            }
+            ParsedPlayerFeedEventText::Augment { player_name, amount, attribute, a_previous_augment_faded} => {
+                let faded = if *a_previous_augment_faded { " A previous augment faded away." } else { "" };
+                format!("{player_name} was Augmented with +{amount} {attribute}.{faded}")
+            }
+            ParsedPlayerFeedEventText::BoonRecombobulated { player_name, old_mod, new_mod} => {
+                format!("{player_name} used the Boon Recombobulator. {old_mod} was swapped for {new_mod}.")
+            }
+            ParsedPlayerFeedEventText::PlayersSwapped { players: [player_one, player_two], slot } => {
+                format!("{player_one} swapped with {player_two} in {slot}.")
+            },
+            ParsedPlayerFeedEventText::ConsumptionContestDelivery { delivery } => delivery.unparse(event, "the Consumption Contest"),
+            ParsedPlayerFeedEventText::ConsumptionContestToTeam { team, earned_coins, item, tied } => {
+                let and_item = item.as_ref().map_or_else(
+                    String::new,
+                    |i| format!(" and a {}", i),
+                );
+
+                if let Some(earned_coins) = earned_coins {
+                    if let Some(score) = tied {
+                        format!("{team} tied the Consumption Contest with {score} and received 🪙 {earned_coins}{and_item}.")
+                    } else {
+                        format!("{team} received 🪙 {earned_coins}{and_item} from a Consumption Contest.")
+                    }
+                } else if let Some(item) = item {
+                    format!("{team} win a {item} from the Consumption Contest.")
+                } else {
+                    panic!("ConsumptionContestToTeam needs either earned coins or an item");
+                }
+            },
+            ParsedPlayerFeedEventText::PlayerReflected { new_name, old_name, replacement_name } => {
+                format!("{new_name} was Reflected from {old_name} to replace {replacement_name}.")
+            },
+            ParsedPlayerFeedEventText::ElectionAppliedLevelUps { player_name, num_level_ups } => {
+                format!("{player_name} applied {num_level_ups} pending level up(s).")
+            },
+            ParsedPlayerFeedEventText::LesserBoon { player_name, boon_emoji, boon } => {
+                format!("{player_name} was granted the {boon_emoji} {boon} Lesser Boon.")
+            },
+            ParsedPlayerFeedEventText::ResumedHolidayProcessingReplacement { replaced_player_name, replacement_player_name } => {
+                format!("Resumed Holiday processing: {replaced_player_name} was replaced by {replacement_player_name}.")
+            },
+            ParsedPlayerFeedEventText::GainedModificationFromGreaterAugment { player_name, modification, augment_name } => {
+                format!("{player_name} gained {modification} via {augment_name}.")
+            },
+            ParsedPlayerFeedEventText::PlayersBecameFriends { player_names: [player1, player2] } => {
+                format!("{player1} became Friends with {player2}.")
+            },
+            ParsedPlayerFeedEventText::PlayerTrained { player_name, bench_slot } => {
+                format!("{player_name} was rerolled and trained to Level 30 for {}.", match bench_slot {
+                    BenchSlot::Batter(n) => format!("Bench Batter #{n}"),
+                    BenchSlot::Pitcher(n) => format!("Bench Pitcher #{n}"),
+                })
+            },
+            ParsedPlayerFeedEventText::NewRetirement { player_name } => {
+                format!("{player_name} retired from MMOLB!")
+            },
+            ParsedPlayerFeedEventText::SweetRelief { player_names: [player1, player2] } => {
+                format!("{player1} swapped with {player2} via Sweet Relief.")
+            },
+            ParsedPlayerFeedEventText::DefensiveShift { player_names: [player1, player2] } => {
+                format!("{player1} swapped with {player2} via Defensive Shift.")
+            },
+            ParsedPlayerFeedEventText::GoingHome { player_names: [player1, player2] } => {
+                format!("{player1} swapped with {player2} via Going Home.")
             }
         }
     }

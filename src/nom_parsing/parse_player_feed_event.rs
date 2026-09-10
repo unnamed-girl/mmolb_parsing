@@ -1,17 +1,22 @@
 use super::shared::{
-    falling_star, feed_event_contained, feed_event_door_prize, feed_event_equipped_door_prize,
-    feed_event_party, feed_event_wither, grow, player_moved, player_positions_swapped,
-    player_relegated, purified, Error, IResult,
+    augment_event, boon_recombobulated, election_applied_level_ups, falling_star,
+    feed_event_contained, feed_event_door_prize, feed_event_effloresce,
+    feed_event_efflorescence_growth, feed_event_equipped_door_prize, feed_event_party,
+    feed_event_resumed_processing, feed_event_wither, grow, lesser_boon, named_greater_swap,
+    player_greater_augment_mod, player_moved, player_positions_swapped, player_reflected,
+    player_relegated, player_retired, player_trained, players_became_friends,
+    players_election_swapped, purified, restyle, Error, IResult,
 };
+use crate::enums::DurabilityType;
 use crate::feed_event::PlayerGreaterAugment;
 use crate::{
     enums::{FeedEventType, ModificationType},
     feed_event::{FeedEvent, FeedEventParseError},
+    game_time::{Breakpoints, Timestamp},
     nom_parsing::shared::{
         emojiless_item, feed_delivery, parse_terminated, sentence_eof, try_from_word, verify_name,
     },
     player_feed::ParsedPlayerFeedEventText,
-    time::{Breakpoints, Timestamp},
 };
 use nom::character::complete::u32;
 use nom::{
@@ -58,6 +63,8 @@ pub fn parse_player_feed_event(event: &FeedEvent) -> ParsedPlayerFeedEventText<&
         FeedEventType::Season => season(event).parse(event.text.as_str()),
         FeedEventType::Election => election(event).parse(&event.text),
         FeedEventType::Roster => roster(event).parse(event.text.as_str()),
+        FeedEventType::Boon => boon(event).parse(event.text.as_str()),
+        FeedEventType::Retirement => retirement(event).parse(event.text.as_str()),
         // TODO More descriptive error message
         FeedEventType::Lottery => fail().parse(event.text.as_str()),
         FeedEventType::Maintenance => fail().parse(event.text.as_str()),
@@ -92,7 +99,7 @@ pub fn parse_player_feed_event(event: &FeedEvent) -> ParsedPlayerFeedEventText<&
     }
 }
 
-fn game<'output>(event: &'output FeedEvent) -> impl PlayerFeedEventParser<'output> {
+fn game(event: &'_ FeedEvent) -> impl PlayerFeedEventParser<'_> {
     context(
         "Game Feed Event",
         alt((
@@ -111,7 +118,7 @@ fn game<'output>(event: &'output FeedEvent) -> impl PlayerFeedEventParser<'outpu
                     outcome,
                 }
             }),
-            retirement(true),
+            pre_s13_retirement(true),
             feed_event_wither
                 .map(|player_name| ParsedPlayerFeedEventText::CorruptedByWither { player_name }),
             feed_event_party.map(|party| ParsedPlayerFeedEventText::Party { party }),
@@ -120,6 +127,19 @@ fn game<'output>(event: &'output FeedEvent) -> impl PlayerFeedEventParser<'outpu
                     contained_player_name,
                     container_player_name,
                 }
+            }),
+            feed_event_efflorescence_growth.map(|(player_name, growths)| {
+                ParsedPlayerFeedEventText::PlayerGrewInEfflorescence {
+                    player_name,
+                    growths,
+                }
+            }),
+            feed_event_effloresce
+                .map(|player_name| ParsedPlayerFeedEventText::PlayerEffloresce { player_name }),
+            feed_delivery("the Consumption Contest")
+                .map(|delivery| ParsedPlayerFeedEventText::ConsumptionContestDelivery { delivery }),
+            players_became_friends.map(|player_names| {
+                ParsedPlayerFeedEventText::PlayersBecameFriends { player_names }
             }),
             fail(),
         )),
@@ -150,6 +170,27 @@ fn augment<'output>(event: &'output FeedEvent) -> impl PlayerFeedEventParser<'ou
             player_positions_swapped
                 .map(|swap| ParsedPlayerFeedEventText::PlayerPositionsSwapped { swap }),
             grow.map(|grow| ParsedPlayerFeedEventText::PlayerGrow { grow }),
+            restyle.map(|(old_name, new_name)| ParsedPlayerFeedEventText::Restyle {
+                old_name,
+                new_name,
+            }),
+            augment_event.map(
+                |(player_name, amount, attribute, a_previous_augment_faded)| {
+                    ParsedPlayerFeedEventText::Augment {
+                        player_name,
+                        amount,
+                        attribute,
+                        a_previous_augment_faded,
+                    }
+                },
+            ),
+            boon_recombobulated.map(|(player_name, old_mod, new_mod)| {
+                ParsedPlayerFeedEventText::BoonRecombobulated {
+                    player_name,
+                    old_mod,
+                    new_mod,
+                }
+            }),
             fail(),
         )),
     )
@@ -168,7 +209,7 @@ fn release<'output>(_event: &'output FeedEvent) -> impl PlayerFeedEventParser<'o
 fn season<'output>(_event: &'output FeedEvent) -> impl PlayerFeedEventParser<'output> {
     context(
         "Season Feed Event",
-        alt((retirement(false), seasonal_durability_loss)),
+        alt((pre_s13_retirement(false), seasonal_durability_loss)),
     )
 }
 
@@ -448,7 +489,7 @@ fn modification<'output>() -> impl PlayerFeedEventParser<'output> {
     }
 }
 
-fn retirement<'output>(emoji: bool) -> impl PlayerFeedEventParser<'output> {
+fn pre_s13_retirement<'output>(emoji: bool) -> impl PlayerFeedEventParser<'output> {
     (
         preceded(
             cond(emoji, tag("😇 ")),
@@ -459,7 +500,7 @@ fn retirement<'output>(emoji: bool) -> impl PlayerFeedEventParser<'output> {
             parse_terminated(" was called up to take their place.").and_then(verify_name),
         )),
     )
-        .map(|(original, new)| ParsedPlayerFeedEventText::Retirement {
+        .map(|(original, new)| ParsedPlayerFeedEventText::OldRetirement {
             previous: original,
             new,
         })
@@ -479,7 +520,20 @@ fn seasonal_durability_loss_happened(
     // This may need more intelligent parsing if " lost " is ever a player name substring
     let (input, player_name) = parse_terminated(" lost ").parse(input)?;
     let (input, durability_lost) = u32.parse(input)?;
-    let (input, _) = tag(" durability for playing in Season ").parse(input)?;
+    let (input, durability_type) = alt((
+        tag(" durability ").map(|_| None),
+        tag(" LesserDurability in the Lesser League ").map(|_| Some(DurabilityType::Lesser)),
+        tag(" Lesser Durability in the Lesser League ").map(|_| Some(DurabilityType::Lesser)),
+        tag(" GreaterDurability in the Greater League ").map(|_| Some(DurabilityType::Greater)),
+        tag(" Greater Durability in the Greater League ").map(|_| Some(DurabilityType::Greater)),
+    ))
+    .parse(input)?;
+    // This can be disambiguated by season
+    let (input, _) = alt((
+        tag("for playing in Season "),
+        tag("for being on the roster in Season "),
+    ))
+    .parse(input)?;
     let (input, season) = u32.parse(input)?;
     let (input, _) = tag(".").parse(input)?;
 
@@ -487,6 +541,7 @@ fn seasonal_durability_loss_happened(
         input,
         ParsedPlayerFeedEventText::SeasonalDurabilityLoss {
             player_name,
+            durability_type,
             durability_lost: Some(durability_lost),
             season,
         },
@@ -506,19 +561,67 @@ fn seasonal_durability_loss_blocked(
         input,
         ParsedPlayerFeedEventText::SeasonalDurabilityLoss {
             player_name,
+            durability_type: None,
             durability_lost: None,
             season,
         },
     ))
 }
 
-fn election<'output>(_event: &'output FeedEvent) -> impl PlayerFeedEventParser<'output> {
+fn election(_event: &'_ FeedEvent) -> impl PlayerFeedEventParser<'_> {
     context(
         "Election Feed Event",
         alt((
             player_greater_augment_result,
             player_retracted_greater_augment_result,
             player_retroactive_greater_augment_result,
+            players_election_swapped
+                .map(|(players, slot)| ParsedPlayerFeedEventText::PlayersSwapped { players, slot }),
+            // Copy of the same event under augment
+            purified.map(
+                |(player_name, outcome)| ParsedPlayerFeedEventText::Purified {
+                    player_name,
+                    outcome,
+                },
+            ),
+            player_reflected.map(|(new_name, old_name, replacement_name)| {
+                ParsedPlayerFeedEventText::PlayerReflected {
+                    new_name,
+                    old_name,
+                    replacement_name,
+                }
+            }),
+            election_applied_level_ups.map(|(player_name, num_level_ups)| {
+                ParsedPlayerFeedEventText::ElectionAppliedLevelUps {
+                    player_name,
+                    num_level_ups,
+                }
+            }),
+            feed_event_resumed_processing.map(|(replaced_player_name, replacement_player_name)| {
+                ParsedPlayerFeedEventText::ResumedHolidayProcessingReplacement {
+                    replaced_player_name,
+                    replacement_player_name,
+                }
+            }),
+            player_greater_augment_mod.map(|(player_name, modification, augment_name)| {
+                ParsedPlayerFeedEventText::GainedModificationFromGreaterAugment {
+                    player_name,
+                    modification,
+                    augment_name,
+                }
+            }),
+            player_trained.map(|(player_name, bench_slot)| {
+                ParsedPlayerFeedEventText::PlayerTrained {
+                    player_name,
+                    bench_slot,
+                }
+            }),
+            named_greater_swap("Sweet Relief")
+                .map(|player_names| ParsedPlayerFeedEventText::SweetRelief { player_names }),
+            named_greater_swap("Defensive Shift")
+                .map(|player_names| ParsedPlayerFeedEventText::DefensiveShift { player_names }),
+            named_greater_swap("Going Home")
+                .map(|player_names| ParsedPlayerFeedEventText::GoingHome { player_names }),
         )),
     )
 }
@@ -616,6 +719,40 @@ fn roster<'output>(_event: &'output FeedEvent) -> impl PlayerFeedEventParser<'ou
                     player_name,
                 },
             ),
+        )),
+    )
+}
+
+fn boon<'output>(_event: &'output FeedEvent) -> impl PlayerFeedEventParser<'output> {
+    context(
+        "Boon Feed Event",
+        alt((
+            lesser_boon.map(|(player_name, boon_emoji, boon)| {
+                ParsedPlayerFeedEventText::LesserBoon {
+                    player_name,
+                    boon_emoji,
+                    boon,
+                }
+            }),
+            boon_recombobulated.map(|(player_name, old_mod, new_mod)| {
+                ParsedPlayerFeedEventText::BoonRecombobulated {
+                    player_name,
+                    old_mod,
+                    new_mod,
+                }
+            }),
+            fail(),
+        )),
+    )
+}
+
+fn retirement(_event: &'_ FeedEvent) -> impl PlayerFeedEventParser<'_> {
+    context(
+        "Retirement Feed Event",
+        alt((
+            player_retired
+                .map(|player_name| ParsedPlayerFeedEventText::NewRetirement { player_name }),
+            fail(),
         )),
     )
 }

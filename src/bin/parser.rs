@@ -17,6 +17,7 @@ use std::{
 };
 
 use mmolb_parsing::parsed_event::{ContainResult, PartyDurabilityLoss, WitherResult};
+use mmolb_parsing::time::Time;
 use reqwest::blocking::Client;
 use strum::IntoDiscriminant;
 use tracing::{info, span::EnteredSpan, Level};
@@ -99,6 +100,10 @@ struct Args {
     #[clap(long)]
     count: Option<u32>,
 
+    /// Remove text formatting for errors, so that piping stderr is more useful
+    #[clap(long, action)]
+    no_ansi: bool,
+
     #[clap(long)]
     output_folder: Option<String>,
 }
@@ -112,6 +117,7 @@ enum Kind {
     PlayerFeed,
     TeamFeed,
     GameFeed,
+    Time,
 }
 
 impl Kind {
@@ -123,6 +129,7 @@ impl Kind {
             Kind::PlayerFeed => "player_feed",
             Kind::TeamFeed => "team_feed",
             Kind::GameFeed => "game_feed",
+            Kind::Time => "time",
         }
     }
 }
@@ -200,11 +207,16 @@ fn main() {
     let args = Args::parse();
 
     let err_layer = tracing_subscriber::fmt::Layer::new()
-        .with_ansi(false)
+        .with_ansi(!args.no_ansi)
         .with_writer(std::io::stderr.with_max_level(Level::ERROR));
 
     let stdout_layer = tracing_subscriber::fmt::Layer::new()
-        .with_writer(std::io::stdout.with_max_level(args.with_max_level.unwrap_or(Level::INFO)));
+        .with_writer(
+            std::io::stdout
+                .with_max_level(args.with_max_level.unwrap_or(Level::INFO))
+                .with_min_level(Level::WARN),
+        )
+        .with_ansi(!args.no_ansi);
 
     let collector = tracing_subscriber::registry()
         .with(err_layer)
@@ -325,6 +337,7 @@ fn get_func<'a, 'b>() -> impl Fn(
             team_feed_inner,
         ),
         Kind::GameFeed => todo!(),
+        Kind::Time => ingest(response, args, progress_report, event_variants, time_inner),
     }
 }
 
@@ -340,8 +353,13 @@ fn ingest<T: for<'a> Deserialize<'a> + Serialize>(
         Option<&mut HashSet<String>>,
     ) -> EnteredSpan,
 ) {
-    let _ingest_guard =
-        tracing::span!(Level::INFO, "Entity Ingest", entity_id = response.entity_id).entered();
+    let _ingest_guard = tracing::span!(
+        Level::INFO,
+        "Entity Ingest",
+        entity_id = response.entity_id,
+        valid_from = response.valid_from,
+    )
+    .entered();
 
     let entity: T = if !args.no_path_to_error {
         let des = response.data.as_ref().into_deserializer();
@@ -378,6 +396,16 @@ fn ingest<T: for<'a> Deserialize<'a> + Serialize>(
     drop(span);
 }
 
+fn time_inner(
+    _time: Time,
+    _response: EntityResponse<Box<serde_json::value::RawValue>>,
+    _args: &Args,
+    _event_variants: Option<&mut HashSet<String>>,
+) -> EnteredSpan {
+    // Nothing else to do, for now...
+    tracing::span!(Level::INFO, "Time").entered()
+}
+
 fn player_inner(
     player: Player,
     response: EntityResponse<Box<serde_json::value::RawValue>>,
@@ -387,7 +415,11 @@ fn player_inner(
     let _player_span_guard = tracing::span!(
         Level::INFO,
         "Player",
-        name = format!("{} {}", player.first_name, player.last_name)
+        name = if let Ok(Some(suffix)) = &player.suffix {
+            format!("{} {} {suffix}", player.first_name, player.last_name)
+        } else {
+            format!("{} {}", player.first_name, player.last_name)
+        }
     )
     .entered();
     let mut output = args
@@ -678,8 +710,13 @@ fn check<S>(event: &ParsedEventMessage<S>) -> String {
             away_team: _,
             home_team: _,
             stadium,
+            weather,
         } => {
-            format!("Stadium: {}", stadium.is_some())
+            format!(
+                "Stadium: {}, weather: {}",
+                stadium.is_some(),
+                weather.is_some()
+            )
         }
         ParsedEventMessage::PitchingMatchup {
             away_team: _,
@@ -687,8 +724,16 @@ fn check<S>(event: &ParsedEventMessage<S>) -> String {
             home_pitcher: _,
             away_pitcher: _,
         } => "".to_string(),
-        ParsedEventMessage::Lineup { side, players } => {
-            format!("Side: {side}, player_count: {}", players.len())
+        ParsedEventMessage::Lineup {
+            side,
+            manager_name,
+            players,
+        } => {
+            format!(
+                "Side: {side}, manager_name: {}, player_count: {}",
+                manager_name.is_some(),
+                players.len()
+            )
         }
         ParsedEventMessage::PlayBall => "".to_string(),
         ParsedEventMessage::GameOver { message } => format!("Message: {message}"),
@@ -711,17 +756,30 @@ fn check<S>(event: &ParsedEventMessage<S>) -> String {
                 pitcher_status.as_ref().map(|status| status.discriminant())
             )
         }
-        ParsedEventMessage::NowBatting { batter: _, stats } => {
-            format!("stats: {}", stats.discriminant())
+        ParsedEventMessage::NowBatting {
+            batter: _,
+            stats,
+            player_swept_away,
+        } => {
+            format!(
+                "stats: {}, player_swept_away: {}",
+                stats.discriminant(),
+                player_swept_away.is_some()
+            )
         }
         ParsedEventMessage::InningEnd { number, side } => {
             format!("number: {number}, side: {side}")
         }
         ParsedEventMessage::MoundVisit {
+            manager_name,
             team: _,
             mound_visit_type,
         } => {
-            format!("type: {}", mound_visit_type)
+            format!(
+                "manager_name: {}, type: {}",
+                manager_name.is_some(),
+                mound_visit_type
+            )
         }
         ParsedEventMessage::PitcherRemains {
             remaining_pitcher: _,
@@ -749,8 +807,19 @@ fn check<S>(event: &ParsedEventMessage<S>) -> String {
             door_prizes,
             wither,
             efflorescence,
+            assassinations,
         } => {
-            format!("steals: {}, cheer: {}, aurora_photos: {}, ejection: {}, door_prizes: {}, wither: {}, efflorescence: {}", steals.len(), cheer.is_some(), aurora_photos.is_some(), ejection.is_some(), door_prizes.len(), wither.is_some(), efflorescence.len())
+            format!(
+                "steals: {}, cheer: {}, aurora_photos: {}, ejection: {}, door_prizes: {}, wither: {}, efflorescence: {}, assassinations: {}",
+                steals.len(),
+                cheer.is_some(),
+                aurora_photos.is_some(),
+                ejection.is_some(),
+                door_prizes.len(),
+                wither.is_some(),
+                efflorescence.len(),
+                assassinations.len(),
+            )
         }
         ParsedEventMessage::Strike {
             strike,
@@ -762,8 +831,21 @@ fn check<S>(event: &ParsedEventMessage<S>) -> String {
             door_prizes,
             wither,
             efflorescence,
+            surprise_strike,
+            assassinations,
         } => {
-            format!("strike: {strike}, steals: {}, cheer: {}, aurora_photos: {}, ejection: {}, door_prizes: {}, wither: {}, efflorescence: {}", steals.len(), cheer.is_some(), aurora_photos.is_some(), ejection.is_some(), door_prizes.len(), wither.is_some(), efflorescence.len())
+            format!(
+                "strike: {strike}, steals: {}, cheer: {}, aurora_photos: {}, ejection: {}, door_prizes: {}, wither: {}, efflorescence: {}, surprise_strike: {}, assassinations: {}",
+                steals.len(),
+                cheer.is_some(),
+                aurora_photos.is_some(),
+                ejection.is_some(),
+                door_prizes.len(),
+                wither.is_some(),
+                efflorescence.len(),
+                surprise_strike,
+                assassinations.len(),
+            )
         }
         ParsedEventMessage::Foul {
             foul,
@@ -774,8 +856,18 @@ fn check<S>(event: &ParsedEventMessage<S>) -> String {
             door_prizes,
             wither,
             efflorescence,
+            assassinations,
         } => {
-            format!("foul: {foul}, steals: {}, cheer: {}, aurora_photos: {}, door_prizes: {}, wither: {}, efflorescence: {}", steals.len(), cheer.is_some(), aurora_photos.is_some(), door_prizes.len(), wither.is_some(), efflorescence.len())
+            format!(
+                "foul: {foul}, steals: {}, cheer: {}, aurora_photos: {}, door_prizes: {}, wither: {}, efflorescence: {}, assassinations: {}",
+                steals.len(),
+                cheer.is_some(),
+                aurora_photos.is_some(),
+                door_prizes.len(),
+                wither.is_some(),
+                efflorescence.len(),
+                assassinations.len(),
+            )
         }
         ParsedEventMessage::Walk {
             batter: _,
@@ -785,14 +877,16 @@ fn check<S>(event: &ParsedEventMessage<S>) -> String {
             aurora_photos,
             ejection,
             wither,
+            assassinations,
         } => {
             format!(
-                "scores: {}, cheer: {}, aurora_photos: {}, ejection: {}, wither: {}",
+                "scores: {}, cheer: {}, aurora_photos: {}, ejection: {}, wither: {}, assassinations: {}",
                 scores.len(),
                 cheer.is_some(),
                 aurora_photos.is_some(),
                 ejection.is_some(),
-                wither.is_some()
+                wither.is_some(),
+                assassinations.len(),
             )
         }
         ParsedEventMessage::HitByPitch {
@@ -816,8 +910,16 @@ fn check<S>(event: &ParsedEventMessage<S>) -> String {
             aurora_photos,
             door_prizes,
             efflorescence,
+            assassinations,
         } => {
-            format!("fair_ball_type: {fair_ball_type}, destination: {destination}, cheer: {}, aurora_photos: {}, door_prizes: {}, efflorescence: {}", cheer.is_some(), aurora_photos.is_some(), door_prizes.len(), efflorescence.len())
+            format!(
+                "fair_ball_type: {fair_ball_type}, destination: {destination}, cheer: {}, aurora_photos: {}, door_prizes: {}, efflorescence: {}, assassinations: {}",
+                cheer.is_some(),
+                aurora_photos.is_some(),
+                door_prizes.len(),
+                efflorescence.len(),
+                assassinations.len(),
+            )
         }
         ParsedEventMessage::StrikeOut {
             foul,
@@ -828,8 +930,18 @@ fn check<S>(event: &ParsedEventMessage<S>) -> String {
             aurora_photos,
             ejection,
             wither,
+            assassinations,
         } => {
-            format!("foul: {}, strike: {strike}, steals: {}, cheer: {}, aurora_photos: {}, ejection: {}, wither: {}", foul.as_ref().map(FoulType::to_string).unwrap_or_else(|| "False".to_string()), steals.len(), cheer.is_some(), aurora_photos.is_some(), ejection.is_some(), wither.is_some())
+            format!(
+                "foul: {}, strike: {strike}, steals: {}, cheer: {}, aurora_photos: {}, ejection: {}, wither: {}, assassinations: {}",
+                foul.as_ref().map(FoulType::to_string).unwrap_or_else(|| "False".to_string()),
+                steals.len(),
+                cheer.is_some(),
+                aurora_photos.is_some(),
+                ejection.is_some(),
+                wither.is_some(),
+                assassinations.len(),
+            )
         }
         ParsedEventMessage::BatterToBase {
             batter: _,
@@ -861,8 +973,9 @@ fn check<S>(event: &ParsedEventMessage<S>) -> String {
             sacrifice,
             perfect,
             ejection,
+            jetpack,
         } => {
-            format!("fair_ball_type: {fair_ball_type}, sacrifice: {sacrifice}, perfect: {perfect}, scores: {}, advances: {}, ejection: {}", scores.len(), advances.len(), ejection.is_some())
+            format!("fair_ball_type: {fair_ball_type}, sacrifice: {sacrifice}, perfect: {perfect}, scores: {}, advances: {}, ejection: {}, jetpack: {jetpack}", scores.len(), advances.len(), ejection.is_some())
         }
         ParsedEventMessage::GroundedOut {
             batter: _,
@@ -871,13 +984,15 @@ fn check<S>(event: &ParsedEventMessage<S>) -> String {
             advances,
             amazing,
             ejection,
+            assassinations,
         } => {
             format!(
-                "fielders: {}, amazing: {amazing}, scores: {}, advances: {}, ejection: {}",
+                "fielders: {}, amazing: {amazing}, scores: {}, advances: {}, ejection: {}, assassinations: {}",
                 fielders.len(),
                 scores.len(),
                 advances.len(),
-                ejection.is_some()
+                ejection.is_some(),
+                assassinations.len(),
             )
         }
         ParsedEventMessage::ForceOut {
@@ -923,13 +1038,15 @@ fn check<S>(event: &ParsedEventMessage<S>) -> String {
             advances,
             sacrifice,
             ejection,
+            double_trouble,
         } => {
             format!(
-                "fielders: {}, sacrifice: {sacrifice}, scores: {}, advances: {}, ejection: {}",
+                "fielders: {}, sacrifice: {sacrifice}, scores: {}, advances: {}, ejection: {}, double_trouble: {}",
                 fielders.len(),
                 scores.len(),
                 advances.len(),
-                ejection.is_some()
+                ejection.is_some(),
+                double_trouble.is_some(),
             )
         }
         ParsedEventMessage::DoublePlayCaught {
@@ -940,8 +1057,16 @@ fn check<S>(event: &ParsedEventMessage<S>) -> String {
             scores,
             advances,
             ejection,
+            double_trouble,
         } => {
-            format!("fielders: {}, fair_ball_type: {fair_ball_type}, scores: {}, advances: {}, ejection: {}", fielders.len(), scores.len(), advances.len(), ejection.is_some())
+            format!(
+                "fielders: {}, fair_ball_type: {fair_ball_type}, scores: {}, advances: {}, ejection: {}, double_trouble: {}",
+                fielders.len(),
+                scores.len(),
+                advances.len(),
+                ejection.is_some(),
+                double_trouble.is_some(),
+            )
         }
         ParsedEventMessage::ReachOnFieldingError {
             batter: _,
@@ -977,6 +1102,7 @@ fn check<S>(event: &ParsedEventMessage<S>) -> String {
         ParsedEventMessage::WeatherSpecialDelivery { delivery: _ } => "".to_string(),
         ParsedEventMessage::Balk {
             pitcher: _,
+            balk_reason: _,
             scores,
             advances,
         } => {

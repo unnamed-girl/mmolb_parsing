@@ -36,6 +36,20 @@ pub struct EventBatter<S> {
     pub extra_fields: serde_json::Map<String, serde_json::Value>,
 }
 
+impl EventBatter<String> {
+    // Warning: this clones extra_fields
+    pub fn map_as_str(&self) -> EventBatter<&str> {
+        EventBatter {
+            id: self.id.as_str(),
+            pa: self.pa.as_str(),
+            avg: self.avg,
+            bats: self.bats,
+            name: self.name.map_as_str(),
+            extra_fields: self.extra_fields.clone(),
+        }
+    }
+}
+
 #[serde_as]
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 #[serde(bound(deserialize = "S: Deserialize<'de>, MaybePlayer<S>: Deserialize<'de>"))]
@@ -50,6 +64,20 @@ pub struct EventPitcher<S> {
     pub extra_fields: serde_json::Map<String, serde_json::Value>,
 }
 
+impl EventPitcher<String> {
+    // Warning: this clones extra_fields
+    pub fn map_as_str(&self) -> EventPitcher<&str> {
+        EventPitcher {
+            id: self.id.as_str(),
+            pitches: self.pitches,
+            era: self.era,
+            throws: self.throws,
+            name: self.name.map_as_str(),
+            extra_fields: self.extra_fields.clone(),
+        }
+    }
+}
+
 #[derive(Debug, Clone, PartialEq, Serialize)]
 #[serde(untagged)]
 pub enum EventPitcherVersions<S> {
@@ -57,11 +85,27 @@ pub enum EventPitcherVersions<S> {
     Old(MaybePlayer<S>),
 }
 
+impl EventPitcherVersions<String> {
+    pub fn map_as_str(&self) -> EventPitcherVersions<&str> {
+        match self {
+            EventPitcherVersions::New(pitcher) => EventPitcherVersions::New(pitcher.map_as_str()),
+            EventPitcherVersions::Old(pitcher) => EventPitcherVersions::Old(pitcher.map_as_str()),
+        }
+    }
+}
+
 impl<S> EventPitcherVersions<S> {
     pub fn name(self) -> MaybePlayer<S> {
         match self {
             EventPitcherVersions::Old(p) => p,
             EventPitcherVersions::New(p) => p.name,
+        }
+    }
+
+    pub fn id(self) -> Option<S> {
+        match self {
+            EventPitcherVersions::New(p) => Some(p.id),
+            EventPitcherVersions::Old(_) => None,
         }
     }
 }
@@ -143,11 +187,29 @@ pub enum EventBatterVersions<S> {
     Old(MaybePlayer<S>),
 }
 
+impl EventBatterVersions<String> {
+    pub fn map_as_str(&self) -> EventBatterVersions<&str> {
+        match self {
+            EventBatterVersions::New(batter) => EventBatterVersions::New(batter.map_as_str()),
+            EventBatterVersions::Old(batter) => {
+                crate::game::EventBatterVersions::Old(batter.map_as_str())
+            }
+        }
+    }
+}
+
 impl<S> EventBatterVersions<S> {
     pub fn name(self) -> MaybePlayer<S> {
         match self {
             EventBatterVersions::Old(p) => p,
             EventBatterVersions::New(p) => p.name,
+        }
+    }
+
+    pub fn id(self) -> Option<S> {
+        match self {
+            EventBatterVersions::New(batter) => Some(batter.id),
+            EventBatterVersions::Old(_) => None,
         }
     }
 }

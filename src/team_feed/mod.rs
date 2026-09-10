@@ -4,19 +4,20 @@ use itertools::Itertools;
 use serde::{Deserialize, Serialize};
 use serde_with::serde_as;
 
-use crate::enums::Slot;
+use crate::enums::{BenchSlot, PositionType, Slot, WithNumberSign};
 use crate::feed_event::{AttributeChange, GreaterAugment};
-pub use crate::nom_parsing::parse_team_feed_event::parse_team_feed_event;
-use crate::nom_parsing::shared::{FeedEventDoorPrize, FeedEventParty, Grow, PositionSwap};
-use crate::parsed_event::{EmojiPlayer, EmojiTeam, GrowAttributeChange};
+use crate::parsed_event::{EmojiPlayer, EmojiTeam, GrowAttributeChange, Item};
 use crate::{
     enums::{Attribute, FeedEventType, ModificationType},
     feed_event::{
-        EmojilessItem, FeedDelivery, FeedEvent, FeedEventParseError, FeedFallingStarOutcome,
+        EmojilessItem, FeedDelivery, FeedEvent, FeedEventDoorPrize, FeedEventParseError,
+        FeedEventParty, FeedFallingStarOutcome, Grow, PositionSwap, PurifiedOutcome,
     },
-    time::{Breakpoints, Timestamp},
+    game_time::{Breakpoints, Timestamp},
     utils::extra_fields_deserialize,
 };
+
+pub use crate::nom_parsing::parse_team_feed_event::parse_team_feed_event;
 
 #[serde_as]
 #[derive(Serialize, Deserialize, Debug, Clone)]
@@ -25,25 +26,6 @@ pub struct TeamFeed {
 
     #[serde(flatten, deserialize_with = "extra_fields_deserialize")]
     pub extra_fields: serde_json::Map<String, serde_json::Value>,
-}
-
-#[derive(Clone, Debug, Serialize, Deserialize, PartialEq)]
-pub enum PurifiedOutcome {
-    Payment(u32),
-    PaymentAndImmunityRemoved(u32),
-    NoCorruption,
-    None,
-}
-
-impl PurifiedOutcome {
-    pub fn unparse<S: Display>(&self, player_name: S) -> String {
-        match self {
-            PurifiedOutcome::Payment(payment) => format!("{player_name} was Purified of 🫀 Corruption and earned {payment} 🪙."),
-            PurifiedOutcome::PaymentAndImmunityRemoved(payment) => format!("{player_name} was Purified of 🌹 Efflorescence, earned {payment} 🪙, and gained 🦠 Immunity."),
-            PurifiedOutcome::NoCorruption => format!("{player_name} was Purified of 🫀 Corruption. {player_name} had no Corruption to remove."),
-            PurifiedOutcome::None => format!("{player_name} was Purified of 🫀 Corruption."),
-        }
-    }
 }
 
 #[derive(Clone, Debug, Serialize, Deserialize, PartialEq)]
@@ -61,6 +43,9 @@ pub enum ParsedTeamFeedEventText<S> {
         home_score: u8,
         away_score: u8,
     },
+    DeliveryDiscarded {
+        item: Item<S>,
+    },
     Delivery {
         delivery: FeedDelivery<S>,
     },
@@ -69,6 +54,23 @@ pub enum ParsedTeamFeedEventText<S> {
     },
     SpecialDelivery {
         delivery: FeedDelivery<S>,
+    },
+    ConsumptionContestToPlayer {
+        delivery: FeedDelivery<S>,
+    },
+    ConsumptionContestToTeam {
+        /// `None` indicates no tie. `Some` indicates a tie with the score being
+        /// the contained value.
+        ///
+        /// As of this writing the score is always equal to earned_coins, but
+        /// I've been through too many economy rebalances to assume that will
+        /// always be the case.
+        tied: Option<u32 /* score */>,
+        team: EmojiTeam<S>,
+        earned_coins: Option<u32>,
+        item: Option<Item<S>>,
+        // TODO Delete this commented-out field if it's not necessary
+        // discarded: Option<Item<S>>,
     },
     PhotoContest {
         player: Option<EmojiPlayer<S>>,
@@ -152,6 +154,10 @@ pub enum ParsedTeamFeedEventText<S> {
     PlayerPositionsSwapped {
         swap: PositionSwap<S>,
     },
+    PlayersSwapped {
+        players: [S; 2],
+        slot: Slot,
+    },
     PlayerContained {
         contained_player_name: S,
         container_player_name: S,
@@ -159,10 +165,15 @@ pub enum ParsedTeamFeedEventText<S> {
     PlayerGrow {
         grow: Grow<S>,
     },
+    PlayersPurified {
+        team: EmojiTeam<S>,
+        num_players_purified: u32,
+    },
     Callup {
         lesser_league_team: EmojiTeam<S>,
         greater_league_team: EmojiTeam<S>,
-        slot: Slot,
+        lesser_league_slot: Slot,
+        greater_league_slot: Slot,
         promoted_player_name: S,
         demoted_player_name: S,
     },
@@ -185,13 +196,97 @@ pub enum ParsedTeamFeedEventText<S> {
         team: EmojiTeam<S>,
         new_belt_holder_team: EmojiTeam<S>,
     },
-    // TODO Delete any of these that are still unused when parsing is up to date
     Released {
         team: S,
     },
-    Retirement {
+    OldRetirement {
         previous: S,
         new: Option<S>,
+    },
+    ElectionAppliedLevelUps {
+        player_name: S,
+        num_level_ups: u32,
+    },
+    Restyle {
+        old_name: S,
+        new_name: S,
+    },
+    // This only happens for s10-and-later augments
+    Augment {
+        player_name: S,
+        attribute: Attribute,
+        amount: u32,
+        a_previous_augment_faded: bool,
+    },
+    BulkImmunized {
+        team: EmojiTeam<S>,
+        num_players: u32,
+    },
+    PlayerReflected {
+        new_name: S,
+        old_name: S,
+        replacement_name: S,
+    },
+    SimulacrumPayout {
+        team: EmojiTeam<S>,
+        earned_coins: u32,
+    },
+    GildedUmpiresPayout {
+        team: EmojiTeam<S>,
+        earned_coins: u32,
+    },
+    GoldenPlayerReplacementFailed {
+        position_type: PositionType,
+        team: EmojiTeam<S>,
+    },
+    ResumedHolidayProcessingReplacement {
+        replaced_player_name: S,
+        replacement_player_name: S,
+    },
+    GoldenPlayerEmerged {
+        position_type: PositionType,
+        player_name: S,
+        player_level: u32,
+    },
+    GainedModificationFromGreaterAugment {
+        player_name: S,
+        modification: ModificationType,
+        augment_name: S,
+    },
+    EndGameIncome {
+        team: EmojiTeam<S>,
+        tokens: u32,
+    },
+    PlayersBecameFriends {
+        player_names: [S; 2],
+    },
+    PlayerTrained {
+        player_name: S,
+        bench_slot: BenchSlot,
+    },
+    // As of mid-s14, only counts greater league teams whose manager was
+    // replaced during the election (because they were the worst in their
+    // division), not voluntary lesser league manager replacements
+    ManagerReplaced {
+        team: EmojiTeam<S>,
+        outgoing_manager_name: S,
+        replacement_manager_name: S,
+    },
+    NewRetirement {
+        player_name: S,
+    },
+    EndGamePollen {
+        team: EmojiTeam<S>,
+        pollen: u32,
+    },
+    SweetRelief {
+        player_names: [S; 2],
+    },
+    DefensiveShift {
+        player_names: [S; 2],
+    },
+    GoingHome {
+        player_names: [S; 2],
     },
 }
 
@@ -202,9 +297,31 @@ impl<S: Display> ParsedTeamFeedEventText<S> {
             ParsedTeamFeedEventText::GameResult { home_team, away_team, home_score, away_score } => {
                 format!("{} vs. {} - FINAL {}-{}", away_team, home_team, away_score, home_score)
             }
+            ParsedTeamFeedEventText::DeliveryDiscarded { item } => {
+                format!("{item} is discarded as no player can use it.")
+            }
             ParsedTeamFeedEventText::Delivery { delivery } => delivery.unparse(event, "Delivery"),
             ParsedTeamFeedEventText::Shipment { delivery } => delivery.unparse(event, "Shipment"),
             ParsedTeamFeedEventText::SpecialDelivery { delivery } => delivery.unparse(event, "Special Delivery"),
+            ParsedTeamFeedEventText::ConsumptionContestToPlayer { delivery } => delivery.unparse(event, "the Consumption Contest"),
+            ParsedTeamFeedEventText::ConsumptionContestToTeam { team, earned_coins, item, tied } => {
+                let and_item = item.as_ref().map_or_else(
+                    String::new,
+                    |i| format!(" and a {}", i),
+                );
+
+                if let Some(earned_coins) = earned_coins {
+                    if let Some(score) = tied {
+                        format!("{team} tied the Consumption Contest with {score} and received 🪙 {earned_coins}{and_item}.")
+                    } else {
+                        format!("{team} received 🪙 {earned_coins}{and_item} from a Consumption Contest.")
+                    }
+                } else if let Some(item) = item {
+                    format!("{team} win a {item} from the Consumption Contest.")
+                } else {
+                    panic!("ConsumptionContestToTeam needs either earned coins or an item");
+                }
+            },
             ParsedTeamFeedEventText::PhotoContest { player, earned_coins } => {
                 match player {
                     None => format!("Earned {earned_coins} 🪙 in the Photo Contest."),
@@ -306,7 +423,7 @@ impl<S: Display> ParsedTeamFeedEventText<S> {
                     None => format!("{team_name} gained the {modification} Modification.")
                 }
             },
-            ParsedTeamFeedEventText::Retirement { previous, new } => {
+            ParsedTeamFeedEventText::OldRetirement { previous, new } => {
                 let new = new.as_ref().map(|new| format!(" {new} was called up to take their place.")).unwrap_or_default();
                 let emoji = (matches!(event.event_type, Ok(FeedEventType::Game))).then_some("😇 ").unwrap_or_default();
                 format!("{emoji}{previous} retired from MMOLB!{new}")
@@ -329,6 +446,9 @@ impl<S: Display> ParsedTeamFeedEventText<S> {
             ParsedTeamFeedEventText::PlayerPositionsSwapped { swap } => {
                 format!("{swap}")
             },
+            ParsedTeamFeedEventText::PlayersSwapped { players: [player_one, player_two], slot } => {
+                format!("{player_one} swapped with {player_two} in {slot}.")
+            },
             ParsedTeamFeedEventText::PlayerContained { contained_player_name, container_player_name } => {
                 format!(
                     "{contained_player_name} was contained by {container_player_name} during the \
@@ -338,20 +458,41 @@ impl<S: Display> ParsedTeamFeedEventText<S> {
             ParsedTeamFeedEventText::PlayerGrow { grow } => {
                 format!("{grow}")
             },
-            ParsedTeamFeedEventText::Callup { lesser_league_team, greater_league_team, slot, promoted_player_name, demoted_player_name } => {
+            ParsedTeamFeedEventText::PlayersPurified { team, num_players_purified } => {
+                format!("{team} Purified their roster, cleansing {num_players_purified} player(s) of Corruption.")
+            },
+            ParsedTeamFeedEventText::Callup { lesser_league_team, greater_league_team, lesser_league_slot, greater_league_slot, promoted_player_name, demoted_player_name } => {
+                let in_the_slot = if event.season < 13 {
+                    String::new()
+                } else {
+                    format!(" in the {lesser_league_slot} slot")
+                };
+
                 format!(
-                    "{lesser_league_team} {slot} {promoted_player_name} was called up to replace \
-                    {greater_league_team} {slot} {demoted_player_name}. {demoted_player_name} \
-                    joined the {}.", lesser_league_team.name
+                    "{lesser_league_team} {lesser_league_slot} {promoted_player_name} was called up to replace \
+                    {greater_league_team} {greater_league_slot} {demoted_player_name}. {demoted_player_name} \
+                    joined the {}{in_the_slot}.", lesser_league_team.name
                 )
             }
             ParsedTeamFeedEventText::GreaterAugment { team, greater_augment } => {
-                format!("{team} selected {}", match greater_augment {
-                    GreaterAugment::StartSmall => "Start Small, improving their Starting Pitchers.",
-                    GreaterAugment::Headliners => "Headliners, improving the three Batters at the top of their Lineup.",
-                    GreaterAugment::Plating => "Reinforced Plating, granting their Players +10 to all Defense Attributes.",
-                    GreaterAugment::LuckyDelivery => "TODO Insert the lucky delivery text here",
-                })
+                match greater_augment {
+                    GreaterAugment::StartSmall => format!("{team} selected Start Small, improving their Starting Pitchers."),
+                    GreaterAugment::Headliners => format!("{team} selected Headliners, improving the three Batters at the top of their Lineup."),
+                    GreaterAugment::Plating => format!("{team} selected Reinforced Plating, granting their Players +10 to all Defense Attributes."),
+                    GreaterAugment::LuckyDelivery => format!("{team} selected TODO Insert the lucky delivery text here"),
+                    GreaterAugment::RestoreBackupRoster => format!("{team} selected Restore Backup: Roster to call up Corrupted Bench Players."),
+                    GreaterAugment::RestoreBackupPitching => format!("{team} selected Restore Backup: Pitching to swap Corrupted Bench Pitchers into the rotation."),
+                    GreaterAugment::RestoreBackupBatting => format!("{team} selected Restore Backup: Batting to swap Corrupted Bench Batters into the lineup."),
+                    GreaterAugment::RestoreBackupNullBatter => format!("{team} selected Restore Backup: Null Batter to Reflect their strongest Batter."),
+                    GreaterAugment::Training(slot) => {
+                        let slot = WithNumberSign(*slot);
+                        format!("{team} selected {slot} Training.")
+                    },
+                    GreaterAugment::AugmentedInfield(num_augments) => format!("{team} selected Augmented Infield, applying {num_augments} Augment(s)."),
+                    GreaterAugment::AugmentedRelief(num_augments) => format!("{team} selected Augmented Relief, applying {num_augments} Augment(s)."),
+                    GreaterAugment::AugmentedStart(num_augments) => format!("{team} selected Augmented Start, applying {num_augments} Augment(s)."),
+                    GreaterAugment::AugmentedOutfield(num_augments) => format!("{team} selected Augmented Outfield, applying {num_augments} Augment(s)."),
+                }
             }
             ParsedTeamFeedEventText::PlayerGrewInEfflorescence { player_name, growths: [grow_1, grow_2] } => {
                 format!("{player_name} grew in the 🌹 Efflorescence: {grow_1}, {grow_2}.")
@@ -360,10 +501,84 @@ impl<S: Display> ParsedTeamFeedEventText<S> {
                 format!("{player_name} is Efflorescing and sheds their Corruption!")
             }
             ParsedTeamFeedEventText::ClaimedLinealBelt { team, old_belt_holder_team} => {
-                format!("{team} claimed the Lineal Belt from {old_belt_holder_team}!")
+                let belt = if Breakpoints::Season10.before(event.season as u32, event.day.as_ref().ok().copied(), None) {
+                    "Lineal Belt"
+                } else {
+                    "➰ Lineal Belt"
+                };
+                format!("{team} claimed the {belt} from {old_belt_holder_team}!")
             }
             ParsedTeamFeedEventText::LostLinealBelt { team, new_belt_holder_team } => {
-                format!("{team} lost the Lineal Belt to {new_belt_holder_team}.")
+                let belt = if Breakpoints::Season10.before(event.season as u32, event.day.as_ref().ok().copied(), None) {
+                    "Lineal Belt"
+                } else {
+                    "➰ Lineal Belt"
+                };
+                format!("{team} lost the {belt} to {new_belt_holder_team}.")
+            }
+            ParsedTeamFeedEventText::ElectionAppliedLevelUps { player_name, num_level_ups } => {
+                format!("{player_name} applied {num_level_ups} pending level up(s).")
+            }
+            ParsedTeamFeedEventText::Restyle { old_name, new_name } => {
+                format!("{old_name} visited the Restylist Salon and emerged as {new_name} with fresh tastes.")
+            }
+            ParsedTeamFeedEventText::Augment { player_name, amount, attribute, a_previous_augment_faded } => {
+                let faded = if *a_previous_augment_faded { " A previous augment faded away." } else { "" };
+                format!("{player_name} was Augmented with +{amount} {attribute}.{faded}")
+            }
+            ParsedTeamFeedEventText::BulkImmunized { team, num_players } => {
+                format!("{team} Immunized {num_players} player(s), cleansing Corruption and Efflorescence.")
+            }
+            ParsedTeamFeedEventText::PlayerReflected { new_name, old_name, replacement_name } => {
+                format!("{new_name} was Reflected from {old_name} to replace {replacement_name}.")
+            }
+            ParsedTeamFeedEventText::SimulacrumPayout { team, earned_coins } => {
+                format!("{team} earned {earned_coins} 🪙 from Simulacrum.")
+            }
+            ParsedTeamFeedEventText::GildedUmpiresPayout { team, earned_coins } => {
+                format!("{team} earned {earned_coins} 🪙 from the Gilded Umpires.")
+            }
+            ParsedTeamFeedEventText::GoldenPlayerReplacementFailed { position_type, team } => {
+                format!("{team} failed to generate a replacement for Golden {position_type}.")
+            }
+            ParsedTeamFeedEventText::ResumedHolidayProcessingReplacement { replaced_player_name, replacement_player_name } => {
+                format!("Resumed Holiday processing: {replaced_player_name} was replaced by {replacement_player_name}.")
+            }
+            ParsedTeamFeedEventText::GoldenPlayerEmerged { position_type, player_name, player_level } => {
+                format!("{player_name} emerged as a Level {player_level} Golden {position_type}.")
+            }
+            ParsedTeamFeedEventText::GainedModificationFromGreaterAugment { player_name, modification, augment_name } => {
+                format!("{player_name} gained {modification} via {augment_name}.")
+            }
+            ParsedTeamFeedEventText::EndGameIncome { team, tokens } => {
+                format!("{team} earned {tokens} 🪙.")
+            }
+            ParsedTeamFeedEventText::PlayersBecameFriends { player_names: [player1, player2] } => {
+                format!("{player1} became Friends with {player2}.")
+            }
+            ParsedTeamFeedEventText::PlayerTrained { player_name, bench_slot } => {
+                format!("{player_name} was rerolled and trained to Level 30 for {}.", match bench_slot {
+                    BenchSlot::Batter(n) => format!("Bench Batter #{n}"),
+                    BenchSlot::Pitcher(n) => format!("Bench Pitcher #{n}"),
+                })
+            }
+            ParsedTeamFeedEventText::ManagerReplaced { team, outgoing_manager_name, replacement_manager_name } => {
+                format!("{team} Manager {outgoing_manager_name} was fired and replaced by {replacement_manager_name}.")
+            }
+            ParsedTeamFeedEventText::NewRetirement { player_name } => {
+                format!("{player_name} retired from MMOLB!")
+            }
+            ParsedTeamFeedEventText::EndGamePollen { team, pollen } => {
+                format!("{team} earned {pollen} 🏵️.")
+            }
+            ParsedTeamFeedEventText::SweetRelief { player_names: [player1, player2] } => {
+                format!("{player1} swapped with {player2} via Sweet Relief.")
+            }
+            ParsedTeamFeedEventText::DefensiveShift { player_names: [player1, player2] } => {
+                format!("{player1} swapped with {player2} via Defensive Shift.")
+            }
+            ParsedTeamFeedEventText::GoingHome { player_names: [player1, player2] } => {
+                format!("{player1} swapped with {player2} via Going Home.")
             }
         }
     }

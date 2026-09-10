@@ -1,29 +1,25 @@
+use itertools::Itertools;
 use serde::{Deserialize, Serialize};
-use std::fmt::Formatter;
 use std::{
     convert::Infallible,
-    fmt::{Display, Write},
+    fmt::{self, Display, Write},
     iter::once,
     str::FromStr,
 };
 use strum::{Display, EnumDiscriminants, EnumString, IntoStaticStr};
 use thiserror::Error;
 
-use crate::enums::{Attribute, FoodName};
-use crate::nom_parsing::shared::{discarded_text, received_text};
-use crate::UnparsingContext;
 use crate::{
     enums::{
-        Base, BaseNameVariant, BatterStat, Distance, EventType, FairBallDestination, FairBallType,
-        FieldingErrorType, FoulType, GameOverMessage, HomeAway, ItemName, ItemPrefix, ItemSuffix,
-        MoundVisitType, NowBattingStats, Place, StrikeType, TopBottom,
+        Attribute, Base, BaseNameVariant, BatterStat, Distance, EventType, FairBallDestination,
+        FairBallType, FieldingErrorType, FoodName, FoulType, GameOverMessage, HomeAway, ItemName,
+        ItemPrefix, ItemSuffix, MoundVisitType, NowBattingStats, Place, PollenCount, StrikeType,
+        TopBottom,
     },
-    nom_parsing::shared::{hit_by_pitch_text, strike_out_text},
-    time::Breakpoints,
-    NotRecognized,
+    game_time::Breakpoints,
+    nom_parsing::shared::{discarded_text, hit_by_pitch_text, received_text, strike_out_text},
+    NotRecognized, UnparsingContext,
 };
-
-pub use crate::nom_parsing::shared::GrowAttributeChange;
 
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Error)]
 pub enum GameEventParseError {
@@ -54,6 +50,7 @@ pub enum ParsedEventMessage<S> {
         away_team: EmojiTeam<S>,
         home_team: EmojiTeam<S>,
         stadium: Option<S>,
+        weather: Option<AugmentedWeather<S>>,
     },
     PitchingMatchup {
         away_team: EmojiTeam<S>,
@@ -63,6 +60,7 @@ pub enum ParsedEventMessage<S> {
     },
     Lineup {
         side: HomeAway,
+        manager_name: Option<S>,
         players: Vec<PlacedPlayer<S>>,
     },
     PlayBall,
@@ -87,6 +85,7 @@ pub enum ParsedEventMessage<S> {
     NowBatting {
         batter: S,
         stats: NowBattingStats,
+        player_swept_away: Option<S>,
     },
     InningEnd {
         number: u8,
@@ -95,6 +94,7 @@ pub enum ParsedEventMessage<S> {
 
     // Mound visits
     MoundVisit {
+        manager_name: Option<S>,
         team: EmojiTeam<S>,
         mound_visit_type: MoundVisitType,
     },
@@ -119,6 +119,7 @@ pub enum ParsedEventMessage<S> {
         door_prizes: Vec<DoorPrize<S>>,
         wither: Option<WitherStruggle<S>>,
         efflorescence: Vec<Efflorescence<S>>,
+        assassinations: Vec<Assassination<S>>,
     },
     Strike {
         strike: StrikeType,
@@ -130,6 +131,8 @@ pub enum ParsedEventMessage<S> {
         door_prizes: Vec<DoorPrize<S>>,
         wither: Option<WitherStruggle<S>>,
         efflorescence: Vec<Efflorescence<S>>,
+        surprise_strike: bool,
+        assassinations: Vec<Assassination<S>>,
     },
     Foul {
         foul: FoulType,
@@ -140,6 +143,7 @@ pub enum ParsedEventMessage<S> {
         door_prizes: Vec<DoorPrize<S>>,
         wither: Option<WitherStruggle<S>>,
         efflorescence: Vec<Efflorescence<S>>,
+        assassinations: Vec<Assassination<S>>,
     },
     Walk {
         batter: S,
@@ -149,6 +153,7 @@ pub enum ParsedEventMessage<S> {
         aurora_photos: Option<SnappedPhotos<S>>,
         ejection: Option<Ejection<S>>,
         wither: Option<WitherStruggle<S>>,
+        assassinations: Vec<Assassination<S>>,
     },
     HitByPitch {
         batter: S,
@@ -169,6 +174,7 @@ pub enum ParsedEventMessage<S> {
         aurora_photos: Option<SnappedPhotos<S>>,
         door_prizes: Vec<DoorPrize<S>>,
         efflorescence: Vec<Efflorescence<S>>,
+        assassinations: Vec<Assassination<S>>,
     },
     StrikeOut {
         foul: Option<FoulType>,
@@ -179,6 +185,7 @@ pub enum ParsedEventMessage<S> {
         aurora_photos: Option<SnappedPhotos<S>>,
         ejection: Option<Ejection<S>>,
         wither: Option<WitherStruggle<S>>,
+        assassinations: Vec<Assassination<S>>,
     },
 
     // Field
@@ -208,6 +215,8 @@ pub enum ParsedEventMessage<S> {
         sacrifice: bool,
         perfect: bool,
         ejection: Option<Ejection<S>>,
+        // Season 13
+        jetpack: bool,
     },
     GroundedOut {
         batter: S,
@@ -216,6 +225,7 @@ pub enum ParsedEventMessage<S> {
         advances: Vec<RunnerAdvance<S>>,
         amazing: bool,
         ejection: Option<Ejection<S>>,
+        assassinations: Vec<Assassination<S>>,
     },
     ForceOut {
         batter: S,
@@ -243,6 +253,7 @@ pub enum ParsedEventMessage<S> {
         advances: Vec<RunnerAdvance<S>>,
         sacrifice: bool,
         ejection: Option<Ejection<S>>,
+        double_trouble: Option<PlacedPlayer<S>>,
     },
     DoublePlayCaught {
         batter: S,
@@ -252,6 +263,7 @@ pub enum ParsedEventMessage<S> {
         scores: Vec<S>,
         advances: Vec<RunnerAdvance<S>>,
         ejection: Option<Ejection<S>>,
+        double_trouble: Option<PlacedPlayer<S>>,
     },
     ReachOnFieldingError {
         batter: S,
@@ -284,6 +296,7 @@ pub enum ParsedEventMessage<S> {
     },
     Balk {
         pitcher: S,
+        balk_reason: S,
         scores: Vec<S>,
         advances: Vec<RunnerAdvance<S>>,
     },
@@ -342,7 +355,540 @@ pub enum ParsedEventMessage<S> {
         tokens_earnt: u32,
     },
     WeatherSimulacrumOffseason,
+
+    // Season 11
+    WeatherNoisy {
+        player_team: EmojiTeam<S>,
+        ump_team: EmojiTeam<S>,
+        tokens_earnt: u32,
+    },
+
+    // Season 13
+    EndGameIncome {
+        winning_team: EmojiTeam<S>,
+        winning_team_income: u32,
+        losing_team: EmojiTeam<S>,
+        losing_team_income: u32,
+    },
+    // TODO Consolidate this with WeatherProsperity, ideally in a way that doesn't break if the
+    //   home and away teams have identical `EmojiTeam`s
+    WeatherProsperityS13 {
+        winning_team: EmojiTeam<S>,
+        winning_team_income: u32,
+        losing_team: EmojiTeam<S>,
+        losing_team_income: u32,
+    },
+    PartyFriendship {
+        pitcher_name: S,
+        batter_name: S,
+    },
+
+    // Season 15
+    WeatherPollen {
+        winning_team: EmojiTeam<S>,
+        winning_team_pollen: u32,
+        losing_team: EmojiTeam<S>,
+        losing_team_pollen: u32,
+    },
 }
+
+impl<S> ParsedEventMessage<S> {
+    pub fn batter(&self) -> Option<&S> {
+        match self {
+            ParsedEventMessage::ParseError { .. } => None,
+            ParsedEventMessage::KnownBug { .. } => None,
+            ParsedEventMessage::LiveNow { .. } => None,
+            ParsedEventMessage::PitchingMatchup { .. } => None,
+            ParsedEventMessage::Lineup { .. } => None,
+            ParsedEventMessage::PlayBall => None,
+            ParsedEventMessage::GameOver { .. } => None,
+            ParsedEventMessage::Recordkeeping { .. } => None,
+            ParsedEventMessage::InningStart { .. } => None,
+            ParsedEventMessage::NowBatting { .. } => None,
+            ParsedEventMessage::InningEnd { .. } => None,
+            ParsedEventMessage::MoundVisit { .. } => None,
+            ParsedEventMessage::PitcherRemains { .. } => None,
+            ParsedEventMessage::PitcherSwap { .. } => None,
+            ParsedEventMessage::Ball { .. } => None,
+            ParsedEventMessage::Strike { .. } => None,
+            ParsedEventMessage::Foul { .. } => None,
+            ParsedEventMessage::Walk { batter, .. } => Some(batter),
+            ParsedEventMessage::HitByPitch { batter, .. } => Some(batter),
+            ParsedEventMessage::FairBall { batter, .. } => Some(batter),
+            ParsedEventMessage::StrikeOut { batter, .. } => Some(batter),
+            ParsedEventMessage::BatterToBase { batter, .. } => Some(batter),
+            ParsedEventMessage::HomeRun { batter, .. } => Some(batter),
+            ParsedEventMessage::CaughtOut { batter, .. } => Some(batter),
+            ParsedEventMessage::GroundedOut { batter, .. } => Some(batter),
+            ParsedEventMessage::ForceOut { batter, .. } => Some(batter),
+            ParsedEventMessage::ReachOnFieldersChoice { batter, .. } => Some(batter),
+            ParsedEventMessage::DoublePlayGrounded { batter, .. } => Some(batter),
+            ParsedEventMessage::DoublePlayCaught { batter, .. } => Some(batter),
+            ParsedEventMessage::ReachOnFieldingError { batter, .. } => Some(batter),
+            ParsedEventMessage::WeatherDelivery { .. } => None,
+            ParsedEventMessage::FallingStar { .. } => None,
+            ParsedEventMessage::FallingStarOutcome { .. } => None,
+            ParsedEventMessage::WeatherShipment { .. } => None,
+            ParsedEventMessage::WeatherSpecialDelivery { .. } => None,
+            ParsedEventMessage::Balk { .. } => None,
+            ParsedEventMessage::WeatherProsperity { .. } => None,
+            ParsedEventMessage::PhotoContest { .. } => None,
+            ParsedEventMessage::Party { .. } => None,
+            ParsedEventMessage::WeatherReflection { .. } => None,
+            ParsedEventMessage::WeatherWither { .. } => None,
+            ParsedEventMessage::LinealBeltTransfer { .. } => None,
+            ParsedEventMessage::WeatherConsumption(_) => None,
+            ParsedEventMessage::WeatherSimulacrum { .. } => None,
+            ParsedEventMessage::WeatherSimulacrumOffseason => None,
+            ParsedEventMessage::WeatherNoisy { .. } => None,
+            ParsedEventMessage::EndGameIncome { .. } => None,
+            ParsedEventMessage::WeatherProsperityS13 { .. } => None,
+            ParsedEventMessage::PartyFriendship { .. } => None,
+            ParsedEventMessage::WeatherPollen { .. } => None,
+        }
+    }
+
+    pub fn steals(&self) -> Option<&Vec<BaseSteal<S>>> {
+        match self {
+            ParsedEventMessage::ParseError { .. } => None,
+            ParsedEventMessage::KnownBug { .. } => None,
+            ParsedEventMessage::LiveNow { .. } => None,
+            ParsedEventMessage::PitchingMatchup { .. } => None,
+            ParsedEventMessage::Lineup { .. } => None,
+            ParsedEventMessage::PlayBall => None,
+            ParsedEventMessage::GameOver { .. } => None,
+            ParsedEventMessage::Recordkeeping { .. } => None,
+            ParsedEventMessage::InningStart { .. } => None,
+            ParsedEventMessage::NowBatting { .. } => None,
+            ParsedEventMessage::InningEnd { .. } => None,
+            ParsedEventMessage::MoundVisit { .. } => None,
+            ParsedEventMessage::PitcherRemains { .. } => None,
+            ParsedEventMessage::PitcherSwap { .. } => None,
+            ParsedEventMessage::Ball { steals, .. } => Some(steals),
+            ParsedEventMessage::Strike { steals, .. } => Some(steals),
+            ParsedEventMessage::Foul { steals, .. } => Some(steals),
+            ParsedEventMessage::Walk { .. } => None,
+            ParsedEventMessage::HitByPitch { .. } => None,
+            ParsedEventMessage::FairBall { .. } => None,
+            ParsedEventMessage::StrikeOut { steals, .. } => Some(steals),
+            ParsedEventMessage::BatterToBase { .. } => None,
+            ParsedEventMessage::HomeRun { .. } => None,
+            ParsedEventMessage::CaughtOut { .. } => None,
+            ParsedEventMessage::GroundedOut { .. } => None,
+            ParsedEventMessage::ForceOut { .. } => None,
+            ParsedEventMessage::ReachOnFieldersChoice { .. } => None,
+            ParsedEventMessage::DoublePlayGrounded { .. } => None,
+            ParsedEventMessage::DoublePlayCaught { .. } => None,
+            ParsedEventMessage::ReachOnFieldingError { .. } => None,
+            ParsedEventMessage::WeatherDelivery { .. } => None,
+            ParsedEventMessage::FallingStar { .. } => None,
+            ParsedEventMessage::FallingStarOutcome { .. } => None,
+            ParsedEventMessage::WeatherShipment { .. } => None,
+            ParsedEventMessage::WeatherSpecialDelivery { .. } => None,
+            ParsedEventMessage::Balk { .. } => None,
+            ParsedEventMessage::WeatherProsperity { .. } => None,
+            ParsedEventMessage::PhotoContest { .. } => None,
+            ParsedEventMessage::Party { .. } => None,
+            ParsedEventMessage::WeatherReflection { .. } => None,
+            ParsedEventMessage::WeatherWither { .. } => None,
+            ParsedEventMessage::LinealBeltTransfer { .. } => None,
+            ParsedEventMessage::WeatherConsumption(_) => None,
+            ParsedEventMessage::WeatherSimulacrum { .. } => None,
+            ParsedEventMessage::WeatherSimulacrumOffseason => None,
+            ParsedEventMessage::WeatherNoisy { .. } => None,
+            ParsedEventMessage::EndGameIncome { .. } => None,
+            ParsedEventMessage::WeatherProsperityS13 { .. } => None,
+            ParsedEventMessage::PartyFriendship { .. } => None,
+            ParsedEventMessage::WeatherPollen { .. } => None,
+        }
+    }
+
+    pub fn scores(&self) -> Option<&Vec<S>> {
+        match self {
+            ParsedEventMessage::ParseError { .. } => None,
+            ParsedEventMessage::KnownBug { .. } => None,
+            ParsedEventMessage::LiveNow { .. } => None,
+            ParsedEventMessage::PitchingMatchup { .. } => None,
+            ParsedEventMessage::Lineup { .. } => None,
+            ParsedEventMessage::PlayBall => None,
+            ParsedEventMessage::GameOver { .. } => None,
+            ParsedEventMessage::Recordkeeping { .. } => None,
+            ParsedEventMessage::InningStart { .. } => None,
+            ParsedEventMessage::NowBatting { .. } => None,
+            ParsedEventMessage::InningEnd { .. } => None,
+            ParsedEventMessage::MoundVisit { .. } => None,
+            ParsedEventMessage::PitcherRemains { .. } => None,
+            ParsedEventMessage::PitcherSwap { .. } => None,
+            ParsedEventMessage::Ball { .. } => None,
+            ParsedEventMessage::Strike { .. } => None,
+            ParsedEventMessage::Foul { .. } => None,
+            ParsedEventMessage::Walk { scores, .. } => Some(scores),
+            ParsedEventMessage::HitByPitch { scores, .. } => Some(scores),
+            ParsedEventMessage::FairBall { .. } => None,
+            ParsedEventMessage::StrikeOut { .. } => None,
+            ParsedEventMessage::BatterToBase { scores, .. } => Some(scores),
+            ParsedEventMessage::HomeRun { scores, .. } => Some(scores),
+            ParsedEventMessage::CaughtOut { scores, .. } => Some(scores),
+            ParsedEventMessage::GroundedOut { scores, .. } => Some(scores),
+            ParsedEventMessage::ForceOut { scores, .. } => Some(scores),
+            ParsedEventMessage::ReachOnFieldersChoice { scores, .. } => Some(scores),
+            ParsedEventMessage::DoublePlayGrounded { scores, .. } => Some(scores),
+            ParsedEventMessage::DoublePlayCaught { scores, .. } => Some(scores),
+            ParsedEventMessage::ReachOnFieldingError { scores, .. } => Some(scores),
+            ParsedEventMessage::WeatherDelivery { .. } => None,
+            ParsedEventMessage::FallingStar { .. } => None,
+            ParsedEventMessage::FallingStarOutcome { .. } => None,
+            ParsedEventMessage::WeatherShipment { .. } => None,
+            ParsedEventMessage::WeatherSpecialDelivery { .. } => None,
+            ParsedEventMessage::Balk { scores, .. } => Some(scores),
+            ParsedEventMessage::WeatherProsperity { .. } => None,
+            ParsedEventMessage::PhotoContest { .. } => None,
+            ParsedEventMessage::Party { .. } => None,
+            ParsedEventMessage::WeatherReflection { .. } => None,
+            ParsedEventMessage::WeatherWither { .. } => None,
+            ParsedEventMessage::LinealBeltTransfer { .. } => None,
+            ParsedEventMessage::WeatherConsumption(_) => None,
+            ParsedEventMessage::WeatherSimulacrum { .. } => None,
+            ParsedEventMessage::WeatherSimulacrumOffseason => None,
+            ParsedEventMessage::WeatherNoisy { .. } => None,
+            ParsedEventMessage::EndGameIncome { .. } => None,
+            ParsedEventMessage::WeatherProsperityS13 { .. } => None,
+            ParsedEventMessage::PartyFriendship { .. } => None,
+            ParsedEventMessage::WeatherPollen { .. } => None,
+        }
+    }
+
+    pub fn cheer(&self) -> Option<&Cheer> {
+        match self {
+            ParsedEventMessage::ParseError { .. } => None,
+            ParsedEventMessage::KnownBug { .. } => None,
+            ParsedEventMessage::LiveNow { .. } => None,
+            ParsedEventMessage::PitchingMatchup { .. } => None,
+            ParsedEventMessage::Lineup { .. } => None,
+            ParsedEventMessage::PlayBall => None,
+            ParsedEventMessage::GameOver { .. } => None,
+            ParsedEventMessage::Recordkeeping { .. } => None,
+            ParsedEventMessage::InningStart { .. } => None,
+            ParsedEventMessage::NowBatting { .. } => None,
+            ParsedEventMessage::InningEnd { .. } => None,
+            ParsedEventMessage::MoundVisit { .. } => None,
+            ParsedEventMessage::PitcherRemains { .. } => None,
+            ParsedEventMessage::PitcherSwap { .. } => None,
+            ParsedEventMessage::Ball { cheer, .. } => cheer.as_ref(),
+            ParsedEventMessage::Strike { cheer, .. } => cheer.as_ref(),
+            ParsedEventMessage::Foul { cheer, .. } => cheer.as_ref(),
+            ParsedEventMessage::Walk { cheer, .. } => cheer.as_ref(),
+            ParsedEventMessage::HitByPitch { cheer, .. } => cheer.as_ref(),
+            ParsedEventMessage::FairBall { cheer, .. } => cheer.as_ref(),
+            ParsedEventMessage::StrikeOut { cheer, .. } => cheer.as_ref(),
+            ParsedEventMessage::BatterToBase { .. } => None,
+            ParsedEventMessage::HomeRun { .. } => None,
+            ParsedEventMessage::CaughtOut { .. } => None,
+            ParsedEventMessage::GroundedOut { .. } => None,
+            ParsedEventMessage::ForceOut { .. } => None,
+            ParsedEventMessage::ReachOnFieldersChoice { .. } => None,
+            ParsedEventMessage::DoublePlayGrounded { .. } => None,
+            ParsedEventMessage::DoublePlayCaught { .. } => None,
+            ParsedEventMessage::ReachOnFieldingError { .. } => None,
+            ParsedEventMessage::WeatherDelivery { .. } => None,
+            ParsedEventMessage::FallingStar { .. } => None,
+            ParsedEventMessage::FallingStarOutcome { .. } => None,
+            ParsedEventMessage::WeatherShipment { .. } => None,
+            ParsedEventMessage::WeatherSpecialDelivery { .. } => None,
+            ParsedEventMessage::Balk { .. } => None,
+            ParsedEventMessage::WeatherProsperity { .. } => None,
+            ParsedEventMessage::PhotoContest { .. } => None,
+            ParsedEventMessage::Party { .. } => None,
+            ParsedEventMessage::WeatherReflection { .. } => None,
+            ParsedEventMessage::WeatherWither { .. } => None,
+            ParsedEventMessage::LinealBeltTransfer { .. } => None,
+            ParsedEventMessage::WeatherConsumption(_) => None,
+            ParsedEventMessage::WeatherSimulacrum { .. } => None,
+            ParsedEventMessage::WeatherSimulacrumOffseason => None,
+            ParsedEventMessage::WeatherNoisy { .. } => None,
+            ParsedEventMessage::EndGameIncome { .. } => None,
+            ParsedEventMessage::WeatherProsperityS13 { .. } => None,
+            ParsedEventMessage::PartyFriendship { .. } => None,
+            ParsedEventMessage::WeatherPollen { .. } => None,
+        }
+    }
+
+    pub fn aurora_photos(&self) -> Option<&SnappedPhotos<S>> {
+        match self {
+            ParsedEventMessage::ParseError { .. } => None,
+            ParsedEventMessage::KnownBug { .. } => None,
+            ParsedEventMessage::LiveNow { .. } => None,
+            ParsedEventMessage::PitchingMatchup { .. } => None,
+            ParsedEventMessage::Lineup { .. } => None,
+            ParsedEventMessage::PlayBall => None,
+            ParsedEventMessage::GameOver { .. } => None,
+            ParsedEventMessage::Recordkeeping { .. } => None,
+            ParsedEventMessage::InningStart { .. } => None,
+            ParsedEventMessage::NowBatting { .. } => None,
+            ParsedEventMessage::InningEnd { .. } => None,
+            ParsedEventMessage::MoundVisit { .. } => None,
+            ParsedEventMessage::PitcherRemains { .. } => None,
+            ParsedEventMessage::PitcherSwap { .. } => None,
+            ParsedEventMessage::Ball { aurora_photos, .. } => aurora_photos.as_ref(),
+            ParsedEventMessage::Strike { aurora_photos, .. } => aurora_photos.as_ref(),
+            ParsedEventMessage::Foul { aurora_photos, .. } => aurora_photos.as_ref(),
+            ParsedEventMessage::Walk { aurora_photos, .. } => aurora_photos.as_ref(),
+            ParsedEventMessage::HitByPitch { aurora_photos, .. } => aurora_photos.as_ref(),
+            ParsedEventMessage::FairBall { aurora_photos, .. } => aurora_photos.as_ref(),
+            ParsedEventMessage::StrikeOut { aurora_photos, .. } => aurora_photos.as_ref(),
+            ParsedEventMessage::BatterToBase { .. } => None,
+            ParsedEventMessage::HomeRun { .. } => None,
+            ParsedEventMessage::CaughtOut { .. } => None,
+            ParsedEventMessage::GroundedOut { .. } => None,
+            ParsedEventMessage::ForceOut { .. } => None,
+            ParsedEventMessage::ReachOnFieldersChoice { .. } => None,
+            ParsedEventMessage::DoublePlayGrounded { .. } => None,
+            ParsedEventMessage::DoublePlayCaught { .. } => None,
+            ParsedEventMessage::ReachOnFieldingError { .. } => None,
+            ParsedEventMessage::WeatherDelivery { .. } => None,
+            ParsedEventMessage::FallingStar { .. } => None,
+            ParsedEventMessage::FallingStarOutcome { .. } => None,
+            ParsedEventMessage::WeatherShipment { .. } => None,
+            ParsedEventMessage::WeatherSpecialDelivery { .. } => None,
+            ParsedEventMessage::Balk { .. } => None,
+            ParsedEventMessage::WeatherProsperity { .. } => None,
+            ParsedEventMessage::PhotoContest { .. } => None,
+            ParsedEventMessage::Party { .. } => None,
+            ParsedEventMessage::WeatherReflection { .. } => None,
+            ParsedEventMessage::WeatherWither { .. } => None,
+            ParsedEventMessage::LinealBeltTransfer { .. } => None,
+            ParsedEventMessage::WeatherConsumption(_) => None,
+            ParsedEventMessage::WeatherSimulacrum { .. } => None,
+            ParsedEventMessage::WeatherSimulacrumOffseason => None,
+            ParsedEventMessage::WeatherNoisy { .. } => None,
+            ParsedEventMessage::EndGameIncome { .. } => None,
+            ParsedEventMessage::WeatherProsperityS13 { .. } => None,
+            ParsedEventMessage::PartyFriendship { .. } => None,
+            ParsedEventMessage::WeatherPollen { .. } => None,
+        }
+    }
+
+    pub fn ejection(&self) -> Option<&Ejection<S>> {
+        match self {
+            ParsedEventMessage::ParseError { .. } => None,
+            ParsedEventMessage::KnownBug { .. } => None,
+            ParsedEventMessage::LiveNow { .. } => None,
+            ParsedEventMessage::PitchingMatchup { .. } => None,
+            ParsedEventMessage::Lineup { .. } => None,
+            ParsedEventMessage::PlayBall => None,
+            ParsedEventMessage::GameOver { .. } => None,
+            ParsedEventMessage::Recordkeeping { .. } => None,
+            ParsedEventMessage::InningStart { .. } => None,
+            ParsedEventMessage::NowBatting { .. } => None,
+            ParsedEventMessage::InningEnd { .. } => None,
+            ParsedEventMessage::MoundVisit { .. } => None,
+            ParsedEventMessage::PitcherRemains { .. } => None,
+            ParsedEventMessage::PitcherSwap { .. } => None,
+            ParsedEventMessage::Ball { ejection, .. } => ejection.as_ref(),
+            ParsedEventMessage::Strike { ejection, .. } => ejection.as_ref(),
+            ParsedEventMessage::Foul { .. } => None,
+            ParsedEventMessage::Walk { ejection, .. } => ejection.as_ref(),
+            ParsedEventMessage::HitByPitch { ejection, .. } => ejection.as_ref(),
+            ParsedEventMessage::FairBall { .. } => None,
+            ParsedEventMessage::StrikeOut { ejection, .. } => ejection.as_ref(),
+            ParsedEventMessage::BatterToBase { ejection, .. } => ejection.as_ref(),
+            ParsedEventMessage::HomeRun { ejection, .. } => ejection.as_ref(),
+            ParsedEventMessage::CaughtOut { ejection, .. } => ejection.as_ref(),
+            ParsedEventMessage::GroundedOut { ejection, .. } => ejection.as_ref(),
+            ParsedEventMessage::ForceOut { ejection, .. } => ejection.as_ref(),
+            ParsedEventMessage::ReachOnFieldersChoice { ejection, .. } => ejection.as_ref(),
+            ParsedEventMessage::DoublePlayGrounded { ejection, .. } => ejection.as_ref(),
+            ParsedEventMessage::DoublePlayCaught { ejection, .. } => ejection.as_ref(),
+            ParsedEventMessage::ReachOnFieldingError { ejection, .. } => ejection.as_ref(),
+            ParsedEventMessage::WeatherDelivery { .. } => None,
+            ParsedEventMessage::FallingStar { .. } => None,
+            ParsedEventMessage::FallingStarOutcome { .. } => None,
+            ParsedEventMessage::WeatherShipment { .. } => None,
+            ParsedEventMessage::WeatherSpecialDelivery { .. } => None,
+            ParsedEventMessage::Balk { .. } => None,
+            ParsedEventMessage::WeatherProsperity { .. } => None,
+            ParsedEventMessage::PhotoContest { .. } => None,
+            ParsedEventMessage::Party { .. } => None,
+            ParsedEventMessage::WeatherReflection { .. } => None,
+            ParsedEventMessage::WeatherWither { .. } => None,
+            ParsedEventMessage::LinealBeltTransfer { .. } => None,
+            ParsedEventMessage::WeatherConsumption(_) => None,
+            ParsedEventMessage::WeatherSimulacrum { .. } => None,
+            ParsedEventMessage::WeatherSimulacrumOffseason => None,
+            ParsedEventMessage::WeatherNoisy { .. } => None,
+            ParsedEventMessage::EndGameIncome { .. } => None,
+            ParsedEventMessage::WeatherProsperityS13 { .. } => None,
+            ParsedEventMessage::PartyFriendship { .. } => None,
+            ParsedEventMessage::WeatherPollen { .. } => None,
+        }
+    }
+
+    pub fn door_prizes(&self) -> Option<&Vec<DoorPrize<S>>> {
+        match self {
+            ParsedEventMessage::ParseError { .. } => None,
+            ParsedEventMessage::KnownBug { .. } => None,
+            ParsedEventMessage::LiveNow { .. } => None,
+            ParsedEventMessage::PitchingMatchup { .. } => None,
+            ParsedEventMessage::Lineup { .. } => None,
+            ParsedEventMessage::PlayBall => None,
+            ParsedEventMessage::GameOver { .. } => None,
+            ParsedEventMessage::Recordkeeping { .. } => None,
+            ParsedEventMessage::InningStart { .. } => None,
+            ParsedEventMessage::NowBatting { .. } => None,
+            ParsedEventMessage::InningEnd { .. } => None,
+            ParsedEventMessage::MoundVisit { .. } => None,
+            ParsedEventMessage::PitcherRemains { .. } => None,
+            ParsedEventMessage::PitcherSwap { .. } => None,
+            ParsedEventMessage::Ball { door_prizes, .. } => Some(door_prizes),
+            ParsedEventMessage::Strike { door_prizes, .. } => Some(door_prizes),
+            ParsedEventMessage::Foul { door_prizes, .. } => Some(door_prizes),
+            ParsedEventMessage::Walk { .. } => None,
+            ParsedEventMessage::HitByPitch { door_prizes, .. } => Some(door_prizes),
+            ParsedEventMessage::FairBall { door_prizes, .. } => Some(door_prizes),
+            ParsedEventMessage::StrikeOut { .. } => None,
+            ParsedEventMessage::BatterToBase { .. } => None,
+            ParsedEventMessage::HomeRun { .. } => None,
+            ParsedEventMessage::CaughtOut { .. } => None,
+            ParsedEventMessage::GroundedOut { .. } => None,
+            ParsedEventMessage::ForceOut { .. } => None,
+            ParsedEventMessage::ReachOnFieldersChoice { .. } => None,
+            ParsedEventMessage::DoublePlayGrounded { .. } => None,
+            ParsedEventMessage::DoublePlayCaught { .. } => None,
+            ParsedEventMessage::ReachOnFieldingError { .. } => None,
+            ParsedEventMessage::WeatherDelivery { .. } => None,
+            ParsedEventMessage::FallingStar { .. } => None,
+            ParsedEventMessage::FallingStarOutcome { .. } => None,
+            ParsedEventMessage::WeatherShipment { .. } => None,
+            ParsedEventMessage::WeatherSpecialDelivery { .. } => None,
+            ParsedEventMessage::Balk { .. } => None,
+            ParsedEventMessage::WeatherProsperity { .. } => None,
+            ParsedEventMessage::PhotoContest { .. } => None,
+            ParsedEventMessage::Party { .. } => None,
+            ParsedEventMessage::WeatherReflection { .. } => None,
+            ParsedEventMessage::WeatherWither { .. } => None,
+            ParsedEventMessage::LinealBeltTransfer { .. } => None,
+            ParsedEventMessage::WeatherConsumption(_) => None,
+            ParsedEventMessage::WeatherSimulacrum { .. } => None,
+            ParsedEventMessage::WeatherSimulacrumOffseason => None,
+            ParsedEventMessage::WeatherNoisy { .. } => None,
+            ParsedEventMessage::EndGameIncome { .. } => None,
+            ParsedEventMessage::WeatherProsperityS13 { .. } => None,
+            ParsedEventMessage::PartyFriendship { .. } => None,
+            ParsedEventMessage::WeatherPollen { .. } => None,
+        }
+    }
+
+    pub fn wither(&self) -> Option<&WitherStruggle<S>> {
+        match self {
+            ParsedEventMessage::ParseError { .. } => None,
+            ParsedEventMessage::KnownBug { .. } => None,
+            ParsedEventMessage::LiveNow { .. } => None,
+            ParsedEventMessage::PitchingMatchup { .. } => None,
+            ParsedEventMessage::Lineup { .. } => None,
+            ParsedEventMessage::PlayBall => None,
+            ParsedEventMessage::GameOver { .. } => None,
+            ParsedEventMessage::Recordkeeping { .. } => None,
+            ParsedEventMessage::InningStart { .. } => None,
+            ParsedEventMessage::NowBatting { .. } => None,
+            ParsedEventMessage::InningEnd { .. } => None,
+            ParsedEventMessage::MoundVisit { .. } => None,
+            ParsedEventMessage::PitcherRemains { .. } => None,
+            ParsedEventMessage::PitcherSwap { .. } => None,
+            ParsedEventMessage::Ball { wither, .. } => wither.as_ref(),
+            ParsedEventMessage::Strike { wither, .. } => wither.as_ref(),
+            ParsedEventMessage::Foul { wither, .. } => wither.as_ref(),
+            ParsedEventMessage::Walk { wither, .. } => wither.as_ref(),
+            ParsedEventMessage::HitByPitch { wither, .. } => wither.as_ref(),
+            ParsedEventMessage::FairBall { .. } => None,
+            ParsedEventMessage::StrikeOut { wither, .. } => wither.as_ref(),
+            ParsedEventMessage::BatterToBase { .. } => None,
+            ParsedEventMessage::HomeRun { .. } => None,
+            ParsedEventMessage::CaughtOut { .. } => None,
+            ParsedEventMessage::GroundedOut { .. } => None,
+            ParsedEventMessage::ForceOut { .. } => None,
+            ParsedEventMessage::ReachOnFieldersChoice { .. } => None,
+            ParsedEventMessage::DoublePlayGrounded { .. } => None,
+            ParsedEventMessage::DoublePlayCaught { .. } => None,
+            ParsedEventMessage::ReachOnFieldingError { .. } => None,
+            ParsedEventMessage::WeatherDelivery { .. } => None,
+            ParsedEventMessage::FallingStar { .. } => None,
+            ParsedEventMessage::FallingStarOutcome { .. } => None,
+            ParsedEventMessage::WeatherShipment { .. } => None,
+            ParsedEventMessage::WeatherSpecialDelivery { .. } => None,
+            ParsedEventMessage::Balk { .. } => None,
+            ParsedEventMessage::WeatherProsperity { .. } => None,
+            ParsedEventMessage::PhotoContest { .. } => None,
+            ParsedEventMessage::Party { .. } => None,
+            ParsedEventMessage::WeatherReflection { .. } => None,
+            ParsedEventMessage::WeatherWither { .. } => None,
+            ParsedEventMessage::LinealBeltTransfer { .. } => None,
+            ParsedEventMessage::WeatherConsumption(_) => None,
+            ParsedEventMessage::WeatherSimulacrum { .. } => None,
+            ParsedEventMessage::WeatherSimulacrumOffseason => None,
+            ParsedEventMessage::WeatherNoisy { .. } => None,
+            ParsedEventMessage::EndGameIncome { .. } => None,
+            ParsedEventMessage::WeatherProsperityS13 { .. } => None,
+            ParsedEventMessage::PartyFriendship { .. } => None,
+            ParsedEventMessage::WeatherPollen { .. } => None,
+        }
+    }
+
+    pub fn efflorescence(&self) -> Option<&Vec<Efflorescence<S>>> {
+        match self {
+            ParsedEventMessage::ParseError { .. } => None,
+            ParsedEventMessage::KnownBug { .. } => None,
+            ParsedEventMessage::LiveNow { .. } => None,
+            ParsedEventMessage::PitchingMatchup { .. } => None,
+            ParsedEventMessage::Lineup { .. } => None,
+            ParsedEventMessage::PlayBall => None,
+            ParsedEventMessage::GameOver { .. } => None,
+            ParsedEventMessage::Recordkeeping { .. } => None,
+            ParsedEventMessage::InningStart { .. } => None,
+            ParsedEventMessage::NowBatting { .. } => None,
+            ParsedEventMessage::InningEnd { .. } => None,
+            ParsedEventMessage::MoundVisit { .. } => None,
+            ParsedEventMessage::PitcherRemains { .. } => None,
+            ParsedEventMessage::PitcherSwap { .. } => None,
+            ParsedEventMessage::Ball { efflorescence, .. } => Some(efflorescence),
+            ParsedEventMessage::Strike { efflorescence, .. } => Some(efflorescence),
+            ParsedEventMessage::Foul { efflorescence, .. } => Some(efflorescence),
+            ParsedEventMessage::Walk { .. } => None,
+            ParsedEventMessage::HitByPitch { efflorescence, .. } => Some(efflorescence),
+            ParsedEventMessage::FairBall { efflorescence, .. } => Some(efflorescence),
+            ParsedEventMessage::StrikeOut { .. } => None,
+            ParsedEventMessage::BatterToBase { .. } => None,
+            ParsedEventMessage::HomeRun { .. } => None,
+            ParsedEventMessage::CaughtOut { .. } => None,
+            ParsedEventMessage::GroundedOut { .. } => None,
+            ParsedEventMessage::ForceOut { .. } => None,
+            ParsedEventMessage::ReachOnFieldersChoice { .. } => None,
+            ParsedEventMessage::DoublePlayGrounded { .. } => None,
+            ParsedEventMessage::DoublePlayCaught { .. } => None,
+            ParsedEventMessage::ReachOnFieldingError { .. } => None,
+            ParsedEventMessage::WeatherDelivery { .. } => None,
+            ParsedEventMessage::FallingStar { .. } => None,
+            ParsedEventMessage::FallingStarOutcome { .. } => None,
+            ParsedEventMessage::WeatherShipment { .. } => None,
+            ParsedEventMessage::WeatherSpecialDelivery { .. } => None,
+            ParsedEventMessage::Balk { .. } => None,
+            ParsedEventMessage::WeatherProsperity { .. } => None,
+            ParsedEventMessage::PhotoContest { .. } => None,
+            ParsedEventMessage::Party { .. } => None,
+            ParsedEventMessage::WeatherReflection { .. } => None,
+            ParsedEventMessage::WeatherWither { .. } => None,
+            ParsedEventMessage::LinealBeltTransfer { .. } => None,
+            ParsedEventMessage::WeatherConsumption(_) => None,
+            ParsedEventMessage::WeatherSimulacrum { .. } => None,
+            ParsedEventMessage::WeatherSimulacrumOffseason => None,
+            ParsedEventMessage::WeatherNoisy { .. } => None,
+            ParsedEventMessage::EndGameIncome { .. } => None,
+            ParsedEventMessage::WeatherProsperityS13 { .. } => None,
+            ParsedEventMessage::PartyFriendship { .. } => None,
+            ParsedEventMessage::WeatherPollen { .. } => None,
+        }
+    }
+}
+
 impl<S: Display> ParsedEventMessage<S> {
     /// Recreate the event message this ParsedEvent was built out of.
     pub fn unparse<'a>(
@@ -357,9 +903,20 @@ impl<S: Display> ParsedEventMessage<S> {
                 away_team,
                 home_team,
                 stadium,
-            } => match stadium {
-                Some(stadium) => format!("{} vs {} @ {}", away_team, home_team, stadium),
-                None => format!("{} @ {}", away_team, home_team),
+                weather,
+            } => match (stadium, weather) {
+                (None, None) => format!("{} @ {}", away_team, home_team),
+                (Some(stadium), None) => format!("{} vs {} @ {}", away_team, home_team, stadium),
+                (None, Some(weather)) => {
+                    format!("{} @ {} (Weather: {})", away_team, home_team, weather)
+                }
+                (Some(stadium), Some(weather)) => {
+                    // This format is a guess, since no known event has stadium and weather
+                    format!(
+                        "{} vs {} @ {} (Weather: {})",
+                        away_team, home_team, stadium, weather
+                    )
+                }
             },
             Self::PitchingMatchup {
                 away_team,
@@ -367,14 +924,24 @@ impl<S: Display> ParsedEventMessage<S> {
                 home_pitcher,
                 away_pitcher,
             } => format!("{away_team} {away_pitcher} vs. {home_team} {home_pitcher}"),
-            Self::Lineup { side: _, players } => {
-                players
-                    .iter()
-                    .enumerate()
-                    .fold(String::new(), |mut acc, (index, player)| {
-                        let _ = write!(acc, "{}. {player}<br>", index + 1);
-                        acc
-                    })
+            Self::Lineup {
+                side: _,
+                manager_name,
+                players,
+            } => {
+                let players_str =
+                    players
+                        .iter()
+                        .enumerate()
+                        .fold(String::new(), |mut acc, (index, player)| {
+                            let _ = write!(acc, "{}. {player}<br>", index + 1);
+                            acc
+                        });
+                if let Some(manager_name) = manager_name {
+                    format!("Manager: {manager_name}<br>{players_str}")
+                } else {
+                    players_str
+                }
             }
             Self::PlayBall => "\"PLAY BALL.\"".to_string(),
             Self::GameOver { message } => message.to_string(),
@@ -425,6 +992,30 @@ impl<S: Display> ParsedEventMessage<S> {
                             .unwrap_or_default();
                         format!(" {leaving_emoji}{leaving_pitcher} is leaving the game. {arriving_emoji}{arriving_pitcher} takes the mound.")
                     }
+                    Some(StartOfInningPitcher::Flooded {
+                        swept_pitcher_name,
+                        incoming_pitcher_name,
+                        preemption,
+                    }) => {
+                        let preemption = preemption.as_ref()
+                            .map_or_else(String::new, |BasicPitcherSwap { leaving_pitcher, arriving_pitcher }| {
+                               format!(
+                                   " {leaving_pitcher} is leaving the game. {} {arriving_pitcher} takes the mound.",
+                                   match side {
+                                       TopBottom::Top => context.home_emoji_team.emoji,
+                                       TopBottom::Bottom => context.away_emoji_team.emoji,
+                                   }
+                               )
+                            });
+
+                        format!(
+                            " {} {incoming_pitcher_name} pitching. {swept_pitcher_name} was swept away in the 🌊 Flood!{preemption}",
+                            match side {
+                                TopBottom::Top => context.home_emoji_team,
+                                TopBottom::Bottom => context.away_emoji_team,
+                            }
+                        )
+                    }
                     None => String::new(),
                 };
                 let automatic_runner = match automatic_runner {
@@ -433,7 +1024,11 @@ impl<S: Display> ParsedEventMessage<S> {
                 };
                 format!("Start of the {side} of the {ordinal}. {batting_team} batting.{automatic_runner}{pitcher_message}")
             }
-            Self::NowBatting { batter, stats } => {
+            Self::NowBatting {
+                batter,
+                stats,
+                player_swept_away,
+            } => {
                 let stats = match stats {
                     NowBattingStats::FirstPA => " (1st PA of game)".to_string(),
                     NowBattingStats::Stats(stats) => {
@@ -448,7 +1043,12 @@ impl<S: Display> ParsedEventMessage<S> {
                     }
                     NowBattingStats::NoStats => String::new(),
                 };
-                format!("Now batting: {batter}{stats}")
+                let player_swept_away =
+                    player_swept_away.as_ref().map_or(String::new(), |player| {
+                        format!(" <br>{player} was swept away in the 🌊 Flood!")
+                    });
+
+                format!("Now batting: {batter}{stats}{player_swept_away}")
             }
             Self::InningEnd { number, side } => {
                 let ordinal = match number {
@@ -466,16 +1066,21 @@ impl<S: Display> ParsedEventMessage<S> {
                 format!("End of the {side} of the {ordinal}.")
             }
             Self::MoundVisit {
+                manager_name,
                 team,
                 mound_visit_type,
-            } => match mound_visit_type {
-                MoundVisitType::MoundVisit => {
-                    format!("The {team} manager is making a mound visit.")
+            } => {
+                let type_str = match mound_visit_type {
+                    MoundVisitType::MoundVisit => "mound visit",
+                    MoundVisitType::PitchingChange => "pitching change",
+                };
+
+                if let Some(manager_name) = manager_name {
+                    format!("Manager {manager_name} of the {team} is making a {type_str}.")
+                } else {
+                    format!("The {team} manager is making a {type_str}.")
                 }
-                MoundVisitType::PitchingChange => {
-                    format!("The {team} manager is making a pitching change.")
-                }
-            },
+            }
             Self::PitcherRemains { remaining_pitcher } => {
                 format!("{remaining_pitcher} remains in the game.")
             }
@@ -510,7 +1115,13 @@ impl<S: Display> ParsedEventMessage<S> {
                 door_prizes,
                 wither,
                 efflorescence,
+                assassinations,
             } => {
+                let assassinations = assassinations
+                    .iter()
+                    .map(|ass| ass.unparse())
+                    .chain(once(String::new()))
+                    .join(" ");
                 let steals = once(String::new())
                     .chain(steals.iter().map(BaseSteal::to_string))
                     .collect::<Vec<String>>()
@@ -538,7 +1149,7 @@ impl<S: Display> ParsedEventMessage<S> {
                     .collect::<Vec<_>>()
                     .join("<br>🌹 ");
 
-                format!("{space}Ball. {}-{}.{steals}{aurora_photos}{ejection}{cheer}{door_prizes}{wither}{efflorescence}", count.0, count.1)
+                format!("{assassinations}{space}Ball. {}-{}.{steals}{aurora_photos}{ejection}{cheer}{door_prizes}{wither}{efflorescence}", count.0, count.1)
             }
             Self::Strike {
                 strike,
@@ -550,7 +1161,14 @@ impl<S: Display> ParsedEventMessage<S> {
                 door_prizes,
                 wither,
                 efflorescence,
+                surprise_strike,
+                assassinations,
             } => {
+                let assassinations = assassinations
+                    .iter()
+                    .map(|ass| ass.unparse())
+                    .chain(once(String::new()))
+                    .join(" ");
                 let steals: Vec<String> = once(String::new())
                     .chain(steals.iter().map(|steal| steal.to_string()))
                     .collect();
@@ -577,8 +1195,11 @@ impl<S: Display> ParsedEventMessage<S> {
                     .chain(efflorescence.iter().map(|d| d.unparse()))
                     .collect::<Vec<_>>()
                     .join("<br>🌹 ");
+                let surprise_strike = surprise_strike
+                    .then(|| " 😲 Surprise Strike!")
+                    .unwrap_or("");
 
-                format!("{space}Strike, {strike}. {}-{}.{steals}{aurora_photos}{ejection}{cheer}{door_prizes}{wither}{efflorescence}", count.0, count.1)
+                format!("{assassinations}{space}Strike, {strike}. {}-{}.{surprise_strike}{steals}{aurora_photos}{ejection}{cheer}{door_prizes}{wither}{efflorescence}", count.0, count.1)
             }
             Self::Foul {
                 foul,
@@ -589,7 +1210,14 @@ impl<S: Display> ParsedEventMessage<S> {
                 door_prizes,
                 wither,
                 efflorescence,
+                assassinations,
             } => {
+                let assassinations: Vec<String> = assassinations
+                    .iter()
+                    .map(|ass| ass.unparse())
+                    .chain(once(String::new()))
+                    .collect();
+                let assassinations = assassinations.join(" ");
                 let steals: Vec<String> = once(String::new())
                     .chain(steals.iter().map(|steal| steal.to_string()))
                     .collect();
@@ -616,7 +1244,7 @@ impl<S: Display> ParsedEventMessage<S> {
                     .collect::<Vec<_>>()
                     .join("<br>🌹 ");
 
-                format!("{space}Foul {foul}. {}-{}.{steals}{aurora_photos}{cheer}{door_prizes}{wither}{efflorescence}", count.0, count.1)
+                format!("{assassinations}{space}Foul {foul}. {}-{}.{steals}{aurora_photos}{cheer}{door_prizes}{wither}{efflorescence}", count.0, count.1)
             }
             Self::Walk {
                 batter,
@@ -626,7 +1254,13 @@ impl<S: Display> ParsedEventMessage<S> {
                 aurora_photos,
                 ejection,
                 wither,
+                assassinations,
             } => {
+                let assassinations = assassinations
+                    .iter()
+                    .map(|ass| ass.unparse())
+                    .chain(once(String::new()))
+                    .join(" ");
                 let scores_and_advances = unparse_scores_and_advances(scores, advances);
                 let space = old_space(context, event_index);
 
@@ -644,7 +1278,7 @@ impl<S: Display> ParsedEventMessage<S> {
                     .map_or_else(String::new, |wither| format!(" {}", wither));
 
                 // Proof cheer is before ejection: https://mmolb.com/watch/6887e503f142e23550fc1254?event=369
-                format!("{space}Ball 4. {batter} walks.{scores_and_advances}{aurora_photos}{cheer}{ejection}{wither}")
+                format!("{assassinations}{space}Ball 4. {batter} walks.{scores_and_advances}{aurora_photos}{cheer}{ejection}{wither}")
             }
             Self::HitByPitch {
                 batter,
@@ -691,7 +1325,13 @@ impl<S: Display> ParsedEventMessage<S> {
                 aurora_photos,
                 door_prizes,
                 efflorescence,
+                assassinations,
             } => {
+                let assassinations = assassinations
+                    .iter()
+                    .map(|ass| ass.unparse())
+                    .chain(once(String::new()))
+                    .join(" ");
                 let space = old_space(context, event_index);
 
                 let cheer = cheer
@@ -711,7 +1351,7 @@ impl<S: Display> ParsedEventMessage<S> {
                     .collect::<Vec<_>>()
                     .join("<br>🌹 ");
 
-                format!("{space}{batter} hits a {fair_ball_type} to {destination}.{aurora_photos}{cheer}{door_prizes}{efflorescence}")
+                format!("{assassinations}{space}{batter} hits a {fair_ball_type} to {destination}.{aurora_photos}{cheer}{door_prizes}{efflorescence}")
             }
             Self::StrikeOut {
                 foul,
@@ -722,7 +1362,13 @@ impl<S: Display> ParsedEventMessage<S> {
                 aurora_photos,
                 ejection,
                 wither,
+                assassinations,
             } => {
+                let assassinations = assassinations
+                    .iter()
+                    .map(|ass| ass.unparse())
+                    .chain(once(String::new()))
+                    .join(" ");
                 let foul = match foul {
                     Some(foul) => format!("Foul {foul}. "),
                     None => String::new(),
@@ -749,7 +1395,7 @@ impl<S: Display> ParsedEventMessage<S> {
                 // I do have proof that cheer is before ejection at least on this event
                 // (game 6887e4f9f142e23550fc1134 event 265)
                 let strike_out_text = strike_out_text(context.season, context.day, event_index);
-                format!("{space}{foul}{batter}{strike_out_text}{strike}.{steals}{aurora_photos}{cheer}{ejection}{wither}")
+                format!("{assassinations}{space}{foul}{batter}{strike_out_text}{strike}.{steals}{aurora_photos}{cheer}{ejection}{wither}")
             }
             Self::BatterToBase {
                 batter,
@@ -797,6 +1443,7 @@ impl<S: Display> ParsedEventMessage<S> {
                 ejection,
                 sacrifice,
                 perfect,
+                jetpack,
             } => {
                 let fair_ball_type = fair_ball_type.verb_name();
                 let scores_and_advances = unparse_scores_and_advances(scores, advances);
@@ -816,7 +1463,13 @@ impl<S: Display> ParsedEventMessage<S> {
                     String::new()
                 };
 
-                format!("{batter} {fair_ball_type} out {sacrifice}to {catcher}.{scores_and_advances}{perfect}{ejection}")
+                let catcher_suffix = if *jetpack {
+                    " flying a 🚀 Jetpack!"
+                } else {
+                    "."
+                };
+
+                format!("{batter} {fair_ball_type} out {sacrifice}to {catcher}{catcher_suffix}{scores_and_advances}{perfect}{ejection}")
             }
             Self::GroundedOut {
                 batter,
@@ -825,7 +1478,13 @@ impl<S: Display> ParsedEventMessage<S> {
                 advances,
                 amazing,
                 ejection,
+                assassinations,
             } => {
+                let assassinations = assassinations
+                    .iter()
+                    .map(|ass| ass.unparse())
+                    .chain(once(String::new()))
+                    .join(" ");
                 let scores_and_advances = unparse_scores_and_advances(scores, advances);
                 let fielders = unparse_fielders(fielders);
                 let perfect = if *amazing {
@@ -842,7 +1501,7 @@ impl<S: Display> ParsedEventMessage<S> {
                 } else {
                     String::new()
                 };
-                format!("{batter} grounds out{fielders}.{scores_and_advances}{perfect}{ejection}")
+                format!("{assassinations}{batter} grounds out{fielders}.{scores_and_advances}{perfect}{ejection}")
             }
             Self::ForceOut {
                 batter,
@@ -878,6 +1537,11 @@ impl<S: Display> ParsedEventMessage<S> {
                     String::new()
                 };
                 match result {
+                    FieldingAttempt::NoOut => {
+                        let fielder_long = fielders.first().unwrap();
+
+                        format!("{batter} reaches on a fielder's choice, fielded by {fielder_long}.{scores_and_advances}{ejection}")
+                    }
                     FieldingAttempt::Out { out } => {
                         let fielders = unparse_fielders_for_play(fielders);
 
@@ -899,6 +1563,7 @@ impl<S: Display> ParsedEventMessage<S> {
                 advances,
                 sacrifice,
                 ejection,
+                double_trouble,
             } => {
                 let fielders = unparse_fielders_for_play(fielders);
                 let scores_and_advances = unparse_scores_and_advances(scores, advances);
@@ -909,6 +1574,9 @@ impl<S: Display> ParsedEventMessage<S> {
                 } else {
                     String::new()
                 };
+                let double_trouble = double_trouble.as_ref().map_or(String::new(), |player| {
+                    format!(" {player} caused ‼️ Double Trouble!")
+                });
 
                 let verb = if Breakpoints::Season5TenseChange.before(
                     context.season,
@@ -920,7 +1588,7 @@ impl<S: Display> ParsedEventMessage<S> {
                     "grounds"
                 };
 
-                format!("{batter} {verb} into a {sacrifice}double play{fielders}. {out_one} {out_two}{scores_and_advances}{ejection}")
+                format!("{batter} {verb} into a {sacrifice}double play{fielders}. {out_one} {out_two}{scores_and_advances}{ejection}{double_trouble}")
             }
             Self::DoublePlayCaught {
                 batter,
@@ -930,6 +1598,7 @@ impl<S: Display> ParsedEventMessage<S> {
                 scores,
                 advances,
                 ejection,
+                double_trouble,
             } => {
                 let fair_ball_type = fair_ball_type.verb_name();
                 let fielders = unparse_fielders_for_play(fielders);
@@ -940,8 +1609,11 @@ impl<S: Display> ParsedEventMessage<S> {
                 } else {
                     String::new()
                 };
+                let double_trouble = double_trouble.as_ref().map_or(String::new(), |player| {
+                    format!(" {player} caused ‼️ Double Trouble!")
+                });
 
-                format!("{batter} {fair_ball_type} into a double play{fielders}. {out_two}{scores_and_advances}{ejection}")
+                format!("{batter} {fair_ball_type} into a double play{fielders}. {out_two}{scores_and_advances}{ejection}{double_trouble}")
             }
             Self::ReachOnFieldingError {
                 batter,
@@ -992,11 +1664,12 @@ impl<S: Display> ParsedEventMessage<S> {
             }
             Self::Balk {
                 pitcher,
+                balk_reason,
                 scores,
                 advances,
             } => {
                 let scores_and_advances = unparse_scores_and_advances(scores, advances);
-                format!("Balk. {pitcher} dropped the ball.{scores_and_advances}")
+                format!("Balk. {pitcher} {balk_reason}.{scores_and_advances}")
             }
             Self::KnownBug { bug } => format!("{bug}"),
             Self::WeatherProsperity {
@@ -1154,7 +1827,46 @@ impl<S: Display> ParsedEventMessage<S> {
                 format!("{real_team} were defeated by the {simulacrum_team} and earned {tokens_earnt} 🪙.")
             }
             Self::WeatherSimulacrumOffseason => {
-                format!("The Simulacrum yields no tokens during the Offseason.")
+                "The Simulacrum yields no tokens during the Offseason.".to_string()
+            }
+            Self::WeatherNoisy {
+                player_team,
+                ump_team,
+                tokens_earnt,
+            } => {
+                format!(
+                    "{player_team} were defeated by the {ump_team} and earned {tokens_earnt} 🪙."
+                )
+            }
+            Self::EndGameIncome {
+                winning_team,
+                winning_team_income,
+                losing_team,
+                losing_team_income,
+            } => {
+                format!("{winning_team} earned {winning_team_income} 🪙. {losing_team} earned {losing_team_income} 🪙.")
+            }
+            Self::WeatherProsperityS13 {
+                winning_team,
+                winning_team_income,
+                losing_team,
+                losing_team_income,
+            } => {
+                format!("{winning_team} earned {winning_team_income} 🪙. {losing_team} earned {losing_team_income} 🪙.")
+            }
+            Self::PartyFriendship {
+                pitcher_name,
+                batter_name,
+            } => {
+                format!("<strong>🥳 {pitcher_name} and {batter_name} are Partying!</strong> They became Friends!")
+            }
+            Self::WeatherPollen {
+                winning_team,
+                winning_team_pollen,
+                losing_team,
+                losing_team_pollen,
+            } => {
+                format!("{winning_team} earned {winning_team_pollen} 🏵️. {losing_team} earned {losing_team_pollen} 🏵️.")
             }
         }
     }
@@ -1214,12 +1926,20 @@ pub enum StartOfInningPitcher<S> {
         arriving_emoji: Option<S>,
         arriving_pitcher: PlacedPlayer<S>,
     },
+    Flooded {
+        swept_pitcher_name: S,
+        incoming_pitcher_name: S,
+        // It's possible for a flood event to replace a pitcher and then the
+        // closer logic to replace THAT pitcher. That's what this field is for
+        preemption: Option<BasicPitcherSwap<S>>,
+    },
 }
 
 /// Either an Out or an Error - e.g. for a Fielder's Choice.
 #[derive(Debug, Clone, Copy, Serialize, Deserialize, PartialEq, EnumDiscriminants)]
 #[strum_discriminants(derive(Display))]
 pub enum FieldingAttempt<S> {
+    NoOut,
     Out {
         out: RunnerOut<S>,
     },
@@ -1231,6 +1951,7 @@ pub enum FieldingAttempt<S> {
 impl<S: Display> Display for FieldingAttempt<S> {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         match self {
+            Self::NoOut => write!(f, ""),
             Self::Out { out } => {
                 write!(f, "{} out at {}.", out.runner, out.base)
             }
@@ -1300,6 +2021,13 @@ impl<S: AsRef<str>> PlacedPlayer<S> {
             place: self.place,
         }
     }
+}
+
+// TODO Where else could this be used?
+#[derive(Debug, Clone, Copy, Serialize, Deserialize, PartialEq)]
+pub struct BasicPitcherSwap<S> {
+    pub leaving_pitcher: PlacedPlayer<S>,
+    pub arriving_pitcher: PlacedPlayer<S>,
 }
 
 #[derive(Debug, Clone, Copy, Serialize, Deserialize, PartialEq)]
@@ -1610,7 +2338,7 @@ pub enum PartyDurabilityLoss<S> {
 }
 
 impl<S: Display> Display for PartyDurabilityLoss<S> {
-    fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         match self {
             PartyDurabilityLoss::Both(durability_loss) => {
                 write!(f, "Both players lose {durability_loss} Durability.")
@@ -1631,7 +2359,7 @@ impl<S: Display> Display for PartyDurabilityLoss<S> {
 }
 
 impl<S: Display> Display for ContainResult<S> {
-    fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         match self {
             ContainResult::NoContain => Ok(()),
             ContainResult::SuccessfulContain {
@@ -1916,6 +2644,22 @@ pub enum Cheer {
     TheCrowdIsEcstatic,
     #[strum(to_string = "The crowd is pumped")]
     TheCrowdIsPumped,
+
+    // The following are jeers, added in s11
+    #[strum(to_string = "The crowd jeers")]
+    TheCrowdJeers,
+    #[strum(to_string = "A chorus of heckles rains onto the field")]
+    AChorusOfHecklesRainsOntoTheField,
+    #[strum(to_string = "Taunts roll in from the crowd")]
+    TauntsRollInFromTheCrowd,
+    #[strum(to_string = "The stands erupt with booing")]
+    TheStandsEruptWithBooing,
+
+    // Added in s13 (more jeers)
+    #[strum(to_string = "The crowd cheers sarcastically")]
+    TheCrowsCheersSarcastically,
+    #[strum(to_string = "Every section piles on with relentless heckling")]
+    EverySectionPilesOnWithRelentlessHeckling,
 
     #[strum(default)]
     Unknown(String),
@@ -2403,6 +3147,30 @@ impl<S: AsRef<str>> Efflorescence<S> {
     }
 }
 
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
+pub struct Assassination<S> {
+    pub assassin_name: S,
+    pub victim_name: S,
+}
+
+impl<S: Display> Assassination<S> {
+    pub fn unparse(&self) -> String {
+        format!(
+            "{} was 🗡️ Assassinated by {} and returned to the dugout!",
+            self.victim_name, self.assassin_name,
+        )
+    }
+}
+
+impl<S: AsRef<str>> Assassination<S> {
+    pub fn to_ref(&self) -> Assassination<&str> {
+        Assassination {
+            assassin_name: self.assassin_name.as_ref(),
+            victim_name: self.victim_name.as_ref(),
+        }
+    }
+}
+
 #[derive(Debug, Clone, Copy, Serialize, Deserialize, PartialEq)]
 pub struct EmojiFood<S> {
     pub food_emoji: S,
@@ -2606,6 +3374,46 @@ impl<S: AsRef<str>> WeatherConsumptionEvents<S> {
                 pitching_team_prize: pitching_team_prize.to_ref(),
             },
         }
+    }
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
+pub enum AugmentedWeather<S> {
+    Pollen { pollen_count: PollenCount },
+    WeatherName(S),
+}
+
+impl<S: Display> Display for AugmentedWeather<S> {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        match self {
+            AugmentedWeather::Pollen { pollen_count } => {
+                write!(f, "Pollen - Pollen Count: {pollen_count}")
+            }
+            AugmentedWeather::WeatherName(name) => {
+                write!(f, "{}", name)
+            }
+        }
+    }
+}
+
+impl<S: AsRef<str>> AugmentedWeather<S> {
+    pub fn name(&self) -> &str {
+        match self {
+            AugmentedWeather::Pollen { .. } => "Pollen",
+            AugmentedWeather::WeatherName(name) => name.as_ref(),
+        }
+    }
+}
+
+#[derive(Clone, Copy, Debug, Serialize, Deserialize, PartialEq)]
+pub struct GrowAttributeChange {
+    pub attribute: Attribute,
+    pub amount: f64,
+}
+
+impl Display for GrowAttributeChange {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> std::fmt::Result {
+        write!(f, "{:+} {}", self.amount, self.attribute)
     }
 }
 

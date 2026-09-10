@@ -1,0 +1,6120 @@
+[
+  {
+    "away_team": {
+      "emoji": "🍓",
+      "name": "Versailles Strawberry Seahorses"
+    },
+    "event_type": "LiveNow",
+    "home_team": {
+      "emoji": "🐟",
+      "name": "Fukuyama Grilled Fish"
+    },
+    "stadium": "Fukuyama Grilled Fishing Grounds",
+    "weather": null
+  },
+  {
+    "away_pitcher": "Savannah Roux",
+    "away_team": {
+      "emoji": "🍓",
+      "name": "Versailles Strawberry Seahorses"
+    },
+    "event_type": "PitchingMatchup",
+    "home_pitcher": "Rusty Leone",
+    "home_team": {
+      "emoji": "🐟",
+      "name": "Fukuyama Grilled Fish"
+    }
+  },
+  {
+    "event_type": "Lineup",
+    "manager_name": "Cameron Newton",
+    "players": [
+      {
+        "name": "Louis Varga",
+        "place": "DH"
+      },
+      {
+        "name": "Inez Marchand",
+        "place": "2B"
+      },
+      {
+        "name": "Jennie Han",
+        "place": "RF"
+      },
+      {
+        "name": "Vulpecula Okada",
+        "place": "3B"
+      },
+      {
+        "name": "Abdul Müller",
+        "place": "SS"
+      },
+      {
+        "name": "Yasmin Mbabazi",
+        "place": "1B"
+      },
+      {
+        "name": "Carlton Vitello",
+        "place": "LF"
+      },
+      {
+        "name": "Emil II",
+        "place": "CF"
+      },
+      {
+        "name": "Aline Lovrić",
+        "place": "C"
+      }
+    ],
+    "side": "Away"
+  },
+  {
+    "event_type": "Lineup",
+    "manager_name": "Sheila Ishihara",
+    "players": [
+      {
+        "name": "Ethan Ford",
+        "place": "C"
+      },
+      {
+        "name": "Quirky Perez",
+        "place": "2B"
+      },
+      {
+        "name": "Shaun Ozawa",
+        "place": "3B"
+      },
+      {
+        "name": "Jiahao Bignumbers",
+        "place": "RF"
+      },
+      {
+        "name": "Amillion Vacation",
+        "place": "1B"
+      },
+      {
+        "name": "Leonard DeGrom V",
+        "place": "LF"
+      },
+      {
+        "name": "Ernie Figueredo",
+        "place": "SS"
+      },
+      {
+        "name": "Shoka Questel",
+        "place": "CF"
+      },
+      {
+        "name": "Mejiro Valentin",
+        "place": "DH"
+      }
+    ],
+    "side": "Home"
+  },
+  {
+    "event_type": "PlayBall"
+  },
+  {
+    "automatic_runner": null,
+    "batting_team": {
+      "emoji": "🍓",
+      "name": "Versailles Strawberry Seahorses"
+    },
+    "event_type": "InningStart",
+    "number": 1,
+    "pitcher_status": {
+      "Same": {
+        "emoji": "🐟",
+        "name": "Rusty Leone"
+      }
+    },
+    "side": "Top"
+  },
+  {
+    "batter": "Louis Varga",
+    "event_type": "NowBatting",
+    "player_swept_away": null,
+    "stats": "FirstPA"
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      1,
+      0
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "ejection": null,
+    "event_type": "Ball",
+    "steals": [],
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "batter": "Louis Varga",
+    "cheer": null,
+    "destination": "SecondBase",
+    "door_prizes": [],
+    "efflorescence": [],
+    "event_type": "FairBall",
+    "fair_ball_type": "GroundBall"
+  },
+  {
+    "advances": [],
+    "batter": "Louis Varga",
+    "distance": "Single",
+    "ejection": null,
+    "event_type": "BatterToBase",
+    "fair_ball_type": "GroundBall",
+    "fielder": {
+      "name": "Jiahao Bignumbers",
+      "place": "RF"
+    },
+    "scores": []
+  },
+  {
+    "batter": "Inez Marchand",
+    "event_type": "NowBatting",
+    "player_swept_away": null,
+    "stats": "FirstPA"
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      1,
+      0
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "ejection": null,
+    "event_type": "Ball",
+    "steals": [],
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "batter": "Inez Marchand",
+    "cheer": null,
+    "destination": "CenterField",
+    "door_prizes": [],
+    "efflorescence": [],
+    "event_type": "FairBall",
+    "fair_ball_type": "FlyBall"
+  },
+  {
+    "batter": "Inez Marchand",
+    "destination": "CenterField",
+    "ejection": null,
+    "event_type": "HomeRun",
+    "fair_ball_type": "FlyBall",
+    "grand_slam": false,
+    "scores": [
+      "Louis Varga"
+    ]
+  },
+  {
+    "batter": "Jennie Han",
+    "event_type": "NowBatting",
+    "player_swept_away": null,
+    "stats": "FirstPA"
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      1,
+      0
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "ejection": null,
+    "event_type": "Ball",
+    "steals": [],
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "batter": "Jennie Han",
+    "cheer": null,
+    "destination": "ThirdBase",
+    "door_prizes": [],
+    "efflorescence": [],
+    "event_type": "FairBall",
+    "fair_ball_type": "GroundBall"
+  },
+  {
+    "advances": [],
+    "amazing": false,
+    "assassinations": [],
+    "batter": "Jennie Han",
+    "ejection": null,
+    "event_type": "GroundedOut",
+    "fielders": [
+      {
+        "name": "Shaun Ozawa",
+        "place": "3B"
+      },
+      {
+        "name": "Amillion Vacation",
+        "place": "1B"
+      }
+    ],
+    "scores": []
+  },
+  {
+    "batter": "Vulpecula Okada",
+    "event_type": "NowBatting",
+    "player_swept_away": null,
+    "stats": "FirstPA"
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "batter": "Vulpecula Okada",
+    "cheer": null,
+    "destination": "LeftField",
+    "door_prizes": [],
+    "efflorescence": [],
+    "event_type": "FairBall",
+    "fair_ball_type": "LineDrive"
+  },
+  {
+    "advances": [],
+    "batter": "Vulpecula Okada",
+    "distance": "Double",
+    "ejection": null,
+    "event_type": "BatterToBase",
+    "fair_ball_type": "LineDrive",
+    "fielder": {
+      "name": "Leonard DeGrom V",
+      "place": "LF"
+    },
+    "scores": []
+  },
+  {
+    "batter": "Abdul Müller",
+    "event_type": "NowBatting",
+    "player_swept_away": null,
+    "stats": "FirstPA"
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "batter": "Abdul Müller",
+    "cheer": null,
+    "destination": "LeftField",
+    "door_prizes": [],
+    "efflorescence": [],
+    "event_type": "FairBall",
+    "fair_ball_type": "LineDrive"
+  },
+  {
+    "advances": [],
+    "batter": "Abdul Müller",
+    "distance": "Single",
+    "ejection": null,
+    "event_type": "BatterToBase",
+    "fair_ball_type": "LineDrive",
+    "fielder": {
+      "name": "Leonard DeGrom V",
+      "place": "LF"
+    },
+    "scores": [
+      "Vulpecula Okada"
+    ]
+  },
+  {
+    "batter": "Yasmin Mbabazi",
+    "event_type": "NowBatting",
+    "player_swept_away": null,
+    "stats": "FirstPA"
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "batter": "Yasmin Mbabazi",
+    "cheer": null,
+    "destination": "CenterField",
+    "door_prizes": [],
+    "efflorescence": [],
+    "event_type": "FairBall",
+    "fair_ball_type": "LineDrive"
+  },
+  {
+    "advances": [
+      {
+        "base": "Third",
+        "runner": "Abdul Müller"
+      }
+    ],
+    "batter": "Yasmin Mbabazi",
+    "distance": "Single",
+    "ejection": null,
+    "event_type": "BatterToBase",
+    "fair_ball_type": "LineDrive",
+    "fielder": {
+      "name": "Shoka Questel",
+      "place": "CF"
+    },
+    "scores": []
+  },
+  {
+    "batter": "Carlton Vitello",
+    "event_type": "NowBatting",
+    "player_swept_away": null,
+    "stats": "FirstPA"
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": "TheHometownFansRoarTheirSupport",
+    "count": [
+      0,
+      1
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "event_type": "Foul",
+    "foul": "Tip",
+    "steals": [],
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      1,
+      1
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "ejection": null,
+    "event_type": "Ball",
+    "steals": [],
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "batter": "Carlton Vitello",
+    "cheer": null,
+    "destination": "ThirdBase",
+    "door_prizes": [],
+    "efflorescence": [],
+    "event_type": "FairBall",
+    "fair_ball_type": "GroundBall"
+  },
+  {
+    "advances": [],
+    "batter": "Carlton Vitello",
+    "double_trouble": null,
+    "ejection": null,
+    "event_type": "DoublePlayGrounded",
+    "fielders": [
+      {
+        "name": "Shaun Ozawa",
+        "place": "3B"
+      },
+      {
+        "name": "Quirky Perez",
+        "place": "2B"
+      },
+      {
+        "name": "Amillion Vacation",
+        "place": "1B"
+      }
+    ],
+    "out_one": {
+      "base": "SecondBase",
+      "runner": "Yasmin Mbabazi"
+    },
+    "out_two": {
+      "base": "FirstBase",
+      "runner": "Carlton Vitello"
+    },
+    "sacrifice": false,
+    "scores": []
+  },
+  {
+    "event_type": "InningEnd",
+    "number": 1,
+    "side": "Top"
+  },
+  {
+    "automatic_runner": null,
+    "batting_team": {
+      "emoji": "🐟",
+      "name": "Fukuyama Grilled Fish"
+    },
+    "event_type": "InningStart",
+    "number": 1,
+    "pitcher_status": {
+      "Same": {
+        "emoji": "🍓",
+        "name": "Savannah Roux"
+      }
+    },
+    "side": "Bottom"
+  },
+  {
+    "batter": "Ethan Ford",
+    "event_type": "NowBatting",
+    "player_swept_away": null,
+    "stats": "FirstPA"
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "batter": "Ethan Ford",
+    "cheer": null,
+    "destination": "ThirdBase",
+    "door_prizes": [],
+    "efflorescence": [],
+    "event_type": "FairBall",
+    "fair_ball_type": "GroundBall"
+  },
+  {
+    "advances": [],
+    "amazing": false,
+    "assassinations": [],
+    "batter": "Ethan Ford",
+    "ejection": null,
+    "event_type": "GroundedOut",
+    "fielders": [
+      {
+        "name": "Vulpecula Okada",
+        "place": "3B"
+      },
+      {
+        "name": "Yasmin Mbabazi",
+        "place": "1B"
+      }
+    ],
+    "scores": []
+  },
+  {
+    "batter": "Quirky Perez",
+    "event_type": "NowBatting",
+    "player_swept_away": null,
+    "stats": "FirstPA"
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "batter": "Quirky Perez",
+    "cheer": null,
+    "destination": "FirstBase",
+    "door_prizes": [],
+    "efflorescence": [],
+    "event_type": "FairBall",
+    "fair_ball_type": "GroundBall"
+  },
+  {
+    "advances": [],
+    "amazing": false,
+    "assassinations": [],
+    "batter": "Quirky Perez",
+    "ejection": null,
+    "event_type": "GroundedOut",
+    "fielders": [
+      {
+        "name": "Yasmin Mbabazi",
+        "place": "1B"
+      }
+    ],
+    "scores": []
+  },
+  {
+    "batter": "Shaun Ozawa",
+    "event_type": "NowBatting",
+    "player_swept_away": null,
+    "stats": "FirstPA"
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      0,
+      1
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "event_type": "Foul",
+    "foul": "Ball",
+    "steals": [],
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      1,
+      1
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "ejection": null,
+    "event_type": "Ball",
+    "steals": [],
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "batter": "Shaun Ozawa",
+    "cheer": null,
+    "destination": "Pitcher",
+    "door_prizes": [],
+    "efflorescence": [],
+    "event_type": "FairBall",
+    "fair_ball_type": "GroundBall"
+  },
+  {
+    "advances": [],
+    "amazing": false,
+    "assassinations": [],
+    "batter": "Shaun Ozawa",
+    "ejection": null,
+    "event_type": "GroundedOut",
+    "fielders": [
+      {
+        "name": "Savannah Roux",
+        "place": "P"
+      },
+      {
+        "name": "Yasmin Mbabazi",
+        "place": "1B"
+      }
+    ],
+    "scores": []
+  },
+  {
+    "event_type": "InningEnd",
+    "number": 1,
+    "side": "Bottom"
+  },
+  {
+    "automatic_runner": null,
+    "batting_team": {
+      "emoji": "🍓",
+      "name": "Versailles Strawberry Seahorses"
+    },
+    "event_type": "InningStart",
+    "number": 2,
+    "pitcher_status": {
+      "Same": {
+        "emoji": "🐟",
+        "name": "Rusty Leone"
+      }
+    },
+    "side": "Top"
+  },
+  {
+    "batter": "Emil II",
+    "event_type": "NowBatting",
+    "player_swept_away": null,
+    "stats": "FirstPA"
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "batter": "Emil II",
+    "cheer": null,
+    "destination": "CenterField",
+    "door_prizes": [],
+    "efflorescence": [],
+    "event_type": "FairBall",
+    "fair_ball_type": "FlyBall"
+  },
+  {
+    "advances": [],
+    "batter": "Emil II",
+    "caught_by": {
+      "name": "Shoka Questel",
+      "place": "CF"
+    },
+    "ejection": null,
+    "event_type": "CaughtOut",
+    "fair_ball_type": "FlyBall",
+    "jetpack": false,
+    "perfect": false,
+    "sacrifice": false,
+    "scores": []
+  },
+  {
+    "batter": "Aline Lovrić",
+    "event_type": "NowBatting",
+    "player_swept_away": null,
+    "stats": "FirstPA"
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "batter": "Aline Lovrić",
+    "cheer": null,
+    "destination": "SecondBase",
+    "door_prizes": [],
+    "efflorescence": [],
+    "event_type": "FairBall",
+    "fair_ball_type": "GroundBall"
+  },
+  {
+    "advances": [],
+    "amazing": false,
+    "assassinations": [],
+    "batter": "Aline Lovrić",
+    "ejection": null,
+    "event_type": "GroundedOut",
+    "fielders": [
+      {
+        "name": "Quirky Perez",
+        "place": "2B"
+      },
+      {
+        "name": "Amillion Vacation",
+        "place": "1B"
+      }
+    ],
+    "scores": []
+  },
+  {
+    "batter": "Louis Varga",
+    "event_type": "NowBatting",
+    "player_swept_away": null,
+    "stats": {
+      "Stats": [
+        {
+          "stat": "HitsForAtBats",
+          "value": {
+            "at_bats": 1,
+            "hits": 1
+          }
+        },
+        {
+          "stat": "FirstBases",
+          "value": 1
+        }
+      ]
+    }
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      0,
+      1
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "event_type": "Foul",
+    "foul": "Ball",
+    "steals": [],
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      0,
+      2
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "event_type": "Foul",
+    "foul": "Ball",
+    "steals": [],
+    "wither": null
+  },
+  {
+    "batter_name": "Louis Varga",
+    "event_type": "PartyFriendship",
+    "pitcher_name": "Rusty Leone"
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      1,
+      2
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "ejection": null,
+    "event_type": "Ball",
+    "steals": [],
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "batter": "Louis Varga",
+    "cheer": null,
+    "destination": "CenterField",
+    "door_prizes": [],
+    "efflorescence": [],
+    "event_type": "FairBall",
+    "fair_ball_type": "LineDrive"
+  },
+  {
+    "advances": [],
+    "batter": "Louis Varga",
+    "caught_by": {
+      "name": "Shoka Questel",
+      "place": "CF"
+    },
+    "ejection": null,
+    "event_type": "CaughtOut",
+    "fair_ball_type": "LineDrive",
+    "jetpack": false,
+    "perfect": false,
+    "sacrifice": false,
+    "scores": []
+  },
+  {
+    "event_type": "InningEnd",
+    "number": 2,
+    "side": "Top"
+  },
+  {
+    "automatic_runner": null,
+    "batting_team": {
+      "emoji": "🐟",
+      "name": "Fukuyama Grilled Fish"
+    },
+    "event_type": "InningStart",
+    "number": 2,
+    "pitcher_status": {
+      "Same": {
+        "emoji": "🍓",
+        "name": "Savannah Roux"
+      }
+    },
+    "side": "Bottom"
+  },
+  {
+    "batter": "Jiahao Bignumbers",
+    "event_type": "NowBatting",
+    "player_swept_away": null,
+    "stats": "FirstPA"
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "batter": "Jiahao Bignumbers",
+    "cheer": null,
+    "destination": "FirstBase",
+    "door_prizes": [],
+    "efflorescence": [],
+    "event_type": "FairBall",
+    "fair_ball_type": "GroundBall"
+  },
+  {
+    "advances": [],
+    "batter": "Jiahao Bignumbers",
+    "distance": "Single",
+    "ejection": null,
+    "event_type": "BatterToBase",
+    "fair_ball_type": "GroundBall",
+    "fielder": {
+      "name": "Jennie Han",
+      "place": "RF"
+    },
+    "scores": []
+  },
+  {
+    "batter": "Amillion Vacation",
+    "event_type": "NowBatting",
+    "player_swept_away": null,
+    "stats": "FirstPA"
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      0,
+      1
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "event_type": "Foul",
+    "foul": "Tip",
+    "steals": [],
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      1,
+      1
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "ejection": null,
+    "event_type": "Ball",
+    "steals": [],
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      1,
+      2
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "ejection": null,
+    "event_type": "Strike",
+    "steals": [
+      {
+        "base": "Second",
+        "caught": false,
+        "runner": "Jiahao Bignumbers"
+      }
+    ],
+    "strike": "Swinging",
+    "surprise_strike": false,
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "batter": "Amillion Vacation",
+    "cheer": "EveryoneInTheStandsIsOnTheirFeet",
+    "destination": "FirstBase",
+    "door_prizes": [],
+    "efflorescence": [],
+    "event_type": "FairBall",
+    "fair_ball_type": "GroundBall"
+  },
+  {
+    "advances": [
+      {
+        "base": "Third",
+        "runner": "Jiahao Bignumbers"
+      }
+    ],
+    "amazing": false,
+    "assassinations": [],
+    "batter": "Amillion Vacation",
+    "ejection": null,
+    "event_type": "GroundedOut",
+    "fielders": [
+      {
+        "name": "Yasmin Mbabazi",
+        "place": "1B"
+      }
+    ],
+    "scores": []
+  },
+  {
+    "batter": "Leonard DeGrom V",
+    "event_type": "NowBatting",
+    "player_swept_away": null,
+    "stats": "FirstPA"
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      0,
+      1
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "event_type": "Foul",
+    "foul": "Ball",
+    "steals": [],
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      1,
+      1
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "ejection": null,
+    "event_type": "Ball",
+    "steals": [],
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      1,
+      2
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "ejection": null,
+    "event_type": "Strike",
+    "steals": [],
+    "strike": "Looking",
+    "surprise_strike": false,
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "batter": "Leonard DeGrom V",
+    "cheer": null,
+    "ejection": null,
+    "event_type": "StrikeOut",
+    "foul": null,
+    "steals": [],
+    "strike": "Swinging",
+    "wither": null
+  },
+  {
+    "batter": "Ernie Figueredo",
+    "event_type": "NowBatting",
+    "player_swept_away": null,
+    "stats": "FirstPA"
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      0,
+      1
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "event_type": "Foul",
+    "foul": "Ball",
+    "steals": [],
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "batter": "Ernie Figueredo",
+    "cheer": null,
+    "destination": "LeftField",
+    "door_prizes": [],
+    "efflorescence": [],
+    "event_type": "FairBall",
+    "fair_ball_type": "FlyBall"
+  },
+  {
+    "advances": [],
+    "batter": "Ernie Figueredo",
+    "caught_by": {
+      "name": "Carlton Vitello",
+      "place": "LF"
+    },
+    "ejection": null,
+    "event_type": "CaughtOut",
+    "fair_ball_type": "FlyBall",
+    "jetpack": false,
+    "perfect": false,
+    "sacrifice": false,
+    "scores": []
+  },
+  {
+    "event_type": "InningEnd",
+    "number": 2,
+    "side": "Bottom"
+  },
+  {
+    "automatic_runner": null,
+    "batting_team": {
+      "emoji": "🍓",
+      "name": "Versailles Strawberry Seahorses"
+    },
+    "event_type": "InningStart",
+    "number": 3,
+    "pitcher_status": {
+      "Same": {
+        "emoji": "🐟",
+        "name": "Rusty Leone"
+      }
+    },
+    "side": "Top"
+  },
+  {
+    "batter": "Inez Marchand",
+    "event_type": "NowBatting",
+    "player_swept_away": null,
+    "stats": {
+      "Stats": [
+        {
+          "stat": "HitsForAtBats",
+          "value": {
+            "at_bats": 1,
+            "hits": 1
+          }
+        },
+        {
+          "stat": "HomeRuns",
+          "value": 1
+        }
+      ]
+    }
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      0,
+      1
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "ejection": null,
+    "event_type": "Strike",
+    "steals": [],
+    "strike": "Looking",
+    "surprise_strike": false,
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      1,
+      1
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "ejection": null,
+    "event_type": "Ball",
+    "steals": [],
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      2,
+      1
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "ejection": null,
+    "event_type": "Ball",
+    "steals": [],
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      2,
+      2
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "ejection": null,
+    "event_type": "Strike",
+    "steals": [],
+    "strike": "Swinging",
+    "surprise_strike": false,
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "batter": "Inez Marchand",
+    "cheer": null,
+    "destination": "ThirdBase",
+    "door_prizes": [],
+    "efflorescence": [],
+    "event_type": "FairBall",
+    "fair_ball_type": "GroundBall"
+  },
+  {
+    "advances": [],
+    "amazing": false,
+    "assassinations": [],
+    "batter": "Inez Marchand",
+    "ejection": null,
+    "event_type": "GroundedOut",
+    "fielders": [
+      {
+        "name": "Shaun Ozawa",
+        "place": "3B"
+      },
+      {
+        "name": "Amillion Vacation",
+        "place": "1B"
+      }
+    ],
+    "scores": []
+  },
+  {
+    "batter": "Jennie Han",
+    "event_type": "NowBatting",
+    "player_swept_away": null,
+    "stats": {
+      "Stats": [
+        {
+          "stat": "HitsForAtBats",
+          "value": {
+            "at_bats": 1,
+            "hits": 0
+          }
+        },
+        {
+          "stat": "GroundOuts",
+          "value": 1
+        }
+      ]
+    }
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      0,
+      1
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "ejection": null,
+    "event_type": "Strike",
+    "steals": [],
+    "strike": "Swinging",
+    "surprise_strike": false,
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "batter": "Jennie Han",
+    "cheer": null,
+    "destination": "ThirdBase",
+    "door_prizes": [],
+    "efflorescence": [],
+    "event_type": "FairBall",
+    "fair_ball_type": "GroundBall"
+  },
+  {
+    "advances": [],
+    "amazing": false,
+    "assassinations": [],
+    "batter": "Jennie Han",
+    "ejection": null,
+    "event_type": "GroundedOut",
+    "fielders": [
+      {
+        "name": "Shaun Ozawa",
+        "place": "3B"
+      },
+      {
+        "name": "Amillion Vacation",
+        "place": "1B"
+      }
+    ],
+    "scores": []
+  },
+  {
+    "batter": "Vulpecula Okada",
+    "event_type": "NowBatting",
+    "player_swept_away": null,
+    "stats": {
+      "Stats": [
+        {
+          "stat": "HitsForAtBats",
+          "value": {
+            "at_bats": 1,
+            "hits": 1
+          }
+        },
+        {
+          "stat": "SecondBases",
+          "value": 1
+        }
+      ]
+    }
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "batter": "Vulpecula Okada",
+    "cheer": null,
+    "destination": "LeftField",
+    "door_prizes": [],
+    "efflorescence": [],
+    "event_type": "FairBall",
+    "fair_ball_type": "LineDrive"
+  },
+  {
+    "advances": [],
+    "batter": "Vulpecula Okada",
+    "distance": "Double",
+    "ejection": null,
+    "event_type": "BatterToBase",
+    "fair_ball_type": "LineDrive",
+    "fielder": {
+      "name": "Leonard DeGrom V",
+      "place": "LF"
+    },
+    "scores": []
+  },
+  {
+    "batter": "Abdul Müller",
+    "event_type": "NowBatting",
+    "player_swept_away": null,
+    "stats": {
+      "Stats": [
+        {
+          "stat": "HitsForAtBats",
+          "value": {
+            "at_bats": 1,
+            "hits": 1
+          }
+        },
+        {
+          "stat": "FirstBases",
+          "value": 1
+        }
+      ]
+    }
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      1,
+      0
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "ejection": null,
+    "event_type": "Ball",
+    "steals": [],
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      2,
+      0
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "ejection": null,
+    "event_type": "Ball",
+    "steals": [],
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      3,
+      0
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "ejection": null,
+    "event_type": "Ball",
+    "steals": [],
+    "wither": null
+  },
+  {
+    "advances": [],
+    "assassinations": [],
+    "aurora_photos": null,
+    "batter": "Abdul Müller",
+    "cheer": null,
+    "ejection": null,
+    "event_type": "Walk",
+    "scores": [],
+    "wither": null
+  },
+  {
+    "batter": "Yasmin Mbabazi",
+    "event_type": "NowBatting",
+    "player_swept_away": null,
+    "stats": {
+      "Stats": [
+        {
+          "stat": "HitsForAtBats",
+          "value": {
+            "at_bats": 1,
+            "hits": 1
+          }
+        },
+        {
+          "stat": "FirstBases",
+          "value": 1
+        }
+      ]
+    }
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      0,
+      1
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "ejection": null,
+    "event_type": "Strike",
+    "steals": [],
+    "strike": "Looking",
+    "surprise_strike": false,
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      1,
+      1
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "ejection": null,
+    "event_type": "Ball",
+    "steals": [],
+    "wither": null
+  },
+  {
+    "advances": [
+      {
+        "base": "Third",
+        "runner": "Vulpecula Okada"
+      },
+      {
+        "base": "Second",
+        "runner": "Abdul Müller"
+      }
+    ],
+    "aurora_photos": null,
+    "batter": "Yasmin Mbabazi",
+    "cheer": null,
+    "door_prizes": [],
+    "efflorescence": [],
+    "ejection": null,
+    "event_type": "HitByPitch",
+    "scores": [],
+    "wither": null
+  },
+  {
+    "batter": "Carlton Vitello",
+    "event_type": "NowBatting",
+    "player_swept_away": null,
+    "stats": {
+      "Stats": [
+        {
+          "stat": "HitsForAtBats",
+          "value": {
+            "at_bats": 1,
+            "hits": 0
+          }
+        },
+        {
+          "stat": "GroundIntoDoublePlays",
+          "value": 1
+        },
+        {
+          "stat": "GroundOuts",
+          "value": 1
+        }
+      ]
+    }
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "batter": "Carlton Vitello",
+    "cheer": null,
+    "destination": "CenterField",
+    "door_prizes": [],
+    "efflorescence": [],
+    "event_type": "FairBall",
+    "fair_ball_type": "FlyBall"
+  },
+  {
+    "batter": "Carlton Vitello",
+    "destination": "CenterField",
+    "ejection": null,
+    "event_type": "HomeRun",
+    "fair_ball_type": "FlyBall",
+    "grand_slam": true,
+    "scores": [
+      "Vulpecula Okada",
+      "Abdul Müller",
+      "Yasmin Mbabazi"
+    ]
+  },
+  {
+    "batter": "Emil II",
+    "event_type": "NowBatting",
+    "player_swept_away": null,
+    "stats": {
+      "Stats": [
+        {
+          "stat": "HitsForAtBats",
+          "value": {
+            "at_bats": 1,
+            "hits": 0
+          }
+        },
+        {
+          "stat": "ForceOuts",
+          "value": 1
+        }
+      ]
+    }
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      1,
+      0
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "ejection": null,
+    "event_type": "Ball",
+    "steals": [],
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "batter": "Emil II",
+    "cheer": null,
+    "destination": "CenterField",
+    "door_prizes": [],
+    "efflorescence": [],
+    "event_type": "FairBall",
+    "fair_ball_type": "FlyBall"
+  },
+  {
+    "advances": [],
+    "batter": "Emil II",
+    "caught_by": {
+      "name": "Shoka Questel",
+      "place": "CF"
+    },
+    "ejection": null,
+    "event_type": "CaughtOut",
+    "fair_ball_type": "FlyBall",
+    "jetpack": false,
+    "perfect": false,
+    "sacrifice": false,
+    "scores": []
+  },
+  {
+    "event_type": "InningEnd",
+    "number": 3,
+    "side": "Top"
+  },
+  {
+    "automatic_runner": null,
+    "batting_team": {
+      "emoji": "🐟",
+      "name": "Fukuyama Grilled Fish"
+    },
+    "event_type": "InningStart",
+    "number": 3,
+    "pitcher_status": {
+      "Same": {
+        "emoji": "🍓",
+        "name": "Savannah Roux"
+      }
+    },
+    "side": "Bottom"
+  },
+  {
+    "batter": "Shoka Questel",
+    "event_type": "NowBatting",
+    "player_swept_away": null,
+    "stats": "FirstPA"
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "batter": "Shoka Questel",
+    "cheer": null,
+    "destination": "CenterField",
+    "door_prizes": [],
+    "efflorescence": [],
+    "event_type": "FairBall",
+    "fair_ball_type": "FlyBall"
+  },
+  {
+    "advances": [],
+    "batter": "Shoka Questel",
+    "caught_by": {
+      "name": "Emil II",
+      "place": "CF"
+    },
+    "ejection": null,
+    "event_type": "CaughtOut",
+    "fair_ball_type": "FlyBall",
+    "jetpack": false,
+    "perfect": false,
+    "sacrifice": false,
+    "scores": []
+  },
+  {
+    "batter": "Mejiro Valentin",
+    "event_type": "NowBatting",
+    "player_swept_away": null,
+    "stats": "FirstPA"
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      0,
+      1
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "event_type": "Foul",
+    "foul": "Ball",
+    "steals": [],
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      1,
+      1
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "ejection": null,
+    "event_type": "Ball",
+    "steals": [],
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      1,
+      2
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "ejection": null,
+    "event_type": "Strike",
+    "steals": [],
+    "strike": "Swinging",
+    "surprise_strike": false,
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "batter": "Mejiro Valentin",
+    "cheer": null,
+    "ejection": null,
+    "event_type": "StrikeOut",
+    "foul": null,
+    "steals": [],
+    "strike": "Swinging",
+    "wither": null
+  },
+  {
+    "batter": "Ethan Ford",
+    "event_type": "NowBatting",
+    "player_swept_away": null,
+    "stats": {
+      "Stats": [
+        {
+          "stat": "HitsForAtBats",
+          "value": {
+            "at_bats": 1,
+            "hits": 0
+          }
+        },
+        {
+          "stat": "GroundOuts",
+          "value": 1
+        }
+      ]
+    }
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      1,
+      0
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "ejection": null,
+    "event_type": "Ball",
+    "steals": [],
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "batter": "Ethan Ford",
+    "cheer": null,
+    "destination": "Catcher",
+    "door_prizes": [],
+    "efflorescence": [],
+    "event_type": "FairBall",
+    "fair_ball_type": "Popup"
+  },
+  {
+    "advances": [],
+    "batter": "Ethan Ford",
+    "caught_by": {
+      "name": "Aline Lovrić",
+      "place": "C"
+    },
+    "ejection": null,
+    "event_type": "CaughtOut",
+    "fair_ball_type": "Popup",
+    "jetpack": false,
+    "perfect": false,
+    "sacrifice": false,
+    "scores": []
+  },
+  {
+    "event_type": "InningEnd",
+    "number": 3,
+    "side": "Bottom"
+  },
+  {
+    "automatic_runner": null,
+    "batting_team": {
+      "emoji": "🍓",
+      "name": "Versailles Strawberry Seahorses"
+    },
+    "event_type": "InningStart",
+    "number": 4,
+    "pitcher_status": {
+      "Same": {
+        "emoji": "🐟",
+        "name": "Rusty Leone"
+      }
+    },
+    "side": "Top"
+  },
+  {
+    "batter": "Aline Lovrić",
+    "event_type": "NowBatting",
+    "player_swept_away": null,
+    "stats": {
+      "Stats": [
+        {
+          "stat": "HitsForAtBats",
+          "value": {
+            "at_bats": 1,
+            "hits": 0
+          }
+        },
+        {
+          "stat": "GroundOuts",
+          "value": 1
+        }
+      ]
+    }
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      1,
+      0
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "ejection": null,
+    "event_type": "Ball",
+    "steals": [],
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      2,
+      0
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "ejection": null,
+    "event_type": "Ball",
+    "steals": [],
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "batter": "Aline Lovrić",
+    "cheer": null,
+    "destination": "LeftField",
+    "door_prizes": [],
+    "efflorescence": [],
+    "event_type": "FairBall",
+    "fair_ball_type": "FlyBall"
+  },
+  {
+    "advances": [],
+    "batter": "Aline Lovrić",
+    "caught_by": {
+      "name": "Leonard DeGrom V",
+      "place": "LF"
+    },
+    "ejection": null,
+    "event_type": "CaughtOut",
+    "fair_ball_type": "FlyBall",
+    "jetpack": false,
+    "perfect": false,
+    "sacrifice": false,
+    "scores": []
+  },
+  {
+    "batter": "Louis Varga",
+    "event_type": "NowBatting",
+    "player_swept_away": null,
+    "stats": {
+      "Stats": [
+        {
+          "stat": "HitsForAtBats",
+          "value": {
+            "at_bats": 2,
+            "hits": 1
+          }
+        },
+        {
+          "stat": "FirstBases",
+          "value": 1
+        },
+        {
+          "stat": "LineOuts",
+          "value": 1
+        }
+      ]
+    }
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "batter": "Louis Varga",
+    "cheer": null,
+    "destination": "ShortStop",
+    "door_prizes": [],
+    "efflorescence": [],
+    "event_type": "FairBall",
+    "fair_ball_type": "GroundBall"
+  },
+  {
+    "advances": [],
+    "amazing": false,
+    "assassinations": [],
+    "batter": "Louis Varga",
+    "ejection": null,
+    "event_type": "GroundedOut",
+    "fielders": [
+      {
+        "name": "Ernie Figueredo",
+        "place": "SS"
+      },
+      {
+        "name": "Amillion Vacation",
+        "place": "1B"
+      }
+    ],
+    "scores": []
+  },
+  {
+    "batter": "Inez Marchand",
+    "event_type": "NowBatting",
+    "player_swept_away": null,
+    "stats": {
+      "Stats": [
+        {
+          "stat": "HitsForAtBats",
+          "value": {
+            "at_bats": 2,
+            "hits": 1
+          }
+        },
+        {
+          "stat": "HomeRuns",
+          "value": 1
+        },
+        {
+          "stat": "GroundOuts",
+          "value": 1
+        }
+      ]
+    }
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      0,
+      1
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "ejection": null,
+    "event_type": "Strike",
+    "steals": [],
+    "strike": "Swinging",
+    "surprise_strike": false,
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      1,
+      1
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "ejection": null,
+    "event_type": "Ball",
+    "steals": [],
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "batter": "Inez Marchand",
+    "cheer": null,
+    "destination": "ShortStop",
+    "door_prizes": [],
+    "efflorescence": [],
+    "event_type": "FairBall",
+    "fair_ball_type": "Popup"
+  },
+  {
+    "advances": [],
+    "batter": "Inez Marchand",
+    "caught_by": {
+      "name": "Ernie Figueredo",
+      "place": "SS"
+    },
+    "ejection": null,
+    "event_type": "CaughtOut",
+    "fair_ball_type": "Popup",
+    "jetpack": false,
+    "perfect": false,
+    "sacrifice": false,
+    "scores": []
+  },
+  {
+    "event_type": "InningEnd",
+    "number": 4,
+    "side": "Top"
+  },
+  {
+    "automatic_runner": null,
+    "batting_team": {
+      "emoji": "🐟",
+      "name": "Fukuyama Grilled Fish"
+    },
+    "event_type": "InningStart",
+    "number": 4,
+    "pitcher_status": {
+      "Same": {
+        "emoji": "🍓",
+        "name": "Savannah Roux"
+      }
+    },
+    "side": "Bottom"
+  },
+  {
+    "batter": "Quirky Perez",
+    "event_type": "NowBatting",
+    "player_swept_away": null,
+    "stats": {
+      "Stats": [
+        {
+          "stat": "HitsForAtBats",
+          "value": {
+            "at_bats": 1,
+            "hits": 0
+          }
+        },
+        {
+          "stat": "GroundOuts",
+          "value": 1
+        }
+      ]
+    }
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      1,
+      0
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "ejection": null,
+    "event_type": "Ball",
+    "steals": [],
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "batter": "Quirky Perez",
+    "cheer": null,
+    "destination": "SecondBase",
+    "door_prizes": [],
+    "efflorescence": [],
+    "event_type": "FairBall",
+    "fair_ball_type": "GroundBall"
+  },
+  {
+    "advances": [],
+    "batter": "Quirky Perez",
+    "distance": "Single",
+    "ejection": null,
+    "event_type": "BatterToBase",
+    "fair_ball_type": "GroundBall",
+    "fielder": {
+      "name": "Inez Marchand",
+      "place": "2B"
+    },
+    "scores": []
+  },
+  {
+    "batter": "Shaun Ozawa",
+    "event_type": "NowBatting",
+    "player_swept_away": null,
+    "stats": {
+      "Stats": [
+        {
+          "stat": "HitsForAtBats",
+          "value": {
+            "at_bats": 1,
+            "hits": 0
+          }
+        },
+        {
+          "stat": "GroundOuts",
+          "value": 1
+        }
+      ]
+    }
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      1,
+      0
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "ejection": null,
+    "event_type": "Ball",
+    "steals": [],
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "batter": "Shaun Ozawa",
+    "cheer": null,
+    "destination": "FirstBase",
+    "door_prizes": [],
+    "efflorescence": [],
+    "event_type": "FairBall",
+    "fair_ball_type": "GroundBall"
+  },
+  {
+    "advances": [],
+    "batter": "Shaun Ozawa",
+    "ejection": null,
+    "event_type": "ForceOut",
+    "fair_ball_type": "GroundBall",
+    "fielders": [
+      {
+        "name": "Yasmin Mbabazi",
+        "place": "1B"
+      },
+      {
+        "name": "Abdul Müller",
+        "place": "SS"
+      }
+    ],
+    "out": {
+      "base": "Second",
+      "runner": "Quirky Perez"
+    },
+    "scores": []
+  },
+  {
+    "batter": "Jiahao Bignumbers",
+    "event_type": "NowBatting",
+    "player_swept_away": null,
+    "stats": {
+      "Stats": [
+        {
+          "stat": "HitsForAtBats",
+          "value": {
+            "at_bats": 1,
+            "hits": 1
+          }
+        },
+        {
+          "stat": "FirstBases",
+          "value": 1
+        }
+      ]
+    }
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "batter": "Jiahao Bignumbers",
+    "cheer": null,
+    "destination": "SecondBase",
+    "door_prizes": [],
+    "efflorescence": [],
+    "event_type": "FairBall",
+    "fair_ball_type": "Popup"
+  },
+  {
+    "advances": [],
+    "batter": "Jiahao Bignumbers",
+    "caught_by": {
+      "name": "Inez Marchand",
+      "place": "2B"
+    },
+    "ejection": null,
+    "event_type": "CaughtOut",
+    "fair_ball_type": "Popup",
+    "jetpack": false,
+    "perfect": false,
+    "sacrifice": false,
+    "scores": []
+  },
+  {
+    "batter": "Amillion Vacation",
+    "event_type": "NowBatting",
+    "player_swept_away": null,
+    "stats": {
+      "Stats": [
+        {
+          "stat": "HitsForAtBats",
+          "value": {
+            "at_bats": 1,
+            "hits": 0
+          }
+        },
+        {
+          "stat": "GroundOuts",
+          "value": 1
+        }
+      ]
+    }
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      1,
+      0
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "ejection": null,
+    "event_type": "Ball",
+    "steals": [],
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      1,
+      1
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "ejection": null,
+    "event_type": "Strike",
+    "steals": [],
+    "strike": "Swinging",
+    "surprise_strike": false,
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "batter": "Amillion Vacation",
+    "cheer": null,
+    "destination": "ThirdBase",
+    "door_prizes": [],
+    "efflorescence": [],
+    "event_type": "FairBall",
+    "fair_ball_type": "Popup"
+  },
+  {
+    "advances": [],
+    "batter": "Amillion Vacation",
+    "caught_by": {
+      "name": "Vulpecula Okada",
+      "place": "3B"
+    },
+    "ejection": null,
+    "event_type": "CaughtOut",
+    "fair_ball_type": "Popup",
+    "jetpack": false,
+    "perfect": false,
+    "sacrifice": false,
+    "scores": []
+  },
+  {
+    "event_type": "InningEnd",
+    "number": 4,
+    "side": "Bottom"
+  },
+  {
+    "automatic_runner": null,
+    "batting_team": {
+      "emoji": "🍓",
+      "name": "Versailles Strawberry Seahorses"
+    },
+    "event_type": "InningStart",
+    "number": 5,
+    "pitcher_status": {
+      "Same": {
+        "emoji": "🐟",
+        "name": "Rusty Leone"
+      }
+    },
+    "side": "Top"
+  },
+  {
+    "batter": "Jennie Han",
+    "event_type": "NowBatting",
+    "player_swept_away": null,
+    "stats": {
+      "Stats": [
+        {
+          "stat": "HitsForAtBats",
+          "value": {
+            "at_bats": 2,
+            "hits": 0
+          }
+        },
+        {
+          "stat": "GroundOuts",
+          "value": 2
+        }
+      ]
+    }
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      0,
+      1
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "event_type": "Foul",
+    "foul": "Ball",
+    "steals": [],
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "batter": "Jennie Han",
+    "cheer": null,
+    "destination": "Catcher",
+    "door_prizes": [],
+    "efflorescence": [],
+    "event_type": "FairBall",
+    "fair_ball_type": "GroundBall"
+  },
+  {
+    "advances": [],
+    "batter": "Jennie Han",
+    "distance": "Single",
+    "ejection": null,
+    "event_type": "BatterToBase",
+    "fair_ball_type": "GroundBall",
+    "fielder": {
+      "name": "Ethan Ford",
+      "place": "C"
+    },
+    "scores": []
+  },
+  {
+    "batter": "Vulpecula Okada",
+    "event_type": "NowBatting",
+    "player_swept_away": null,
+    "stats": {
+      "Stats": [
+        {
+          "stat": "HitsForAtBats",
+          "value": {
+            "at_bats": 2,
+            "hits": 2
+          }
+        },
+        {
+          "stat": "SecondBases",
+          "value": 2
+        }
+      ]
+    }
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      0,
+      1
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "ejection": null,
+    "event_type": "Strike",
+    "steals": [],
+    "strike": "Looking",
+    "surprise_strike": false,
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      0,
+      2
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "ejection": null,
+    "event_type": "Strike",
+    "steals": [],
+    "strike": "Looking",
+    "surprise_strike": false,
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "batter": "Vulpecula Okada",
+    "cheer": null,
+    "ejection": null,
+    "event_type": "StrikeOut",
+    "foul": null,
+    "steals": [],
+    "strike": "Looking",
+    "wither": null
+  },
+  {
+    "batter": "Abdul Müller",
+    "event_type": "NowBatting",
+    "player_swept_away": null,
+    "stats": {
+      "Stats": [
+        {
+          "stat": "HitsForAtBats",
+          "value": {
+            "at_bats": 1,
+            "hits": 1
+          }
+        },
+        {
+          "stat": "FirstBases",
+          "value": 1
+        },
+        {
+          "stat": "BaseOnBalls",
+          "value": 1
+        }
+      ]
+    }
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      0,
+      1
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "event_type": "Foul",
+    "foul": "Ball",
+    "steals": [],
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      0,
+      2
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "event_type": "Foul",
+    "foul": "Ball",
+    "steals": [],
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      0,
+      2
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "event_type": "Foul",
+    "foul": "Ball",
+    "steals": [],
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      0,
+      2
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "event_type": "Foul",
+    "foul": "Ball",
+    "steals": [],
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "batter": "Abdul Müller",
+    "cheer": null,
+    "destination": "ThirdBase",
+    "door_prizes": [],
+    "efflorescence": [],
+    "event_type": "FairBall",
+    "fair_ball_type": "GroundBall"
+  },
+  {
+    "advances": [],
+    "batter": "Abdul Müller",
+    "ejection": null,
+    "event_type": "ForceOut",
+    "fair_ball_type": "GroundBall",
+    "fielders": [
+      {
+        "name": "Shaun Ozawa",
+        "place": "3B"
+      },
+      {
+        "name": "Ernie Figueredo",
+        "place": "SS"
+      }
+    ],
+    "out": {
+      "base": "Second",
+      "runner": "Jennie Han"
+    },
+    "scores": []
+  },
+  {
+    "batter": "Yasmin Mbabazi",
+    "event_type": "NowBatting",
+    "player_swept_away": null,
+    "stats": {
+      "Stats": [
+        {
+          "stat": "HitsForAtBats",
+          "value": {
+            "at_bats": 1,
+            "hits": 1
+          }
+        },
+        {
+          "stat": "FirstBases",
+          "value": 1
+        },
+        {
+          "stat": "HitByPitchs",
+          "value": 1
+        }
+      ]
+    }
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      1,
+      0
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "ejection": null,
+    "event_type": "Ball",
+    "steals": [],
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      2,
+      0
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "ejection": null,
+    "event_type": "Ball",
+    "steals": [],
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "batter": "Yasmin Mbabazi",
+    "cheer": null,
+    "destination": "Pitcher",
+    "door_prizes": [],
+    "efflorescence": [],
+    "event_type": "FairBall",
+    "fair_ball_type": "GroundBall"
+  },
+  {
+    "advances": [],
+    "amazing": false,
+    "assassinations": [],
+    "batter": "Yasmin Mbabazi",
+    "ejection": null,
+    "event_type": "GroundedOut",
+    "fielders": [
+      {
+        "name": "Rusty Leone",
+        "place": "P"
+      },
+      {
+        "name": "Amillion Vacation",
+        "place": "1B"
+      }
+    ],
+    "scores": []
+  },
+  {
+    "event_type": "InningEnd",
+    "number": 5,
+    "side": "Top"
+  },
+  {
+    "automatic_runner": null,
+    "batting_team": {
+      "emoji": "🐟",
+      "name": "Fukuyama Grilled Fish"
+    },
+    "event_type": "InningStart",
+    "number": 5,
+    "pitcher_status": {
+      "Same": {
+        "emoji": "🍓",
+        "name": "Savannah Roux"
+      }
+    },
+    "side": "Bottom"
+  },
+  {
+    "batter": "Leonard DeGrom V",
+    "event_type": "NowBatting",
+    "player_swept_away": null,
+    "stats": {
+      "Stats": [
+        {
+          "stat": "HitsForAtBats",
+          "value": {
+            "at_bats": 1,
+            "hits": 0
+          }
+        },
+        {
+          "stat": "StrikeOuts",
+          "value": 1
+        }
+      ]
+    }
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      0,
+      1
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "event_type": "Foul",
+    "foul": "Ball",
+    "steals": [],
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      0,
+      2
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "ejection": null,
+    "event_type": "Strike",
+    "steals": [],
+    "strike": "Looking",
+    "surprise_strike": false,
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      0,
+      2
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "event_type": "Foul",
+    "foul": "Ball",
+    "steals": [],
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "batter": "Leonard DeGrom V",
+    "cheer": null,
+    "destination": "RightField",
+    "door_prizes": [],
+    "efflorescence": [],
+    "event_type": "FairBall",
+    "fair_ball_type": "LineDrive"
+  },
+  {
+    "advances": [],
+    "batter": "Leonard DeGrom V",
+    "distance": "Double",
+    "ejection": null,
+    "event_type": "BatterToBase",
+    "fair_ball_type": "LineDrive",
+    "fielder": {
+      "name": "Jennie Han",
+      "place": "RF"
+    },
+    "scores": []
+  },
+  {
+    "batter": "Ernie Figueredo",
+    "event_type": "NowBatting",
+    "player_swept_away": null,
+    "stats": {
+      "Stats": [
+        {
+          "stat": "HitsForAtBats",
+          "value": {
+            "at_bats": 1,
+            "hits": 0
+          }
+        },
+        {
+          "stat": "ForceOuts",
+          "value": 1
+        }
+      ]
+    }
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      0,
+      1
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "ejection": null,
+    "event_type": "Strike",
+    "steals": [],
+    "strike": "Swinging",
+    "surprise_strike": false,
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "batter": "Ernie Figueredo",
+    "cheer": null,
+    "destination": "ThirdBase",
+    "door_prizes": [],
+    "efflorescence": [],
+    "event_type": "FairBall",
+    "fair_ball_type": "GroundBall"
+  },
+  {
+    "advances": [
+      {
+        "base": "Third",
+        "runner": "Leonard DeGrom V"
+      }
+    ],
+    "amazing": false,
+    "assassinations": [],
+    "batter": "Ernie Figueredo",
+    "ejection": null,
+    "event_type": "GroundedOut",
+    "fielders": [
+      {
+        "name": "Vulpecula Okada",
+        "place": "3B"
+      },
+      {
+        "name": "Yasmin Mbabazi",
+        "place": "1B"
+      }
+    ],
+    "scores": []
+  },
+  {
+    "batter": "Shoka Questel",
+    "event_type": "NowBatting",
+    "player_swept_away": null,
+    "stats": {
+      "Stats": [
+        {
+          "stat": "HitsForAtBats",
+          "value": {
+            "at_bats": 1,
+            "hits": 0
+          }
+        },
+        {
+          "stat": "ForceOuts",
+          "value": 1
+        }
+      ]
+    }
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": "TheHomeTownSectionIsDeafening",
+    "count": [
+      0,
+      1
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "ejection": null,
+    "event_type": "Strike",
+    "steals": [],
+    "strike": "Looking",
+    "surprise_strike": false,
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      0,
+      2
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "event_type": "Foul",
+    "foul": "Ball",
+    "steals": [],
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      0,
+      2
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "event_type": "Foul",
+    "foul": "Ball",
+    "steals": [],
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "batter": "Shoka Questel",
+    "cheer": null,
+    "destination": "ShortStop",
+    "door_prizes": [],
+    "efflorescence": [],
+    "event_type": "FairBall",
+    "fair_ball_type": "GroundBall"
+  },
+  {
+    "advances": [],
+    "batter": "Shoka Questel",
+    "distance": "Single",
+    "ejection": null,
+    "event_type": "BatterToBase",
+    "fair_ball_type": "GroundBall",
+    "fielder": {
+      "name": "Carlton Vitello",
+      "place": "LF"
+    },
+    "scores": [
+      "Leonard DeGrom V"
+    ]
+  },
+  {
+    "batter": "Mejiro Valentin",
+    "event_type": "NowBatting",
+    "player_swept_away": null,
+    "stats": {
+      "Stats": [
+        {
+          "stat": "HitsForAtBats",
+          "value": {
+            "at_bats": 1,
+            "hits": 0
+          }
+        },
+        {
+          "stat": "StrikeOuts",
+          "value": 1
+        }
+      ]
+    }
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "batter": "Mejiro Valentin",
+    "cheer": null,
+    "destination": "ThirdBase",
+    "door_prizes": [],
+    "efflorescence": [],
+    "event_type": "FairBall",
+    "fair_ball_type": "GroundBall"
+  },
+  {
+    "advances": [],
+    "batter": "Mejiro Valentin",
+    "double_trouble": null,
+    "ejection": null,
+    "event_type": "DoublePlayGrounded",
+    "fielders": [
+      {
+        "name": "Vulpecula Okada",
+        "place": "3B"
+      },
+      {
+        "name": "Inez Marchand",
+        "place": "2B"
+      },
+      {
+        "name": "Yasmin Mbabazi",
+        "place": "1B"
+      }
+    ],
+    "out_one": {
+      "base": "SecondBase",
+      "runner": "Shoka Questel"
+    },
+    "out_two": {
+      "base": "FirstBase",
+      "runner": "Mejiro Valentin"
+    },
+    "sacrifice": false,
+    "scores": []
+  },
+  {
+    "event_type": "InningEnd",
+    "number": 5,
+    "side": "Bottom"
+  },
+  {
+    "automatic_runner": null,
+    "batting_team": {
+      "emoji": "🍓",
+      "name": "Versailles Strawberry Seahorses"
+    },
+    "event_type": "InningStart",
+    "number": 6,
+    "pitcher_status": {
+      "Same": {
+        "emoji": "🐟",
+        "name": "Rusty Leone"
+      }
+    },
+    "side": "Top"
+  },
+  {
+    "batter": "Carlton Vitello",
+    "event_type": "NowBatting",
+    "player_swept_away": null,
+    "stats": {
+      "Stats": [
+        {
+          "stat": "HitsForAtBats",
+          "value": {
+            "at_bats": 2,
+            "hits": 1
+          }
+        },
+        {
+          "stat": "GroundIntoDoublePlays",
+          "value": 1
+        },
+        {
+          "stat": "GroundOuts",
+          "value": 1
+        },
+        {
+          "stat": "HomeRuns",
+          "value": 1
+        }
+      ]
+    }
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      0,
+      1
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "ejection": null,
+    "event_type": "Strike",
+    "steals": [],
+    "strike": "Swinging",
+    "surprise_strike": false,
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      0,
+      2
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "ejection": null,
+    "event_type": "Strike",
+    "steals": [],
+    "strike": "Swinging",
+    "surprise_strike": false,
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      0,
+      2
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "event_type": "Foul",
+    "foul": "Ball",
+    "steals": [],
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      1,
+      2
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "ejection": null,
+    "event_type": "Ball",
+    "steals": [],
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      1,
+      2
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "event_type": "Foul",
+    "foul": "Ball",
+    "steals": [],
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      2,
+      2
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "ejection": null,
+    "event_type": "Ball",
+    "steals": [],
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "batter": "Carlton Vitello",
+    "cheer": null,
+    "ejection": null,
+    "event_type": "StrikeOut",
+    "foul": "Tip",
+    "steals": [],
+    "strike": "Swinging",
+    "wither": null
+  },
+  {
+    "batter": "Emil II",
+    "event_type": "NowBatting",
+    "player_swept_away": null,
+    "stats": {
+      "Stats": [
+        {
+          "stat": "HitsForAtBats",
+          "value": {
+            "at_bats": 2,
+            "hits": 0
+          }
+        },
+        {
+          "stat": "ForceOuts",
+          "value": 2
+        }
+      ]
+    }
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      1,
+      0
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "ejection": null,
+    "event_type": "Ball",
+    "steals": [],
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      2,
+      0
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "ejection": null,
+    "event_type": "Ball",
+    "steals": [],
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      3,
+      0
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "ejection": null,
+    "event_type": "Ball",
+    "steals": [],
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "batter": "Emil II",
+    "cheer": null,
+    "destination": "LeftField",
+    "door_prizes": [],
+    "efflorescence": [],
+    "event_type": "FairBall",
+    "fair_ball_type": "FlyBall"
+  },
+  {
+    "advances": [],
+    "batter": "Emil II",
+    "caught_by": {
+      "name": "Leonard DeGrom V",
+      "place": "LF"
+    },
+    "ejection": null,
+    "event_type": "CaughtOut",
+    "fair_ball_type": "FlyBall",
+    "jetpack": false,
+    "perfect": false,
+    "sacrifice": false,
+    "scores": []
+  },
+  {
+    "batter": "Aline Lovrić",
+    "event_type": "NowBatting",
+    "player_swept_away": null,
+    "stats": {
+      "Stats": [
+        {
+          "stat": "HitsForAtBats",
+          "value": {
+            "at_bats": 2,
+            "hits": 0
+          }
+        },
+        {
+          "stat": "GroundOuts",
+          "value": 1
+        },
+        {
+          "stat": "ForceOuts",
+          "value": 1
+        }
+      ]
+    }
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      0,
+      1
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "event_type": "Foul",
+    "foul": "Ball",
+    "steals": [],
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      0,
+      2
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "event_type": "Foul",
+    "foul": "Ball",
+    "steals": [],
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      1,
+      2
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "ejection": null,
+    "event_type": "Ball",
+    "steals": [],
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "batter": "Aline Lovrić",
+    "cheer": null,
+    "ejection": null,
+    "event_type": "StrikeOut",
+    "foul": "Tip",
+    "steals": [],
+    "strike": "Swinging",
+    "wither": null
+  },
+  {
+    "event_type": "InningEnd",
+    "number": 6,
+    "side": "Top"
+  },
+  {
+    "automatic_runner": null,
+    "batting_team": {
+      "emoji": "🐟",
+      "name": "Fukuyama Grilled Fish"
+    },
+    "event_type": "InningStart",
+    "number": 6,
+    "pitcher_status": {
+      "Same": {
+        "emoji": "🍓",
+        "name": "Savannah Roux"
+      }
+    },
+    "side": "Bottom"
+  },
+  {
+    "batter": "Ethan Ford",
+    "event_type": "NowBatting",
+    "player_swept_away": null,
+    "stats": {
+      "Stats": [
+        {
+          "stat": "HitsForAtBats",
+          "value": {
+            "at_bats": 2,
+            "hits": 0
+          }
+        },
+        {
+          "stat": "GroundOuts",
+          "value": 1
+        },
+        {
+          "stat": "PopOuts",
+          "value": 1
+        }
+      ]
+    }
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      0,
+      1
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "ejection": null,
+    "event_type": "Strike",
+    "steals": [],
+    "strike": "Looking",
+    "surprise_strike": false,
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      0,
+      2
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "event_type": "Foul",
+    "foul": "Ball",
+    "steals": [],
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      1,
+      2
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "ejection": null,
+    "event_type": "Ball",
+    "steals": [],
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "batter": "Ethan Ford",
+    "cheer": null,
+    "destination": "CenterField",
+    "door_prizes": [],
+    "efflorescence": [],
+    "event_type": "FairBall",
+    "fair_ball_type": "LineDrive"
+  },
+  {
+    "advances": [],
+    "batter": "Ethan Ford",
+    "distance": "Single",
+    "ejection": null,
+    "event_type": "BatterToBase",
+    "fair_ball_type": "LineDrive",
+    "fielder": {
+      "name": "Emil II",
+      "place": "CF"
+    },
+    "scores": []
+  },
+  {
+    "batter": "Quirky Perez",
+    "event_type": "NowBatting",
+    "player_swept_away": null,
+    "stats": {
+      "Stats": [
+        {
+          "stat": "HitsForAtBats",
+          "value": {
+            "at_bats": 2,
+            "hits": 1
+          }
+        },
+        {
+          "stat": "GroundOuts",
+          "value": 1
+        },
+        {
+          "stat": "FirstBases",
+          "value": 1
+        }
+      ]
+    }
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      0,
+      1
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "event_type": "Foul",
+    "foul": "Ball",
+    "steals": [],
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      1,
+      1
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "ejection": null,
+    "event_type": "Ball",
+    "steals": [],
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      1,
+      2
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "event_type": "Foul",
+    "foul": "Ball",
+    "steals": [],
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "batter": "Quirky Perez",
+    "cheer": null,
+    "destination": "FirstBase",
+    "door_prizes": [],
+    "efflorescence": [],
+    "event_type": "FairBall",
+    "fair_ball_type": "GroundBall"
+  },
+  {
+    "advances": [],
+    "batter": "Quirky Perez",
+    "ejection": null,
+    "event_type": "ForceOut",
+    "fair_ball_type": "GroundBall",
+    "fielders": [
+      {
+        "name": "Yasmin Mbabazi",
+        "place": "1B"
+      },
+      {
+        "name": "Abdul Müller",
+        "place": "SS"
+      }
+    ],
+    "out": {
+      "base": "Second",
+      "runner": "Ethan Ford"
+    },
+    "scores": []
+  },
+  {
+    "batter": "Shaun Ozawa",
+    "event_type": "NowBatting",
+    "player_swept_away": null,
+    "stats": {
+      "Stats": [
+        {
+          "stat": "HitsForAtBats",
+          "value": {
+            "at_bats": 2,
+            "hits": 0
+          }
+        },
+        {
+          "stat": "GroundOuts",
+          "value": 1
+        },
+        {
+          "stat": "Fouls",
+          "value": 1
+        }
+      ]
+    }
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      1,
+      0
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "ejection": null,
+    "event_type": "Ball",
+    "steals": [],
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "batter": "Shaun Ozawa",
+    "cheer": null,
+    "destination": "ShortStop",
+    "door_prizes": [],
+    "efflorescence": [],
+    "event_type": "FairBall",
+    "fair_ball_type": "GroundBall"
+  },
+  {
+    "advances": [
+      {
+        "base": "Second",
+        "runner": "Quirky Perez"
+      }
+    ],
+    "batter": "Shaun Ozawa",
+    "ejection": null,
+    "error": "Fielding",
+    "event_type": "ReachOnFieldingError",
+    "fielder": {
+      "name": "Abdul Müller",
+      "place": "SS"
+    },
+    "scores": []
+  },
+  {
+    "batter": "Jiahao Bignumbers",
+    "event_type": "NowBatting",
+    "player_swept_away": null,
+    "stats": {
+      "Stats": [
+        {
+          "stat": "HitsForAtBats",
+          "value": {
+            "at_bats": 2,
+            "hits": 1
+          }
+        },
+        {
+          "stat": "FirstBases",
+          "value": 1
+        },
+        {
+          "stat": "PopOuts",
+          "value": 1
+        }
+      ]
+    }
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      0,
+      1
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "ejection": null,
+    "event_type": "Strike",
+    "steals": [],
+    "strike": "Swinging",
+    "surprise_strike": false,
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      1,
+      1
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "ejection": null,
+    "event_type": "Ball",
+    "steals": [],
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      1,
+      2
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "ejection": null,
+    "event_type": "Strike",
+    "steals": [],
+    "strike": "Looking",
+    "surprise_strike": false,
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "batter": "Jiahao Bignumbers",
+    "cheer": null,
+    "destination": "FirstBase",
+    "door_prizes": [],
+    "efflorescence": [],
+    "event_type": "FairBall",
+    "fair_ball_type": "GroundBall"
+  },
+  {
+    "advances": [
+      {
+        "base": "Third",
+        "runner": "Quirky Perez"
+      },
+      {
+        "base": "Second",
+        "runner": "Shaun Ozawa"
+      }
+    ],
+    "amazing": false,
+    "assassinations": [],
+    "batter": "Jiahao Bignumbers",
+    "ejection": null,
+    "event_type": "GroundedOut",
+    "fielders": [
+      {
+        "name": "Yasmin Mbabazi",
+        "place": "1B"
+      }
+    ],
+    "scores": []
+  },
+  {
+    "batter": "Amillion Vacation",
+    "event_type": "NowBatting",
+    "player_swept_away": null,
+    "stats": {
+      "Stats": [
+        {
+          "stat": "HitsForAtBats",
+          "value": {
+            "at_bats": 2,
+            "hits": 0
+          }
+        },
+        {
+          "stat": "GroundOuts",
+          "value": 1
+        },
+        {
+          "stat": "PopOuts",
+          "value": 1
+        }
+      ]
+    }
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      0,
+      1
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "event_type": "Foul",
+    "foul": "Ball",
+    "steals": [],
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "batter": "Amillion Vacation",
+    "cheer": "TheStadiumShakesWithExcitement",
+    "destination": "ShortStop",
+    "door_prizes": [],
+    "efflorescence": [],
+    "event_type": "FairBall",
+    "fair_ball_type": "GroundBall"
+  },
+  {
+    "advances": [],
+    "amazing": false,
+    "assassinations": [],
+    "batter": "Amillion Vacation",
+    "ejection": null,
+    "event_type": "GroundedOut",
+    "fielders": [
+      {
+        "name": "Abdul Müller",
+        "place": "SS"
+      },
+      {
+        "name": "Yasmin Mbabazi",
+        "place": "1B"
+      }
+    ],
+    "scores": []
+  },
+  {
+    "event_type": "InningEnd",
+    "number": 6,
+    "side": "Bottom"
+  },
+  {
+    "automatic_runner": null,
+    "batting_team": {
+      "emoji": "🍓",
+      "name": "Versailles Strawberry Seahorses"
+    },
+    "event_type": "InningStart",
+    "number": 7,
+    "pitcher_status": {
+      "Same": {
+        "emoji": "🐟",
+        "name": "Rusty Leone"
+      }
+    },
+    "side": "Top"
+  },
+  {
+    "batter": "Louis Varga",
+    "event_type": "NowBatting",
+    "player_swept_away": null,
+    "stats": {
+      "Stats": [
+        {
+          "stat": "HitsForAtBats",
+          "value": {
+            "at_bats": 3,
+            "hits": 1
+          }
+        },
+        {
+          "stat": "FirstBases",
+          "value": 1
+        },
+        {
+          "stat": "LineOuts",
+          "value": 1
+        },
+        {
+          "stat": "GroundOuts",
+          "value": 1
+        }
+      ]
+    }
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "batter": "Louis Varga",
+    "cheer": null,
+    "destination": "Pitcher",
+    "door_prizes": [],
+    "efflorescence": [],
+    "event_type": "FairBall",
+    "fair_ball_type": "GroundBall"
+  },
+  {
+    "advances": [],
+    "batter": "Louis Varga",
+    "ejection": null,
+    "error": "Fielding",
+    "event_type": "ReachOnFieldingError",
+    "fielder": {
+      "name": "Rusty Leone",
+      "place": "SP1"
+    },
+    "scores": []
+  },
+  {
+    "batter": "Inez Marchand",
+    "event_type": "NowBatting",
+    "player_swept_away": null,
+    "stats": {
+      "Stats": [
+        {
+          "stat": "HitsForAtBats",
+          "value": {
+            "at_bats": 3,
+            "hits": 1
+          }
+        },
+        {
+          "stat": "HomeRuns",
+          "value": 1
+        },
+        {
+          "stat": "GroundOuts",
+          "value": 1
+        },
+        {
+          "stat": "PopOuts",
+          "value": 1
+        }
+      ]
+    }
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "batter": "Inez Marchand",
+    "cheer": null,
+    "destination": "FirstBase",
+    "door_prizes": [],
+    "efflorescence": [],
+    "event_type": "FairBall",
+    "fair_ball_type": "GroundBall"
+  },
+  {
+    "advances": [],
+    "batter": "Inez Marchand",
+    "double_trouble": null,
+    "ejection": null,
+    "event_type": "DoublePlayGrounded",
+    "fielders": [
+      {
+        "name": "Amillion Vacation",
+        "place": "1B"
+      },
+      {
+        "name": "Ernie Figueredo",
+        "place": "SS"
+      },
+      {
+        "name": "Amillion Vacation",
+        "place": "1B"
+      }
+    ],
+    "out_one": {
+      "base": "SecondBase",
+      "runner": "Louis Varga"
+    },
+    "out_two": {
+      "base": "FirstBase",
+      "runner": "Inez Marchand"
+    },
+    "sacrifice": false,
+    "scores": []
+  },
+  {
+    "batter": "Jennie Han",
+    "event_type": "NowBatting",
+    "player_swept_away": null,
+    "stats": {
+      "Stats": [
+        {
+          "stat": "HitsForAtBats",
+          "value": {
+            "at_bats": 3,
+            "hits": 1
+          }
+        },
+        {
+          "stat": "GroundOuts",
+          "value": 2
+        },
+        {
+          "stat": "FirstBases",
+          "value": 1
+        }
+      ]
+    }
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      0,
+      1
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "ejection": null,
+    "event_type": "Strike",
+    "steals": [],
+    "strike": "Swinging",
+    "surprise_strike": false,
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      0,
+      2
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "event_type": "Foul",
+    "foul": "Ball",
+    "steals": [],
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      0,
+      2
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "event_type": "Foul",
+    "foul": "Ball",
+    "steals": [],
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      0,
+      2
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "event_type": "Foul",
+    "foul": "Ball",
+    "steals": [],
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      1,
+      2
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "ejection": null,
+    "event_type": "Ball",
+    "steals": [],
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "batter": "Jennie Han",
+    "cheer": null,
+    "destination": "CenterField",
+    "door_prizes": [],
+    "efflorescence": [],
+    "event_type": "FairBall",
+    "fair_ball_type": "LineDrive"
+  },
+  {
+    "advances": [],
+    "batter": "Jennie Han",
+    "distance": "Single",
+    "ejection": null,
+    "event_type": "BatterToBase",
+    "fair_ball_type": "LineDrive",
+    "fielder": {
+      "name": "Ernie Figueredo",
+      "place": "SS"
+    },
+    "scores": []
+  },
+  {
+    "batter": "Vulpecula Okada",
+    "event_type": "NowBatting",
+    "player_swept_away": null,
+    "stats": {
+      "Stats": [
+        {
+          "stat": "HitsForAtBats",
+          "value": {
+            "at_bats": 3,
+            "hits": 2
+          }
+        },
+        {
+          "stat": "SecondBases",
+          "value": 2
+        },
+        {
+          "stat": "StrikeOuts",
+          "value": 1
+        }
+      ]
+    }
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      1,
+      0
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "ejection": null,
+    "event_type": "Ball",
+    "steals": [],
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      1,
+      1
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "event_type": "Foul",
+    "foul": "Ball",
+    "steals": [],
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      1,
+      2
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "event_type": "Foul",
+    "foul": "Ball",
+    "steals": [],
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      2,
+      2
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "ejection": null,
+    "event_type": "Ball",
+    "steals": [],
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "batter": "Vulpecula Okada",
+    "cheer": null,
+    "ejection": null,
+    "event_type": "StrikeOut",
+    "foul": null,
+    "steals": [],
+    "strike": "Looking",
+    "wither": null
+  },
+  {
+    "event_type": "InningEnd",
+    "number": 7,
+    "side": "Top"
+  },
+  {
+    "automatic_runner": null,
+    "batting_team": {
+      "emoji": "🐟",
+      "name": "Fukuyama Grilled Fish"
+    },
+    "event_type": "InningStart",
+    "number": 7,
+    "pitcher_status": {
+      "Same": {
+        "emoji": "🍓",
+        "name": "Savannah Roux"
+      }
+    },
+    "side": "Bottom"
+  },
+  {
+    "batter": "Leonard DeGrom V",
+    "event_type": "NowBatting",
+    "player_swept_away": null,
+    "stats": {
+      "Stats": [
+        {
+          "stat": "HitsForAtBats",
+          "value": {
+            "at_bats": 2,
+            "hits": 1
+          }
+        },
+        {
+          "stat": "StrikeOuts",
+          "value": 1
+        },
+        {
+          "stat": "SecondBases",
+          "value": 1
+        }
+      ]
+    }
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      0,
+      1
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "event_type": "Foul",
+    "foul": "Ball",
+    "steals": [],
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      0,
+      2
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "ejection": null,
+    "event_type": "Strike",
+    "steals": [],
+    "strike": "Swinging",
+    "surprise_strike": false,
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      1,
+      2
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "ejection": null,
+    "event_type": "Ball",
+    "steals": [],
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "batter": "Leonard DeGrom V",
+    "cheer": null,
+    "ejection": null,
+    "event_type": "StrikeOut",
+    "foul": null,
+    "steals": [],
+    "strike": "Swinging",
+    "wither": null
+  },
+  {
+    "batter": "Ernie Figueredo",
+    "event_type": "NowBatting",
+    "player_swept_away": null,
+    "stats": {
+      "Stats": [
+        {
+          "stat": "HitsForAtBats",
+          "value": {
+            "at_bats": 2,
+            "hits": 0
+          }
+        },
+        {
+          "stat": "ForceOuts",
+          "value": 1
+        },
+        {
+          "stat": "GroundOuts",
+          "value": 1
+        }
+      ]
+    }
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "batter": "Ernie Figueredo",
+    "cheer": null,
+    "destination": "LeftField",
+    "door_prizes": [],
+    "efflorescence": [],
+    "event_type": "FairBall",
+    "fair_ball_type": "LineDrive"
+  },
+  {
+    "advances": [],
+    "batter": "Ernie Figueredo",
+    "distance": "Single",
+    "ejection": null,
+    "event_type": "BatterToBase",
+    "fair_ball_type": "LineDrive",
+    "fielder": {
+      "name": "Carlton Vitello",
+      "place": "LF"
+    },
+    "scores": []
+  },
+  {
+    "batter": "Shoka Questel",
+    "event_type": "NowBatting",
+    "player_swept_away": null,
+    "stats": {
+      "Stats": [
+        {
+          "stat": "HitsForAtBats",
+          "value": {
+            "at_bats": 2,
+            "hits": 1
+          }
+        },
+        {
+          "stat": "ForceOuts",
+          "value": 1
+        },
+        {
+          "stat": "FirstBases",
+          "value": 1
+        }
+      ]
+    }
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      0,
+      1
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "event_type": "Foul",
+    "foul": "Ball",
+    "steals": [],
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "batter": "Shoka Questel",
+    "cheer": null,
+    "destination": "ShortStop",
+    "door_prizes": [],
+    "efflorescence": [],
+    "event_type": "FairBall",
+    "fair_ball_type": "GroundBall"
+  },
+  {
+    "advances": [],
+    "batter": "Shoka Questel",
+    "double_trouble": null,
+    "ejection": null,
+    "event_type": "DoublePlayGrounded",
+    "fielders": [
+      {
+        "name": "Abdul Müller",
+        "place": "SS"
+      },
+      {
+        "name": "Yasmin Mbabazi",
+        "place": "1B"
+      }
+    ],
+    "out_one": {
+      "base": "SecondBase",
+      "runner": "Ernie Figueredo"
+    },
+    "out_two": {
+      "base": "FirstBase",
+      "runner": "Shoka Questel"
+    },
+    "sacrifice": false,
+    "scores": []
+  },
+  {
+    "event_type": "InningEnd",
+    "number": 7,
+    "side": "Bottom"
+  },
+  {
+    "automatic_runner": null,
+    "batting_team": {
+      "emoji": "🍓",
+      "name": "Versailles Strawberry Seahorses"
+    },
+    "event_type": "InningStart",
+    "number": 8,
+    "pitcher_status": {
+      "Different": {
+        "arriving_emoji": "🐟",
+        "arriving_pitcher": {
+          "name": "Mecha Ushiromiya",
+          "place": "RP1"
+        },
+        "leaving_emoji": "🐟",
+        "leaving_pitcher": {
+          "name": "Rusty Leone",
+          "place": "SP1"
+        }
+      }
+    },
+    "side": "Top"
+  },
+  {
+    "batter": "Abdul Müller",
+    "event_type": "NowBatting",
+    "player_swept_away": null,
+    "stats": {
+      "Stats": [
+        {
+          "stat": "HitsForAtBats",
+          "value": {
+            "at_bats": 2,
+            "hits": 1
+          }
+        },
+        {
+          "stat": "FirstBases",
+          "value": 1
+        },
+        {
+          "stat": "BaseOnBalls",
+          "value": 1
+        },
+        {
+          "stat": "Fouls",
+          "value": 1
+        }
+      ]
+    }
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      1,
+      0
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "ejection": null,
+    "event_type": "Ball",
+    "steals": [],
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      1,
+      1
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "event_type": "Foul",
+    "foul": "Ball",
+    "steals": [],
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      2,
+      1
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "ejection": null,
+    "event_type": "Ball",
+    "steals": [],
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      2,
+      2
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "event_type": "Foul",
+    "foul": "Ball",
+    "steals": [],
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      3,
+      2
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "ejection": null,
+    "event_type": "Ball",
+    "steals": [],
+    "wither": null
+  },
+  {
+    "advances": [],
+    "assassinations": [],
+    "aurora_photos": null,
+    "batter": "Abdul Müller",
+    "cheer": null,
+    "ejection": null,
+    "event_type": "Walk",
+    "scores": [],
+    "wither": null
+  },
+  {
+    "batter": "Yasmin Mbabazi",
+    "event_type": "NowBatting",
+    "player_swept_away": null,
+    "stats": {
+      "Stats": [
+        {
+          "stat": "HitsForAtBats",
+          "value": {
+            "at_bats": 2,
+            "hits": 1
+          }
+        },
+        {
+          "stat": "FirstBases",
+          "value": 1
+        },
+        {
+          "stat": "HitByPitchs",
+          "value": 1
+        },
+        {
+          "stat": "GroundOuts",
+          "value": 1
+        }
+      ]
+    }
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      0,
+      1
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "ejection": null,
+    "event_type": "Strike",
+    "steals": [],
+    "strike": "Looking",
+    "surprise_strike": false,
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      1,
+      1
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "ejection": null,
+    "event_type": "Ball",
+    "steals": [],
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      1,
+      2
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "ejection": null,
+    "event_type": "Strike",
+    "steals": [],
+    "strike": "Looking",
+    "surprise_strike": false,
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "batter": "Yasmin Mbabazi",
+    "cheer": null,
+    "ejection": null,
+    "event_type": "StrikeOut",
+    "foul": null,
+    "steals": [],
+    "strike": "Swinging",
+    "wither": null
+  },
+  {
+    "batter": "Carlton Vitello",
+    "event_type": "NowBatting",
+    "player_swept_away": null,
+    "stats": {
+      "Stats": [
+        {
+          "stat": "HitsForAtBats",
+          "value": {
+            "at_bats": 3,
+            "hits": 1
+          }
+        },
+        {
+          "stat": "GroundIntoDoublePlays",
+          "value": 1
+        },
+        {
+          "stat": "GroundOuts",
+          "value": 1
+        },
+        {
+          "stat": "HomeRuns",
+          "value": 1
+        },
+        {
+          "stat": "StrikeOuts",
+          "value": 1
+        }
+      ]
+    }
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "batter": "Carlton Vitello",
+    "cheer": null,
+    "destination": "ThirdBase",
+    "door_prizes": [],
+    "efflorescence": [],
+    "event_type": "FairBall",
+    "fair_ball_type": "GroundBall"
+  },
+  {
+    "advances": [],
+    "batter": "Carlton Vitello",
+    "ejection": null,
+    "event_type": "ForceOut",
+    "fair_ball_type": "GroundBall",
+    "fielders": [
+      {
+        "name": "Shaun Ozawa",
+        "place": "3B"
+      },
+      {
+        "name": "Ernie Figueredo",
+        "place": "SS"
+      }
+    ],
+    "out": {
+      "base": "Second",
+      "runner": "Abdul Müller"
+    },
+    "scores": []
+  },
+  {
+    "batter": "Emil II",
+    "event_type": "NowBatting",
+    "player_swept_away": null,
+    "stats": {
+      "Stats": [
+        {
+          "stat": "HitsForAtBats",
+          "value": {
+            "at_bats": 3,
+            "hits": 0
+          }
+        },
+        {
+          "stat": "ForceOuts",
+          "value": 3
+        }
+      ]
+    }
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      1,
+      0
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "ejection": null,
+    "event_type": "Ball",
+    "steals": [
+      {
+        "base": "Second",
+        "caught": true,
+        "runner": "Carlton Vitello"
+      }
+    ],
+    "wither": null
+  },
+  {
+    "event_type": "InningEnd",
+    "number": 8,
+    "side": "Top"
+  },
+  {
+    "automatic_runner": null,
+    "batting_team": {
+      "emoji": "🐟",
+      "name": "Fukuyama Grilled Fish"
+    },
+    "event_type": "InningStart",
+    "number": 8,
+    "pitcher_status": {
+      "Same": {
+        "emoji": "🍓",
+        "name": "Savannah Roux"
+      }
+    },
+    "side": "Bottom"
+  },
+  {
+    "batter": "Mejiro Valentin",
+    "event_type": "NowBatting",
+    "player_swept_away": null,
+    "stats": {
+      "Stats": [
+        {
+          "stat": "HitsForAtBats",
+          "value": {
+            "at_bats": 2,
+            "hits": 0
+          }
+        },
+        {
+          "stat": "StrikeOuts",
+          "value": 1
+        },
+        {
+          "stat": "GroundIntoDoublePlays",
+          "value": 1
+        },
+        {
+          "stat": "GroundOuts",
+          "value": 1
+        }
+      ]
+    }
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      0,
+      1
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "ejection": null,
+    "event_type": "Strike",
+    "steals": [],
+    "strike": "Looking",
+    "surprise_strike": false,
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      1,
+      1
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "ejection": null,
+    "event_type": "Ball",
+    "steals": [],
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "batter": "Mejiro Valentin",
+    "cheer": null,
+    "destination": "SecondBase",
+    "door_prizes": [],
+    "efflorescence": [],
+    "event_type": "FairBall",
+    "fair_ball_type": "GroundBall"
+  },
+  {
+    "advances": [],
+    "amazing": false,
+    "assassinations": [],
+    "batter": "Mejiro Valentin",
+    "ejection": null,
+    "event_type": "GroundedOut",
+    "fielders": [
+      {
+        "name": "Inez Marchand",
+        "place": "2B"
+      },
+      {
+        "name": "Yasmin Mbabazi",
+        "place": "1B"
+      }
+    ],
+    "scores": []
+  },
+  {
+    "batter": "Ethan Ford",
+    "event_type": "NowBatting",
+    "player_swept_away": null,
+    "stats": {
+      "Stats": [
+        {
+          "stat": "HitsForAtBats",
+          "value": {
+            "at_bats": 3,
+            "hits": 1
+          }
+        },
+        {
+          "stat": "GroundOuts",
+          "value": 1
+        },
+        {
+          "stat": "PopOuts",
+          "value": 1
+        },
+        {
+          "stat": "FirstBases",
+          "value": 1
+        }
+      ]
+    }
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      0,
+      1
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "ejection": null,
+    "event_type": "Strike",
+    "steals": [],
+    "strike": "Swinging",
+    "surprise_strike": false,
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      0,
+      2
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "ejection": null,
+    "event_type": "Strike",
+    "steals": [],
+    "strike": "Looking",
+    "surprise_strike": false,
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "batter": "Ethan Ford",
+    "cheer": null,
+    "ejection": null,
+    "event_type": "StrikeOut",
+    "foul": null,
+    "steals": [],
+    "strike": "Looking",
+    "wither": null
+  },
+  {
+    "batter": "Quirky Perez",
+    "event_type": "NowBatting",
+    "player_swept_away": null,
+    "stats": {
+      "Stats": [
+        {
+          "stat": "HitsForAtBats",
+          "value": {
+            "at_bats": 3,
+            "hits": 1
+          }
+        },
+        {
+          "stat": "GroundOuts",
+          "value": 1
+        },
+        {
+          "stat": "FirstBases",
+          "value": 1
+        },
+        {
+          "stat": "Fouls",
+          "value": 1
+        }
+      ]
+    }
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      1,
+      0
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "ejection": null,
+    "event_type": "Ball",
+    "steals": [],
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      1,
+      1
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "ejection": null,
+    "event_type": "Strike",
+    "steals": [],
+    "strike": "Swinging",
+    "surprise_strike": false,
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      1,
+      2
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "ejection": null,
+    "event_type": "Strike",
+    "steals": [],
+    "strike": "Swinging",
+    "surprise_strike": false,
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      2,
+      2
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "ejection": null,
+    "event_type": "Ball",
+    "steals": [],
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "batter": "Quirky Perez",
+    "cheer": null,
+    "ejection": null,
+    "event_type": "StrikeOut",
+    "foul": null,
+    "steals": [],
+    "strike": "Swinging",
+    "wither": null
+  },
+  {
+    "event_type": "InningEnd",
+    "number": 8,
+    "side": "Bottom"
+  },
+  {
+    "automatic_runner": null,
+    "batting_team": {
+      "emoji": "🍓",
+      "name": "Versailles Strawberry Seahorses"
+    },
+    "event_type": "InningStart",
+    "number": 9,
+    "pitcher_status": {
+      "Same": {
+        "emoji": "🐟",
+        "name": "Mecha Ushiromiya"
+      }
+    },
+    "side": "Top"
+  },
+  {
+    "batter": "Emil II",
+    "event_type": "NowBatting",
+    "player_swept_away": null,
+    "stats": {
+      "Stats": [
+        {
+          "stat": "HitsForAtBats",
+          "value": {
+            "at_bats": 3,
+            "hits": 0
+          }
+        },
+        {
+          "stat": "ForceOuts",
+          "value": 3
+        }
+      ]
+    }
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      0,
+      1
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "event_type": "Foul",
+    "foul": "Ball",
+    "steals": [],
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      1,
+      1
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "ejection": null,
+    "event_type": "Ball",
+    "steals": [],
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "batter": "Emil II",
+    "cheer": null,
+    "destination": "RightField",
+    "door_prizes": [],
+    "efflorescence": [],
+    "event_type": "FairBall",
+    "fair_ball_type": "LineDrive"
+  },
+  {
+    "advances": [],
+    "batter": "Emil II",
+    "caught_by": {
+      "name": "Jiahao Bignumbers",
+      "place": "RF"
+    },
+    "ejection": null,
+    "event_type": "CaughtOut",
+    "fair_ball_type": "LineDrive",
+    "jetpack": false,
+    "perfect": false,
+    "sacrifice": false,
+    "scores": []
+  },
+  {
+    "batter": "Aline Lovrić",
+    "event_type": "NowBatting",
+    "player_swept_away": null,
+    "stats": {
+      "Stats": [
+        {
+          "stat": "HitsForAtBats",
+          "value": {
+            "at_bats": 3,
+            "hits": 0
+          }
+        },
+        {
+          "stat": "GroundOuts",
+          "value": 1
+        },
+        {
+          "stat": "ForceOuts",
+          "value": 1
+        },
+        {
+          "stat": "StrikeOuts",
+          "value": 1
+        }
+      ]
+    }
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      1,
+      0
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "ejection": null,
+    "event_type": "Ball",
+    "steals": [],
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      1,
+      1
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "ejection": null,
+    "event_type": "Strike",
+    "steals": [],
+    "strike": "Looking",
+    "surprise_strike": false,
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      1,
+      2
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "event_type": "Foul",
+    "foul": "Ball",
+    "steals": [],
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      2,
+      2
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "ejection": null,
+    "event_type": "Ball",
+    "steals": [],
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "batter": "Aline Lovrić",
+    "cheer": null,
+    "ejection": null,
+    "event_type": "StrikeOut",
+    "foul": null,
+    "steals": [],
+    "strike": "Swinging",
+    "wither": null
+  },
+  {
+    "batter": "Louis Varga",
+    "event_type": "NowBatting",
+    "player_swept_away": null,
+    "stats": {
+      "Stats": [
+        {
+          "stat": "HitsForAtBats",
+          "value": {
+            "at_bats": 4,
+            "hits": 1
+          }
+        },
+        {
+          "stat": "FirstBases",
+          "value": 1
+        },
+        {
+          "stat": "LineOuts",
+          "value": 1
+        },
+        {
+          "stat": "GroundOuts",
+          "value": 1
+        }
+      ]
+    }
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "batter": "Louis Varga",
+    "cheer": null,
+    "destination": "CenterField",
+    "door_prizes": [],
+    "efflorescence": [],
+    "event_type": "FairBall",
+    "fair_ball_type": "FlyBall"
+  },
+  {
+    "advances": [],
+    "batter": "Louis Varga",
+    "caught_by": {
+      "name": "Shoka Questel",
+      "place": "CF"
+    },
+    "ejection": null,
+    "event_type": "CaughtOut",
+    "fair_ball_type": "FlyBall",
+    "jetpack": false,
+    "perfect": false,
+    "sacrifice": false,
+    "scores": []
+  },
+  {
+    "event_type": "InningEnd",
+    "number": 9,
+    "side": "Top"
+  },
+  {
+    "automatic_runner": null,
+    "batting_team": {
+      "emoji": "🐟",
+      "name": "Fukuyama Grilled Fish"
+    },
+    "event_type": "InningStart",
+    "number": 9,
+    "pitcher_status": {
+      "Same": {
+        "emoji": "🍓",
+        "name": "Savannah Roux"
+      }
+    },
+    "side": "Bottom"
+  },
+  {
+    "batter": "Shaun Ozawa",
+    "event_type": "NowBatting",
+    "player_swept_away": null,
+    "stats": {
+      "Stats": [
+        {
+          "stat": "HitsForAtBats",
+          "value": {
+            "at_bats": 3,
+            "hits": 0
+          }
+        },
+        {
+          "stat": "GroundOuts",
+          "value": 1
+        },
+        {
+          "stat": "Fouls",
+          "value": 1
+        }
+      ]
+    }
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "batter": "Shaun Ozawa",
+    "cheer": null,
+    "destination": "LeftField",
+    "door_prizes": [],
+    "efflorescence": [],
+    "event_type": "FairBall",
+    "fair_ball_type": "FlyBall"
+  },
+  {
+    "advances": [],
+    "batter": "Shaun Ozawa",
+    "distance": "Single",
+    "ejection": null,
+    "event_type": "BatterToBase",
+    "fair_ball_type": "FlyBall",
+    "fielder": {
+      "name": "Carlton Vitello",
+      "place": "LF"
+    },
+    "scores": []
+  },
+  {
+    "batter": "Jiahao Bignumbers",
+    "event_type": "NowBatting",
+    "player_swept_away": null,
+    "stats": {
+      "Stats": [
+        {
+          "stat": "HitsForAtBats",
+          "value": {
+            "at_bats": 3,
+            "hits": 1
+          }
+        },
+        {
+          "stat": "FirstBases",
+          "value": 1
+        },
+        {
+          "stat": "PopOuts",
+          "value": 1
+        },
+        {
+          "stat": "GroundOuts",
+          "value": 1
+        }
+      ]
+    }
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      0,
+      1
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "event_type": "Foul",
+    "foul": "Ball",
+    "steals": [],
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      0,
+      2
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "event_type": "Foul",
+    "foul": "Ball",
+    "steals": [],
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "batter": "Jiahao Bignumbers",
+    "cheer": null,
+    "destination": "SecondBase",
+    "door_prizes": [],
+    "efflorescence": [],
+    "event_type": "FairBall",
+    "fair_ball_type": "GroundBall"
+  },
+  {
+    "advances": [
+      {
+        "base": "Third",
+        "runner": "Shaun Ozawa"
+      }
+    ],
+    "batter": "Jiahao Bignumbers",
+    "distance": "Single",
+    "ejection": null,
+    "event_type": "BatterToBase",
+    "fair_ball_type": "GroundBall",
+    "fielder": {
+      "name": "Emil II",
+      "place": "CF"
+    },
+    "scores": []
+  },
+  {
+    "event_type": "MoundVisit",
+    "manager_name": "Cameron Newton",
+    "mound_visit_type": "MoundVisit",
+    "team": {
+      "emoji": "🍓",
+      "name": "Versailles Strawberry Seahorses"
+    }
+  },
+  {
+    "event_type": "PitcherRemains",
+    "remaining_pitcher": {
+      "name": "Savannah Roux",
+      "place": "SP1"
+    }
+  },
+  {
+    "batter": "Amillion Vacation",
+    "event_type": "NowBatting",
+    "player_swept_away": null,
+    "stats": {
+      "Stats": [
+        {
+          "stat": "HitsForAtBats",
+          "value": {
+            "at_bats": 3,
+            "hits": 0
+          }
+        },
+        {
+          "stat": "GroundOuts",
+          "value": 2
+        },
+        {
+          "stat": "PopOuts",
+          "value": 1
+        }
+      ]
+    }
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": "NoiseRainsDownFromTheSeats",
+    "count": [
+      0,
+      1
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "ejection": null,
+    "event_type": "Strike",
+    "steals": [],
+    "strike": "Looking",
+    "surprise_strike": false,
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      1,
+      1
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "ejection": null,
+    "event_type": "Ball",
+    "steals": [],
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      2,
+      1
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "ejection": null,
+    "event_type": "Ball",
+    "steals": [],
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      2,
+      2
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "event_type": "Foul",
+    "foul": "Ball",
+    "steals": [],
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "batter": "Amillion Vacation",
+    "cheer": null,
+    "destination": "FirstBase",
+    "door_prizes": [],
+    "efflorescence": [],
+    "event_type": "FairBall",
+    "fair_ball_type": "GroundBall"
+  },
+  {
+    "advances": [
+      {
+        "base": "Second",
+        "runner": "Jiahao Bignumbers"
+      }
+    ],
+    "batter": "Amillion Vacation",
+    "distance": "Single",
+    "ejection": null,
+    "event_type": "BatterToBase",
+    "fair_ball_type": "GroundBall",
+    "fielder": {
+      "name": "Jennie Han",
+      "place": "RF"
+    },
+    "scores": [
+      "Shaun Ozawa"
+    ]
+  },
+  {
+    "batter": "Leonard DeGrom V",
+    "event_type": "NowBatting",
+    "player_swept_away": null,
+    "stats": {
+      "Stats": [
+        {
+          "stat": "HitsForAtBats",
+          "value": {
+            "at_bats": 3,
+            "hits": 1
+          }
+        },
+        {
+          "stat": "StrikeOuts",
+          "value": 2
+        },
+        {
+          "stat": "SecondBases",
+          "value": 1
+        }
+      ]
+    }
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      1,
+      0
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "ejection": null,
+    "event_type": "Ball",
+    "steals": [],
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "batter": "Leonard DeGrom V",
+    "cheer": null,
+    "destination": "CenterField",
+    "door_prizes": [],
+    "efflorescence": [],
+    "event_type": "FairBall",
+    "fair_ball_type": "FlyBall"
+  },
+  {
+    "advances": [
+      {
+        "base": "Third",
+        "runner": "Amillion Vacation"
+      }
+    ],
+    "batter": "Leonard DeGrom V",
+    "distance": "Double",
+    "ejection": null,
+    "event_type": "BatterToBase",
+    "fair_ball_type": "FlyBall",
+    "fielder": {
+      "name": "Emil II",
+      "place": "CF"
+    },
+    "scores": [
+      "Jiahao Bignumbers"
+    ]
+  },
+  {
+    "batter": "Ernie Figueredo",
+    "event_type": "NowBatting",
+    "player_swept_away": null,
+    "stats": {
+      "Stats": [
+        {
+          "stat": "HitsForAtBats",
+          "value": {
+            "at_bats": 3,
+            "hits": 1
+          }
+        },
+        {
+          "stat": "ForceOuts",
+          "value": 1
+        },
+        {
+          "stat": "GroundOuts",
+          "value": 1
+        },
+        {
+          "stat": "FirstBases",
+          "value": 1
+        }
+      ]
+    }
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      0,
+      1
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "event_type": "Foul",
+    "foul": "Ball",
+    "steals": [],
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": "TheBallparkIsInAnUproar",
+    "count": [
+      1,
+      1
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "ejection": null,
+    "event_type": "Ball",
+    "steals": [],
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      1,
+      2
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "ejection": null,
+    "event_type": "Strike",
+    "steals": [],
+    "strike": "Swinging",
+    "surprise_strike": false,
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "batter": "Ernie Figueredo",
+    "cheer": null,
+    "destination": "ThirdBase",
+    "door_prizes": [],
+    "efflorescence": [],
+    "event_type": "FairBall",
+    "fair_ball_type": "GroundBall"
+  },
+  {
+    "advances": [
+      {
+        "base": "Third",
+        "runner": "Leonard DeGrom V"
+      }
+    ],
+    "amazing": false,
+    "assassinations": [],
+    "batter": "Ernie Figueredo",
+    "ejection": null,
+    "event_type": "GroundedOut",
+    "fielders": [
+      {
+        "name": "Vulpecula Okada",
+        "place": "3B"
+      },
+      {
+        "name": "Yasmin Mbabazi",
+        "place": "1B"
+      }
+    ],
+    "scores": [
+      "Amillion Vacation"
+    ]
+  },
+  {
+    "event_type": "MoundVisit",
+    "manager_name": "Cameron Newton",
+    "mound_visit_type": "PitchingChange",
+    "team": {
+      "emoji": "🍓",
+      "name": "Versailles Strawberry Seahorses"
+    }
+  },
+  {
+    "arriving_pitcher_emoji": "🍓",
+    "arriving_pitcher_name": "Gabriella Jung",
+    "arriving_pitcher_place": "RP1",
+    "event_type": "PitcherSwap",
+    "leaving_pitcher": {
+      "name": "Savannah Roux",
+      "place": "SP1"
+    },
+    "leaving_pitcher_emoji": null
+  },
+  {
+    "batter": "Shoka Questel",
+    "event_type": "NowBatting",
+    "player_swept_away": null,
+    "stats": {
+      "Stats": [
+        {
+          "stat": "HitsForAtBats",
+          "value": {
+            "at_bats": 3,
+            "hits": 1
+          }
+        },
+        {
+          "stat": "ForceOuts",
+          "value": 1
+        },
+        {
+          "stat": "FirstBases",
+          "value": 1
+        },
+        {
+          "stat": "GroundIntoDoublePlays",
+          "value": 1
+        },
+        {
+          "stat": "GroundOuts",
+          "value": 1
+        }
+      ]
+    }
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": "TheyCheerLikeTheresNoTomorrow",
+    "count": [
+      0,
+      1
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "event_type": "Foul",
+    "foul": "Ball",
+    "steals": [],
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      0,
+      2
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "ejection": null,
+    "event_type": "Strike",
+    "steals": [],
+    "strike": "Swinging",
+    "surprise_strike": false,
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      1,
+      2
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "ejection": null,
+    "event_type": "Ball",
+    "steals": [],
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "batter": "Shoka Questel",
+    "cheer": null,
+    "ejection": null,
+    "event_type": "StrikeOut",
+    "foul": null,
+    "steals": [],
+    "strike": "Looking",
+    "wither": null
+  },
+  {
+    "batter": "Mejiro Valentin",
+    "event_type": "NowBatting",
+    "player_swept_away": null,
+    "stats": {
+      "Stats": [
+        {
+          "stat": "HitsForAtBats",
+          "value": {
+            "at_bats": 3,
+            "hits": 0
+          }
+        },
+        {
+          "stat": "StrikeOuts",
+          "value": 1
+        },
+        {
+          "stat": "GroundIntoDoublePlays",
+          "value": 1
+        },
+        {
+          "stat": "GroundOuts",
+          "value": 2
+        }
+      ]
+    }
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      1,
+      0
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "ejection": null,
+    "event_type": "Ball",
+    "steals": [],
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      2,
+      0
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "ejection": null,
+    "event_type": "Ball",
+    "steals": [],
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      2,
+      1
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "ejection": null,
+    "event_type": "Strike",
+    "steals": [],
+    "strike": "Swinging",
+    "surprise_strike": false,
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      3,
+      1
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "ejection": null,
+    "event_type": "Ball",
+    "steals": [],
+    "wither": null
+  },
+  {
+    "advances": [],
+    "assassinations": [],
+    "aurora_photos": null,
+    "batter": "Mejiro Valentin",
+    "cheer": null,
+    "ejection": null,
+    "event_type": "Walk",
+    "scores": [],
+    "wither": null
+  },
+  {
+    "batter": "Ethan Ford",
+    "event_type": "NowBatting",
+    "player_swept_away": null,
+    "stats": {
+      "Stats": [
+        {
+          "stat": "HitsForAtBats",
+          "value": {
+            "at_bats": 4,
+            "hits": 1
+          }
+        },
+        {
+          "stat": "GroundOuts",
+          "value": 1
+        },
+        {
+          "stat": "PopOuts",
+          "value": 1
+        },
+        {
+          "stat": "FirstBases",
+          "value": 1
+        },
+        {
+          "stat": "StrikeOuts",
+          "value": 1
+        }
+      ]
+    }
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": "TheCrowdLetsOutACollectiveHowl",
+    "count": [
+      1,
+      0
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "ejection": null,
+    "event_type": "Ball",
+    "steals": [],
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      2,
+      0
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "ejection": null,
+    "event_type": "Ball",
+    "steals": [],
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      3,
+      0
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "ejection": null,
+    "event_type": "Ball",
+    "steals": [],
+    "wither": null
+  },
+  {
+    "advances": [
+      {
+        "base": "Second",
+        "runner": "Mejiro Valentin"
+      }
+    ],
+    "assassinations": [],
+    "aurora_photos": null,
+    "batter": "Ethan Ford",
+    "cheer": null,
+    "ejection": null,
+    "event_type": "Walk",
+    "scores": [],
+    "wither": null
+  },
+  {
+    "batter": "Quirky Perez",
+    "event_type": "NowBatting",
+    "player_swept_away": null,
+    "stats": {
+      "Stats": [
+        {
+          "stat": "HitsForAtBats",
+          "value": {
+            "at_bats": 4,
+            "hits": 1
+          }
+        },
+        {
+          "stat": "GroundOuts",
+          "value": 1
+        },
+        {
+          "stat": "FirstBases",
+          "value": 1
+        },
+        {
+          "stat": "Fouls",
+          "value": 1
+        },
+        {
+          "stat": "StrikeOuts",
+          "value": 1
+        }
+      ]
+    }
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      1,
+      0
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "ejection": null,
+    "event_type": "Ball",
+    "steals": [],
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      2,
+      0
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "ejection": null,
+    "event_type": "Ball",
+    "steals": [],
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      3,
+      0
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "ejection": null,
+    "event_type": "Ball",
+    "steals": [],
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": "TheBallparkIsInAnUproar",
+    "count": [
+      3,
+      1
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "ejection": null,
+    "event_type": "Strike",
+    "steals": [],
+    "strike": "Swinging",
+    "surprise_strike": false,
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      3,
+      2
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "ejection": null,
+    "event_type": "Strike",
+    "steals": [],
+    "strike": "Swinging",
+    "surprise_strike": false,
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "batter": "Quirky Perez",
+    "cheer": null,
+    "ejection": null,
+    "event_type": "StrikeOut",
+    "foul": "Tip",
+    "steals": [],
+    "strike": "Swinging",
+    "wither": null
+  },
+  {
+    "event_type": "InningEnd",
+    "number": 9,
+    "side": "Bottom"
+  },
+  {
+    "event_type": "GameOver",
+    "message": "QuotedGAMEOVER"
+  },
+  {
+    "claimed_by": {
+      "emoji": "🍓",
+      "name": "Versailles Strawberry Seahorses"
+    },
+    "claimed_from": {
+      "emoji": "🐟",
+      "name": "Fukuyama Grilled Fish"
+    },
+    "event_type": "LinealBeltTransfer"
+  },
+  {
+    "event_type": "EndGameIncome",
+    "losing_team": {
+      "emoji": "🐟",
+      "name": "Fukuyama Grilled Fish"
+    },
+    "losing_team_income": 440,
+    "winning_team": {
+      "emoji": "🍓",
+      "name": "Versailles Strawberry Seahorses"
+    },
+    "winning_team_income": 220
+  },
+  {
+    "event_type": "Recordkeeping",
+    "losing_score": 4,
+    "losing_team": {
+      "emoji": "🐟",
+      "name": "Fukuyama Grilled Fish"
+    },
+    "winning_score": 7,
+    "winning_team": {
+      "emoji": "🍓",
+      "name": "Versailles Strawberry Seahorses"
+    }
+  }
+]

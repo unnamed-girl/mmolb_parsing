@@ -1,9 +1,12 @@
-pub use serde::{Deserialize, Serialize};
-use serde_with::serde_as;
-use std::collections::HashMap;
-
-use crate::enums::{AttributeCategory, PitchCategory, PitchType};
-use crate::utils::{extra_fields_deserialize, MaybeRecognizedHelper, SometimesMissingHelper};
+use crate::enums::{
+    AttributeCategory, EquipmentEffectPhase, ImplicitEquipmentEffectSource, PitchCategory,
+    PitchType, Slot,
+};
+use crate::utils::PitchTypeFromAcronym;
+use crate::utils::PositionOrSlotHelper;
+use crate::utils::{
+    extra_fields_deserialize, MaybeRecognizedHelper, SometimesMissingHelper, TimestampHelper,
+};
 use crate::{
     enums::{
         Attribute, Day, EquipmentEffectType, EquipmentRarity, EquipmentSlot, GameStat, Handedness,
@@ -16,6 +19,18 @@ use crate::{
     },
     EmptyArrayOr,
 };
+use chrono::{DateTime, Utc};
+use itertools::Either;
+pub use serde::{Deserialize, Serialize};
+use serde_with::serde_as;
+use std::collections::HashMap;
+use strum::{Display, EnumIter, EnumString, IntoStaticStr};
+use uuid::Uuid;
+
+// Needed for skip_serializing_if
+fn is_false(b: &bool) -> bool {
+    !*b
+}
 
 #[serde_as]
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
@@ -25,13 +40,103 @@ pub struct Player {
     #[serde(rename = "_id", skip_serializing_if = "Option::is_none")]
     _id: Option<String>,
 
-    pub augments: u8,
+    // Removed in s11
+    #[serde(
+        default = "SometimesMissingHelper::default_result",
+        skip_serializing_if = "RemovedLaterResult::is_err"
+    )]
+    #[serde_as(as = "SometimesMissingHelper<_>")]
+    pub augments: RemovedLaterResult<u8>,
+    // Added in s11
+    #[serde(
+        default = "SometimesMissingHelper::default_result",
+        skip_serializing_if = "AddedLaterResult::is_err"
+    )]
+    #[serde_as(as = "SometimesMissingHelper<_>")]
+    pub applied_level_ups: AddedLaterResult<Vec<AppliedLevelUp>>,
+    // Added in s11
+    #[serde(
+        default = "SometimesMissingHelper::default_result",
+        skip_serializing_if = "AddedLaterResult::is_err"
+    )]
+    #[serde_as(as = "SometimesMissingHelper<_>")]
+    pub pending_level_ups: AddedLaterResult<Vec<PendingLevelUp>>,
+    // Added in s11
+    #[serde(
+        default = "SometimesMissingHelper::default_result",
+        skip_serializing_if = "AddedLaterResult::is_err"
+    )]
+    #[serde_as(as = "SometimesMissingHelper<_>")]
+    pub scheduled_level_ups: AddedLaterResult<Vec<ScheduledLevelUp>>, // TODO type
+
+    // Added in s11
+    #[serde(
+        default = "SometimesMissingHelper::default_result",
+        skip_serializing_if = "AddedLaterResult::is_err"
+    )]
+    #[serde_as(as = "SometimesMissingHelper<_>")]
+    pub last_season_level_grant_day: AddedLaterResult<u32>,
+
+    // Added in s11
+    #[serde(
+        default = "SometimesMissingHelper::default_result",
+        skip_serializing_if = "AddedLaterResult::is_err"
+    )]
+    #[serde_as(as = "SometimesMissingHelper<_>")]
+    pub augment_history: AddedLaterResult<Vec<AppliedAugment>>,
+
+    // Added in s11
+    #[serde(
+        default = "SometimesMissingHelper::default_result",
+        skip_serializing_if = "AddedLaterResult::is_err"
+    )]
+    #[serde_as(as = "SometimesMissingHelper<_>")]
+    pub base_attribute_bonuses: AddedLaterResult<Vec<AttributeBonus>>,
+
+    // Added in s11
+    #[serde(
+        default = "SometimesMissingHelper::default_result",
+        skip_serializing_if = "AddedLaterResult::is_err"
+    )]
+    #[serde_as(as = "SometimesMissingHelper<_>")]
+    pub food_buffs: AddedLaterResult<Vec<FoodBuff>>,
+
+    // Added in s11 (I think)
+    #[serde(
+        default = "SometimesMissingHelper::default_result",
+        skip_serializing_if = "AddedLaterResult::is_err"
+    )]
+    #[serde_as(as = "SometimesMissingHelper<_>")]
+    pub priority: AddedLaterResult<f64>,
+
     #[serde_as(as = "MaybeRecognizedHelper<_>")]
     pub bats: MaybeRecognizedResult<Handedness>,
     #[serde_as(as = "MaybeRecognizedHelper<_>")]
     pub birthday: MaybeRecognizedResult<Day>,
     pub birthseason: u16,
-    pub durability: f64,
+
+    // Removed in s11
+    #[serde(
+        default = "SometimesMissingHelper::default_result",
+        skip_serializing_if = "RemovedLaterResult::is_err"
+    )]
+    #[serde_as(as = "SometimesMissingHelper<_>")]
+    pub durability: RemovedLaterResult<f64>,
+    // Added in s11
+    #[serde(
+        default = "SometimesMissingHelper::default_result",
+        skip_serializing_if = "AddedLaterResult::is_err"
+    )]
+    #[serde_as(as = "SometimesMissingHelper<_>")]
+    pub lesser_durability: AddedLaterResult<u32>,
+    // Added in s11
+    #[serde(
+        default = "SometimesMissingHelper::default_result",
+        skip_serializing_if = "AddedLaterResult::is_err"
+    )]
+    #[serde_as(as = "SometimesMissingHelper<_>")]
+    pub greater_durability: AddedLaterResult<u32>,
+
     /// Not present on old, deleted players
     #[serde(
         default = "SometimesMissingHelper::default_result",
@@ -52,15 +157,34 @@ pub struct Player {
     pub home: String,
 
     pub greater_boon: BoonCollection,
+    // In s11 there is both a greater_boon (singular) and greater_boons (plural)
+    // field. I have elected not to try to merge them in deserialization, and
+    // to leave that up to user code.
+    #[serde(
+        default = "SometimesMissingHelper::default_result",
+        skip_serializing_if = "AddedLaterResult::is_err"
+    )]
+    #[serde_as(as = "SometimesMissingHelper<_>")]
+    pub greater_boons: AddedLaterResult<Vec<Modification>>,
     pub lesser_boon: BoonCollection,
+    // See comment on `greater_boons`
+    #[serde(
+        default = "SometimesMissingHelper::default_result",
+        skip_serializing_if = "AddedLaterResult::is_err"
+    )]
+    #[serde_as(as = "SometimesMissingHelper<_>")]
+    pub lesser_boons: AddedLaterResult<Vec<Modification>>,
     pub modifications: Vec<Modification>,
 
     pub likes: String,
     pub dislikes: String,
 
     pub number: u8,
-    #[serde_as(as = "MaybeRecognizedHelper<_>")]
-    pub position: MaybeRecognizedResult<Position>,
+
+    // As a result of the s13 elections, some player versions were created
+    // with Slots for positions
+    #[serde_as(as = "MaybeRecognizedHelper<PositionOrSlotHelper>")]
+    pub position: MaybeRecognizedResult<Either<Position, Slot>>,
     #[serde_as(as = "MaybeRecognizedHelper<_>")]
     pub position_type: MaybeRecognizedResult<PositionType>,
 
@@ -91,6 +215,11 @@ pub struct Player {
     )]
     #[serde_as(as = "SometimesMissingHelper<_>")]
     pub base_attributes: AddedLaterResult<BaseAttributes>,
+
+    // Added in s11, but isn't on all players. I think it's always `true` if
+    // it's present
+    #[serde(default, skip_serializing_if = "is_false")]
+    pub legacy: bool,
 
     #[serde(
         default = "SometimesMissingHelper::default_result",
@@ -141,8 +270,171 @@ pub struct Player {
     pub pitch_category_bonuses:
         AddedLaterResult<HashMap<MaybeRecognizedResult<PitchCategory>, f64>>,
 
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub free_recomp: Option<bool>,
+
+    #[serde(
+        default = "SometimesMissingHelper::default_result",
+        skip_serializing_if = "AddedLaterResult::is_err"
+    )]
+    #[serde_as(as = "SometimesMissingHelper<_>")]
+    pub friends: AddedLaterResult<Vec<String>>,
+
     #[serde(flatten, deserialize_with = "extra_fields_deserialize")]
     pub extra_fields: serde_json::Map<String, serde_json::Value>,
+}
+
+#[serde_as]
+#[derive(Debug, Serialize, Deserialize, Clone, PartialEq, IntoStaticStr, Display)]
+#[serde(rename_all = "snake_case", tag = "type")]
+pub enum LevelUpChoice {
+    Attribute {
+        id: Uuid,
+        label: String,
+        amount: f64,
+        attribute: Attribute,
+    },
+    LesserBoon {
+        id: Uuid,
+        boon: Modification,
+        name: String,
+        label: String,
+        description: String,
+    },
+    GreaterBoon {
+        id: Uuid,
+        boon: Modification,
+        name: String,
+        label: String,
+        description: String,
+    },
+    PitchLearn {
+        id: Uuid,
+        label: String,
+        #[serde_as(as = "PitchTypeFromAcronym")]
+        pitch_type: PitchType,
+    },
+    PitchCategoryBonus {
+        id: Uuid,
+        label: String,
+        category: PitchCategory,
+        bonus: f64,
+    },
+    PitchReplace {
+        id: Uuid,
+        label: String,
+        #[serde_as(as = "PitchTypeFromAcronym")]
+        old_pitch: PitchType,
+        #[serde_as(as = "PitchTypeFromAcronym")]
+        new_pitch: PitchType,
+    },
+    PitchTypeBonus {
+        id: Uuid,
+        label: String,
+        #[serde_as(as = "PitchTypeFromAcronym")]
+        pitch_type: PitchType,
+        bonus: f64,
+    },
+    PitchForget {
+        id: Uuid,
+        label: String,
+        #[serde_as(as = "PitchTypeFromAcronym")]
+        old_pitch: PitchType,
+    },
+}
+
+#[derive(
+    Debug,
+    Clone,
+    Serialize,
+    Deserialize,
+    EnumString,
+    IntoStaticStr,
+    Display,
+    PartialEq,
+    Eq,
+    Hash,
+    EnumIter,
+)]
+#[serde(rename_all = "snake_case")]
+pub enum AttributeBonusSource {
+    GenerationPitching,
+    GenerationBattingBaserunning,
+    GenerationDefense,
+    GenerationLuck,
+    LevelUp,
+    LegacyAttributeMigration,
+}
+
+#[serde_as]
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
+pub struct AttributeBonus {
+    pub amount: f64,
+    pub source: AttributeBonusSource,
+    pub attribute: Attribute,
+}
+
+#[serde_as]
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
+pub struct FoodBuff {
+    pub name: String,
+    pub emoji: String,
+    pub attribute: Attribute,
+    #[serde_as(as = "TimestampHelper")]
+    pub applied_at: DateTime<Utc>,
+    pub instance_id: Uuid,
+}
+
+#[serde_as]
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
+pub struct AppliedAugment {
+    pub amount: f64,
+    pub attribute: Attribute,
+    #[serde_as(as = "TimestampHelper")]
+    pub timestamp: DateTime<Utc>,
+    pub augment_name: String,
+}
+
+#[serde_as]
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
+pub struct AppliedLevelUp {
+    pub id: Uuid,
+    pub level: u32,
+    pub choice: LevelUpChoice,
+    #[serde_as(as = "TimestampHelper")]
+    pub applied_at: DateTime<Utc>,
+}
+
+#[serde_as]
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
+pub struct ScheduledLevelUp {
+    // Often, but not always, a UUID
+    pub id: String,
+    pub level: u32,
+    pub choice: LevelUpChoice,
+    #[serde_as(as = "Option<TimestampHelper>")]
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub scheduled_at: Option<DateTime<Utc>>,
+    #[serde_as(as = "Option<TimestampHelper>")]
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub applied_at: Option<DateTime<Utc>>,
+    #[serde_as(as = "Option<TimestampHelper>")]
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub effective_at: Option<DateTime<Utc>>,
+}
+
+#[serde_as]
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
+pub struct PendingLevelUp {
+    // Often, but not always, a UUID
+    pub id: String,
+    pub level: u32,
+    #[serde_as(as = "Option<TimestampHelper>")]
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub earned_at: Option<DateTime<Utc>>,
+
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub options: Option<Vec<LevelUpChoice>>,
 }
 
 /// A player's equipment field can be described by `HashMap<Result<EquipmentSlot, NotRecognized>, Option<PlayerEquipment>>`
@@ -248,6 +540,10 @@ pub struct PlayerEquipment {
     #[serde(default, skip_serializing_if = "Option::is_none")]
     #[serde_as(as = "Option<Vec<MaybeRecognizedHelper<_>>>")]
     pub effects: Option<Vec<MaybeRecognizedResult<EquipmentEffect>>>,
+    // Used for corrupted modifiers
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    #[serde_as(as = "Option<_>")]
+    pub implicit: Option<ImplicitEquipmentEffect>,
     pub emoji: String,
     /// Removed in the current version of the API
     #[serde(
@@ -288,6 +584,12 @@ pub struct PlayerEquipment {
     )]
     #[serde_as(as = "SometimesMissingHelper<_>")]
     pub specialized: AddedLaterResult<bool>,
+    #[serde(
+        default = "SometimesMissingHelper::default_result",
+        skip_serializing_if = "AddedLaterResult::is_err"
+    )]
+    #[serde_as(as = "SometimesMissingHelper<_>")]
+    pub corrupted: AddedLaterResult<bool>,
 
     /// Only exists on deleted player's equipment. Was replaced with the "prefixes" field once multi-prefix items
     /// were added.
@@ -348,6 +650,27 @@ pub struct EquipmentEffect {
     )]
     #[serde_as(as = "SometimesMissingHelper<_>")]
     pub tier: AddedLaterResult<u32>,
+
+    // Only exists when effect_type is ZoneConditionalMultiplier
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub zone: Option<u8>,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    #[serde_as(as = "Option<MaybeRecognizedHelper<_>>")]
+    pub phase: Option<MaybeRecognizedResult<EquipmentEffectPhase>>,
+
+    #[serde(flatten, deserialize_with = "extra_fields_deserialize")]
+    pub extra_fields: serde_json::Map<String, serde_json::Value>,
+}
+
+#[serde_as]
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
+#[serde(rename_all = "PascalCase")]
+pub struct ImplicitEquipmentEffect {
+    #[serde_as(as = "MaybeRecognizedHelper<_>")]
+    pub source: MaybeRecognizedResult<ImplicitEquipmentEffectSource>,
+
+    #[serde_as(as = "Vec<MaybeRecognizedHelper<_>>")]
+    pub effects: Vec<MaybeRecognizedResult<EquipmentEffect>>,
 
     #[serde(flatten, deserialize_with = "extra_fields_deserialize")]
     pub extra_fields: serde_json::Map<String, serde_json::Value>,
@@ -428,9 +751,15 @@ pub enum TalkStars {
     Simple(#[serde_as(as = "StarHelper")] u8),
 }
 
+#[serde_as]
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
 pub struct ComplexTalkStars {
-    pub attribute: Attribute,
+    #[serde(
+        default = "SometimesMissingHelper::default_result",
+        skip_serializing_if = "AddedLaterResult::is_err"
+    )]
+    #[serde_as(as = "SometimesMissingHelper<_>")]
+    pub attribute: AddedLaterResult<Attribute>,
     pub display: String,
     pub regular: u8,
     pub shiny: u8,

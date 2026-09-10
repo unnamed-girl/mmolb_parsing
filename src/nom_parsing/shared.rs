@@ -1,44 +1,37 @@
-use nom::bytes::complete::is_not;
-use nom::character::complete::u32;
-use nom::combinator::eof;
-use nom::number::double;
+use crate::{
+    enums::{
+        Attribute, Base, BatterStat, BenchSlot, BenchSlotLabel, CelestialEnergyTier, Day,
+        FairBallDestination, FairBallType, FoodName, FullSlotLabel, HomeAway, ModificationType,
+        NowBattingStats, Place, Slot,
+    },
+    feed_event::{
+        EmojilessItem, FeedDelivery, FeedEvent, FeedEventDoorPrize, FeedEventParty,
+        FeedFallingStarOutcome, GainedImmovable, Grow, PositionSwap, PurifiedOutcome,
+    },
+    game::{Event, EventPitcherVersions},
+    game_time::{Breakpoints, GameTime},
+    parsed_event::{
+        Assassination, BaseSteal, Cheer, Delivery, DoorPrize, Efflorescence, EfflorescenceOutcome,
+        Ejection, EjectionReason, EjectionReplacement, EmojiFood, EmojiPlayer, EmojiTeam,
+        GrowAttributeChange, Item, ItemAffixes, ItemEquip, ItemPrize, PlacedPlayer, Prize,
+        RunnerAdvance, RunnerOut, SnappedPhotos, ViolationType, WitherStruggle,
+    },
+    Game,
+};
 use nom::{
     branch::alt,
-    bytes::complete::{tag, take, take_till, take_until, take_until1, take_while},
-    character::complete::{one_of, space0, u16, u8},
-    combinator::{all_consuming, fail, opt, recognize, rest, value, verify},
+    bytes::complete::{is_not, tag, take, take_till, take_until, take_until1, take_while},
+    character::complete::{i32, one_of, space0, u16, u32, u8},
+    combinator::{all_consuming, eof, fail, opt, recognize, rest, value, verify},
     error::{ErrorKind, ParseError},
     multi::{count, many0, many1, separated_list1},
+    number::double,
     sequence::{delimited, preceded, separated_pair, terminated},
     AsChar, Input, Parser,
 };
 use nom_language::error::VerboseError;
-use std::fmt::{Display, Formatter};
 use std::{fmt::Debug, str::FromStr};
-
-use crate::enums::{
-    Attribute, BenchSlot, CelestialEnergyTier, FoodName, FullSlot, ModificationType, Slot,
-};
-use crate::feed_event::FeedFallingStarOutcome;
-use crate::parsed_event::{
-    Efflorescence, EfflorescenceOutcome, EjectionReplacement, EmojiFood, EmojiPlayer, ItemEquip,
-    ItemPrize, WitherStruggle,
-};
-use crate::player::{Deserialize, Serialize};
-use crate::team_feed::PurifiedOutcome;
-use crate::{
-    enums::{
-        Base, BatterStat, Day, FairBallDestination, FairBallType, HomeAway, NowBattingStats, Place,
-    },
-    feed_event::{EmojilessItem, FeedDelivery, FeedEvent},
-    game::Event,
-    parsed_event::{
-        BaseSteal, Cheer, Delivery, DoorPrize, Ejection, EjectionReason, EmojiTeam, Item,
-        ItemAffixes, PlacedPlayer, Prize, RunnerAdvance, RunnerOut, SnappedPhotos, ViolationType,
-    },
-    time::{Breakpoints, Time},
-    Game,
-};
+use strum::IntoEnumIterator;
 
 pub(crate) type Error<'a> = VerboseError<&'a str>;
 pub(crate) type IResult<'a, I, O> = nom::IResult<I, O, Error<'a>>;
@@ -61,6 +54,7 @@ pub struct ParsingContext<'parse> {
     pub away_emoji_team: EmojiTeam<&'parse str>,
     pub season: u32,
     pub day: Option<Day>,
+    pub pitcher_name: Option<&'parse str>,
 }
 impl<'parse> ParsingContext<'parse> {
     pub fn new(game_id: &'parse str, game: &'parse Game, event_index: Option<u16>) -> Self {
@@ -78,28 +72,36 @@ impl<'parse> ParsingContext<'parse> {
             },
             season: game.season,
             day: game.day.as_ref().copied().ok(),
+            pitcher_name: event_index.and_then(|event_index| {
+                game.event_log
+                    .get(event_index as usize)
+                    .and_then(|event| match &event.pitcher {
+                        EventPitcherVersions::New(pitcher) => pitcher.name.map_as_str().player(),
+                        EventPitcherVersions::Old(pitcher) => pitcher.map_as_str().player(),
+                    })
+            }),
         }
     }
 
     /// Whether this event is before the given time
-    pub(crate) fn before(&self, time: impl Into<Time>) -> bool {
+    pub(crate) fn before(&self, time: impl Into<GameTime>) -> bool {
         time.into().before(self.season, self.day, self.event_index)
     }
 
     /// Whether this event is after the given time
-    pub(crate) fn after(&self, time: impl Into<Time>) -> bool {
+    pub(crate) fn after(&self, time: impl Into<GameTime>) -> bool {
         time.into().after(self.season, self.day, self.event_index)
     }
 }
 
 impl FeedEvent {
-    pub(crate) fn after(&self, time: impl Into<Time>) -> bool {
+    pub(crate) fn after(&self, time: impl Into<GameTime>) -> bool {
         time.into()
             .after(self.season as u32, self.day.as_ref().ok().copied(), None)
     }
 
     #[allow(dead_code)]
-    pub(crate) fn before(&self, time: impl Into<Time>) -> bool {
+    pub(crate) fn before(&self, time: impl Into<GameTime>) -> bool {
         time.into()
             .before(self.season as u32, self.day.as_ref().ok().copied(), None)
     }
@@ -340,6 +342,23 @@ pub(super) fn base_steal_sentence(input: &str) -> IResult<'_, &str, BaseSteal<&s
     .parse(input)
 }
 
+pub(super) fn assassination(input: &str) -> IResult<'_, &str, Assassination<&str>> {
+    let (input, victim_name) = parse_terminated(" was 🗡️ Assassinated by ")
+        .and_then(verify_name)
+        .parse(input)?;
+    let (input, assassin_name) = parse_terminated(" and returned to the dugout! ")
+        .and_then(verify_name)
+        .parse(input)?;
+
+    Ok((
+        input,
+        Assassination {
+            assassin_name,
+            victim_name,
+        },
+    ))
+}
+
 pub(super) fn score_update(i: &str) -> IResult<'_, &str, (u8, u8)> {
     separated_pair(u8, tag("-"), u8).parse(i)
 }
@@ -392,6 +411,75 @@ pub(super) fn all_consuming_sentence_and<
     }
 }
 
+/// At each of the given delimiters, will attempt to split the input.
+///
+/// Effectively calls all_consuming(f) on the first half, then all_consuming(f2) on f's result and the second half.
+///
+/// The first time f2 returns Ok(), this function returns Ok(), else it returns Err()
+pub(super) fn try_all_consuming_splits_char<'parse, 'output, F, F2, O, O2>(
+    delimiters: &'parse [char],
+    f: F,
+    f2: F2,
+) -> impl Parser<&'output str, Output = O2, Error = Error<'output>> + use<'parse, 'output, F, F2, O, O2>
+where
+    F: Fn(&'output str) -> IResult<'output, &'output str, O>,
+    F2: Fn(O, &'output str) -> IResult<'output, &'output str, O2>,
+{
+    move |input: &'output str| {
+        input
+            .match_indices(delimiters)
+            .filter_map(|(i, _)| match f(&input[..i]) {
+                // Effectively all_consuming
+                Ok(("", r)) => match f2(r, &input[i + 1..]) {
+                    // 1 is the delimiter length
+                    // Effectively all_consuming
+                    Ok(("", r2)) => Some(Ok(("", r2))),
+                    _ => None,
+                },
+                _ => None,
+            })
+            .next()
+            .unwrap_or_else(|| {
+                IResult::Err(nom::Err::Error(VerboseError::from_error_kind(
+                    input,
+                    ErrorKind::Tag,
+                )))
+            })
+    }
+}
+
+/// See [`try_all_consuming_splits_char`].
+pub(super) fn try_all_consuming_splits_str<'parse, 'output, F, F2, O, O2>(
+    delimiter: &'parse str,
+    f: F,
+    f2: F2,
+) -> impl Parser<&'output str, Output = O2, Error = Error<'output>> + use<'parse, 'output, F, F2, O, O2>
+where
+    F: Fn(&'output str) -> IResult<'output, &'output str, O>,
+    F2: Fn(O, &'output str) -> IResult<'output, &'output str, O2>,
+{
+    move |input: &'output str| {
+        input
+            .match_indices(delimiter)
+            .filter_map(|(i, _)| match f(&input[..i]) {
+                // Effectively all_consuming
+                Ok(("", r)) => match f2(r, &input[i + delimiter.len()..]) {
+                    // Effectively all_consuming
+                    Ok(("", r2)) => Some(Ok(("", r2))),
+                    _ => None,
+                },
+                _ => None,
+            })
+            .next()
+            .unwrap_or_else(|| {
+                IResult::Err(nom::Err::Error(VerboseError::from_error_kind(
+                    input,
+                    ErrorKind::Tag,
+                )))
+            })
+    }
+}
+
 /// Keeps searching for the delimiter until it finds an instance immediately followed by a valid input to the child parser.
 /// Returns everything up to the delimiter and the output of the child parser.
 pub fn parse_and<'output, F, O>(
@@ -426,21 +514,6 @@ where
 /// Parse until tag is found, then discard that tag.
 pub(super) fn parse_terminated(tag_content: &str) -> impl Fn(&str) -> IResult<&str, &str> + '_ {
     move |input| {
-        // There's an "and Friends" name now
-        if tag_content == " and " {
-            let (new_input, prefix_and_name) = opt(alt((
-                parse_terminated(" and Friends and ").map(|prefix| (prefix, " and Friends")),
-                parse_terminated(" and Joe and ").map(|prefix| (prefix, " and Joe")),
-            )))
-            .parse(input)?;
-            if let Some((prefix, name)) = prefix_and_name {
-                // Extend val by the length of " and Friends"
-                let name_len = prefix.len() + name.len();
-                let full_match = &input[..name_len];
-                return Ok((new_input, full_match));
-            }
-        }
-
         let (input, parsed_value) = if tag_content == "." {
             alt((
                 // The Kaj Statter Jr. rule
@@ -509,7 +582,11 @@ pub(super) fn verify_name(input: &str) -> IResult<'_, &str, &str> {
         ![' '].contains(&name.chars().last().unwrap()) && // Names shouldn't end with these, and this catches some common logic errors (e.g. forgetting to parse the space after the name)
         // Cleanest fix for https://mmolb.com/watch/68aab8a3318f19d301830b7c?event=316
         // "to 2B" etc. are exceedingly unlikely as a prefix to name
-        name.strip_prefix("to ").map(|rest| try_from_word::<Place>(rest).is_err()).unwrap_or(true) 
+        name.strip_prefix("to ").map(|rest| try_from_word::<Place>(rest).is_err()).unwrap_or(true) &&
+        // If your name contains "and ", it must be followed by "Friends" or "Joe"
+        // 
+        // In order to disambiguate "Christine and Joe II and Mollie Delgado"
+        name.find(" and ").map(|i| &name[i+" and ".len()..]).is_none_or(|remainder| remainder.starts_with("Joe") || remainder.starts_with("Friends"))
     )
     .parse(input)
 }
@@ -527,9 +604,13 @@ pub(super) fn sentence_eof<
     mut parser: F,
 ) -> impl Parser<&'output str, Output = O, Error = E> {
     all_consuming(sentence(move |input: &'output str| {
-        take(input.chars().count() - 1)
-            .and_then(|i| parser.parse(i))
-            .parse(input)
+        if let Some(chars_to_take) = input.chars().count().checked_sub(1) {
+            take(chars_to_take)
+                .and_then(|i| parser.parse(i))
+                .parse(input)
+        } else {
+            fail().parse(input)
+        }
     }))
 }
 
@@ -804,28 +885,32 @@ pub(super) fn aurora_players<'parse, 'output: 'parse>(
         PlacedPlayer<&'output str>,
     ),
 > + 'parse {
-    move |input| {
+    move |input: &'output str| {
         let (input, first_team_emoji) = tag(first.emoji).parse(input)?;
         let (input, _) = tag(" ").parse(input)?;
-        let (input, first_player) = parse_terminated(" and ")
-            .and_then(placed_player_eof)
-            .parse(input)?;
 
-        let (input, second_team_emoji) = tag(second.emoji).parse(input)?;
-        let (input, _) = tag(" ").parse(input)?;
-        let (input, second_player) = parse_terminated(" snapped photos of the aurora.")
-            .and_then(placed_player_eof)
-            .parse(input)?;
+        try_all_consuming_splits_str(
+            " and ",
+            |first_player| placed_player_eof(first_player),
+            move |first_player, input| {
+                let (input, second_team_emoji) = tag(second.emoji).parse(input)?;
+                let (input, _) = tag(" ").parse(input)?;
+                let (input, second_player) = parse_terminated(" snapped photos of the aurora.")
+                    .and_then(placed_player_eof)
+                    .parse(input)?;
 
-        Ok((
-            input,
-            (
-                first_team_emoji,
-                first_player,
-                second_team_emoji,
-                second_player,
-            ),
-        ))
+                Ok((
+                    input,
+                    (
+                        first_team_emoji,
+                        first_player,
+                        second_team_emoji,
+                        second_player,
+                    ),
+                ))
+            },
+        )
+        .parse(input)
     }
 }
 
@@ -1177,28 +1262,15 @@ pub(super) fn efflorescences(input: &str) -> IResult<'_, &str, Vec<Efflorescence
     many0(preceded(tag("<br>🌹 "), efflorescence)).parse(input)
 }
 
-#[derive(Clone, Debug, Serialize, Deserialize, PartialEq)]
-pub struct FeedEventParty<S> {
-    pub player_name: S,
-    pub amount_gained: u8,
-    pub attribute: Attribute,
-    // As of this writing, the Prolific boon is the only way to not lose durability
-    pub durability_lost: Option<u8>,
+pub(super) fn double_trouble(input: &str) -> IResult<'_, &str, PlacedPlayer<&str>> {
+    let (input, player) = parse_terminated(" caused ‼️ Double Trouble!").parse(input)?;
+    let (_, placed_player) = placed_player_eof.parse(player)?;
+    Ok((input, placed_player))
 }
 
-impl<S: Display> Display for FeedEventParty<S> {
-    fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
-        write!(
-            f,
-            "{} is Partying! {} gained +{} {} and ",
-            self.player_name, self.player_name, self.amount_gained, self.attribute,
-        )?;
-
-        match self.durability_lost {
-            None => write!(f, "their Prolific Greater Boon resisted Durability loss."),
-            Some(durability_lost) => write!(f, "lost {durability_lost} Durability."),
-        }
-    }
+pub(super) fn swept_away(input: &str) -> IResult<'_, &str, &str> {
+    let (input, _) = tag("<br>").parse(input)?;
+    parse_terminated(" was swept away in the 🌊 Flood!").parse(input)
 }
 
 pub(super) fn feed_event_party(input: &str) -> IResult<'_, &str, FeedEventParty<&str>> {
@@ -1234,25 +1306,12 @@ pub(super) fn feed_event_party(input: &str) -> IResult<'_, &str, FeedEventParty<
     ))
 }
 
-#[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
-pub struct FeedEventDoorPrize<S> {
-    pub player_name: S,
-    pub prize: Prize<S>,
-}
+pub(super) fn feed_event_delivery_discarded(input: &str) -> IResult<'_, &str, Item<&str>> {
+    let (input, item_str) =
+        parse_terminated(" is discarded as no player can use it.").parse(input)?;
+    let (_, item) = item.parse(item_str)?;
 
-impl<S: Display> Display for FeedEventDoorPrize<S> {
-    fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
-        let punct = match &self.prize {
-            Prize::Items(i) if i.iter().any(|prize| !prize.equip.is_none()) => "!",
-            _ => ":",
-        };
-        write!(
-            f,
-            "{} won a Door Prize{punct} {}.",
-            self.player_name,
-            self.prize.unparse()
-        )
-    }
+    Ok((input, item))
 }
 
 pub(super) fn feed_event_door_prize(input: &str) -> IResult<'_, &str, FeedEventDoorPrize<&str>> {
@@ -1360,10 +1419,87 @@ pub(super) fn feed_event_effloresce(input: &str) -> IResult<'_, &str, &str> {
     parse_terminated(" is Efflorescing and sheds their Corruption!").parse(input)
 }
 
-fn bench_slot(input: &str) -> IResult<'_, &str, BenchSlot> {
+pub(super) fn feed_event_consumption_contest_specific(
+    input: &str,
+) -> IResult<
+    '_,
+    &str,
+    (
+        Option<u32>,
+        EmojiTeam<&str>,
+        Option<u32>,
+        Option<Item<&str>>,
+    ),
+> {
     alt((
-        preceded(tag("Bench Batter "), u8).map(BenchSlot::Batter),
-        preceded(tag("Bench Pitcher "), u8).map(BenchSlot::Pitcher),
+        feed_event_won_consumption_contest.map(|(t, i)| (None, t, None, Some(i))),
+        feed_event_consumption_contest_with_item_and_coin_tied
+            .map(|(s, t, c, i)| (Some(s), t, Some(c), i)),
+        feed_event_consumption_contest_with_item_and_coin_outright
+            .map(|(t, c, i)| (None, t, Some(c), i)),
+    ))
+    .parse(input)
+}
+
+pub(super) fn feed_event_consumption_contest_with_item_and_coin_outright(
+    input: &str,
+) -> IResult<'_, &str, (EmojiTeam<&str>, u32, Option<Item<&str>>)> {
+    let (input, team_emoji_name) = parse_terminated(" received 🪙 ").parse(input)?;
+    let (_, team) = emoji_team_eof.parse(team_emoji_name)?;
+
+    let (input, coins_received) = u32.parse(input)?;
+    let (input, item) = opt(and_item).parse(input)?;
+
+    let (input, _) = tag(" from a Consumption Contest").parse(input)?;
+    // let (input, discarded) = opt(discarded_item()).parse(input)?;
+    let (input, _) = tag(".").parse(input)?;
+
+    Ok((input, (team, coins_received, item)))
+}
+
+pub(super) fn feed_event_won_consumption_contest(
+    input: &str,
+) -> IResult<'_, &str, (EmojiTeam<&str>, Item<&str>)> {
+    let (input, team_emoji_name) = parse_terminated(" win a ").parse(input)?;
+    let (_, team) = emoji_team_eof.parse(team_emoji_name)?;
+
+    let (input, item) = item.parse(input)?;
+
+    let (input, _) = tag(" from the Consumption Contest.").parse(input)?;
+
+    Ok((input, (team, item)))
+}
+
+pub(super) fn feed_event_consumption_contest_with_item_and_coin_tied(
+    input: &str,
+) -> IResult<'_, &str, (u32, EmojiTeam<&str>, u32, Option<Item<&str>>)> {
+    let (input, team_emoji_name) =
+        parse_terminated(" tied the Consumption Contest with ").parse(input)?;
+    let (_, team) = emoji_team_eof.parse(team_emoji_name)?;
+    let (input, score) = u32.parse(input)?;
+
+    let (input, _) = tag(" and received 🪙 ").parse(input)?;
+    let (input, coins_received) = u32.parse(input)?;
+    let (input, item) = opt(and_item).parse(input)?;
+
+    // let (input, discarded) = opt(discarded_item()).parse(input)?;
+    let (input, _) = tag(".").parse(input)?;
+
+    Ok((input, (score, team, coins_received, item)))
+}
+
+pub(super) fn and_item(input: &str) -> IResult<'_, &str, Item<&str>> {
+    let (input, _) = tag(" and a ").parse(input)?;
+
+    let (input, item) = item.parse(input)?;
+
+    Ok((input, item))
+}
+
+fn bench_slot_label(input: &str) -> IResult<'_, &str, BenchSlotLabel> {
+    alt((
+        preceded(tag("Bench Batter "), u8).map(BenchSlotLabel::Batter),
+        preceded(tag("Bench Pitcher "), u8).map(BenchSlotLabel::Pitcher),
     ))
     .parse(input)
 }
@@ -1388,37 +1524,41 @@ pub(super) fn active_slot(input: &str) -> IResult<'_, &str, Slot> {
     .parse(input)
 }
 
-fn full_slot(input: &str) -> IResult<'_, &str, FullSlot> {
+fn full_slot_label(input: &str) -> IResult<'_, &str, FullSlotLabel> {
     alt((
-        bench_slot.map(FullSlot::Bench),
-        active_slot.map(FullSlot::Active),
+        bench_slot_label.map(FullSlotLabel::Bench),
+        active_slot.map(FullSlotLabel::Roster),
     ))
     .parse(input)
 }
 
-#[derive(Clone, Debug, Serialize, Deserialize, PartialEq)]
-pub struct PositionSwap<S> {
-    first_player_name: S,
-    first_player_new_slot: FullSlot,
-    second_player_name: S,
-    second_player_new_slot: FullSlot,
+fn bench_slot_with_num(input: &str) -> IResult<'_, &str, BenchSlot> {
+    alt((
+        preceded(tag("Bench Batter #"), u8).map(BenchSlot::Batter),
+        preceded(tag("Bench Pitcher #"), u8).map(BenchSlot::Pitcher),
+    ))
+    .parse(input)
 }
 
-impl<S: Display> Display for PositionSwap<S> {
-    fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
-        let PositionSwap {
-            first_player_name,
-            first_player_new_slot,
-            second_player_name,
-            second_player_new_slot,
-        } = self;
+pub fn training(input: &str) -> IResult<'_, &str, BenchSlot> {
+    // Might need a new full_slot_with_num
+    let (input, slot) = bench_slot_with_num.parse(input)?;
+    let (input, _) = tag(" Training.").parse(input)?;
 
-        write!(
-            f,
-            "{first_player_name} and {second_player_name} swapped positions: \
-            {first_player_name} moved to {first_player_new_slot}, \
-            {second_player_name} moved to {second_player_new_slot}."
-        )
+    Ok((input, slot))
+}
+
+pub fn augmented_roster_group(
+    roster_group: &str,
+) -> impl Fn(&str) -> IResult<'_, &str, i32> + use<'_> {
+    move |input| {
+        let (input, _) = tag("Augmented ").parse(input)?;
+        let (input, _) = tag(roster_group).parse(input)?;
+        let (input, _) = tag(", applying ").parse(input)?;
+        let (input, num_augments) = i32.parse(input)?;
+        let (input, _) = tag(" Augment(s).").parse(input)?;
+
+        Ok((input, num_augments))
     }
 }
 
@@ -1428,10 +1568,10 @@ pub(super) fn player_positions_swapped(input: &str) -> IResult<'_, &str, Positio
     // of names as a single unit here and then verify it after.
     let (input, anded_names) = parse_terminated(" swapped positions: ").parse(input)?;
     let (input, first_player_name) = parse_terminated(" moved to ").parse(input)?;
-    let (input, first_player_new_slot) = full_slot.parse(input)?;
+    let (input, first_player_new_slot) = full_slot_label.parse(input)?;
     let (input, _) = tag(", ").parse(input)?;
     let (input, second_player_name) = parse_terminated(" moved to ").parse(input)?;
-    let (input, second_player_new_slot) = full_slot.parse(input)?;
+    let (input, second_player_new_slot) = full_slot_label.parse(input)?;
     let (input, _) = tag(".").parse(input)?;
 
     // Verify that anded_names matches what's expected
@@ -1451,61 +1591,24 @@ pub(super) fn player_positions_swapped(input: &str) -> IResult<'_, &str, Positio
     ))
 }
 
-#[derive(Clone, Copy, Debug, Serialize, Deserialize, PartialEq)]
-pub struct GrowAttributeChange {
-    pub attribute: Attribute,
-    pub amount: f64,
+pub(super) fn players_election_swapped(input: &str) -> IResult<'_, &str, ([&str; 2], Slot)> {
+    let (input, first_player_name) = parse_terminated(" swapped with ").parse(input)?;
+    let (input, second_player_name) = parse_terminated(" in ").parse(input)?;
+    let (input, position) = active_slot.parse(input)?;
+    let (input, _) = tag(".").parse(input)?;
+
+    Ok((input, ([first_player_name, second_player_name], position)))
 }
 
-impl Display for GrowAttributeChange {
-    fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
-        write!(f, "{:+} {}", self.amount, self.attribute)
-    }
-}
+pub(super) fn team_election_purified(input: &str) -> IResult<'_, &str, (EmojiTeam<&str>, u32)> {
+    let (input, emoji_team) =
+        parse_terminated(" Purified their roster, cleansing ").parse(input)?;
+    let (_, team) = emoji_team_eof.parse(emoji_team)?;
 
-#[derive(Clone, Debug, Serialize, Deserialize, PartialEq)]
-pub enum GainedImmovable {
-    No,
-    Yes,
-    YesReplacing(ModificationType),
-    BenchPlayerImmune,
-}
+    let (input, players_cleansed) = u32.parse(input)?;
+    let (input, _) = tag(" player(s) of Corruption.").parse(input)?;
 
-#[derive(Clone, Debug, Serialize, Deserialize, PartialEq)]
-pub struct Grow<S> {
-    player_name: S,
-    attribute_changes: [GrowAttributeChange; 3],
-    immovable_granted: GainedImmovable,
-}
-
-impl<S: Display> Display for Grow<S> {
-    fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
-        write!(f, "{}'s Corruption grew: ", self.player_name)?;
-        for (i, change) in self.attribute_changes.iter().enumerate() {
-            let prefix = if i == 0 { "" } else { ", " };
-            // Don't use GrowAttributeChange's Display implementation because it's the
-            // wrong number of decimal places
-            write!(f, "{prefix}{:+.1} {}", change.amount, change.attribute)?;
-        }
-        match &self.immovable_granted {
-            GainedImmovable::No => write!(f, "."),
-            GainedImmovable::Yes => write!(
-                f,
-                ". {} gained the Immovable Greater Boon.",
-                self.player_name
-            ),
-            GainedImmovable::YesReplacing(replaced) => write!(
-                f,
-                ". {} gained the Immovable Greater Boon, replacing {replaced}.",
-                self.player_name
-            ),
-            GainedImmovable::BenchPlayerImmune => write!(
-                f,
-                ". {} could not gain Immovable while on the Bench.",
-                self.player_name
-            ),
-        }
-    }
+    Ok((input, (team, players_cleansed)))
 }
 
 fn grow_attribute_change(input: &str) -> IResult<'_, &str, GrowAttributeChange> {
@@ -1630,6 +1733,61 @@ fn deflected_falling_star_harmlessly(input: &str) -> IResult<'_, &str, &str> {
     Ok((input, player_name))
 }
 
+pub(super) fn restyle(input: &str) -> IResult<'_, &str, (&str, &str)> {
+    let (input, former_name) =
+        parse_terminated(" visited the Restylist Salon and emerged as ").parse(input)?;
+    let (input, new_name) = parse_terminated(" with fresh tastes.").parse(input)?;
+
+    Ok((input, (former_name, new_name)))
+}
+
+pub(super) fn augment_event(input: &str) -> IResult<'_, &str, (&str, u32, Attribute, bool)> {
+    let (input, player_name) = parse_terminated(" was Augmented with +").parse(input)?;
+    let (input, amount) = u32.parse(input)?;
+    let (input, _) = tag(" ").parse(input)?;
+    let (input, attribute) = try_from_word.parse(input)?;
+    let (input, _) = tag(".").parse(input)?;
+
+    let (input, faded) = opt(tag(" A previous augment faded away.")).parse(input)?;
+    let faded = faded.is_some();
+
+    Ok((input, (player_name, amount, attribute, faded)))
+}
+
+pub(super) fn bulk_immunized(input: &str) -> IResult<'_, &str, (EmojiTeam<&str>, u32)> {
+    let (input, team_emoji_name) = parse_terminated(" Immunized ").parse(input)?;
+    let (_, team) = emoji_team_eof.parse(team_emoji_name)?;
+    let (input, num_players) = u32.parse(input)?;
+    let (input, _) = tag(" player(s), cleansing Corruption and Efflorescence.").parse(input)?;
+
+    Ok((input, (team, num_players)))
+}
+
+pub(super) fn player_reflected(input: &str) -> IResult<'_, &str, (&str, &str, &str)> {
+    let (input, new_name) = parse_terminated(" was Reflected from ").parse(input)?;
+    let (input, old_name) = parse_terminated(" to replace ").parse(input)?;
+    let (input, replacement_name) = parse_until_period_eof.parse(input)?;
+
+    Ok((input, (new_name, old_name, replacement_name)))
+}
+
+pub(super) fn boon_recombobulated(
+    input: &str,
+) -> IResult<'_, &str, (&str, ModificationType, ModificationType)> {
+    let (input, player_name) = parse_terminated(" used the Boon Recombobulator. ").parse(input)?;
+    let (input, old_boon_name) = parse_terminated(" was swapped for ").parse(input)?;
+    let old_boon = ModificationType::new(old_boon_name);
+    assert!(
+        !ModificationType::iter().any(|mt| mt.to_string().contains(".")),
+        "If any boon includes a period, the following parse_terminated breaks",
+    );
+
+    let (input, new_boon_name) = parse_terminated(".").parse(input)?;
+    let new_boon = ModificationType::new(new_boon_name);
+
+    Ok((input, (player_name, old_boon, new_boon)))
+}
+
 pub(super) fn player_relegated(input: &str) -> IResult<'_, &str, &str> {
     // This might be team emoji, not sure
     let (input, _) = tag("🧳 ").parse(input)?;
@@ -1645,6 +1803,25 @@ pub(super) fn player_moved(input: &str) -> IResult<'_, &str, (&str, &str)> {
     let (input, player_name) = parse_terminated(" was moved to the Bench.").parse(input)?;
 
     Ok((input, (team_emoji, player_name)))
+}
+
+pub(super) fn election_applied_level_ups(input: &str) -> IResult<'_, &str, (&str, u32)> {
+    let (input, player_name) = parse_terminated(" applied ").parse(input)?;
+    let (input, num_level_ups) = u32.parse(input)?;
+    let (input, _) = tag(" pending level up(s).").parse(input)?;
+    Ok((input, (player_name, num_level_ups)))
+}
+
+pub(super) fn side_team<'parse, 'output>(
+    side: HomeAway,
+    parsing_context: &ParsingContext<'parse>,
+) -> impl MyParser<'output, (&'output str, &'output str)> + 'parse {
+    let emoji_team = match side {
+        HomeAway::Home => parsing_context.home_emoji_team,
+        HomeAway::Away => parsing_context.away_emoji_team,
+    };
+
+    move |input| separated_pair(tag(emoji_team.emoji), tag(" "), tag(emoji_team.name)).parse(input)
 }
 
 pub(super) fn team_emoji<'parse, 'output>(
@@ -1726,6 +1903,7 @@ pub fn emoji_food(input: &str) -> IResult<'_, &str, EmojiFood<&str>> {
     Ok((input, EmojiFood { food_emoji, food }))
 }
 
+#[allow(unused)]
 pub(super) fn team_emoji_player_eof<'parse, 'output>(
     side: HomeAway,
     parsing_context: &'parse ParsingContext<'parse>,
@@ -1751,12 +1929,82 @@ pub(super) fn either_team_emoji_player_eof<'parse, 'output>(
     }
 }
 
+pub(super) fn lesser_boon(input: &str) -> IResult<'_, &str, (&str, &str, ModificationType)> {
+    let (input, player_name) = parse_terminated(" was granted the ").parse(input)?;
+    let (input, emoji_boon) = parse_terminated(" Lesser Boon.").parse(input)?;
+    let (boon_name, emoji) = emoji(emoji_boon)?;
+    let (boon_name, _) = tag(" ")(boon_name)?;
+    let boon = ModificationType::new(boon_name);
+
+    Ok((input, (player_name, emoji, boon)))
+}
+
+pub(super) fn feed_event_resumed_processing(input: &str) -> IResult<'_, &str, (&str, &str)> {
+    let (input, _) = tag("Resumed Holiday processing: ").parse(input)?;
+    let (input, replaced_player_name) = parse_terminated(" was replaced by ").parse(input)?;
+    let (input, replacement_player_name) = parse_until_period_eof.parse(input)?;
+
+    Ok((input, (replaced_player_name, replacement_player_name)))
+}
+
+pub(super) fn player_greater_augment_mod(
+    input: &str,
+) -> IResult<'_, &str, (&str, ModificationType, &str)> {
+    let (input, player_name) = parse_terminated(" gained ").parse(input)?;
+    let (input, modification) = parse_terminated(" via ")
+        .map(ModificationType::new)
+        .parse(input)?;
+    let (input, augment_name) = parse_until_period_eof.parse(input)?;
+
+    Ok((input, (player_name, modification, augment_name)))
+}
+
+pub(super) fn players_became_friends(input: &str) -> IResult<'_, &str, [&str; 2]> {
+    let (input, player1_name) = parse_terminated(" became Friends with ").parse(input)?;
+    let (input, player2_name) = parse_until_period_eof.parse(input)?;
+
+    Ok((input, [player1_name, player2_name]))
+}
+
+pub(super) fn player_trained(input: &str) -> IResult<'_, &str, (&str, BenchSlot)> {
+    let (input, player_name) =
+        parse_terminated(" was rerolled and trained to Level 30 for ").parse(input)?;
+    let (input, bench_slot) = alt((
+        preceded(tag("Bench Batter #"), u8).map(BenchSlot::Batter),
+        preceded(tag("Bench Pitcher #"), u8).map(BenchSlot::Pitcher),
+    ))
+    .parse(input)?;
+    let (input, _) = tag(".").parse(input)?;
+
+    Ok((input, (player_name, bench_slot)))
+}
+
+pub(super) fn player_retired(input: &str) -> IResult<'_, &str, &str> {
+    let (input, player_name) = parse_terminated(" retired from MMOLB!").parse(input)?;
+
+    Ok((input, player_name))
+}
+
+pub(super) fn named_greater_swap(
+    augment_name: &str,
+) -> impl Fn(&str) -> IResult<'_, &str, [&str; 2]> + use<'_> {
+    move |input| {
+        let (input, player_name_1) = parse_terminated(" swapped with ").parse(input)?;
+        let terminator = format!(" via {augment_name}.");
+        let (input, player_name_2) = parse_terminated(&terminator).parse(input)?;
+
+        Ok((input, [player_name_1, player_name_2]))
+    }
+}
+
 #[cfg(test)]
 mod test {
     use crate::{
         enums::{BaseNameVariant, Day, FairBallType, TopBottom},
         nom_parsing::{
-            shared::{delivery, emoji, out, parse_and, try_from_word, try_from_words_m_n},
+            shared::{
+                delivery, emoji, out, parse_and, try_from_word, try_from_words_m_n, verify_name,
+            },
             ParsingContext,
         },
         parsed_event::{EmojiTeam, RunnerOut},
@@ -1820,10 +2068,16 @@ mod test {
                 },
                 season: 3,
                 day: Some(Day::Day(166)),
+                pitcher_name: None,
             },
             "Special Delivery",
         );
 
         parser.parse(text).unwrap();
+    }
+
+    #[test]
+    fn and_joe_ii() {
+        verify_name("Christine and Joe II").unwrap();
     }
 }

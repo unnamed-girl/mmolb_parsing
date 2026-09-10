@@ -1,6 +1,7 @@
 use std::{any::type_name, fmt::Debug, marker::PhantomData, str::FromStr};
 
-use chrono::{DateTime, NaiveDateTime, Utc};
+use chrono::{DateTime, NaiveDateTime, Timelike, Utc};
+use itertools::Either;
 use serde::{
     de::{Error, Visitor},
     Deserialize, Deserializer, Serialize, Serializer,
@@ -14,7 +15,7 @@ use thiserror::Error;
 #[cfg(test)]
 pub(crate) use test_utils::*;
 
-use crate::enums::PitchType;
+use crate::enums::{PitchType, Position, Slot};
 
 #[derive(Debug, Clone, PartialEq, Eq, Hash, Serialize, Deserialize, Error, Default)]
 /// Error for fields where some cashews data is missing the field.
@@ -306,6 +307,7 @@ impl SerializeAs<u8> for StarHelper {
 
 pub(crate) struct TimestampHelper;
 const FORMAT: &str = "%Y-%m-%dT%H:%M:%S%.6f+00:00";
+const ROUND_FORMAT: &str = "%Y-%m-%dT%H:%M:%S+00:00";
 
 impl<'de> DeserializeAs<'de, DateTime<Utc>> for TimestampHelper {
     fn deserialize_as<D>(deserializer: D) -> Result<DateTime<Utc>, D::Error>
@@ -323,8 +325,73 @@ impl SerializeAs<DateTime<Utc>> for TimestampHelper {
     where
         S: Serializer,
     {
-        let s = format!("{}", date.format(FORMAT));
+        let s = if date.nanosecond() == 0 {
+            format!("{}", date.format(ROUND_FORMAT))
+        } else {
+            format!("{}", date.format(FORMAT))
+        };
         serializer.serialize_str(&s)
+    }
+}
+
+pub(crate) struct PitchTypeFromAcronym;
+
+impl<'de> DeserializeAs<'de, PitchType> for PitchTypeFromAcronym {
+    fn deserialize_as<D>(deserializer: D) -> Result<PitchType, D::Error>
+    where
+        D: Deserializer<'de>,
+    {
+        let s = String::deserialize(deserializer)?;
+        PitchType::from_acronym(&s).map_err(serde::de::Error::custom)
+    }
+}
+
+impl SerializeAs<PitchType> for PitchTypeFromAcronym {
+    fn serialize_as<S>(pitch_type: &PitchType, serializer: S) -> Result<S::Ok, S::Error>
+    where
+        S: Serializer,
+    {
+        let s = pitch_type.acronym();
+        serializer.serialize_str(s)
+    }
+}
+
+#[derive(Debug, Error)]
+#[error("Failed to parse position-or-slot field as a position (with error {position_err}) or as a slot (with error {slot_err})")]
+pub struct PositionOrSlotError {
+    pub position_err: strum::ParseError,
+    pub slot_err: String,
+}
+
+pub(crate) struct PositionOrSlotHelper;
+
+impl<'de> DeserializeAs<'de, Either<Position, Slot>> for PositionOrSlotHelper {
+    fn deserialize_as<D>(deserializer: D) -> Result<Either<Position, Slot>, D::Error>
+    where
+        D: Deserializer<'de>,
+    {
+        let s = String::deserialize(deserializer)?;
+        match Position::from_str(&s) {
+            Ok(p) => Ok(Either::Left(p)),
+            Err(position_err) => match Slot::from_str(&s) {
+                Ok(slot) => Ok(Either::Right(slot)),
+                Err(slot_err) => Err(serde::de::Error::custom(PositionOrSlotError {
+                    position_err,
+                    slot_err: slot_err.to_string(),
+                })),
+            },
+        }
+    }
+}
+impl SerializeAs<Either<Position, Slot>> for PositionOrSlotHelper {
+    fn serialize_as<S>(source: &Either<Position, Slot>, serializer: S) -> Result<S::Ok, S::Error>
+    where
+        S: Serializer,
+    {
+        match source {
+            Either::Left(p) => serializer.serialize_str(&p.to_string()),
+            Either::Right(slot) => serializer.serialize_str(&slot.to_string()),
+        }
     }
 }
 

@@ -112,6 +112,19 @@ pub enum EventType {
     #[strum(to_string = "Weather_Simulacrum")]
     #[serde(rename = "Weather_Simulacrum")]
     WeatherSimulacrum,
+
+    // Season 11
+    #[strum(to_string = "Weather_Noisy")]
+    #[serde(rename = "Weather_Noisy")]
+    WeatherNoisy,
+
+    // Season 13
+    EndGameTokens,
+
+    // Season 15
+    #[strum(to_string = "Weather_Pollen")]
+    #[serde(rename = "Weather_Pollen")]
+    WeatherPollen,
 }
 
 /// Top or bottom of an inning.
@@ -1149,6 +1162,16 @@ pub enum GameStat {
 
     // Season 5
     Holds,
+
+    // Season 13
+    BonusStrikes,
+    BonusStrikesRisp,
+    FloodedPlate,
+    FloodedPlateRisp,
+    FloodedMound,
+    Robberies,
+    Removals,
+    RemovalsRisp,
 }
 
 #[derive(
@@ -1284,6 +1307,8 @@ pub enum FeedEventType {
     Maintenance,
     Roster,
     Election,
+    Boon,
+    Retirement,
 }
 
 #[derive(
@@ -1324,6 +1349,7 @@ pub enum SeasonStatus {
     Preseason,
     PostseasonPreview,
     Offseason,
+    Super16Tournament,
 }
 impl FromStr for SeasonStatus {
     type Err = &'static str;
@@ -1340,6 +1366,7 @@ impl FromStr for SeasonStatus {
             "Preseason" => Ok(SeasonStatus::Preseason),
             "Offseason" => Ok(SeasonStatus::Offseason),
             "Postseason Preview" => Ok(SeasonStatus::PostseasonPreview),
+            "Super 16 Tournament" => Ok(SeasonStatus::Super16Tournament),
             s => s
                 .strip_prefix("Postseason Round ")
                 .and_then(|s| s.parse().ok())
@@ -1365,6 +1392,7 @@ impl Display for SeasonStatus {
             SeasonStatus::Preseason => write!(f, "Preseason"),
             SeasonStatus::PostseasonPreview => write!(f, "Postseason Preview"),
             SeasonStatus::Offseason => write!(f, "Offseason"),
+            SeasonStatus::Super16Tournament => write!(f, "Super 16 Tournament"),
         }
     }
 }
@@ -1391,7 +1419,7 @@ pub enum Day {
         deserialize_with = "superstar_day_de",
         serialize_with = "superstar_day_ser"
     )]
-    SuperstarDay(u8),
+    SuperstarDay(u8, bool),
     #[serde(
         untagged,
         deserialize_with = "postseason_round_de",
@@ -1399,22 +1427,33 @@ pub enum Day {
     )]
     PostseasonRound(u8),
 }
-fn superstar_day_ser<S>(day: &u8, serializer: S) -> Result<S::Ok, S::Error>
+fn superstar_day_ser<S>(day: &u8, quoted: &bool, serializer: S) -> Result<S::Ok, S::Error>
 where
     S: Serializer,
 {
-    format!("Superstar Day {day}").serialize(serializer)
+    if *quoted {
+        format!("\"Superstar Day {day}\"").serialize(serializer)
+    } else {
+        format!("Superstar Day {day}").serialize(serializer)
+    }
 }
 
-fn superstar_day_de<'de, D>(deserializer: D) -> Result<u8, D::Error>
+fn superstar_day_de<'de, D>(deserializer: D) -> Result<(u8, bool), D::Error>
 where
     D: Deserializer<'de>,
 {
-    <String>::deserialize(deserializer)?
+    let s = <String>::deserialize(deserializer)?;
+    let (s, quoted) = if s.starts_with("\"") && s.len() > 2 {
+        (s[1..s.len() - 1].to_string(), true)
+    } else {
+        (s, false)
+    };
+    let num = s
         .strip_prefix("Superstar Day ")
         .ok_or(D::Error::custom("Didn't start with \"Superstar Day\""))?
         .parse::<u8>()
-        .map_err(|_| D::Error::custom("Expected a number"))
+        .map_err(|_| D::Error::custom("Expected a number"))?;
+    Ok((num, quoted))
 }
 
 fn postseason_round_ser<S>(round: &u8, serializer: S) -> Result<S::Ok, S::Error>
@@ -1443,7 +1482,8 @@ impl Display for Day {
             Self::Preseason => write!(f, "Preseason"),
             Self::Holiday => write!(f, "Holiday"),
             Self::Election => write!(f, "Election"),
-            Self::SuperstarDay(d) => write!(f, "Superstar Day {d}"),
+            Self::SuperstarDay(d, false) => write!(f, "Superstar Day {d}"),
+            Self::SuperstarDay(d, true) => write!(f, "\"Superstar Day {d}\""),
             Self::PostseasonPreview => write!(f, "Postseason Preview"),
             Self::PostseasonRound(r) => write!(f, "Postseason Round {r}"),
             Self::SpecialEvent => write!(f, "Special Event"),
@@ -1472,6 +1512,7 @@ pub enum RecordType {
     PostseasonRound(u8),
     SuperstarGame,
     HomeRunChallenge,
+    Offseason,
 }
 impl FromStr for RecordType {
     type Err = &'static str;
@@ -1481,6 +1522,7 @@ impl FromStr for RecordType {
             "Superstar Game" => Ok(RecordType::SuperstarGame),
             "Kumite" => Ok(RecordType::Kumite),
             "Home Run Challenge" => Ok(RecordType::HomeRunChallenge),
+            "Offseason" => Ok(RecordType::Offseason),
             s => s
                 .strip_prefix("Postseason Round ")
                 .and_then(|s| s.parse().ok())
@@ -1499,6 +1541,7 @@ impl Display for RecordType {
             RecordType::Kumite => write!(f, "Kumite"),
             RecordType::SuperstarGame => write!(f, "Superstar Game"),
             RecordType::HomeRunChallenge => write!(f, "Home Run Challenge"),
+            RecordType::Offseason => write!(f, "Offseason"),
         }
     }
 }
@@ -1519,6 +1562,24 @@ impl Display for RecordType {
 pub enum PositionType {
     Pitcher,
     Batter,
+}
+
+#[derive(
+    Debug,
+    Clone,
+    Serialize,
+    Deserialize,
+    EnumString,
+    IntoStaticStr,
+    Display,
+    PartialEq,
+    Eq,
+    Hash,
+    EnumIter,
+)]
+pub enum BenchRole {
+    Pitchers,
+    Batters,
 }
 
 #[derive(
@@ -1617,8 +1678,8 @@ pub enum BenchSlot {
 impl Display for BenchSlot {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         match self {
-            BenchSlot::Batter(num) => write!(f, "Bench Batter {}", num),
-            BenchSlot::Pitcher(num) => write!(f, "Bench Pitcher {}", num),
+            BenchSlot::Batter(num) => write!(f, "B{}", num),
+            BenchSlot::Pitcher(num) => write!(f, "P{}", num),
         }
     }
 }
@@ -1628,10 +1689,8 @@ impl FromStr for BenchSlot {
 
     fn from_str(s: &str) -> Result<Self, Self::Err> {
         alt((
-            preceded(tag("Bench Batter "), u8::<&str, nom::error::Error<&str>>)
-                .map(BenchSlot::Batter),
-            preceded(tag("Bench Pitcher "), u8::<&str, nom::error::Error<&str>>)
-                .map(BenchSlot::Pitcher),
+            preceded(tag("B"), u8::<&str, nom::error::Error<&str>>).map(BenchSlot::Batter),
+            preceded(tag("P"), u8::<&str, nom::error::Error<&str>>).map(BenchSlot::Pitcher),
         ))
         .parse(s)
         .map(|(_, o)| o)
@@ -1640,12 +1699,72 @@ impl FromStr for BenchSlot {
 }
 
 #[derive(
+    Debug,
+    Clone,
+    Copy,
+    EnumIter,
+    PartialEq,
+    Eq,
+    Hash,
+    EnumDiscriminants,
+    SerializeDisplay,
+    DeserializeFromStr,
+)]
+pub enum BenchSlotLabel {
+    Batter(u8),
+    Pitcher(u8),
+}
+
+impl Display for BenchSlotLabel {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        match self {
+            BenchSlotLabel::Batter(num) => write!(f, "Bench Batter {}", num),
+            BenchSlotLabel::Pitcher(num) => write!(f, "Bench Pitcher {}", num),
+        }
+    }
+}
+
+impl FromStr for BenchSlotLabel {
+    type Err = &'static str;
+
+    fn from_str(s: &str) -> Result<Self, Self::Err> {
+        alt((
+            preceded(tag("Bench Batter "), u8::<&str, nom::error::Error<&str>>)
+                .map(BenchSlotLabel::Batter),
+            preceded(tag("Bench Pitcher "), u8::<&str, nom::error::Error<&str>>)
+                .map(BenchSlotLabel::Pitcher),
+        ))
+        .parse(s)
+        .map(|(_, o)| o)
+        .map_err(|_| "Player's bench slot label didn't match known bench slot labels")
+    }
+}
+
+#[derive(
+    Debug,
+    Clone,
+    Serialize,
+    Deserialize,
+    EnumString,
+    IntoStaticStr,
+    Display,
+    PartialEq,
+    Eq,
+    Hash,
+    EnumIter,
+)]
+pub enum SlotType {
+    Bench,
+    Roster,
+}
+
+#[derive(
     Debug, Clone, Copy, PartialEq, Eq, Hash, EnumDiscriminants, SerializeDisplay, Deserialize,
 )]
 #[serde(untagged)]
 pub enum FullSlot {
     Bench(BenchSlot),
-    Active(Slot),
+    Roster(Slot),
 }
 
 // Default Display is just the discriminant names; I'm not sure if there's a shorter
@@ -1654,7 +1773,70 @@ impl Display for FullSlot {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         match self {
             FullSlot::Bench(slot) => write!(f, "{}", slot),
-            FullSlot::Active(slot) => write!(f, "{}", slot),
+            FullSlot::Roster(slot) => write!(f, "{}", slot),
+        }
+    }
+}
+
+// Default Display is just the discriminant names; I'm not sure if there's a shorter
+// way to say "completely delegate Display"
+impl FromStr for FullSlot {
+    type Err = &'static str;
+
+    fn from_str(s: &str) -> Result<Self, Self::Err> {
+        if let Ok(slot) = s.parse::<BenchSlot>() {
+            Ok(FullSlot::Bench(slot))
+        } else if let Ok(slot) = s.parse::<Slot>() {
+            Ok(FullSlot::Roster(slot))
+        } else {
+            Err("Player's full slot didn't match known bench or active slots")
+        }
+    }
+}
+
+#[derive(
+    Debug, Clone, Copy, PartialEq, Eq, Hash, EnumDiscriminants, SerializeDisplay, Deserialize,
+)]
+#[serde(untagged)]
+pub enum FullSlotLabel {
+    Bench(BenchSlotLabel),
+    Roster(Slot), // TODO
+}
+
+// Default Display is just the discriminant names; I'm not sure if there's a shorter
+// way to say "completely delegate Display"
+impl Display for FullSlotLabel {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        match self {
+            FullSlotLabel::Bench(slot) => write!(f, "{}", slot),
+            FullSlotLabel::Roster(slot) => write!(f, "{}", slot),
+        }
+    }
+}
+
+// Default Display is just the discriminant names; I'm not sure if there's a shorter
+// way to say "completely delegate Display"
+impl FromStr for FullSlotLabel {
+    type Err = &'static str;
+
+    fn from_str(s: &str) -> Result<Self, Self::Err> {
+        if let Ok(slot) = s.parse::<BenchSlotLabel>() {
+            Ok(FullSlotLabel::Bench(slot))
+        } else if let Ok(slot) = s.parse::<Slot>() {
+            Ok(FullSlotLabel::Roster(slot))
+        } else {
+            Err("Player's full slot label didn't match known bench or active slot labels")
+        }
+    }
+}
+
+pub struct WithNumberSign(pub BenchSlot);
+
+impl Display for WithNumberSign {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        match self.0 {
+            BenchSlot::Batter(num) => write!(f, "Bench Batter #{}", num),
+            BenchSlot::Pitcher(num) => write!(f, "Bench Pitcher #{}", num),
         }
     }
 }
@@ -1753,11 +1935,11 @@ impl TryFrom<Attribute> for AttributeCategory {
             | Attribute::Cunning
             | Attribute::Selflessness
             | Attribute::Determination
-            | Attribute::Wisdom 
+            | Attribute::Wisdom
             | Attribute::Insight
             | Attribute::Aiming
             | Attribute::Lift => Ok(AttributeCategory::Batting),
-            Attribute::Performance | Attribute::Speed | Attribute::Greed |  Attribute::Stealth => {
+            Attribute::Performance | Attribute::Speed | Attribute::Greed | Attribute::Stealth => {
                 Ok(AttributeCategory::Baserunning)
             }
             Attribute::Control
@@ -2121,6 +2303,26 @@ pub enum Handedness {
 pub enum EquipmentEffectType {
     FlatBonus,
     Multiplier,
+    ZoneConditionalMultiplier,
+}
+
+#[derive(
+    Debug,
+    Serialize,
+    Deserialize,
+    Clone,
+    Copy,
+    EnumIter,
+    PartialEq,
+    Eq,
+    Hash,
+    EnumString,
+    IntoStaticStr,
+    Display,
+)]
+pub enum EquipmentEffectPhase {
+    Batting,
+    Pitching,
 }
 
 #[derive(
@@ -2307,6 +2509,44 @@ pub enum ModificationType {
     AllKnowing,
     Underdog,
     Immovable,
+    Striker,
+    Bulwark,
+    Charger,
+    Marathoner,
+    Snowperson,
+    Thoroughbred,
+    Sneaky,
+    Majestic,
+    Weaver,
+    Spotlight,
+    Tireless,
+    Courier,
+    Granite,
+    Satellite,
+    Loyal,
+    Peacebroker,
+    Ambassador,
+    Disguised,
+    #[strum(to_string = "Sweet Tooth")]
+    #[serde(rename = "Sweet Tooth")]
+    SweetTooth,
+    Jetpack,
+    Caltrops,
+    #[strum(to_string = "Surprise Strike")]
+    #[serde(rename = "Surprise Strike")]
+    SurpriseStrike,
+    Assassin,
+    Meteor,
+    Accountant,
+    Gambit,
+    Venomous,
+    Elvish,
+    Clockwork,
+    Director,
+    Headliner,
+    Shopper,
+    Hardy,
+    Lionheart,
 
     #[strum(default)]
     #[serde(untagged)]
@@ -2323,6 +2563,25 @@ impl ModificationType {
 
         r
     }
+}
+
+#[derive(
+    Debug,
+    Serialize,
+    Deserialize,
+    Clone,
+    Copy,
+    EnumIter,
+    PartialEq,
+    Eq,
+    Hash,
+    EnumString,
+    IntoStaticStr,
+    Display,
+)]
+pub enum DurabilityType {
+    Greater,
+    Lesser,
 }
 
 #[derive(
@@ -2519,6 +2778,55 @@ impl From<PitchType> for PitchCategory {
             PitchType::Splitter => PitchCategory::Offspeed,
         }
     }
+}
+
+#[derive(
+    Clone,
+    Copy,
+    EnumString,
+    IntoStaticStr,
+    Display,
+    Debug,
+    Serialize,
+    Deserialize,
+    PartialEq,
+    Eq,
+    Hash,
+    EnumIter,
+)]
+pub enum ImplicitEquipmentEffectSource {
+    #[strum(to_string = "Corrupting Orb")]
+    #[serde(rename = "Corrupting Orb")]
+    CorruptingOrb,
+}
+
+#[derive(
+    Debug,
+    Clone,
+    Copy,
+    Serialize,
+    Deserialize,
+    PartialEq,
+    Eq,
+    Hash,
+    EnumString,
+    IntoStaticStr,
+    Display,
+    EnumIter,
+)]
+pub enum PollenCount {
+    #[strum(to_string = "LOW")]
+    #[serde(rename = "LOW")]
+    Low,
+    #[strum(to_string = "MEDIUM")]
+    #[serde(rename = "MEDIUM")]
+    Medium,
+    #[strum(to_string = "HIGH")]
+    #[serde(rename = "HIGH")]
+    High,
+    #[strum(to_string = "EXTREME")]
+    #[serde(rename = "EXTREME")]
+    Extreme,
 }
 
 #[cfg(test)]

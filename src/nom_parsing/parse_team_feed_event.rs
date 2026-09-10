@@ -1,22 +1,30 @@
 use super::shared::{
-    emoji, emoji_team_eof, emoji_team_eof_maybe_no_space, feed_event_contained,
-    feed_event_door_prize, feed_event_equipped_door_prize, feed_event_party, feed_event_wither,
-    parse_until_period_eof, player_positions_swapped, purified, Error, IResult,
+    augment_event, augmented_roster_group, bulk_immunized, emoji, emoji_team_eof,
+    emoji_team_eof_maybe_no_space, feed_event_consumption_contest_specific, feed_event_contained,
+    feed_event_delivery_discarded, feed_event_door_prize, feed_event_equipped_door_prize,
+    feed_event_party, feed_event_wither, named_greater_swap, parse_until_period_eof,
+    player_positions_swapped, player_reflected, player_retired, player_trained,
+    players_election_swapped, purified, restyle, team_election_purified, training, Error, IResult,
 };
+use crate::enums::{PositionType, Slot};
 use crate::feed_event::{AttributeChange, GreaterAugment};
 use crate::nom_parsing::shared::{
     active_slot, falling_star, feed_event_effloresce, feed_event_efflorescence_growth, grow,
     parse_until_exclamation_point_eof, player_moved, player_relegated,
 };
+use crate::nom_parsing::shared::{
+    election_applied_level_ups, feed_event_resumed_processing, player_greater_augment_mod,
+    players_became_friends,
+};
 use crate::parsed_event::{EmojiPlayer, EmojiTeam};
 use crate::{
     enums::{FeedEventType, ModificationType},
     feed_event::{FeedEvent, FeedEventParseError},
+    game_time::{Breakpoints, Timestamp},
     nom_parsing::shared::{
         emojiless_item, feed_delivery, parse_terminated, sentence_eof, try_from_word, verify_name,
     },
     team_feed::ParsedTeamFeedEventText,
-    time::{Breakpoints, Timestamp},
 };
 use nom::bytes::complete::take_while;
 use nom::combinator::{eof, verify};
@@ -67,6 +75,8 @@ pub fn parse_team_feed_event(event: &FeedEvent) -> ParsedTeamFeedEventText<&str>
         FeedEventType::Maintenance => maintenance().parse(event.text.as_str()),
         FeedEventType::Roster => roster().parse(event.text.as_str()),
         FeedEventType::Election => election().parse(event.text.as_str()),
+        FeedEventType::Boon => boon().parse(event.text.as_str()),
+        FeedEventType::Retirement => retirement().parse(event.text.as_str()),
     };
     match result.finish() {
         Ok(("", output)) => output,
@@ -102,45 +112,75 @@ fn game(event: &FeedEvent) -> impl TeamFeedEventParser<'_> {
     context(
         "Game Feed Event",
         alt((
-            game_result(),
-            feed_event_door_prize.map(|prize| ParsedTeamFeedEventText::DoorPrize { prize }),
-            feed_event_equipped_door_prize
-                .map(|prize| ParsedTeamFeedEventText::DoorPrize { prize }),
-            feed_delivery("Delivery")
-                .map(|delivery| ParsedTeamFeedEventText::Delivery { delivery }),
-            feed_delivery("Shipment")
-                .map(|delivery| ParsedTeamFeedEventText::Shipment { delivery }),
-            feed_delivery("Special Delivery")
-                .map(|delivery| ParsedTeamFeedEventText::SpecialDelivery { delivery }),
-            photo_contest(),
-            falling_star(event).map(|(player_name, outcome)| {
-                ParsedTeamFeedEventText::FallingStarOutcome {
-                    player_name,
-                    outcome,
-                }
-            }),
-            feed_event_party.map(|party| ParsedTeamFeedEventText::Party { party }),
-            prosperous(),
-            retirement(true),
-            feed_event_wither
-                .map(|player_name| ParsedTeamFeedEventText::CorruptedByWither { player_name }),
-            feed_event_contained.map(|(contained_player_name, container_player_name)| {
-                ParsedTeamFeedEventText::PlayerContained {
-                    contained_player_name,
-                    container_player_name,
-                }
-            }),
-            feed_event_efflorescence_growth.map(|(player_name, growths)| {
-                ParsedTeamFeedEventText::PlayerGrewInEfflorescence {
-                    player_name,
-                    growths,
-                }
-            }),
-            feed_event_effloresce
-                .map(|player_name| ParsedTeamFeedEventText::PlayerEffloresce { player_name }),
-            claimed_lineal_belt,
-            lost_lineal_belt,
-            fail(),
+            alt((
+                game_result(),
+                feed_event_door_prize.map(|prize| ParsedTeamFeedEventText::DoorPrize { prize }),
+                feed_event_delivery_discarded
+                    .map(|item| ParsedTeamFeedEventText::DeliveryDiscarded { item }),
+                feed_event_equipped_door_prize
+                    .map(|prize| ParsedTeamFeedEventText::DoorPrize { prize }),
+                feed_delivery("Delivery")
+                    .map(|delivery| ParsedTeamFeedEventText::Delivery { delivery }),
+                feed_delivery("Shipment")
+                    .map(|delivery| ParsedTeamFeedEventText::Shipment { delivery }),
+                feed_delivery("Special Delivery")
+                    .map(|delivery| ParsedTeamFeedEventText::SpecialDelivery { delivery }),
+                feed_delivery("the Consumption Contest").map(|delivery| {
+                    ParsedTeamFeedEventText::ConsumptionContestToPlayer { delivery }
+                }),
+                photo_contest(),
+                falling_star(event).map(|(player_name, outcome)| {
+                    ParsedTeamFeedEventText::FallingStarOutcome {
+                        player_name,
+                        outcome,
+                    }
+                }),
+                feed_event_party.map(|party| ParsedTeamFeedEventText::Party { party }),
+                prosperous(),
+                old_retirement(true),
+                feed_event_wither
+                    .map(|player_name| ParsedTeamFeedEventText::CorruptedByWither { player_name }),
+                feed_event_contained.map(|(contained_player_name, container_player_name)| {
+                    ParsedTeamFeedEventText::PlayerContained {
+                        contained_player_name,
+                        container_player_name,
+                    }
+                }),
+                feed_event_efflorescence_growth.map(|(player_name, growths)| {
+                    ParsedTeamFeedEventText::PlayerGrewInEfflorescence {
+                        player_name,
+                        growths,
+                    }
+                }),
+                feed_event_effloresce
+                    .map(|player_name| ParsedTeamFeedEventText::PlayerEffloresce { player_name }),
+                claimed_lineal_belt(event.season),
+                lost_lineal_belt,
+                feed_event_consumption_contest_specific.map(|(tied, team, earned_coins, item)| {
+                    ParsedTeamFeedEventText::ConsumptionContestToTeam {
+                        tied,
+                        team,
+                        earned_coins,
+                        item,
+                    }
+                }),
+                simulacrum_payout.map(|(team, earned_coins)| {
+                    ParsedTeamFeedEventText::SimulacrumPayout { team, earned_coins }
+                }),
+            )),
+            alt((
+                gilded_umpires_payout.map(|(team, earned_coins)| {
+                    ParsedTeamFeedEventText::GildedUmpiresPayout { team, earned_coins }
+                }),
+                end_game_earnings("🪙")
+                    .map(|(team, tokens)| ParsedTeamFeedEventText::EndGameIncome { team, tokens }),
+                players_became_friends.map(|player_names| {
+                    ParsedTeamFeedEventText::PlayersBecameFriends { player_names }
+                }),
+                end_game_earnings("🏵️")
+                    .map(|(team, pollen)| ParsedTeamFeedEventText::EndGamePollen { team, pollen }),
+                fail(),
+            )),
         )),
     )
 }
@@ -167,6 +207,20 @@ fn augment(event: &FeedEvent) -> impl TeamFeedEventParser<'_> {
             player_positions_swapped
                 .map(|swap| ParsedTeamFeedEventText::PlayerPositionsSwapped { swap }),
             grow.map(|grow| ParsedTeamFeedEventText::PlayerGrow { grow }),
+            restyle.map(|(old_name, new_name)| ParsedTeamFeedEventText::Restyle {
+                old_name,
+                new_name,
+            }),
+            augment_event.map(
+                |(player_name, amount, attribute, a_previous_augment_faded)| {
+                    ParsedTeamFeedEventText::Augment {
+                        player_name,
+                        amount,
+                        attribute,
+                        a_previous_augment_faded,
+                    }
+                },
+            ),
             fail(),
         )),
     )
@@ -258,7 +312,7 @@ fn release<'output>(_event: &'output FeedEvent) -> impl TeamFeedEventParser<'out
 }
 
 fn season<'output>(_event: &'output FeedEvent) -> impl TeamFeedEventParser<'output> {
-    context("Season Feed Event", alt((retirement(false),)))
+    context("Season Feed Event", alt((old_retirement(false),)))
 }
 
 fn lottery<'output>() -> impl TeamFeedEventParser<'output> {
@@ -331,7 +385,84 @@ fn roster<'output>() -> impl TeamFeedEventParser<'output> {
 }
 
 fn election<'output>() -> impl TeamFeedEventParser<'output> {
-    context("Election Feed Event", alt((callup, greater_augment)))
+    context(
+        "Election Feed Event",
+        alt((
+            callup,
+            greater_augment,
+            players_election_swapped
+                .map(|(players, slot)| ParsedTeamFeedEventText::PlayersSwapped { players, slot }),
+            team_election_purified.map(|(team, num_players_purified)| {
+                ParsedTeamFeedEventText::PlayersPurified {
+                    team,
+                    num_players_purified,
+                }
+            }),
+            election_applied_level_ups.map(|(player_name, num_level_ups)| {
+                ParsedTeamFeedEventText::ElectionAppliedLevelUps {
+                    player_name,
+                    num_level_ups,
+                }
+            }),
+            bulk_immunized.map(
+                |(team, num_players)| ParsedTeamFeedEventText::BulkImmunized { team, num_players },
+            ),
+            player_reflected.map(|(new_name, old_name, replacement_name)| {
+                ParsedTeamFeedEventText::PlayerReflected {
+                    new_name,
+                    old_name,
+                    replacement_name,
+                }
+            }),
+            golden_player_emerged.map(|(position_type, player_name, player_level)| {
+                ParsedTeamFeedEventText::GoldenPlayerEmerged {
+                    position_type,
+                    player_name,
+                    player_level,
+                }
+            }),
+            golden_player_replacement_failed.map(|(position_type, team)| {
+                ParsedTeamFeedEventText::GoldenPlayerReplacementFailed {
+                    position_type,
+                    team,
+                }
+            }),
+            feed_event_resumed_processing.map(|(replaced_player_name, replacement_player_name)| {
+                ParsedTeamFeedEventText::ResumedHolidayProcessingReplacement {
+                    replaced_player_name,
+                    replacement_player_name,
+                }
+            }),
+            player_greater_augment_mod.map(|(player_name, modification, augment_name)| {
+                ParsedTeamFeedEventText::GainedModificationFromGreaterAugment {
+                    player_name,
+                    modification,
+                    augment_name,
+                }
+            }),
+            player_trained.map(|(player_name, bench_slot)| {
+                ParsedTeamFeedEventText::PlayerTrained {
+                    player_name,
+                    bench_slot,
+                }
+            }),
+            manager_replaced,
+            named_greater_swap("Sweet Relief")
+                .map(|player_names| ParsedTeamFeedEventText::SweetRelief { player_names }),
+            named_greater_swap("Defensive Shift")
+                .map(|player_names| ParsedTeamFeedEventText::DefensiveShift { player_names }),
+            named_greater_swap("Going Home")
+                .map(|player_names| ParsedTeamFeedEventText::GoingHome { player_names }),
+        )),
+    )
+}
+
+fn callup_terminus_with_slot(input: &str) -> IResult<'_, &str, (&str, Slot)> {
+    let (input, team_name_with_space) = parse_terminated(" in the ").parse(input)?;
+    let (input, slot) = active_slot.parse(input)?;
+    let (input, _) = tag(" slot.").parse(input)?;
+
+    Ok((input, (team_name_with_space, slot)))
 }
 
 fn callup(input: &str) -> IResult<'_, &str, ParsedTeamFeedEventText<&str>> {
@@ -340,16 +471,43 @@ fn callup(input: &str) -> IResult<'_, &str, ParsedTeamFeedEventText<&str>> {
     // Oh and to add to the weird, I'm including the leading space so it can
     // be more conveniently used as a tag in the next step
     let (rest, input) = parse_terminated(" joined the").parse(input)?;
-    let (rest, lesser_team_name_with_space) = parse_until_period_eof.parse(rest)?;
+    // TODO How to make sure this matches the `slot` from later?
+    let (rest, (lesser_team_name_with_space, _terminus_slot)) = alt((
+        // Order matters here
+        callup_terminus_with_slot
+            .map(|(team_name_with_space, slot)| (team_name_with_space, Some(slot))),
+        parse_until_period_eof.map(|team_name_with_space| (team_name_with_space, None)),
+    ))
+    .parse(rest)?;
     let lesser_team_name = &lesser_team_name_with_space[1..];
 
     let (input, lesser_team_emoji) = parse_terminated(lesser_team_name_with_space).parse(input)?;
     let (input, _) = tag(" ").parse(input)?;
-    let (input, slot) = active_slot.parse(input)?;
+    let (input, lesser_league_slot) = active_slot.parse(input)?;
     let (input, _) = tag(" ").parse(input)?;
     let (input, promoted_player_name) =
         parse_terminated(" was called up to replace ").parse(input)?;
-    let (input, greater_team_emoji_name) = parse_terminated(&format!(" {slot} ")).parse(input)?;
+    let (input, (greater_team_emoji_name, greater_league_slot)) = alt((
+        parse_terminated(" C ").map(|n| (n, Slot::Catcher)),
+        parse_terminated(" 1B ").map(|n| (n, Slot::FirstBaseman)),
+        parse_terminated(" 2B ").map(|n| (n, Slot::SecondBaseman)),
+        parse_terminated(" 3B ").map(|n| (n, Slot::ThirdBaseman)),
+        parse_terminated(" SS ").map(|n| (n, Slot::ShortStop)),
+        parse_terminated(" LF ").map(|n| (n, Slot::LeftField)),
+        parse_terminated(" CF ").map(|n| (n, Slot::CenterField)),
+        parse_terminated(" RF ").map(|n| (n, Slot::RightField)),
+        parse_terminated(" SP1 ").map(|n| (n, Slot::StartingPitcher(1))),
+        parse_terminated(" SP2 ").map(|n| (n, Slot::StartingPitcher(2))),
+        parse_terminated(" SP3 ").map(|n| (n, Slot::StartingPitcher(3))),
+        parse_terminated(" SP4 ").map(|n| (n, Slot::StartingPitcher(4))),
+        parse_terminated(" SP5 ").map(|n| (n, Slot::StartingPitcher(5))),
+        parse_terminated(" RP1 ").map(|n| (n, Slot::ReliefPitcher(1))),
+        parse_terminated(" RP2 ").map(|n| (n, Slot::ReliefPitcher(2))),
+        parse_terminated(" RP3 ").map(|n| (n, Slot::ReliefPitcher(3))),
+        parse_terminated(" CL ").map(|n| (n, Slot::Closer)),
+        parse_terminated(" DH ").map(|n| (n, Slot::DesignatedHitter)),
+    ))
+    .parse(input)?;
     let (_, greater_league_team) = emoji_team_eof.parse(greater_team_emoji_name)?;
 
     // At this point, `input` should only contain "{player_name}. {player_name}".
@@ -376,7 +534,8 @@ fn callup(input: &str) -> IResult<'_, &str, ParsedTeamFeedEventText<&str>> {
                 name: lesser_team_name,
             },
             greater_league_team,
-            slot,
+            lesser_league_slot,
+            greater_league_slot,
             promoted_player_name,
             demoted_player_name,
         },
@@ -396,6 +555,19 @@ fn greater_augment(input: &str) -> IResult<'_, &str, ParsedTeamFeedEventText<&st
         tag("Reinforced Plating, granting their Players +10 to all Defense Attributes.")
             .map(|_| GreaterAugment::Plating),
         tag("TODO Insert the lucky delivery text here").map(|_| GreaterAugment::LuckyDelivery),
+        tag("Restore Backup: Roster to call up Corrupted Bench Players.")
+            .map(|_| GreaterAugment::RestoreBackupRoster),
+        tag("Restore Backup: Pitching to swap Corrupted Bench Pitchers into the rotation.")
+            .map(|_| GreaterAugment::RestoreBackupPitching),
+        tag("Restore Backup: Batting to swap Corrupted Bench Batters into the lineup.")
+            .map(|_| GreaterAugment::RestoreBackupBatting),
+        tag("Restore Backup: Null Batter to Reflect their strongest Batter.")
+            .map(|_| GreaterAugment::RestoreBackupNullBatter),
+        training.map(GreaterAugment::Training),
+        augmented_roster_group("Infield").map(GreaterAugment::AugmentedInfield),
+        augmented_roster_group("Relief").map(GreaterAugment::AugmentedRelief),
+        augmented_roster_group("Start").map(GreaterAugment::AugmentedStart),
+        augmented_roster_group("Outfield").map(GreaterAugment::AugmentedOutfield),
     ))
     .parse(input)?;
 
@@ -703,7 +875,7 @@ fn modification<'output>() -> impl TeamFeedEventParser<'output> {
     }
 }
 
-fn retirement<'output>(emoji: bool) -> impl TeamFeedEventParser<'output> {
+fn old_retirement<'output>(emoji: bool) -> impl TeamFeedEventParser<'output> {
     (
         preceded(
             cond(emoji, tag("😇 ")),
@@ -714,32 +886,44 @@ fn retirement<'output>(emoji: bool) -> impl TeamFeedEventParser<'output> {
             parse_terminated(" was called up to take their place.").and_then(verify_name),
         )),
     )
-        .map(|(original, new)| ParsedTeamFeedEventText::Retirement {
+        .map(|(original, new)| ParsedTeamFeedEventText::OldRetirement {
             previous: original,
             new,
         })
 }
 
-fn claimed_lineal_belt(input: &str) -> IResult<'_, &str, ParsedTeamFeedEventText<&str>> {
-    let (input, team_emoji_name) =
-        parse_terminated(" claimed the Lineal Belt from ").parse(input)?;
-    let (_, team) = emoji_team_eof.parse(team_emoji_name)?;
+fn claimed_lineal_belt(
+    season: u8,
+) -> impl Fn(&str) -> IResult<'_, &str, ParsedTeamFeedEventText<&str>> {
+    move |input| {
+        let (input, team_emoji_name) = if season < 10 {
+            parse_terminated(" claimed the Lineal Belt from ").parse(input)?
+        } else {
+            parse_terminated(" claimed the ➰ Lineal Belt from ").parse(input)?
+        };
+        let (_, team) = emoji_team_eof.parse(team_emoji_name)?;
 
-    let (input, old_belt_holder_team_emoji_name) =
-        parse_until_exclamation_point_eof.parse(input)?;
-    let (_, old_belt_holder_team) = emoji_team_eof.parse(old_belt_holder_team_emoji_name)?;
+        let (input, old_belt_holder_team_emoji_name) =
+            parse_until_exclamation_point_eof.parse(input)?;
+        let (_, old_belt_holder_team) = emoji_team_eof.parse(old_belt_holder_team_emoji_name)?;
 
-    Ok((
-        input,
-        ParsedTeamFeedEventText::ClaimedLinealBelt {
-            team,
-            old_belt_holder_team,
-        },
-    ))
+        Ok((
+            input,
+            ParsedTeamFeedEventText::ClaimedLinealBelt {
+                team,
+                old_belt_holder_team,
+            },
+        ))
+    }
 }
 
 fn lost_lineal_belt(input: &str) -> IResult<'_, &str, ParsedTeamFeedEventText<&str>> {
-    let (input, team_emoji_name) = parse_terminated(" lost the Lineal Belt to ").parse(input)?;
+    let (input, team_emoji_name) = alt((
+        parse_terminated(" lost the Lineal Belt to "),
+        // Emoji was added later
+        parse_terminated(" lost the ➰ Lineal Belt to "),
+    ))
+    .parse(input)?;
     let (_, team) = emoji_team_eof.parse(team_emoji_name)?;
 
     let (input, new_belt_holder_team_emoji_name) = parse_until_period_eof.parse(input)?;
@@ -752,4 +936,96 @@ fn lost_lineal_belt(input: &str) -> IResult<'_, &str, ParsedTeamFeedEventText<&s
             new_belt_holder_team,
         },
     ))
+}
+
+pub(super) fn simulacrum_payout(input: &str) -> IResult<'_, &str, (EmojiTeam<&str>, u32)> {
+    let (input, team_emoji_name) = parse_terminated(" earned ").parse(input)?;
+    let (_, team) = emoji_team_eof.parse(team_emoji_name)?;
+
+    let (input, num_level_ups) = u32.parse(input)?;
+    let (input, _) = tag(" 🪙 from Simulacrum.").parse(input)?;
+    Ok((input, (team, num_level_ups)))
+}
+
+pub(super) fn gilded_umpires_payout(input: &str) -> IResult<'_, &str, (EmojiTeam<&str>, u32)> {
+    let (input, team_emoji_name) = parse_terminated(" earned ").parse(input)?;
+    let (_, team) = emoji_team_eof.parse(team_emoji_name)?;
+
+    let (input, num_level_ups) = u32.parse(input)?;
+    let (input, _) = tag(" 🪙 from the Gilded Umpires.").parse(input)?;
+    Ok((input, (team, num_level_ups)))
+}
+
+pub(super) fn golden_player_replacement_failed(
+    input: &str,
+) -> IResult<'_, &str, (PositionType, EmojiTeam<&str>)> {
+    let (input, team_emoji_name) =
+        parse_terminated(" failed to generate a replacement for Golden ").parse(input)?;
+    let (_, team) = emoji_team_eof.parse(team_emoji_name)?;
+    let (input, position_type) = parse_position_type.parse(input)?;
+    let (input, _) = tag(".").parse(input)?;
+    Ok((input, (position_type, team)))
+}
+
+pub(super) fn manager_replaced(input: &str) -> IResult<'_, &str, ParsedTeamFeedEventText<&str>> {
+    let (input, team_emoji_name) = parse_terminated(" Manager ").parse(input)?;
+    let (_, team) = emoji_team_eof.parse(team_emoji_name)?;
+    let (input, outgoing_manager_name) =
+        parse_terminated(" was fired and replaced by ").parse(input)?;
+    let (input, replacement_manager_name) = parse_until_period_eof.parse(input)?;
+
+    Ok((
+        input,
+        ParsedTeamFeedEventText::ManagerReplaced {
+            team,
+            outgoing_manager_name,
+            replacement_manager_name,
+        },
+    ))
+}
+
+pub(super) fn end_game_earnings(
+    earnings_emoji: &str,
+) -> impl Parser<&str, Output = (EmojiTeam<&str>, u32), Error = Error<'_>> {
+    move |input| {
+        let (input, team_emoji_name) = parse_terminated(" earned ").parse(input)?;
+        let (_, team) = emoji_team_eof.parse(team_emoji_name)?;
+        let (input, earned_tokens) = u32.parse(input)?;
+        let (input, _) = tag(" ").parse(input)?;
+        let (input, _) = tag(earnings_emoji).parse(input)?;
+        let (input, _) = tag(".").parse(input)?;
+        Ok((input, (team, earned_tokens)))
+    }
+}
+
+pub(super) fn parse_position_type(input: &str) -> IResult<'_, &str, PositionType> {
+    alt((
+        tag("Pitcher").map(|_| PositionType::Pitcher),
+        tag("Batter").map(|_| PositionType::Batter),
+    ))
+    .parse(input)
+}
+
+pub(super) fn golden_player_emerged(input: &str) -> IResult<'_, &str, (PositionType, &str, u32)> {
+    let (input, player_name) = parse_terminated(" emerged as a Level ").parse(input)?;
+    let (input, player_level) = u32.parse(input)?;
+    let (input, _) = tag(" Golden ").parse(input)?;
+    let (input, position_type) = parse_position_type.parse(input)?;
+    let (input, _) = tag(".").parse(input)?;
+    Ok((input, (position_type, player_name, player_level)))
+}
+
+fn boon<'output>() -> impl TeamFeedEventParser<'output> {
+    context("Boon Feed Event", alt((fail(),)))
+}
+
+fn retirement<'output>() -> impl TeamFeedEventParser<'output> {
+    context(
+        "Retirement Feed Event",
+        alt((
+            player_retired
+                .map(|player_name| ParsedTeamFeedEventText::NewRetirement { player_name }),
+            fail(),
+        )),
+    )
 }

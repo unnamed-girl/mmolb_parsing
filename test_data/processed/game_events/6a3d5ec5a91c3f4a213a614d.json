@@ -1,0 +1,6106 @@
+[
+  {
+    "away_team": {
+      "emoji": "🧮",
+      "name": "Dallas Instruments"
+    },
+    "event_type": "LiveNow",
+    "home_team": {
+      "emoji": "🛸",
+      "name": "Roswell Weather Balloons"
+    },
+    "stadium": "Arena 51",
+    "weather": null
+  },
+  {
+    "away_pitcher": "Mila Butler",
+    "away_team": {
+      "emoji": "🧮",
+      "name": "Dallas Instruments"
+    },
+    "event_type": "PitchingMatchup",
+    "home_pitcher": "Julian Aaron",
+    "home_team": {
+      "emoji": "🛸",
+      "name": "Roswell Weather Balloons"
+    }
+  },
+  {
+    "event_type": "Lineup",
+    "manager_name": "Silver O'Sullivan",
+    "players": [
+      {
+        "name": "Princess Stratfordford",
+        "place": "RF"
+      },
+      {
+        "name": "Bloop Mancini",
+        "place": "2B"
+      },
+      {
+        "name": "Jay Andreasen",
+        "place": "3B"
+      },
+      {
+        "name": "Vickie Blevins",
+        "place": "LF"
+      },
+      {
+        "name": "Tom Thomson",
+        "place": "DH"
+      },
+      {
+        "name": "Oksana Liriano",
+        "place": "SS"
+      },
+      {
+        "name": "Aaliyah Zamora",
+        "place": "C"
+      },
+      {
+        "name": "Franklin Frost",
+        "place": "CF"
+      },
+      {
+        "name": "J. Kara",
+        "place": "1B"
+      }
+    ],
+    "side": "Away"
+  },
+  {
+    "event_type": "Lineup",
+    "manager_name": "Amin Şen",
+    "players": [
+      {
+        "name": "Edward Park",
+        "place": "3B"
+      },
+      {
+        "name": "Rafael Ragequit",
+        "place": "LF"
+      },
+      {
+        "name": "Yellow and Joe",
+        "place": "CF"
+      },
+      {
+        "name": "Greg Dickinson",
+        "place": "RF"
+      },
+      {
+        "name": "Wèi Oliver",
+        "place": "SS"
+      },
+      {
+        "name": "Viola de Jesus",
+        "place": "C"
+      },
+      {
+        "name": "Riley Kamanga",
+        "place": "2B"
+      },
+      {
+        "name": "Geo Winslow",
+        "place": "1B"
+      },
+      {
+        "name": "Liz Strong",
+        "place": "DH"
+      }
+    ],
+    "side": "Home"
+  },
+  {
+    "event_type": "PlayBall"
+  },
+  {
+    "automatic_runner": null,
+    "batting_team": {
+      "emoji": "🧮",
+      "name": "Dallas Instruments"
+    },
+    "event_type": "InningStart",
+    "number": 1,
+    "pitcher_status": {
+      "Same": {
+        "emoji": "🛸",
+        "name": "Julian Aaron"
+      }
+    },
+    "side": "Top"
+  },
+  {
+    "batter": "Princess Stratfordford",
+    "event_type": "NowBatting",
+    "player_swept_away": null,
+    "stats": "FirstPA"
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      0,
+      1
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "event_type": "Foul",
+    "foul": "Ball",
+    "steals": [],
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      1,
+      1
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "ejection": null,
+    "event_type": "Ball",
+    "steals": [],
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "batter": "Princess Stratfordford",
+    "cheer": null,
+    "destination": "ShortStop",
+    "door_prizes": [],
+    "efflorescence": [],
+    "event_type": "FairBall",
+    "fair_ball_type": "GroundBall"
+  },
+  {
+    "advances": [],
+    "amazing": false,
+    "assassinations": [],
+    "batter": "Princess Stratfordford",
+    "ejection": null,
+    "event_type": "GroundedOut",
+    "fielders": [
+      {
+        "name": "Wèi Oliver",
+        "place": "SS"
+      },
+      {
+        "name": "Geo Winslow",
+        "place": "1B"
+      }
+    ],
+    "scores": []
+  },
+  {
+    "batter": "Bloop Mancini",
+    "event_type": "NowBatting",
+    "player_swept_away": null,
+    "stats": "FirstPA"
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      1,
+      0
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "ejection": null,
+    "event_type": "Ball",
+    "steals": [],
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      1,
+      1
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "ejection": null,
+    "event_type": "Strike",
+    "steals": [],
+    "strike": "Swinging",
+    "surprise_strike": false,
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      2,
+      1
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "ejection": null,
+    "event_type": "Ball",
+    "steals": [],
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      2,
+      2
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "event_type": "Foul",
+    "foul": "Ball",
+    "steals": [],
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      3,
+      2
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "ejection": null,
+    "event_type": "Ball",
+    "steals": [],
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      3,
+      2
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "event_type": "Foul",
+    "foul": "Ball",
+    "steals": [],
+    "wither": null
+  },
+  {
+    "advances": [],
+    "assassinations": [],
+    "aurora_photos": null,
+    "batter": "Bloop Mancini",
+    "cheer": null,
+    "ejection": null,
+    "event_type": "Walk",
+    "scores": [],
+    "wither": null
+  },
+  {
+    "batter": "Jay Andreasen",
+    "event_type": "NowBatting",
+    "player_swept_away": null,
+    "stats": "FirstPA"
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "batter": "Jay Andreasen",
+    "cheer": null,
+    "destination": "CenterField",
+    "door_prizes": [],
+    "efflorescence": [],
+    "event_type": "FairBall",
+    "fair_ball_type": "FlyBall"
+  },
+  {
+    "advances": [
+      {
+        "base": "Third",
+        "runner": "Bloop Mancini"
+      }
+    ],
+    "batter": "Jay Andreasen",
+    "distance": "Single",
+    "ejection": null,
+    "event_type": "BatterToBase",
+    "fair_ball_type": "FlyBall",
+    "fielder": {
+      "name": "Yellow and Joe",
+      "place": "CF"
+    },
+    "scores": []
+  },
+  {
+    "batter": "Vickie Blevins",
+    "event_type": "NowBatting",
+    "player_swept_away": null,
+    "stats": "FirstPA"
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      0,
+      1
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "ejection": null,
+    "event_type": "Strike",
+    "steals": [],
+    "strike": "Looking",
+    "surprise_strike": false,
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "batter": "Vickie Blevins",
+    "cheer": null,
+    "destination": "LeftField",
+    "door_prizes": [],
+    "efflorescence": [],
+    "event_type": "FairBall",
+    "fair_ball_type": "FlyBall"
+  },
+  {
+    "advances": [],
+    "batter": "Vickie Blevins",
+    "caught_by": {
+      "name": "Rafael Ragequit",
+      "place": "LF"
+    },
+    "ejection": null,
+    "event_type": "CaughtOut",
+    "fair_ball_type": "FlyBall",
+    "jetpack": false,
+    "perfect": false,
+    "sacrifice": true,
+    "scores": [
+      "Bloop Mancini"
+    ]
+  },
+  {
+    "batter": "Tom Thomson",
+    "event_type": "NowBatting",
+    "player_swept_away": null,
+    "stats": "FirstPA"
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      0,
+      1
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "event_type": "Foul",
+    "foul": "Ball",
+    "steals": [],
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      0,
+      2
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "ejection": null,
+    "event_type": "Strike",
+    "steals": [],
+    "strike": "Looking",
+    "surprise_strike": false,
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      1,
+      2
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "ejection": null,
+    "event_type": "Ball",
+    "steals": [],
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      2,
+      2
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "ejection": null,
+    "event_type": "Ball",
+    "steals": [],
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "batter": "Tom Thomson",
+    "cheer": null,
+    "destination": "LeftField",
+    "door_prizes": [],
+    "efflorescence": [],
+    "event_type": "FairBall",
+    "fair_ball_type": "FlyBall"
+  },
+  {
+    "advances": [],
+    "batter": "Tom Thomson",
+    "caught_by": {
+      "name": "Rafael Ragequit",
+      "place": "LF"
+    },
+    "ejection": null,
+    "event_type": "CaughtOut",
+    "fair_ball_type": "FlyBall",
+    "jetpack": false,
+    "perfect": false,
+    "sacrifice": false,
+    "scores": []
+  },
+  {
+    "event_type": "InningEnd",
+    "number": 1,
+    "side": "Top"
+  },
+  {
+    "automatic_runner": null,
+    "batting_team": {
+      "emoji": "🛸",
+      "name": "Roswell Weather Balloons"
+    },
+    "event_type": "InningStart",
+    "number": 1,
+    "pitcher_status": {
+      "Same": {
+        "emoji": "🧮",
+        "name": "Mila Butler"
+      }
+    },
+    "side": "Bottom"
+  },
+  {
+    "batter": "Edward Park",
+    "event_type": "NowBatting",
+    "player_swept_away": null,
+    "stats": "FirstPA"
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "batter": "Edward Park",
+    "cheer": null,
+    "destination": "SecondBase",
+    "door_prizes": [],
+    "efflorescence": [],
+    "event_type": "FairBall",
+    "fair_ball_type": "GroundBall"
+  },
+  {
+    "advances": [],
+    "amazing": false,
+    "assassinations": [],
+    "batter": "Edward Park",
+    "ejection": null,
+    "event_type": "GroundedOut",
+    "fielders": [
+      {
+        "name": "Bloop Mancini",
+        "place": "2B"
+      },
+      {
+        "name": "J. Kara",
+        "place": "1B"
+      }
+    ],
+    "scores": []
+  },
+  {
+    "batter": "Rafael Ragequit",
+    "event_type": "NowBatting",
+    "player_swept_away": null,
+    "stats": "FirstPA"
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      0,
+      1
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "event_type": "Foul",
+    "foul": "Ball",
+    "steals": [],
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      1,
+      1
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "ejection": null,
+    "event_type": "Ball",
+    "steals": [],
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "batter": "Rafael Ragequit",
+    "cheer": null,
+    "destination": "CenterField",
+    "door_prizes": [],
+    "efflorescence": [],
+    "event_type": "FairBall",
+    "fair_ball_type": "LineDrive"
+  },
+  {
+    "advances": [],
+    "batter": "Rafael Ragequit",
+    "distance": "Single",
+    "ejection": null,
+    "event_type": "BatterToBase",
+    "fair_ball_type": "LineDrive",
+    "fielder": {
+      "name": "Franklin Frost",
+      "place": "CF"
+    },
+    "scores": []
+  },
+  {
+    "batter": "Yellow and Joe",
+    "event_type": "NowBatting",
+    "player_swept_away": null,
+    "stats": "FirstPA"
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      1,
+      0
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "ejection": null,
+    "event_type": "Ball",
+    "steals": [],
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      2,
+      0
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "ejection": null,
+    "event_type": "Ball",
+    "steals": [],
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      2,
+      1
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "event_type": "Foul",
+    "foul": "Ball",
+    "steals": [],
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      3,
+      1
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "ejection": null,
+    "event_type": "Ball",
+    "steals": [],
+    "wither": null
+  },
+  {
+    "advances": [
+      {
+        "base": "Second",
+        "runner": "Rafael Ragequit"
+      }
+    ],
+    "assassinations": [],
+    "aurora_photos": null,
+    "batter": "Yellow and Joe",
+    "cheer": null,
+    "ejection": null,
+    "event_type": "Walk",
+    "scores": [],
+    "wither": null
+  },
+  {
+    "batter": "Greg Dickinson",
+    "event_type": "NowBatting",
+    "player_swept_away": null,
+    "stats": "FirstPA"
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "batter": "Greg Dickinson",
+    "cheer": null,
+    "destination": "FirstBase",
+    "door_prizes": [],
+    "efflorescence": [],
+    "event_type": "FairBall",
+    "fair_ball_type": "GroundBall"
+  },
+  {
+    "advances": [
+      {
+        "base": "Third",
+        "runner": "Rafael Ragequit"
+      },
+      {
+        "base": "Second",
+        "runner": "Yellow and Joe"
+      }
+    ],
+    "batter": "Greg Dickinson",
+    "distance": "Single",
+    "ejection": null,
+    "event_type": "BatterToBase",
+    "fair_ball_type": "GroundBall",
+    "fielder": {
+      "name": "Princess Stratfordford",
+      "place": "RF"
+    },
+    "scores": []
+  },
+  {
+    "batter": "Wèi Oliver",
+    "event_type": "NowBatting",
+    "player_swept_away": null,
+    "stats": "FirstPA"
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      0,
+      1
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "event_type": "Foul",
+    "foul": "Ball",
+    "steals": [],
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "batter": "Wèi Oliver",
+    "cheer": null,
+    "destination": "CenterField",
+    "door_prizes": [],
+    "efflorescence": [],
+    "event_type": "FairBall",
+    "fair_ball_type": "FlyBall"
+  },
+  {
+    "advances": [
+      {
+        "base": "Third",
+        "runner": "Yellow and Joe"
+      },
+      {
+        "base": "Second",
+        "runner": "Greg Dickinson"
+      }
+    ],
+    "batter": "Wèi Oliver",
+    "distance": "Single",
+    "ejection": null,
+    "event_type": "BatterToBase",
+    "fair_ball_type": "FlyBall",
+    "fielder": {
+      "name": "Franklin Frost",
+      "place": "CF"
+    },
+    "scores": [
+      "Rafael Ragequit"
+    ]
+  },
+  {
+    "batter": "Viola de Jesus",
+    "event_type": "NowBatting",
+    "player_swept_away": null,
+    "stats": "FirstPA"
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      0,
+      1
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "ejection": null,
+    "event_type": "Strike",
+    "steals": [],
+    "strike": "Looking",
+    "surprise_strike": false,
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      0,
+      2
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "event_type": "Foul",
+    "foul": "Ball",
+    "steals": [],
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": "TheCrowsCheersSarcastically",
+    "count": [
+      1,
+      2
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "ejection": null,
+    "event_type": "Ball",
+    "steals": [],
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "batter": "Viola de Jesus",
+    "cheer": null,
+    "ejection": null,
+    "event_type": "StrikeOut",
+    "foul": null,
+    "steals": [],
+    "strike": "Swinging",
+    "wither": null
+  },
+  {
+    "batter": "Riley Kamanga",
+    "event_type": "NowBatting",
+    "player_swept_away": null,
+    "stats": "FirstPA"
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      0,
+      1
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "event_type": "Foul",
+    "foul": "Ball",
+    "steals": [],
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      1,
+      1
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "ejection": null,
+    "event_type": "Ball",
+    "steals": [],
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      1,
+      2
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "ejection": null,
+    "event_type": "Strike",
+    "steals": [],
+    "strike": "Swinging",
+    "surprise_strike": false,
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      1,
+      2
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "event_type": "Foul",
+    "foul": "Ball",
+    "steals": [],
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "batter": "Riley Kamanga",
+    "cheer": null,
+    "destination": "RightField",
+    "door_prizes": [],
+    "efflorescence": [],
+    "event_type": "FairBall",
+    "fair_ball_type": "FlyBall"
+  },
+  {
+    "advances": [],
+    "batter": "Riley Kamanga",
+    "caught_by": {
+      "name": "Princess Stratfordford",
+      "place": "RF"
+    },
+    "ejection": null,
+    "event_type": "CaughtOut",
+    "fair_ball_type": "FlyBall",
+    "jetpack": false,
+    "perfect": false,
+    "sacrifice": false,
+    "scores": []
+  },
+  {
+    "event_type": "InningEnd",
+    "number": 1,
+    "side": "Bottom"
+  },
+  {
+    "automatic_runner": null,
+    "batting_team": {
+      "emoji": "🧮",
+      "name": "Dallas Instruments"
+    },
+    "event_type": "InningStart",
+    "number": 2,
+    "pitcher_status": {
+      "Same": {
+        "emoji": "🛸",
+        "name": "Julian Aaron"
+      }
+    },
+    "side": "Top"
+  },
+  {
+    "batter": "Oksana Liriano",
+    "event_type": "NowBatting",
+    "player_swept_away": null,
+    "stats": "FirstPA"
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      0,
+      1
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "event_type": "Foul",
+    "foul": "Ball",
+    "steals": [],
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      0,
+      2
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "ejection": null,
+    "event_type": "Strike",
+    "steals": [],
+    "strike": "Swinging",
+    "surprise_strike": false,
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      0,
+      2
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "event_type": "Foul",
+    "foul": "Ball",
+    "steals": [],
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      1,
+      2
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "ejection": null,
+    "event_type": "Ball",
+    "steals": [],
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      2,
+      2
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "ejection": null,
+    "event_type": "Ball",
+    "steals": [],
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "batter": "Oksana Liriano",
+    "cheer": null,
+    "ejection": null,
+    "event_type": "StrikeOut",
+    "foul": null,
+    "steals": [],
+    "strike": "Swinging",
+    "wither": null
+  },
+  {
+    "batter": "Aaliyah Zamora",
+    "event_type": "NowBatting",
+    "player_swept_away": null,
+    "stats": "FirstPA"
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      0,
+      1
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "event_type": "Foul",
+    "foul": "Ball",
+    "steals": [],
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      0,
+      2
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "event_type": "Foul",
+    "foul": "Ball",
+    "steals": [],
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      1,
+      2
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "ejection": null,
+    "event_type": "Ball",
+    "steals": [],
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      2,
+      2
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "ejection": null,
+    "event_type": "Ball",
+    "steals": [],
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "batter": "Aaliyah Zamora",
+    "cheer": null,
+    "ejection": null,
+    "event_type": "StrikeOut",
+    "foul": null,
+    "steals": [],
+    "strike": "Looking",
+    "wither": null
+  },
+  {
+    "batter": "Franklin Frost",
+    "event_type": "NowBatting",
+    "player_swept_away": null,
+    "stats": "FirstPA"
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "batter": "Franklin Frost",
+    "cheer": null,
+    "destination": "SecondBase",
+    "door_prizes": [],
+    "efflorescence": [],
+    "event_type": "FairBall",
+    "fair_ball_type": "GroundBall"
+  },
+  {
+    "advances": [],
+    "amazing": false,
+    "assassinations": [],
+    "batter": "Franklin Frost",
+    "ejection": null,
+    "event_type": "GroundedOut",
+    "fielders": [
+      {
+        "name": "Riley Kamanga",
+        "place": "2B"
+      },
+      {
+        "name": "Geo Winslow",
+        "place": "1B"
+      }
+    ],
+    "scores": []
+  },
+  {
+    "event_type": "InningEnd",
+    "number": 2,
+    "side": "Top"
+  },
+  {
+    "automatic_runner": null,
+    "batting_team": {
+      "emoji": "🛸",
+      "name": "Roswell Weather Balloons"
+    },
+    "event_type": "InningStart",
+    "number": 2,
+    "pitcher_status": {
+      "Same": {
+        "emoji": "🧮",
+        "name": "Mila Butler"
+      }
+    },
+    "side": "Bottom"
+  },
+  {
+    "batter": "Geo Winslow",
+    "event_type": "NowBatting",
+    "player_swept_away": null,
+    "stats": "FirstPA"
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      1,
+      0
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "ejection": null,
+    "event_type": "Ball",
+    "steals": [],
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      1,
+      1
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "event_type": "Foul",
+    "foul": "Ball",
+    "steals": [],
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      1,
+      2
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "ejection": null,
+    "event_type": "Strike",
+    "steals": [],
+    "strike": "Swinging",
+    "surprise_strike": false,
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      2,
+      2
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "ejection": null,
+    "event_type": "Ball",
+    "steals": [],
+    "wither": null
+  },
+  {
+    "advances": [],
+    "aurora_photos": null,
+    "batter": "Geo Winslow",
+    "cheer": null,
+    "door_prizes": [],
+    "efflorescence": [],
+    "ejection": null,
+    "event_type": "HitByPitch",
+    "scores": [],
+    "wither": null
+  },
+  {
+    "batter": "Liz Strong",
+    "event_type": "NowBatting",
+    "player_swept_away": null,
+    "stats": "FirstPA"
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "batter": "Liz Strong",
+    "cheer": null,
+    "destination": "ThirdBase",
+    "door_prizes": [],
+    "efflorescence": [],
+    "event_type": "FairBall",
+    "fair_ball_type": "GroundBall"
+  },
+  {
+    "advances": [
+      {
+        "base": "Third",
+        "runner": "Geo Winslow"
+      }
+    ],
+    "batter": "Liz Strong",
+    "distance": "Double",
+    "ejection": null,
+    "event_type": "BatterToBase",
+    "fair_ball_type": "GroundBall",
+    "fielder": {
+      "name": "Jay Andreasen",
+      "place": "3B"
+    },
+    "scores": []
+  },
+  {
+    "batter": "Edward Park",
+    "event_type": "NowBatting",
+    "player_swept_away": null,
+    "stats": {
+      "Stats": [
+        {
+          "stat": "HitsForAtBats",
+          "value": {
+            "at_bats": 1,
+            "hits": 0
+          }
+        },
+        {
+          "stat": "GroundOuts",
+          "value": 1
+        }
+      ]
+    }
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      0,
+      1
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "ejection": null,
+    "event_type": "Strike",
+    "steals": [],
+    "strike": "Looking",
+    "surprise_strike": false,
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": "EverySectionPilesOnWithRelentlessHeckling",
+    "count": [
+      1,
+      1
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "ejection": null,
+    "event_type": "Ball",
+    "steals": [],
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      2,
+      1
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "ejection": null,
+    "event_type": "Ball",
+    "steals": [],
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "batter": "Edward Park",
+    "cheer": null,
+    "destination": "ShortStop",
+    "door_prizes": [],
+    "efflorescence": [],
+    "event_type": "FairBall",
+    "fair_ball_type": "Popup"
+  },
+  {
+    "advances": [],
+    "batter": "Edward Park",
+    "caught_by": {
+      "name": "Oksana Liriano",
+      "place": "SS"
+    },
+    "ejection": null,
+    "event_type": "CaughtOut",
+    "fair_ball_type": "Popup",
+    "jetpack": false,
+    "perfect": false,
+    "sacrifice": false,
+    "scores": []
+  },
+  {
+    "batter": "Rafael Ragequit",
+    "event_type": "NowBatting",
+    "player_swept_away": null,
+    "stats": {
+      "Stats": [
+        {
+          "stat": "HitsForAtBats",
+          "value": {
+            "at_bats": 1,
+            "hits": 1
+          }
+        },
+        {
+          "stat": "FirstBases",
+          "value": 1
+        }
+      ]
+    }
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "batter": "Rafael Ragequit",
+    "cheer": null,
+    "destination": "RightField",
+    "door_prizes": [],
+    "efflorescence": [],
+    "event_type": "FairBall",
+    "fair_ball_type": "FlyBall"
+  },
+  {
+    "advances": [],
+    "batter": "Rafael Ragequit",
+    "caught_by": {
+      "name": "Princess Stratfordford",
+      "place": "RF"
+    },
+    "ejection": null,
+    "event_type": "CaughtOut",
+    "fair_ball_type": "FlyBall",
+    "jetpack": false,
+    "perfect": false,
+    "sacrifice": false,
+    "scores": []
+  },
+  {
+    "batter": "Yellow and Joe",
+    "event_type": "NowBatting",
+    "player_swept_away": null,
+    "stats": {
+      "Stats": [
+        {
+          "stat": "BaseOnBalls",
+          "value": 1
+        }
+      ]
+    }
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "batter": "Yellow and Joe",
+    "cheer": "TheCrowdJeers",
+    "destination": "LeftField",
+    "door_prizes": [],
+    "efflorescence": [],
+    "event_type": "FairBall",
+    "fair_ball_type": "LineDrive"
+  },
+  {
+    "advances": [
+      {
+        "base": "Third",
+        "runner": "Liz Strong"
+      }
+    ],
+    "batter": "Yellow and Joe",
+    "distance": "Single",
+    "ejection": null,
+    "event_type": "BatterToBase",
+    "fair_ball_type": "LineDrive",
+    "fielder": {
+      "name": "Vickie Blevins",
+      "place": "LF"
+    },
+    "scores": [
+      "Geo Winslow"
+    ]
+  },
+  {
+    "batter": "Greg Dickinson",
+    "event_type": "NowBatting",
+    "player_swept_away": null,
+    "stats": {
+      "Stats": [
+        {
+          "stat": "HitsForAtBats",
+          "value": {
+            "at_bats": 1,
+            "hits": 1
+          }
+        },
+        {
+          "stat": "FirstBases",
+          "value": 1
+        }
+      ]
+    }
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      1,
+      0
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "ejection": null,
+    "event_type": "Ball",
+    "steals": [],
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "batter": "Greg Dickinson",
+    "cheer": null,
+    "destination": "ShortStop",
+    "door_prizes": [],
+    "efflorescence": [],
+    "event_type": "FairBall",
+    "fair_ball_type": "Popup"
+  },
+  {
+    "advances": [],
+    "batter": "Greg Dickinson",
+    "caught_by": {
+      "name": "Oksana Liriano",
+      "place": "SS"
+    },
+    "ejection": null,
+    "event_type": "CaughtOut",
+    "fair_ball_type": "Popup",
+    "jetpack": false,
+    "perfect": false,
+    "sacrifice": false,
+    "scores": []
+  },
+  {
+    "event_type": "InningEnd",
+    "number": 2,
+    "side": "Bottom"
+  },
+  {
+    "automatic_runner": null,
+    "batting_team": {
+      "emoji": "🧮",
+      "name": "Dallas Instruments"
+    },
+    "event_type": "InningStart",
+    "number": 3,
+    "pitcher_status": {
+      "Same": {
+        "emoji": "🛸",
+        "name": "Julian Aaron"
+      }
+    },
+    "side": "Top"
+  },
+  {
+    "batter": "J. Kara",
+    "event_type": "NowBatting",
+    "player_swept_away": null,
+    "stats": "FirstPA"
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      1,
+      0
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "ejection": null,
+    "event_type": "Ball",
+    "steals": [],
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      1,
+      1
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "event_type": "Foul",
+    "foul": "Ball",
+    "steals": [],
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      1,
+      2
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "ejection": null,
+    "event_type": "Strike",
+    "steals": [],
+    "strike": "Looking",
+    "surprise_strike": false,
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      2,
+      2
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "ejection": null,
+    "event_type": "Ball",
+    "steals": [],
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      2,
+      2
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "event_type": "Foul",
+    "foul": "Ball",
+    "steals": [],
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      2,
+      2
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "event_type": "Foul",
+    "foul": "Ball",
+    "steals": [],
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      3,
+      2
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "ejection": null,
+    "event_type": "Ball",
+    "steals": [],
+    "wither": null
+  },
+  {
+    "advances": [],
+    "assassinations": [],
+    "aurora_photos": null,
+    "batter": "J. Kara",
+    "cheer": null,
+    "ejection": null,
+    "event_type": "Walk",
+    "scores": [],
+    "wither": null
+  },
+  {
+    "batter": "Princess Stratfordford",
+    "event_type": "NowBatting",
+    "player_swept_away": null,
+    "stats": {
+      "Stats": [
+        {
+          "stat": "HitsForAtBats",
+          "value": {
+            "at_bats": 1,
+            "hits": 0
+          }
+        },
+        {
+          "stat": "GroundOuts",
+          "value": 1
+        }
+      ]
+    }
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      0,
+      1
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "event_type": "Foul",
+    "foul": "Ball",
+    "steals": [],
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "batter": "Princess Stratfordford",
+    "cheer": null,
+    "destination": "LeftField",
+    "door_prizes": [],
+    "efflorescence": [],
+    "event_type": "FairBall",
+    "fair_ball_type": "LineDrive"
+  },
+  {
+    "advances": [
+      {
+        "base": "Third",
+        "runner": "J. Kara"
+      }
+    ],
+    "batter": "Princess Stratfordford",
+    "distance": "Single",
+    "ejection": null,
+    "event_type": "BatterToBase",
+    "fair_ball_type": "LineDrive",
+    "fielder": {
+      "name": "Rafael Ragequit",
+      "place": "LF"
+    },
+    "scores": []
+  },
+  {
+    "batter": "Bloop Mancini",
+    "event_type": "NowBatting",
+    "player_swept_away": null,
+    "stats": {
+      "Stats": [
+        {
+          "stat": "BaseOnBalls",
+          "value": 1
+        }
+      ]
+    }
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "batter": "Bloop Mancini",
+    "cheer": null,
+    "destination": "ShortStop",
+    "door_prizes": [],
+    "efflorescence": [],
+    "event_type": "FairBall",
+    "fair_ball_type": "GroundBall"
+  },
+  {
+    "advances": [],
+    "batter": "Bloop Mancini",
+    "double_trouble": null,
+    "ejection": null,
+    "event_type": "DoublePlayGrounded",
+    "fielders": [
+      {
+        "name": "Wèi Oliver",
+        "place": "SS"
+      },
+      {
+        "name": "Riley Kamanga",
+        "place": "2B"
+      },
+      {
+        "name": "Geo Winslow",
+        "place": "1B"
+      }
+    ],
+    "out_one": {
+      "base": "SecondBase",
+      "runner": "Princess Stratfordford"
+    },
+    "out_two": {
+      "base": "FirstBase",
+      "runner": "Bloop Mancini"
+    },
+    "sacrifice": false,
+    "scores": [
+      "J. Kara"
+    ]
+  },
+  {
+    "batter": "Jay Andreasen",
+    "event_type": "NowBatting",
+    "player_swept_away": null,
+    "stats": {
+      "Stats": [
+        {
+          "stat": "HitsForAtBats",
+          "value": {
+            "at_bats": 1,
+            "hits": 1
+          }
+        },
+        {
+          "stat": "FirstBases",
+          "value": 1
+        }
+      ]
+    }
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "batter": "Jay Andreasen",
+    "cheer": null,
+    "destination": "CenterField",
+    "door_prizes": [],
+    "efflorescence": [],
+    "event_type": "FairBall",
+    "fair_ball_type": "LineDrive"
+  },
+  {
+    "advances": [],
+    "batter": "Jay Andreasen",
+    "caught_by": {
+      "name": "Julian Aaron",
+      "place": "P"
+    },
+    "ejection": null,
+    "event_type": "CaughtOut",
+    "fair_ball_type": "LineDrive",
+    "jetpack": false,
+    "perfect": false,
+    "sacrifice": false,
+    "scores": []
+  },
+  {
+    "event_type": "InningEnd",
+    "number": 3,
+    "side": "Top"
+  },
+  {
+    "automatic_runner": null,
+    "batting_team": {
+      "emoji": "🛸",
+      "name": "Roswell Weather Balloons"
+    },
+    "event_type": "InningStart",
+    "number": 3,
+    "pitcher_status": {
+      "Same": {
+        "emoji": "🧮",
+        "name": "Mila Butler"
+      }
+    },
+    "side": "Bottom"
+  },
+  {
+    "batter": "Wèi Oliver",
+    "event_type": "NowBatting",
+    "player_swept_away": null,
+    "stats": {
+      "Stats": [
+        {
+          "stat": "HitsForAtBats",
+          "value": {
+            "at_bats": 1,
+            "hits": 1
+          }
+        },
+        {
+          "stat": "FirstBases",
+          "value": 1
+        }
+      ]
+    }
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      0,
+      1
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "event_type": "Foul",
+    "foul": "Ball",
+    "steals": [],
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      0,
+      2
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "ejection": null,
+    "event_type": "Strike",
+    "steals": [],
+    "strike": "Swinging",
+    "surprise_strike": false,
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "batter": "Wèi Oliver",
+    "cheer": null,
+    "destination": "CenterField",
+    "door_prizes": [],
+    "efflorescence": [],
+    "event_type": "FairBall",
+    "fair_ball_type": "FlyBall"
+  },
+  {
+    "advances": [],
+    "batter": "Wèi Oliver",
+    "caught_by": {
+      "name": "Franklin Frost",
+      "place": "CF"
+    },
+    "ejection": null,
+    "event_type": "CaughtOut",
+    "fair_ball_type": "FlyBall",
+    "jetpack": false,
+    "perfect": false,
+    "sacrifice": false,
+    "scores": []
+  },
+  {
+    "batter": "Viola de Jesus",
+    "event_type": "NowBatting",
+    "player_swept_away": null,
+    "stats": {
+      "Stats": [
+        {
+          "stat": "HitsForAtBats",
+          "value": {
+            "at_bats": 1,
+            "hits": 0
+          }
+        },
+        {
+          "stat": "StrikeOuts",
+          "value": 1
+        }
+      ]
+    }
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      1,
+      0
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "ejection": null,
+    "event_type": "Ball",
+    "steals": [],
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      1,
+      1
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "event_type": "Foul",
+    "foul": "Ball",
+    "steals": [],
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "batter": "Viola de Jesus",
+    "cheer": null,
+    "destination": "FirstBase",
+    "door_prizes": [],
+    "efflorescence": [],
+    "event_type": "FairBall",
+    "fair_ball_type": "GroundBall"
+  },
+  {
+    "advances": [],
+    "amazing": false,
+    "assassinations": [],
+    "batter": "Viola de Jesus",
+    "ejection": null,
+    "event_type": "GroundedOut",
+    "fielders": [
+      {
+        "name": "J. Kara",
+        "place": "1B"
+      }
+    ],
+    "scores": []
+  },
+  {
+    "batter": "Riley Kamanga",
+    "event_type": "NowBatting",
+    "player_swept_away": null,
+    "stats": {
+      "Stats": [
+        {
+          "stat": "HitsForAtBats",
+          "value": {
+            "at_bats": 1,
+            "hits": 0
+          }
+        },
+        {
+          "stat": "ForceOuts",
+          "value": 1
+        }
+      ]
+    }
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "batter": "Riley Kamanga",
+    "cheer": null,
+    "destination": "SecondBase",
+    "door_prizes": [],
+    "efflorescence": [],
+    "event_type": "FairBall",
+    "fair_ball_type": "GroundBall"
+  },
+  {
+    "advances": [],
+    "amazing": false,
+    "assassinations": [],
+    "batter": "Riley Kamanga",
+    "ejection": null,
+    "event_type": "GroundedOut",
+    "fielders": [
+      {
+        "name": "Bloop Mancini",
+        "place": "2B"
+      },
+      {
+        "name": "J. Kara",
+        "place": "1B"
+      }
+    ],
+    "scores": []
+  },
+  {
+    "event_type": "InningEnd",
+    "number": 3,
+    "side": "Bottom"
+  },
+  {
+    "automatic_runner": null,
+    "batting_team": {
+      "emoji": "🧮",
+      "name": "Dallas Instruments"
+    },
+    "event_type": "InningStart",
+    "number": 4,
+    "pitcher_status": {
+      "Same": {
+        "emoji": "🛸",
+        "name": "Julian Aaron"
+      }
+    },
+    "side": "Top"
+  },
+  {
+    "batter": "Vickie Blevins",
+    "event_type": "NowBatting",
+    "player_swept_away": null,
+    "stats": {
+      "Stats": [
+        {
+          "stat": "SacrificeFlies",
+          "value": 1
+        }
+      ]
+    }
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      1,
+      0
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "ejection": null,
+    "event_type": "Ball",
+    "steals": [],
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "batter": "Vickie Blevins",
+    "cheer": null,
+    "destination": "ShortStop",
+    "door_prizes": [],
+    "efflorescence": [],
+    "event_type": "FairBall",
+    "fair_ball_type": "GroundBall"
+  },
+  {
+    "advances": [],
+    "batter": "Vickie Blevins",
+    "distance": "Single",
+    "ejection": null,
+    "event_type": "BatterToBase",
+    "fair_ball_type": "GroundBall",
+    "fielder": {
+      "name": "Yellow and Joe",
+      "place": "CF"
+    },
+    "scores": []
+  },
+  {
+    "batter": "Tom Thomson",
+    "event_type": "NowBatting",
+    "player_swept_away": null,
+    "stats": {
+      "Stats": [
+        {
+          "stat": "HitsForAtBats",
+          "value": {
+            "at_bats": 1,
+            "hits": 0
+          }
+        },
+        {
+          "stat": "ForceOuts",
+          "value": 1
+        }
+      ]
+    }
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      1,
+      0
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "ejection": null,
+    "event_type": "Ball",
+    "steals": [],
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      1,
+      1
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "ejection": null,
+    "event_type": "Strike",
+    "steals": [],
+    "strike": "Looking",
+    "surprise_strike": false,
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "batter": "Tom Thomson",
+    "cheer": null,
+    "destination": "ShortStop",
+    "door_prizes": [],
+    "efflorescence": [],
+    "event_type": "FairBall",
+    "fair_ball_type": "GroundBall"
+  },
+  {
+    "advances": [],
+    "batter": "Tom Thomson",
+    "ejection": null,
+    "event_type": "ForceOut",
+    "fair_ball_type": "GroundBall",
+    "fielders": [
+      {
+        "name": "Wèi Oliver",
+        "place": "SS"
+      },
+      {
+        "name": "Riley Kamanga",
+        "place": "2B"
+      }
+    ],
+    "out": {
+      "base": "Second",
+      "runner": "Vickie Blevins"
+    },
+    "scores": []
+  },
+  {
+    "batter": "Oksana Liriano",
+    "event_type": "NowBatting",
+    "player_swept_away": null,
+    "stats": {
+      "Stats": [
+        {
+          "stat": "HitsForAtBats",
+          "value": {
+            "at_bats": 1,
+            "hits": 0
+          }
+        },
+        {
+          "stat": "StrikeOuts",
+          "value": 1
+        }
+      ]
+    }
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      0,
+      1
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "ejection": null,
+    "event_type": "Strike",
+    "steals": [],
+    "strike": "Swinging",
+    "surprise_strike": false,
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      1,
+      1
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "ejection": null,
+    "event_type": "Ball",
+    "steals": [],
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      2,
+      1
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "ejection": null,
+    "event_type": "Ball",
+    "steals": [],
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      3,
+      1
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "ejection": null,
+    "event_type": "Ball",
+    "steals": [],
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "batter": "Oksana Liriano",
+    "cheer": null,
+    "destination": "SecondBase",
+    "door_prizes": [],
+    "efflorescence": [],
+    "event_type": "FairBall",
+    "fair_ball_type": "GroundBall"
+  },
+  {
+    "advances": [
+      {
+        "base": "Second",
+        "runner": "Tom Thomson"
+      }
+    ],
+    "amazing": false,
+    "assassinations": [],
+    "batter": "Oksana Liriano",
+    "ejection": null,
+    "event_type": "GroundedOut",
+    "fielders": [
+      {
+        "name": "Riley Kamanga",
+        "place": "2B"
+      },
+      {
+        "name": "Geo Winslow",
+        "place": "1B"
+      }
+    ],
+    "scores": []
+  },
+  {
+    "batter": "Aaliyah Zamora",
+    "event_type": "NowBatting",
+    "player_swept_away": null,
+    "stats": {
+      "Stats": [
+        {
+          "stat": "HitsForAtBats",
+          "value": {
+            "at_bats": 1,
+            "hits": 0
+          }
+        },
+        {
+          "stat": "StrikeOuts",
+          "value": 1
+        }
+      ]
+    }
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": "TheCrowdJeers",
+    "count": [
+      1,
+      0
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "ejection": null,
+    "event_type": "Ball",
+    "steals": [],
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "batter": "Aaliyah Zamora",
+    "cheer": null,
+    "destination": "SecondBase",
+    "door_prizes": [],
+    "efflorescence": [],
+    "event_type": "FairBall",
+    "fair_ball_type": "GroundBall"
+  },
+  {
+    "advances": [],
+    "amazing": false,
+    "assassinations": [],
+    "batter": "Aaliyah Zamora",
+    "ejection": null,
+    "event_type": "GroundedOut",
+    "fielders": [
+      {
+        "name": "Riley Kamanga",
+        "place": "2B"
+      },
+      {
+        "name": "Geo Winslow",
+        "place": "1B"
+      }
+    ],
+    "scores": []
+  },
+  {
+    "event_type": "InningEnd",
+    "number": 4,
+    "side": "Top"
+  },
+  {
+    "automatic_runner": null,
+    "batting_team": {
+      "emoji": "🛸",
+      "name": "Roswell Weather Balloons"
+    },
+    "event_type": "InningStart",
+    "number": 4,
+    "pitcher_status": {
+      "Same": {
+        "emoji": "🧮",
+        "name": "Mila Butler"
+      }
+    },
+    "side": "Bottom"
+  },
+  {
+    "batter": "Geo Winslow",
+    "event_type": "NowBatting",
+    "player_swept_away": null,
+    "stats": {
+      "Stats": [
+        {
+          "stat": "HitByPitchs",
+          "value": 1
+        }
+      ]
+    }
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      1,
+      0
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "ejection": null,
+    "event_type": "Ball",
+    "steals": [],
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      2,
+      0
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "ejection": null,
+    "event_type": "Ball",
+    "steals": [],
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      2,
+      1
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "ejection": null,
+    "event_type": "Strike",
+    "steals": [],
+    "strike": "Looking",
+    "surprise_strike": false,
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "batter": "Geo Winslow",
+    "cheer": null,
+    "destination": "CenterField",
+    "door_prizes": [],
+    "efflorescence": [],
+    "event_type": "FairBall",
+    "fair_ball_type": "FlyBall"
+  },
+  {
+    "advances": [],
+    "batter": "Geo Winslow",
+    "caught_by": {
+      "name": "Franklin Frost",
+      "place": "CF"
+    },
+    "ejection": null,
+    "event_type": "CaughtOut",
+    "fair_ball_type": "FlyBall",
+    "jetpack": false,
+    "perfect": false,
+    "sacrifice": false,
+    "scores": []
+  },
+  {
+    "batter": "Liz Strong",
+    "event_type": "NowBatting",
+    "player_swept_away": null,
+    "stats": {
+      "Stats": [
+        {
+          "stat": "HitsForAtBats",
+          "value": {
+            "at_bats": 1,
+            "hits": 1
+          }
+        },
+        {
+          "stat": "SecondBases",
+          "value": 1
+        }
+      ]
+    }
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      0,
+      1
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "event_type": "Foul",
+    "foul": "Ball",
+    "steals": [],
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      0,
+      2
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "event_type": "Foul",
+    "foul": "Ball",
+    "steals": [],
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      0,
+      2
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "event_type": "Foul",
+    "foul": "Ball",
+    "steals": [],
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      0,
+      2
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "event_type": "Foul",
+    "foul": "Ball",
+    "steals": [],
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      1,
+      2
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "ejection": null,
+    "event_type": "Ball",
+    "steals": [],
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "batter": "Liz Strong",
+    "cheer": null,
+    "destination": "RightField",
+    "door_prizes": [],
+    "efflorescence": [],
+    "event_type": "FairBall",
+    "fair_ball_type": "FlyBall"
+  },
+  {
+    "advances": [],
+    "batter": "Liz Strong",
+    "caught_by": {
+      "name": "Princess Stratfordford",
+      "place": "RF"
+    },
+    "ejection": null,
+    "event_type": "CaughtOut",
+    "fair_ball_type": "FlyBall",
+    "jetpack": false,
+    "perfect": false,
+    "sacrifice": false,
+    "scores": []
+  },
+  {
+    "batter": "Edward Park",
+    "event_type": "NowBatting",
+    "player_swept_away": null,
+    "stats": {
+      "Stats": [
+        {
+          "stat": "HitsForAtBats",
+          "value": {
+            "at_bats": 2,
+            "hits": 0
+          }
+        },
+        {
+          "stat": "GroundOuts",
+          "value": 1
+        },
+        {
+          "stat": "PopOuts",
+          "value": 1
+        }
+      ]
+    }
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "batter": "Edward Park",
+    "cheer": null,
+    "destination": "LeftField",
+    "door_prizes": [],
+    "efflorescence": [],
+    "event_type": "FairBall",
+    "fair_ball_type": "FlyBall"
+  },
+  {
+    "advances": [],
+    "batter": "Edward Park",
+    "caught_by": {
+      "name": "Vickie Blevins",
+      "place": "LF"
+    },
+    "ejection": null,
+    "event_type": "CaughtOut",
+    "fair_ball_type": "FlyBall",
+    "jetpack": false,
+    "perfect": false,
+    "sacrifice": false,
+    "scores": []
+  },
+  {
+    "event_type": "InningEnd",
+    "number": 4,
+    "side": "Bottom"
+  },
+  {
+    "automatic_runner": null,
+    "batting_team": {
+      "emoji": "🧮",
+      "name": "Dallas Instruments"
+    },
+    "event_type": "InningStart",
+    "number": 5,
+    "pitcher_status": {
+      "Same": {
+        "emoji": "🛸",
+        "name": "Julian Aaron"
+      }
+    },
+    "side": "Top"
+  },
+  {
+    "batter": "Franklin Frost",
+    "event_type": "NowBatting",
+    "player_swept_away": null,
+    "stats": {
+      "Stats": [
+        {
+          "stat": "HitsForAtBats",
+          "value": {
+            "at_bats": 1,
+            "hits": 0
+          }
+        },
+        {
+          "stat": "GroundOuts",
+          "value": 1
+        }
+      ]
+    }
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      0,
+      1
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "ejection": null,
+    "event_type": "Strike",
+    "steals": [],
+    "strike": "Swinging",
+    "surprise_strike": false,
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      1,
+      1
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "ejection": null,
+    "event_type": "Ball",
+    "steals": [],
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "batter": "Franklin Frost",
+    "cheer": null,
+    "destination": "SecondBase",
+    "door_prizes": [],
+    "efflorescence": [],
+    "event_type": "FairBall",
+    "fair_ball_type": "GroundBall"
+  },
+  {
+    "advances": [],
+    "batter": "Franklin Frost",
+    "distance": "Single",
+    "ejection": null,
+    "event_type": "BatterToBase",
+    "fair_ball_type": "GroundBall",
+    "fielder": {
+      "name": "Greg Dickinson",
+      "place": "RF"
+    },
+    "scores": []
+  },
+  {
+    "batter": "J. Kara",
+    "event_type": "NowBatting",
+    "player_swept_away": null,
+    "stats": {
+      "Stats": [
+        {
+          "stat": "BaseOnBalls",
+          "value": 1
+        }
+      ]
+    }
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "batter": "J. Kara",
+    "cheer": null,
+    "destination": "ShortStop",
+    "door_prizes": [],
+    "efflorescence": [],
+    "event_type": "FairBall",
+    "fair_ball_type": "GroundBall"
+  },
+  {
+    "advances": [],
+    "batter": "J. Kara",
+    "ejection": null,
+    "event_type": "ForceOut",
+    "fair_ball_type": "GroundBall",
+    "fielders": [
+      {
+        "name": "Wèi Oliver",
+        "place": "SS"
+      },
+      {
+        "name": "Riley Kamanga",
+        "place": "2B"
+      }
+    ],
+    "out": {
+      "base": "Second",
+      "runner": "Franklin Frost"
+    },
+    "scores": []
+  },
+  {
+    "batter": "Princess Stratfordford",
+    "event_type": "NowBatting",
+    "player_swept_away": null,
+    "stats": {
+      "Stats": [
+        {
+          "stat": "HitsForAtBats",
+          "value": {
+            "at_bats": 2,
+            "hits": 1
+          }
+        },
+        {
+          "stat": "GroundOuts",
+          "value": 1
+        },
+        {
+          "stat": "FirstBases",
+          "value": 1
+        }
+      ]
+    }
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "batter": "Princess Stratfordford",
+    "cheer": null,
+    "destination": "LeftField",
+    "door_prizes": [],
+    "efflorescence": [],
+    "event_type": "FairBall",
+    "fair_ball_type": "LineDrive"
+  },
+  {
+    "advances": [],
+    "batter": "Princess Stratfordford",
+    "caught_by": {
+      "name": "Rafael Ragequit",
+      "place": "LF"
+    },
+    "ejection": null,
+    "event_type": "CaughtOut",
+    "fair_ball_type": "LineDrive",
+    "jetpack": false,
+    "perfect": false,
+    "sacrifice": false,
+    "scores": []
+  },
+  {
+    "batter": "Bloop Mancini",
+    "event_type": "NowBatting",
+    "player_swept_away": null,
+    "stats": {
+      "Stats": [
+        {
+          "stat": "HitsForAtBats",
+          "value": {
+            "at_bats": 1,
+            "hits": 0
+          }
+        },
+        {
+          "stat": "BaseOnBalls",
+          "value": 1
+        },
+        {
+          "stat": "GroundIntoDoublePlays",
+          "value": 1
+        },
+        {
+          "stat": "GroundOuts",
+          "value": 1
+        }
+      ]
+    }
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      1,
+      0
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "ejection": null,
+    "event_type": "Ball",
+    "steals": [],
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      1,
+      1
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "event_type": "Foul",
+    "foul": "Ball",
+    "steals": [],
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      1,
+      2
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "event_type": "Foul",
+    "foul": "Ball",
+    "steals": [],
+    "wither": null
+  },
+  {
+    "advances": [
+      {
+        "base": "Second",
+        "runner": "J. Kara"
+      }
+    ],
+    "aurora_photos": null,
+    "batter": "Bloop Mancini",
+    "cheer": null,
+    "door_prizes": [],
+    "efflorescence": [],
+    "ejection": null,
+    "event_type": "HitByPitch",
+    "scores": [],
+    "wither": null
+  },
+  {
+    "batter": "Jay Andreasen",
+    "event_type": "NowBatting",
+    "player_swept_away": null,
+    "stats": {
+      "Stats": [
+        {
+          "stat": "HitsForAtBats",
+          "value": {
+            "at_bats": 2,
+            "hits": 1
+          }
+        },
+        {
+          "stat": "FirstBases",
+          "value": 1
+        },
+        {
+          "stat": "LineOuts",
+          "value": 1
+        }
+      ]
+    }
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      0,
+      1
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "event_type": "Foul",
+    "foul": "Ball",
+    "steals": [],
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      0,
+      2
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "ejection": null,
+    "event_type": "Strike",
+    "steals": [],
+    "strike": "Swinging",
+    "surprise_strike": false,
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "batter": "Jay Andreasen",
+    "cheer": null,
+    "ejection": null,
+    "event_type": "StrikeOut",
+    "foul": null,
+    "steals": [],
+    "strike": "Looking",
+    "wither": null
+  },
+  {
+    "event_type": "InningEnd",
+    "number": 5,
+    "side": "Top"
+  },
+  {
+    "automatic_runner": null,
+    "batting_team": {
+      "emoji": "🛸",
+      "name": "Roswell Weather Balloons"
+    },
+    "event_type": "InningStart",
+    "number": 5,
+    "pitcher_status": {
+      "Same": {
+        "emoji": "🧮",
+        "name": "Mila Butler"
+      }
+    },
+    "side": "Bottom"
+  },
+  {
+    "batter": "Rafael Ragequit",
+    "event_type": "NowBatting",
+    "player_swept_away": null,
+    "stats": {
+      "Stats": [
+        {
+          "stat": "HitsForAtBats",
+          "value": {
+            "at_bats": 2,
+            "hits": 1
+          }
+        },
+        {
+          "stat": "FirstBases",
+          "value": 1
+        },
+        {
+          "stat": "ForceOuts",
+          "value": 1
+        }
+      ]
+    }
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      0,
+      1
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "event_type": "Foul",
+    "foul": "Ball",
+    "steals": [],
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "batter": "Rafael Ragequit",
+    "cheer": null,
+    "destination": "ThirdBase",
+    "door_prizes": [],
+    "efflorescence": [],
+    "event_type": "FairBall",
+    "fair_ball_type": "GroundBall"
+  },
+  {
+    "advances": [],
+    "amazing": false,
+    "assassinations": [],
+    "batter": "Rafael Ragequit",
+    "ejection": null,
+    "event_type": "GroundedOut",
+    "fielders": [
+      {
+        "name": "Jay Andreasen",
+        "place": "3B"
+      },
+      {
+        "name": "J. Kara",
+        "place": "1B"
+      }
+    ],
+    "scores": []
+  },
+  {
+    "batter": "Yellow and Joe",
+    "event_type": "NowBatting",
+    "player_swept_away": null,
+    "stats": {
+      "Stats": [
+        {
+          "stat": "HitsForAtBats",
+          "value": {
+            "at_bats": 1,
+            "hits": 1
+          }
+        },
+        {
+          "stat": "BaseOnBalls",
+          "value": 1
+        },
+        {
+          "stat": "FirstBases",
+          "value": 1
+        }
+      ]
+    }
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      1,
+      0
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "ejection": null,
+    "event_type": "Ball",
+    "steals": [],
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      2,
+      0
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "ejection": null,
+    "event_type": "Ball",
+    "steals": [],
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "batter": "Yellow and Joe",
+    "cheer": null,
+    "destination": "LeftField",
+    "door_prizes": [],
+    "efflorescence": [],
+    "event_type": "FairBall",
+    "fair_ball_type": "LineDrive"
+  },
+  {
+    "advances": [],
+    "batter": "Yellow and Joe",
+    "caught_by": {
+      "name": "Jay Andreasen",
+      "place": "3B"
+    },
+    "ejection": null,
+    "event_type": "CaughtOut",
+    "fair_ball_type": "LineDrive",
+    "jetpack": false,
+    "perfect": false,
+    "sacrifice": false,
+    "scores": []
+  },
+  {
+    "batter": "Greg Dickinson",
+    "event_type": "NowBatting",
+    "player_swept_away": null,
+    "stats": {
+      "Stats": [
+        {
+          "stat": "HitsForAtBats",
+          "value": {
+            "at_bats": 2,
+            "hits": 1
+          }
+        },
+        {
+          "stat": "FirstBases",
+          "value": 1
+        },
+        {
+          "stat": "PopOuts",
+          "value": 1
+        }
+      ]
+    }
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      0,
+      1
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "event_type": "Foul",
+    "foul": "Ball",
+    "steals": [],
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "batter": "Greg Dickinson",
+    "cheer": null,
+    "destination": "SecondBase",
+    "door_prizes": [],
+    "efflorescence": [],
+    "event_type": "FairBall",
+    "fair_ball_type": "GroundBall"
+  },
+  {
+    "advances": [],
+    "amazing": false,
+    "assassinations": [],
+    "batter": "Greg Dickinson",
+    "ejection": null,
+    "event_type": "GroundedOut",
+    "fielders": [
+      {
+        "name": "Bloop Mancini",
+        "place": "2B"
+      },
+      {
+        "name": "J. Kara",
+        "place": "1B"
+      }
+    ],
+    "scores": []
+  },
+  {
+    "event_type": "InningEnd",
+    "number": 5,
+    "side": "Bottom"
+  },
+  {
+    "automatic_runner": null,
+    "batting_team": {
+      "emoji": "🧮",
+      "name": "Dallas Instruments"
+    },
+    "event_type": "InningStart",
+    "number": 6,
+    "pitcher_status": {
+      "Same": {
+        "emoji": "🛸",
+        "name": "Julian Aaron"
+      }
+    },
+    "side": "Top"
+  },
+  {
+    "batter": "Vickie Blevins",
+    "event_type": "NowBatting",
+    "player_swept_away": null,
+    "stats": {
+      "Stats": [
+        {
+          "stat": "HitsForAtBats",
+          "value": {
+            "at_bats": 1,
+            "hits": 1
+          }
+        },
+        {
+          "stat": "SacrificeFlies",
+          "value": 1
+        },
+        {
+          "stat": "FirstBases",
+          "value": 1
+        }
+      ]
+    }
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      0,
+      1
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "ejection": null,
+    "event_type": "Strike",
+    "steals": [],
+    "strike": "Looking",
+    "surprise_strike": false,
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      1,
+      1
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "ejection": null,
+    "event_type": "Ball",
+    "steals": [],
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      1,
+      2
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "ejection": null,
+    "event_type": "Strike",
+    "steals": [],
+    "strike": "Swinging",
+    "surprise_strike": false,
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      2,
+      2
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "ejection": null,
+    "event_type": "Ball",
+    "steals": [],
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "batter": "Vickie Blevins",
+    "cheer": null,
+    "destination": "ShortStop",
+    "door_prizes": [],
+    "efflorescence": [],
+    "event_type": "FairBall",
+    "fair_ball_type": "GroundBall"
+  },
+  {
+    "advances": [],
+    "amazing": false,
+    "assassinations": [],
+    "batter": "Vickie Blevins",
+    "ejection": null,
+    "event_type": "GroundedOut",
+    "fielders": [
+      {
+        "name": "Wèi Oliver",
+        "place": "SS"
+      },
+      {
+        "name": "Geo Winslow",
+        "place": "1B"
+      }
+    ],
+    "scores": []
+  },
+  {
+    "batter": "Tom Thomson",
+    "event_type": "NowBatting",
+    "player_swept_away": null,
+    "stats": {
+      "Stats": [
+        {
+          "stat": "HitsForAtBats",
+          "value": {
+            "at_bats": 2,
+            "hits": 0
+          }
+        },
+        {
+          "stat": "ForceOuts",
+          "value": 1
+        },
+        {
+          "stat": "Fouls",
+          "value": 1
+        }
+      ]
+    }
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      0,
+      1
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "ejection": null,
+    "event_type": "Strike",
+    "steals": [],
+    "strike": "Swinging",
+    "surprise_strike": false,
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      0,
+      2
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "event_type": "Foul",
+    "foul": "Ball",
+    "steals": [],
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "batter": "Tom Thomson",
+    "cheer": null,
+    "ejection": null,
+    "event_type": "StrikeOut",
+    "foul": null,
+    "steals": [],
+    "strike": "Swinging",
+    "wither": null
+  },
+  {
+    "batter": "Oksana Liriano",
+    "event_type": "NowBatting",
+    "player_swept_away": null,
+    "stats": {
+      "Stats": [
+        {
+          "stat": "HitsForAtBats",
+          "value": {
+            "at_bats": 2,
+            "hits": 0
+          }
+        },
+        {
+          "stat": "StrikeOuts",
+          "value": 1
+        },
+        {
+          "stat": "GroundOuts",
+          "value": 1
+        }
+      ]
+    }
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "batter": "Oksana Liriano",
+    "cheer": null,
+    "destination": "RightField",
+    "door_prizes": [],
+    "efflorescence": [],
+    "event_type": "FairBall",
+    "fair_ball_type": "LineDrive"
+  },
+  {
+    "advances": [],
+    "batter": "Oksana Liriano",
+    "distance": "Single",
+    "ejection": null,
+    "event_type": "BatterToBase",
+    "fair_ball_type": "LineDrive",
+    "fielder": {
+      "name": "Greg Dickinson",
+      "place": "RF"
+    },
+    "scores": []
+  },
+  {
+    "batter": "Aaliyah Zamora",
+    "event_type": "NowBatting",
+    "player_swept_away": null,
+    "stats": {
+      "Stats": [
+        {
+          "stat": "HitsForAtBats",
+          "value": {
+            "at_bats": 2,
+            "hits": 0
+          }
+        },
+        {
+          "stat": "StrikeOuts",
+          "value": 1
+        },
+        {
+          "stat": "GroundOuts",
+          "value": 1
+        }
+      ]
+    }
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      1,
+      0
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "ejection": null,
+    "event_type": "Ball",
+    "steals": [],
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      1,
+      1
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "ejection": null,
+    "event_type": "Strike",
+    "steals": [],
+    "strike": "Looking",
+    "surprise_strike": false,
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      2,
+      1
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "ejection": null,
+    "event_type": "Ball",
+    "steals": [],
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      3,
+      1
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "ejection": null,
+    "event_type": "Ball",
+    "steals": [
+      {
+        "base": "Second",
+        "caught": false,
+        "runner": "Oksana Liriano"
+      }
+    ],
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      3,
+      2
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "ejection": null,
+    "event_type": "Strike",
+    "steals": [],
+    "strike": "Looking",
+    "surprise_strike": false,
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "batter": "Aaliyah Zamora",
+    "cheer": null,
+    "ejection": null,
+    "event_type": "StrikeOut",
+    "foul": null,
+    "steals": [],
+    "strike": "Looking",
+    "wither": null
+  },
+  {
+    "event_type": "InningEnd",
+    "number": 6,
+    "side": "Top"
+  },
+  {
+    "automatic_runner": null,
+    "batting_team": {
+      "emoji": "🛸",
+      "name": "Roswell Weather Balloons"
+    },
+    "event_type": "InningStart",
+    "number": 6,
+    "pitcher_status": {
+      "Same": {
+        "emoji": "🧮",
+        "name": "Mila Butler"
+      }
+    },
+    "side": "Bottom"
+  },
+  {
+    "batter": "Wèi Oliver",
+    "event_type": "NowBatting",
+    "player_swept_away": null,
+    "stats": {
+      "Stats": [
+        {
+          "stat": "HitsForAtBats",
+          "value": {
+            "at_bats": 2,
+            "hits": 1
+          }
+        },
+        {
+          "stat": "FirstBases",
+          "value": 1
+        },
+        {
+          "stat": "ForceOuts",
+          "value": 1
+        }
+      ]
+    }
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "batter": "Wèi Oliver",
+    "cheer": null,
+    "destination": "ThirdBase",
+    "door_prizes": [],
+    "efflorescence": [],
+    "event_type": "FairBall",
+    "fair_ball_type": "GroundBall"
+  },
+  {
+    "advances": [],
+    "batter": "Wèi Oliver",
+    "ejection": null,
+    "error": "Fielding",
+    "event_type": "ReachOnFieldingError",
+    "fielder": {
+      "name": "Jay Andreasen",
+      "place": "3B"
+    },
+    "scores": []
+  },
+  {
+    "batter": "Viola de Jesus",
+    "event_type": "NowBatting",
+    "player_swept_away": null,
+    "stats": {
+      "Stats": [
+        {
+          "stat": "HitsForAtBats",
+          "value": {
+            "at_bats": 2,
+            "hits": 0
+          }
+        },
+        {
+          "stat": "StrikeOuts",
+          "value": 1
+        },
+        {
+          "stat": "GroundOuts",
+          "value": 1
+        }
+      ]
+    }
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      0,
+      1
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "ejection": null,
+    "event_type": "Strike",
+    "steals": [],
+    "strike": "Looking",
+    "surprise_strike": false,
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      0,
+      2
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "ejection": null,
+    "event_type": "Strike",
+    "steals": [],
+    "strike": "Looking",
+    "surprise_strike": false,
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "batter": "Viola de Jesus",
+    "cheer": null,
+    "ejection": null,
+    "event_type": "StrikeOut",
+    "foul": null,
+    "steals": [],
+    "strike": "Swinging",
+    "wither": null
+  },
+  {
+    "batter": "Riley Kamanga",
+    "event_type": "NowBatting",
+    "player_swept_away": null,
+    "stats": {
+      "Stats": [
+        {
+          "stat": "HitsForAtBats",
+          "value": {
+            "at_bats": 2,
+            "hits": 0
+          }
+        },
+        {
+          "stat": "ForceOuts",
+          "value": 1
+        },
+        {
+          "stat": "GroundOuts",
+          "value": 1
+        }
+      ]
+    }
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      1,
+      0
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "ejection": null,
+    "event_type": "Ball",
+    "steals": [],
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "batter": "Riley Kamanga",
+    "cheer": null,
+    "destination": "Pitcher",
+    "door_prizes": [],
+    "efflorescence": [],
+    "event_type": "FairBall",
+    "fair_ball_type": "GroundBall"
+  },
+  {
+    "advances": [],
+    "batter": "Riley Kamanga",
+    "double_trouble": null,
+    "ejection": null,
+    "event_type": "DoublePlayGrounded",
+    "fielders": [
+      {
+        "name": "Mila Butler",
+        "place": "SP1"
+      },
+      {
+        "name": "Bloop Mancini",
+        "place": "2B"
+      },
+      {
+        "name": "J. Kara",
+        "place": "1B"
+      }
+    ],
+    "out_one": {
+      "base": "SecondBase",
+      "runner": "Wèi Oliver"
+    },
+    "out_two": {
+      "base": "FirstBase",
+      "runner": "Riley Kamanga"
+    },
+    "sacrifice": false,
+    "scores": []
+  },
+  {
+    "event_type": "InningEnd",
+    "number": 6,
+    "side": "Bottom"
+  },
+  {
+    "automatic_runner": null,
+    "batting_team": {
+      "emoji": "🧮",
+      "name": "Dallas Instruments"
+    },
+    "event_type": "InningStart",
+    "number": 7,
+    "pitcher_status": {
+      "Same": {
+        "emoji": "🛸",
+        "name": "Julian Aaron"
+      }
+    },
+    "side": "Top"
+  },
+  {
+    "batter": "Franklin Frost",
+    "event_type": "NowBatting",
+    "player_swept_away": null,
+    "stats": {
+      "Stats": [
+        {
+          "stat": "HitsForAtBats",
+          "value": {
+            "at_bats": 2,
+            "hits": 1
+          }
+        },
+        {
+          "stat": "GroundOuts",
+          "value": 1
+        },
+        {
+          "stat": "FirstBases",
+          "value": 1
+        }
+      ]
+    }
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      1,
+      0
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "ejection": null,
+    "event_type": "Ball",
+    "steals": [],
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      1,
+      1
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "ejection": null,
+    "event_type": "Strike",
+    "steals": [],
+    "strike": "Looking",
+    "surprise_strike": false,
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      1,
+      2
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "ejection": null,
+    "event_type": "Strike",
+    "steals": [],
+    "strike": "Swinging",
+    "surprise_strike": false,
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "batter": "Franklin Frost",
+    "cheer": null,
+    "destination": "SecondBase",
+    "door_prizes": [],
+    "efflorescence": [],
+    "event_type": "FairBall",
+    "fair_ball_type": "GroundBall"
+  },
+  {
+    "advances": [],
+    "amazing": false,
+    "assassinations": [],
+    "batter": "Franklin Frost",
+    "ejection": null,
+    "event_type": "GroundedOut",
+    "fielders": [
+      {
+        "name": "Riley Kamanga",
+        "place": "2B"
+      },
+      {
+        "name": "Geo Winslow",
+        "place": "1B"
+      }
+    ],
+    "scores": []
+  },
+  {
+    "batter": "J. Kara",
+    "event_type": "NowBatting",
+    "player_swept_away": null,
+    "stats": {
+      "Stats": [
+        {
+          "stat": "HitsForAtBats",
+          "value": {
+            "at_bats": 1,
+            "hits": 0
+          }
+        },
+        {
+          "stat": "BaseOnBalls",
+          "value": 1
+        },
+        {
+          "stat": "Fouls",
+          "value": 1
+        }
+      ]
+    }
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      0,
+      1
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "ejection": null,
+    "event_type": "Strike",
+    "steals": [],
+    "strike": "Swinging",
+    "surprise_strike": false,
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      0,
+      2
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "ejection": null,
+    "event_type": "Strike",
+    "steals": [],
+    "strike": "Swinging",
+    "surprise_strike": false,
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "batter": "J. Kara",
+    "cheer": null,
+    "destination": "Pitcher",
+    "door_prizes": [],
+    "efflorescence": [],
+    "event_type": "FairBall",
+    "fair_ball_type": "GroundBall"
+  },
+  {
+    "advances": [],
+    "amazing": false,
+    "assassinations": [],
+    "batter": "J. Kara",
+    "ejection": null,
+    "event_type": "GroundedOut",
+    "fielders": [
+      {
+        "name": "Julian Aaron",
+        "place": "P"
+      },
+      {
+        "name": "Geo Winslow",
+        "place": "1B"
+      }
+    ],
+    "scores": []
+  },
+  {
+    "batter": "Princess Stratfordford",
+    "event_type": "NowBatting",
+    "player_swept_away": null,
+    "stats": {
+      "Stats": [
+        {
+          "stat": "HitsForAtBats",
+          "value": {
+            "at_bats": 3,
+            "hits": 1
+          }
+        },
+        {
+          "stat": "GroundOuts",
+          "value": 1
+        },
+        {
+          "stat": "FirstBases",
+          "value": 1
+        },
+        {
+          "stat": "LineOuts",
+          "value": 1
+        }
+      ]
+    }
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      0,
+      1
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "ejection": null,
+    "event_type": "Strike",
+    "steals": [],
+    "strike": "Swinging",
+    "surprise_strike": false,
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      0,
+      2
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "event_type": "Foul",
+    "foul": "Ball",
+    "steals": [],
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      1,
+      2
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "ejection": null,
+    "event_type": "Ball",
+    "steals": [],
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      1,
+      2
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "event_type": "Foul",
+    "foul": "Ball",
+    "steals": [],
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "batter": "Princess Stratfordford",
+    "cheer": null,
+    "ejection": null,
+    "event_type": "StrikeOut",
+    "foul": null,
+    "steals": [],
+    "strike": "Swinging",
+    "wither": null
+  },
+  {
+    "event_type": "InningEnd",
+    "number": 7,
+    "side": "Top"
+  },
+  {
+    "automatic_runner": null,
+    "batting_team": {
+      "emoji": "🛸",
+      "name": "Roswell Weather Balloons"
+    },
+    "event_type": "InningStart",
+    "number": 7,
+    "pitcher_status": {
+      "Same": {
+        "emoji": "🧮",
+        "name": "Mila Butler"
+      }
+    },
+    "side": "Bottom"
+  },
+  {
+    "batter": "Geo Winslow",
+    "event_type": "NowBatting",
+    "player_swept_away": null,
+    "stats": {
+      "Stats": [
+        {
+          "stat": "HitsForAtBats",
+          "value": {
+            "at_bats": 1,
+            "hits": 0
+          }
+        },
+        {
+          "stat": "HitByPitchs",
+          "value": 1
+        },
+        {
+          "stat": "ForceOuts",
+          "value": 1
+        }
+      ]
+    }
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "batter": "Geo Winslow",
+    "cheer": null,
+    "destination": "LeftField",
+    "door_prizes": [],
+    "efflorescence": [],
+    "event_type": "FairBall",
+    "fair_ball_type": "LineDrive"
+  },
+  {
+    "advances": [],
+    "batter": "Geo Winslow",
+    "distance": "Single",
+    "ejection": null,
+    "event_type": "BatterToBase",
+    "fair_ball_type": "LineDrive",
+    "fielder": {
+      "name": "Mila Butler",
+      "place": "P"
+    },
+    "scores": []
+  },
+  {
+    "batter": "Liz Strong",
+    "event_type": "NowBatting",
+    "player_swept_away": null,
+    "stats": {
+      "Stats": [
+        {
+          "stat": "HitsForAtBats",
+          "value": {
+            "at_bats": 2,
+            "hits": 1
+          }
+        },
+        {
+          "stat": "SecondBases",
+          "value": 1
+        },
+        {
+          "stat": "ForceOuts",
+          "value": 1
+        }
+      ]
+    }
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      0,
+      1
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "ejection": null,
+    "event_type": "Strike",
+    "steals": [],
+    "strike": "Swinging",
+    "surprise_strike": false,
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      1,
+      1
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "ejection": null,
+    "event_type": "Ball",
+    "steals": [],
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "batter": "Liz Strong",
+    "cheer": null,
+    "destination": "ShortStop",
+    "door_prizes": [],
+    "efflorescence": [],
+    "event_type": "FairBall",
+    "fair_ball_type": "GroundBall"
+  },
+  {
+    "advances": [],
+    "batter": "Liz Strong",
+    "double_trouble": {
+      "name": "Oksana Liriano",
+      "place": "SS"
+    },
+    "ejection": null,
+    "event_type": "DoublePlayGrounded",
+    "fielders": [
+      {
+        "name": "Oksana Liriano",
+        "place": "SS"
+      },
+      {
+        "name": "J. Kara",
+        "place": "1B"
+      }
+    ],
+    "out_one": {
+      "base": "SecondBase",
+      "runner": "Geo Winslow"
+    },
+    "out_two": {
+      "base": "FirstBase",
+      "runner": "Liz Strong"
+    },
+    "sacrifice": false,
+    "scores": []
+  },
+  {
+    "batter": "Edward Park",
+    "event_type": "NowBatting",
+    "player_swept_away": null,
+    "stats": {
+      "Stats": [
+        {
+          "stat": "HitsForAtBats",
+          "value": {
+            "at_bats": 3,
+            "hits": 0
+          }
+        },
+        {
+          "stat": "GroundOuts",
+          "value": 1
+        },
+        {
+          "stat": "PopOuts",
+          "value": 1
+        },
+        {
+          "stat": "ForceOuts",
+          "value": 1
+        }
+      ]
+    }
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "batter": "Edward Park",
+    "cheer": null,
+    "destination": "Pitcher",
+    "door_prizes": [],
+    "efflorescence": [],
+    "event_type": "FairBall",
+    "fair_ball_type": "GroundBall"
+  },
+  {
+    "advances": [],
+    "batter": "Edward Park",
+    "distance": "Single",
+    "ejection": null,
+    "event_type": "BatterToBase",
+    "fair_ball_type": "GroundBall",
+    "fielder": {
+      "name": "Mila Butler",
+      "place": "P"
+    },
+    "scores": []
+  },
+  {
+    "batter": "Rafael Ragequit",
+    "event_type": "NowBatting",
+    "player_swept_away": null,
+    "stats": {
+      "Stats": [
+        {
+          "stat": "HitsForAtBats",
+          "value": {
+            "at_bats": 3,
+            "hits": 1
+          }
+        },
+        {
+          "stat": "FirstBases",
+          "value": 1
+        },
+        {
+          "stat": "ForceOuts",
+          "value": 1
+        },
+        {
+          "stat": "GroundOuts",
+          "value": 1
+        }
+      ]
+    }
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "batter": "Rafael Ragequit",
+    "cheer": null,
+    "destination": "ThirdBase",
+    "door_prizes": [],
+    "efflorescence": [],
+    "event_type": "FairBall",
+    "fair_ball_type": "GroundBall"
+  },
+  {
+    "advances": [
+      {
+        "base": "Second",
+        "runner": "Edward Park"
+      }
+    ],
+    "batter": "Rafael Ragequit",
+    "distance": "Single",
+    "ejection": null,
+    "event_type": "BatterToBase",
+    "fair_ball_type": "GroundBall",
+    "fielder": {
+      "name": "Jay Andreasen",
+      "place": "3B"
+    },
+    "scores": []
+  },
+  {
+    "batter": "Yellow and Joe",
+    "event_type": "NowBatting",
+    "player_swept_away": null,
+    "stats": {
+      "Stats": [
+        {
+          "stat": "HitsForAtBats",
+          "value": {
+            "at_bats": 2,
+            "hits": 1
+          }
+        },
+        {
+          "stat": "BaseOnBalls",
+          "value": 1
+        },
+        {
+          "stat": "FirstBases",
+          "value": 1
+        },
+        {
+          "stat": "LineOuts",
+          "value": 1
+        }
+      ]
+    }
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      1,
+      0
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "ejection": null,
+    "event_type": "Ball",
+    "steals": [],
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      1,
+      1
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "ejection": null,
+    "event_type": "Strike",
+    "steals": [],
+    "strike": "Looking",
+    "surprise_strike": false,
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      1,
+      2
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "ejection": null,
+    "event_type": "Strike",
+    "steals": [],
+    "strike": "Looking",
+    "surprise_strike": false,
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "batter": "Yellow and Joe",
+    "cheer": null,
+    "destination": "LeftField",
+    "door_prizes": [],
+    "efflorescence": [],
+    "event_type": "FairBall",
+    "fair_ball_type": "FlyBall"
+  },
+  {
+    "advances": [],
+    "batter": "Yellow and Joe",
+    "caught_by": {
+      "name": "Vickie Blevins",
+      "place": "LF"
+    },
+    "ejection": null,
+    "event_type": "CaughtOut",
+    "fair_ball_type": "FlyBall",
+    "jetpack": false,
+    "perfect": false,
+    "sacrifice": false,
+    "scores": []
+  },
+  {
+    "event_type": "InningEnd",
+    "number": 7,
+    "side": "Bottom"
+  },
+  {
+    "automatic_runner": null,
+    "batting_team": {
+      "emoji": "🧮",
+      "name": "Dallas Instruments"
+    },
+    "event_type": "InningStart",
+    "number": 8,
+    "pitcher_status": {
+      "Same": {
+        "emoji": "🛸",
+        "name": "Julian Aaron"
+      }
+    },
+    "side": "Top"
+  },
+  {
+    "batter": "Bloop Mancini",
+    "event_type": "NowBatting",
+    "player_swept_away": null,
+    "stats": {
+      "Stats": [
+        {
+          "stat": "HitsForAtBats",
+          "value": {
+            "at_bats": 1,
+            "hits": 0
+          }
+        },
+        {
+          "stat": "BaseOnBalls",
+          "value": 1
+        },
+        {
+          "stat": "GroundIntoDoublePlays",
+          "value": 1
+        },
+        {
+          "stat": "GroundOuts",
+          "value": 1
+        },
+        {
+          "stat": "HitByPitchs",
+          "value": 1
+        }
+      ]
+    }
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      1,
+      0
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "ejection": null,
+    "event_type": "Ball",
+    "steals": [],
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      2,
+      0
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "ejection": null,
+    "event_type": "Ball",
+    "steals": [],
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "batter": "Bloop Mancini",
+    "cheer": null,
+    "destination": "CenterField",
+    "door_prizes": [],
+    "efflorescence": [],
+    "event_type": "FairBall",
+    "fair_ball_type": "FlyBall"
+  },
+  {
+    "advances": [],
+    "batter": "Bloop Mancini",
+    "caught_by": {
+      "name": "Yellow and Joe",
+      "place": "CF"
+    },
+    "ejection": null,
+    "event_type": "CaughtOut",
+    "fair_ball_type": "FlyBall",
+    "jetpack": false,
+    "perfect": false,
+    "sacrifice": false,
+    "scores": []
+  },
+  {
+    "batter": "Jay Andreasen",
+    "event_type": "NowBatting",
+    "player_swept_away": null,
+    "stats": {
+      "Stats": [
+        {
+          "stat": "HitsForAtBats",
+          "value": {
+            "at_bats": 3,
+            "hits": 1
+          }
+        },
+        {
+          "stat": "FirstBases",
+          "value": 1
+        },
+        {
+          "stat": "LineOuts",
+          "value": 1
+        },
+        {
+          "stat": "StrikeOuts",
+          "value": 1
+        }
+      ]
+    }
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "batter": "Jay Andreasen",
+    "cheer": null,
+    "destination": "ThirdBase",
+    "door_prizes": [],
+    "efflorescence": [],
+    "event_type": "FairBall",
+    "fair_ball_type": "GroundBall"
+  },
+  {
+    "advances": [],
+    "batter": "Jay Andreasen",
+    "distance": "Single",
+    "ejection": null,
+    "event_type": "BatterToBase",
+    "fair_ball_type": "GroundBall",
+    "fielder": {
+      "name": "Rafael Ragequit",
+      "place": "LF"
+    },
+    "scores": []
+  },
+  {
+    "batter": "Vickie Blevins",
+    "event_type": "NowBatting",
+    "player_swept_away": null,
+    "stats": {
+      "Stats": [
+        {
+          "stat": "HitsForAtBats",
+          "value": {
+            "at_bats": 2,
+            "hits": 1
+          }
+        },
+        {
+          "stat": "SacrificeFlies",
+          "value": 1
+        },
+        {
+          "stat": "FirstBases",
+          "value": 1
+        },
+        {
+          "stat": "GroundOuts",
+          "value": 1
+        }
+      ]
+    }
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "batter": "Vickie Blevins",
+    "cheer": null,
+    "destination": "LeftField",
+    "door_prizes": [],
+    "efflorescence": [],
+    "event_type": "FairBall",
+    "fair_ball_type": "LineDrive"
+  },
+  {
+    "advances": [],
+    "batter": "Vickie Blevins",
+    "distance": "Double",
+    "ejection": null,
+    "event_type": "BatterToBase",
+    "fair_ball_type": "LineDrive",
+    "fielder": {
+      "name": "Rafael Ragequit",
+      "place": "LF"
+    },
+    "scores": [
+      "Jay Andreasen"
+    ]
+  },
+  {
+    "batter": "Tom Thomson",
+    "event_type": "NowBatting",
+    "player_swept_away": null,
+    "stats": {
+      "Stats": [
+        {
+          "stat": "HitsForAtBats",
+          "value": {
+            "at_bats": 3,
+            "hits": 0
+          }
+        },
+        {
+          "stat": "ForceOuts",
+          "value": 1
+        },
+        {
+          "stat": "Fouls",
+          "value": 1
+        },
+        {
+          "stat": "StrikeOuts",
+          "value": 1
+        }
+      ]
+    }
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      1,
+      0
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "ejection": null,
+    "event_type": "Ball",
+    "steals": [],
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": "TheCrowsCheersSarcastically",
+    "count": [
+      1,
+      1
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "ejection": null,
+    "event_type": "Strike",
+    "steals": [],
+    "strike": "Swinging",
+    "surprise_strike": false,
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      2,
+      1
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "ejection": null,
+    "event_type": "Ball",
+    "steals": [],
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      2,
+      2
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "ejection": null,
+    "event_type": "Strike",
+    "steals": [],
+    "strike": "Swinging",
+    "surprise_strike": false,
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      3,
+      2
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "ejection": null,
+    "event_type": "Ball",
+    "steals": [],
+    "wither": null
+  },
+  {
+    "advances": [],
+    "assassinations": [],
+    "aurora_photos": null,
+    "batter": "Tom Thomson",
+    "cheer": null,
+    "ejection": null,
+    "event_type": "Walk",
+    "scores": [],
+    "wither": null
+  },
+  {
+    "batter": "Oksana Liriano",
+    "event_type": "NowBatting",
+    "player_swept_away": null,
+    "stats": {
+      "Stats": [
+        {
+          "stat": "HitsForAtBats",
+          "value": {
+            "at_bats": 3,
+            "hits": 1
+          }
+        },
+        {
+          "stat": "StrikeOuts",
+          "value": 1
+        },
+        {
+          "stat": "GroundOuts",
+          "value": 1
+        },
+        {
+          "stat": "FirstBases",
+          "value": 1
+        }
+      ]
+    }
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      1,
+      0
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "ejection": null,
+    "event_type": "Ball",
+    "steals": [],
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "batter": "Oksana Liriano",
+    "cheer": null,
+    "destination": "RightField",
+    "door_prizes": [],
+    "efflorescence": [],
+    "event_type": "FairBall",
+    "fair_ball_type": "LineDrive"
+  },
+  {
+    "advances": [
+      {
+        "base": "Third",
+        "runner": "Tom Thomson"
+      }
+    ],
+    "batter": "Oksana Liriano",
+    "distance": "Double",
+    "ejection": null,
+    "event_type": "BatterToBase",
+    "fair_ball_type": "LineDrive",
+    "fielder": {
+      "name": "Greg Dickinson",
+      "place": "RF"
+    },
+    "scores": [
+      "Vickie Blevins"
+    ]
+  },
+  {
+    "batter": "Aaliyah Zamora",
+    "event_type": "NowBatting",
+    "player_swept_away": null,
+    "stats": {
+      "Stats": [
+        {
+          "stat": "HitsForAtBats",
+          "value": {
+            "at_bats": 3,
+            "hits": 0
+          }
+        },
+        {
+          "stat": "StrikeOuts",
+          "value": 2
+        },
+        {
+          "stat": "GroundOuts",
+          "value": 1
+        }
+      ]
+    }
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      0,
+      1
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "event_type": "Foul",
+    "foul": "Ball",
+    "steals": [],
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "batter": "Aaliyah Zamora",
+    "cheer": null,
+    "destination": "SecondBase",
+    "door_prizes": [],
+    "efflorescence": [],
+    "event_type": "FairBall",
+    "fair_ball_type": "GroundBall"
+  },
+  {
+    "advances": [
+      {
+        "base": "Third",
+        "runner": "Oksana Liriano"
+      }
+    ],
+    "amazing": false,
+    "assassinations": [],
+    "batter": "Aaliyah Zamora",
+    "ejection": null,
+    "event_type": "GroundedOut",
+    "fielders": [
+      {
+        "name": "Riley Kamanga",
+        "place": "2B"
+      },
+      {
+        "name": "Geo Winslow",
+        "place": "1B"
+      }
+    ],
+    "scores": [
+      "Tom Thomson"
+    ]
+  },
+  {
+    "event_type": "MoundVisit",
+    "manager_name": "Amin Şen",
+    "mound_visit_type": "MoundVisit",
+    "team": {
+      "emoji": "🛸",
+      "name": "Roswell Weather Balloons"
+    }
+  },
+  {
+    "arriving_pitcher_emoji": "🛸",
+    "arriving_pitcher_name": "Jason Olesen",
+    "arriving_pitcher_place": "RP1",
+    "event_type": "PitcherSwap",
+    "leaving_pitcher": {
+      "name": "Julian Aaron",
+      "place": "SP1"
+    },
+    "leaving_pitcher_emoji": null
+  },
+  {
+    "batter": "Franklin Frost",
+    "event_type": "NowBatting",
+    "player_swept_away": null,
+    "stats": {
+      "Stats": [
+        {
+          "stat": "HitsForAtBats",
+          "value": {
+            "at_bats": 3,
+            "hits": 1
+          }
+        },
+        {
+          "stat": "GroundOuts",
+          "value": 2
+        },
+        {
+          "stat": "FirstBases",
+          "value": 1
+        }
+      ]
+    }
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "batter": "Franklin Frost",
+    "cheer": null,
+    "destination": "LeftField",
+    "door_prizes": [],
+    "efflorescence": [],
+    "event_type": "FairBall",
+    "fair_ball_type": "LineDrive"
+  },
+  {
+    "advances": [],
+    "batter": "Franklin Frost",
+    "distance": "Double",
+    "ejection": null,
+    "event_type": "BatterToBase",
+    "fair_ball_type": "LineDrive",
+    "fielder": {
+      "name": "Rafael Ragequit",
+      "place": "LF"
+    },
+    "scores": [
+      "Oksana Liriano"
+    ]
+  },
+  {
+    "batter": "J. Kara",
+    "event_type": "NowBatting",
+    "player_swept_away": null,
+    "stats": {
+      "Stats": [
+        {
+          "stat": "HitsForAtBats",
+          "value": {
+            "at_bats": 2,
+            "hits": 0
+          }
+        },
+        {
+          "stat": "BaseOnBalls",
+          "value": 1
+        },
+        {
+          "stat": "Fouls",
+          "value": 1
+        },
+        {
+          "stat": "GroundOuts",
+          "value": 1
+        }
+      ]
+    }
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      0,
+      1
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "ejection": null,
+    "event_type": "Strike",
+    "steals": [],
+    "strike": "Looking",
+    "surprise_strike": false,
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      0,
+      2
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "ejection": null,
+    "event_type": "Strike",
+    "steals": [],
+    "strike": "Swinging",
+    "surprise_strike": false,
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "batter": "J. Kara",
+    "cheer": null,
+    "ejection": null,
+    "event_type": "StrikeOut",
+    "foul": null,
+    "steals": [],
+    "strike": "Looking",
+    "wither": null
+  },
+  {
+    "event_type": "InningEnd",
+    "number": 8,
+    "side": "Top"
+  },
+  {
+    "automatic_runner": null,
+    "batting_team": {
+      "emoji": "🛸",
+      "name": "Roswell Weather Balloons"
+    },
+    "event_type": "InningStart",
+    "number": 8,
+    "pitcher_status": {
+      "Same": {
+        "emoji": "🧮",
+        "name": "Mila Butler"
+      }
+    },
+    "side": "Bottom"
+  },
+  {
+    "batter": "Greg Dickinson",
+    "event_type": "NowBatting",
+    "player_swept_away": null,
+    "stats": {
+      "Stats": [
+        {
+          "stat": "HitsForAtBats",
+          "value": {
+            "at_bats": 3,
+            "hits": 1
+          }
+        },
+        {
+          "stat": "FirstBases",
+          "value": 1
+        },
+        {
+          "stat": "PopOuts",
+          "value": 1
+        },
+        {
+          "stat": "GroundOuts",
+          "value": 1
+        }
+      ]
+    }
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      0,
+      1
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "event_type": "Foul",
+    "foul": "Ball",
+    "steals": [],
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      0,
+      2
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "ejection": null,
+    "event_type": "Strike",
+    "steals": [],
+    "strike": "Looking",
+    "surprise_strike": false,
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      0,
+      2
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "event_type": "Foul",
+    "foul": "Ball",
+    "steals": [],
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      0,
+      2
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "event_type": "Foul",
+    "foul": "Ball",
+    "steals": [],
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      0,
+      2
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "event_type": "Foul",
+    "foul": "Ball",
+    "steals": [],
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "batter": "Greg Dickinson",
+    "cheer": null,
+    "destination": "SecondBase",
+    "door_prizes": [],
+    "efflorescence": [],
+    "event_type": "FairBall",
+    "fair_ball_type": "GroundBall"
+  },
+  {
+    "advances": [],
+    "amazing": false,
+    "assassinations": [],
+    "batter": "Greg Dickinson",
+    "ejection": null,
+    "event_type": "GroundedOut",
+    "fielders": [
+      {
+        "name": "Bloop Mancini",
+        "place": "2B"
+      },
+      {
+        "name": "J. Kara",
+        "place": "1B"
+      }
+    ],
+    "scores": []
+  },
+  {
+    "batter": "Wèi Oliver",
+    "event_type": "NowBatting",
+    "player_swept_away": null,
+    "stats": {
+      "Stats": [
+        {
+          "stat": "HitsForAtBats",
+          "value": {
+            "at_bats": 3,
+            "hits": 1
+          }
+        },
+        {
+          "stat": "FirstBases",
+          "value": 1
+        },
+        {
+          "stat": "ForceOuts",
+          "value": 1
+        }
+      ]
+    }
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "batter": "Wèi Oliver",
+    "cheer": null,
+    "destination": "ShortStop",
+    "door_prizes": [],
+    "efflorescence": [],
+    "event_type": "FairBall",
+    "fair_ball_type": "GroundBall"
+  },
+  {
+    "advances": [],
+    "batter": "Wèi Oliver",
+    "ejection": null,
+    "error": "Throwing",
+    "event_type": "ReachOnFieldingError",
+    "fielder": {
+      "name": "Oksana Liriano",
+      "place": "SS"
+    },
+    "scores": []
+  },
+  {
+    "batter": "Viola de Jesus",
+    "event_type": "NowBatting",
+    "player_swept_away": null,
+    "stats": {
+      "Stats": [
+        {
+          "stat": "HitsForAtBats",
+          "value": {
+            "at_bats": 3,
+            "hits": 0
+          }
+        },
+        {
+          "stat": "StrikeOuts",
+          "value": 2
+        },
+        {
+          "stat": "GroundOuts",
+          "value": 1
+        }
+      ]
+    }
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "batter": "Viola de Jesus",
+    "cheer": null,
+    "destination": "CenterField",
+    "door_prizes": [],
+    "efflorescence": [],
+    "event_type": "FairBall",
+    "fair_ball_type": "LineDrive"
+  },
+  {
+    "advances": [],
+    "batter": "Viola de Jesus",
+    "caught_by": {
+      "name": "Franklin Frost",
+      "place": "CF"
+    },
+    "ejection": null,
+    "event_type": "CaughtOut",
+    "fair_ball_type": "LineDrive",
+    "jetpack": false,
+    "perfect": false,
+    "sacrifice": false,
+    "scores": []
+  },
+  {
+    "batter": "Riley Kamanga",
+    "event_type": "NowBatting",
+    "player_swept_away": null,
+    "stats": {
+      "Stats": [
+        {
+          "stat": "HitsForAtBats",
+          "value": {
+            "at_bats": 3,
+            "hits": 0
+          }
+        },
+        {
+          "stat": "ForceOuts",
+          "value": 1
+        },
+        {
+          "stat": "GroundOuts",
+          "value": 2
+        },
+        {
+          "stat": "GroundIntoDoublePlays",
+          "value": 1
+        }
+      ]
+    }
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      0,
+      1
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "ejection": null,
+    "event_type": "Strike",
+    "steals": [],
+    "strike": "Looking",
+    "surprise_strike": false,
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      1,
+      1
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "ejection": null,
+    "event_type": "Ball",
+    "steals": [],
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      2,
+      1
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "ejection": null,
+    "event_type": "Ball",
+    "steals": [],
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "batter": "Riley Kamanga",
+    "cheer": null,
+    "destination": "ThirdBase",
+    "door_prizes": [],
+    "efflorescence": [],
+    "event_type": "FairBall",
+    "fair_ball_type": "GroundBall"
+  },
+  {
+    "advances": [],
+    "amazing": false,
+    "assassinations": [],
+    "batter": "Riley Kamanga",
+    "ejection": null,
+    "event_type": "GroundedOut",
+    "fielders": [
+      {
+        "name": "Jay Andreasen",
+        "place": "3B"
+      },
+      {
+        "name": "J. Kara",
+        "place": "1B"
+      }
+    ],
+    "scores": []
+  },
+  {
+    "event_type": "InningEnd",
+    "number": 8,
+    "side": "Bottom"
+  },
+  {
+    "automatic_runner": null,
+    "batting_team": {
+      "emoji": "🧮",
+      "name": "Dallas Instruments"
+    },
+    "event_type": "InningStart",
+    "number": 9,
+    "pitcher_status": {
+      "Same": {
+        "emoji": "🛸",
+        "name": "Jason Olesen"
+      }
+    },
+    "side": "Top"
+  },
+  {
+    "batter": "Princess Stratfordford",
+    "event_type": "NowBatting",
+    "player_swept_away": null,
+    "stats": {
+      "Stats": [
+        {
+          "stat": "HitsForAtBats",
+          "value": {
+            "at_bats": 4,
+            "hits": 1
+          }
+        },
+        {
+          "stat": "GroundOuts",
+          "value": 1
+        },
+        {
+          "stat": "FirstBases",
+          "value": 1
+        },
+        {
+          "stat": "LineOuts",
+          "value": 1
+        },
+        {
+          "stat": "StrikeOuts",
+          "value": 1
+        }
+      ]
+    }
+  },
+  {
+    "advances": [],
+    "aurora_photos": null,
+    "batter": "Princess Stratfordford",
+    "cheer": null,
+    "door_prizes": [],
+    "efflorescence": [],
+    "ejection": null,
+    "event_type": "HitByPitch",
+    "scores": [],
+    "wither": null
+  },
+  {
+    "batter": "Bloop Mancini",
+    "event_type": "NowBatting",
+    "player_swept_away": null,
+    "stats": {
+      "Stats": [
+        {
+          "stat": "HitsForAtBats",
+          "value": {
+            "at_bats": 2,
+            "hits": 0
+          }
+        },
+        {
+          "stat": "BaseOnBalls",
+          "value": 1
+        },
+        {
+          "stat": "GroundIntoDoublePlays",
+          "value": 1
+        },
+        {
+          "stat": "GroundOuts",
+          "value": 1
+        },
+        {
+          "stat": "HitByPitchs",
+          "value": 1
+        },
+        {
+          "stat": "ForceOuts",
+          "value": 1
+        }
+      ]
+    }
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "batter": "Bloop Mancini",
+    "cheer": null,
+    "destination": "FirstBase",
+    "door_prizes": [],
+    "efflorescence": [],
+    "event_type": "FairBall",
+    "fair_ball_type": "GroundBall"
+  },
+  {
+    "advances": [
+      {
+        "base": "Third",
+        "runner": "Princess Stratfordford"
+      }
+    ],
+    "batter": "Bloop Mancini",
+    "distance": "Single",
+    "ejection": null,
+    "event_type": "BatterToBase",
+    "fair_ball_type": "GroundBall",
+    "fielder": {
+      "name": "Greg Dickinson",
+      "place": "RF"
+    },
+    "scores": []
+  },
+  {
+    "batter": "Jay Andreasen",
+    "event_type": "NowBatting",
+    "player_swept_away": null,
+    "stats": {
+      "Stats": [
+        {
+          "stat": "HitsForAtBats",
+          "value": {
+            "at_bats": 4,
+            "hits": 2
+          }
+        },
+        {
+          "stat": "FirstBases",
+          "value": 2
+        },
+        {
+          "stat": "LineOuts",
+          "value": 1
+        },
+        {
+          "stat": "StrikeOuts",
+          "value": 1
+        }
+      ]
+    }
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "batter": "Jay Andreasen",
+    "cheer": null,
+    "destination": "SecondBase",
+    "door_prizes": [],
+    "efflorescence": [],
+    "event_type": "FairBall",
+    "fair_ball_type": "GroundBall"
+  },
+  {
+    "advances": [],
+    "batter": "Jay Andreasen",
+    "double_trouble": null,
+    "ejection": null,
+    "event_type": "DoublePlayGrounded",
+    "fielders": [
+      {
+        "name": "Riley Kamanga",
+        "place": "2B"
+      },
+      {
+        "name": "Wèi Oliver",
+        "place": "SS"
+      },
+      {
+        "name": "Geo Winslow",
+        "place": "1B"
+      }
+    ],
+    "out_one": {
+      "base": "SecondBase",
+      "runner": "Bloop Mancini"
+    },
+    "out_two": {
+      "base": "FirstBase",
+      "runner": "Jay Andreasen"
+    },
+    "sacrifice": false,
+    "scores": [
+      "Princess Stratfordford"
+    ]
+  },
+  {
+    "batter": "Vickie Blevins",
+    "event_type": "NowBatting",
+    "player_swept_away": null,
+    "stats": {
+      "Stats": [
+        {
+          "stat": "HitsForAtBats",
+          "value": {
+            "at_bats": 3,
+            "hits": 2
+          }
+        },
+        {
+          "stat": "SacrificeFlies",
+          "value": 1
+        },
+        {
+          "stat": "FirstBases",
+          "value": 1
+        },
+        {
+          "stat": "GroundOuts",
+          "value": 1
+        },
+        {
+          "stat": "SecondBases",
+          "value": 1
+        }
+      ]
+    }
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "batter": "Vickie Blevins",
+    "cheer": null,
+    "destination": "RightField",
+    "door_prizes": [],
+    "efflorescence": [],
+    "event_type": "FairBall",
+    "fair_ball_type": "FlyBall"
+  },
+  {
+    "advances": [],
+    "batter": "Vickie Blevins",
+    "caught_by": {
+      "name": "Greg Dickinson",
+      "place": "RF"
+    },
+    "ejection": null,
+    "event_type": "CaughtOut",
+    "fair_ball_type": "FlyBall",
+    "jetpack": false,
+    "perfect": false,
+    "sacrifice": false,
+    "scores": []
+  },
+  {
+    "event_type": "InningEnd",
+    "number": 9,
+    "side": "Top"
+  },
+  {
+    "automatic_runner": null,
+    "batting_team": {
+      "emoji": "🛸",
+      "name": "Roswell Weather Balloons"
+    },
+    "event_type": "InningStart",
+    "number": 9,
+    "pitcher_status": {
+      "Same": {
+        "emoji": "🧮",
+        "name": "Mila Butler"
+      }
+    },
+    "side": "Bottom"
+  },
+  {
+    "batter": "Geo Winslow",
+    "event_type": "NowBatting",
+    "player_swept_away": null,
+    "stats": {
+      "Stats": [
+        {
+          "stat": "HitsForAtBats",
+          "value": {
+            "at_bats": 2,
+            "hits": 1
+          }
+        },
+        {
+          "stat": "HitByPitchs",
+          "value": 1
+        },
+        {
+          "stat": "ForceOuts",
+          "value": 1
+        },
+        {
+          "stat": "FirstBases",
+          "value": 1
+        }
+      ]
+    }
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      0,
+      1
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "ejection": null,
+    "event_type": "Strike",
+    "steals": [],
+    "strike": "Looking",
+    "surprise_strike": false,
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      0,
+      2
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "ejection": null,
+    "event_type": "Strike",
+    "steals": [],
+    "strike": "Swinging",
+    "surprise_strike": false,
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "batter": "Geo Winslow",
+    "cheer": null,
+    "ejection": null,
+    "event_type": "StrikeOut",
+    "foul": null,
+    "steals": [],
+    "strike": "Looking",
+    "wither": null
+  },
+  {
+    "batter": "Liz Strong",
+    "event_type": "NowBatting",
+    "player_swept_away": null,
+    "stats": {
+      "Stats": [
+        {
+          "stat": "HitsForAtBats",
+          "value": {
+            "at_bats": 3,
+            "hits": 1
+          }
+        },
+        {
+          "stat": "SecondBases",
+          "value": 1
+        },
+        {
+          "stat": "ForceOuts",
+          "value": 1
+        },
+        {
+          "stat": "GroundIntoDoublePlays",
+          "value": 1
+        },
+        {
+          "stat": "GroundOuts",
+          "value": 1
+        }
+      ]
+    }
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "batter": "Liz Strong",
+    "cheer": null,
+    "destination": "FirstBase",
+    "door_prizes": [],
+    "efflorescence": [],
+    "event_type": "FairBall",
+    "fair_ball_type": "Popup"
+  },
+  {
+    "advances": [],
+    "batter": "Liz Strong",
+    "caught_by": {
+      "name": "J. Kara",
+      "place": "1B"
+    },
+    "ejection": null,
+    "event_type": "CaughtOut",
+    "fair_ball_type": "Popup",
+    "jetpack": false,
+    "perfect": false,
+    "sacrifice": false,
+    "scores": []
+  },
+  {
+    "batter": "Edward Park",
+    "event_type": "NowBatting",
+    "player_swept_away": null,
+    "stats": {
+      "Stats": [
+        {
+          "stat": "HitsForAtBats",
+          "value": {
+            "at_bats": 4,
+            "hits": 1
+          }
+        },
+        {
+          "stat": "GroundOuts",
+          "value": 1
+        },
+        {
+          "stat": "PopOuts",
+          "value": 1
+        },
+        {
+          "stat": "ForceOuts",
+          "value": 1
+        },
+        {
+          "stat": "FirstBases",
+          "value": 1
+        }
+      ]
+    }
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      0,
+      1
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "event_type": "Foul",
+    "foul": "Ball",
+    "steals": [],
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      0,
+      2
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "ejection": null,
+    "event_type": "Strike",
+    "steals": [],
+    "strike": "Swinging",
+    "surprise_strike": false,
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "batter": "Edward Park",
+    "cheer": null,
+    "destination": "CenterField",
+    "door_prizes": [],
+    "efflorescence": [],
+    "event_type": "FairBall",
+    "fair_ball_type": "FlyBall"
+  },
+  {
+    "advances": [],
+    "batter": "Edward Park",
+    "caught_by": {
+      "name": "Franklin Frost",
+      "place": "CF"
+    },
+    "ejection": null,
+    "event_type": "CaughtOut",
+    "fair_ball_type": "FlyBall",
+    "jetpack": false,
+    "perfect": false,
+    "sacrifice": false,
+    "scores": []
+  },
+  {
+    "event_type": "InningEnd",
+    "number": 9,
+    "side": "Bottom"
+  },
+  {
+    "event_type": "GameOver",
+    "message": "QuotedGAMEOVER"
+  },
+  {
+    "event_type": "EndGameIncome",
+    "losing_team": {
+      "emoji": "🛸",
+      "name": "Roswell Weather Balloons"
+    },
+    "losing_team_income": 360,
+    "winning_team": {
+      "emoji": "🧮",
+      "name": "Dallas Instruments"
+    },
+    "winning_team_income": 180
+  },
+  {
+    "event_type": "Recordkeeping",
+    "losing_score": 2,
+    "losing_team": {
+      "emoji": "🛸",
+      "name": "Roswell Weather Balloons"
+    },
+    "winning_score": 7,
+    "winning_team": {
+      "emoji": "🧮",
+      "name": "Dallas Instruments"
+    }
+  }
+]

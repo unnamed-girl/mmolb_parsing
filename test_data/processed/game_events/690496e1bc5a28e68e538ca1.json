@@ -1,0 +1,5675 @@
+[
+  {
+    "away_team": {
+      "emoji": "🔥",
+      "name": "Phoenix Phoenixes"
+    },
+    "event_type": "LiveNow",
+    "home_team": {
+      "emoji": "🌲",
+      "name": "Yosemite Valley Park Rangers"
+    },
+    "stadium": "Glacier Point Field",
+    "weather": null
+  },
+  {
+    "away_pitcher": "Lollypop Shevchenko",
+    "away_team": {
+      "emoji": "🔥",
+      "name": "Phoenix Phoenixes"
+    },
+    "event_type": "PitchingMatchup",
+    "home_pitcher": "Khloe Sapphire",
+    "home_team": {
+      "emoji": "🌲",
+      "name": "Yosemite Valley Park Rangers"
+    }
+  },
+  {
+    "event_type": "Lineup",
+    "manager_name": null,
+    "players": [
+      {
+        "name": "Fox Sarkar",
+        "place": "LF"
+      },
+      {
+        "name": "Eva Thorsen",
+        "place": "SS"
+      },
+      {
+        "name": "Cora Huntington",
+        "place": "3B"
+      },
+      {
+        "name": "King Jacobs",
+        "place": "2B"
+      },
+      {
+        "name": "Lab Powell",
+        "place": "C"
+      },
+      {
+        "name": "Hugo Ueno",
+        "place": "CF"
+      },
+      {
+        "name": "Seraphina Gamer",
+        "place": "DH"
+      },
+      {
+        "name": "Flubber Jönsson",
+        "place": "RF"
+      },
+      {
+        "name": "Catboy Hicks",
+        "place": "1B"
+      }
+    ],
+    "side": "Away"
+  },
+  {
+    "event_type": "Lineup",
+    "manager_name": null,
+    "players": [
+      {
+        "name": "Hunter Prestwickton",
+        "place": "RF"
+      },
+      {
+        "name": "Aline Wycliffe",
+        "place": "LF"
+      },
+      {
+        "name": "V. Massey",
+        "place": "1B"
+      },
+      {
+        "name": "Jocelyn Normal",
+        "place": "2B"
+      },
+      {
+        "name": "Xander Kravchenko",
+        "place": "SS"
+      },
+      {
+        "name": "Jacob Clements",
+        "place": "3B"
+      },
+      {
+        "name": "Scarlett de Sousa",
+        "place": "CF"
+      },
+      {
+        "name": "Commissioner Pavlova",
+        "place": "DH"
+      },
+      {
+        "name": "Keith Deschamps",
+        "place": "C"
+      }
+    ],
+    "side": "Home"
+  },
+  {
+    "event_type": "PlayBall"
+  },
+  {
+    "automatic_runner": null,
+    "batting_team": {
+      "emoji": "🔥",
+      "name": "Phoenix Phoenixes"
+    },
+    "event_type": "InningStart",
+    "number": 1,
+    "pitcher_status": {
+      "Same": {
+        "emoji": "🌲",
+        "name": "Khloe Sapphire"
+      }
+    },
+    "side": "Top"
+  },
+  {
+    "batter": "Fox Sarkar",
+    "event_type": "NowBatting",
+    "player_swept_away": null,
+    "stats": "FirstPA"
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      1,
+      0
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "ejection": null,
+    "event_type": "Ball",
+    "steals": [],
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      2,
+      0
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "ejection": null,
+    "event_type": "Ball",
+    "steals": [],
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      3,
+      0
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "ejection": null,
+    "event_type": "Ball",
+    "steals": [],
+    "wither": null
+  },
+  {
+    "advances": [],
+    "assassinations": [],
+    "aurora_photos": null,
+    "batter": "Fox Sarkar",
+    "cheer": null,
+    "ejection": null,
+    "event_type": "Walk",
+    "scores": [],
+    "wither": null
+  },
+  {
+    "batter": "Eva Thorsen",
+    "event_type": "NowBatting",
+    "player_swept_away": null,
+    "stats": "FirstPA"
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      1,
+      0
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "ejection": null,
+    "event_type": "Ball",
+    "steals": [],
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      1,
+      1
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "ejection": null,
+    "event_type": "Strike",
+    "steals": [],
+    "strike": "Looking",
+    "surprise_strike": false,
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      1,
+      2
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "event_type": "Foul",
+    "foul": "Ball",
+    "steals": [],
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      1,
+      2
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "event_type": "Foul",
+    "foul": "Ball",
+    "steals": [],
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      1,
+      2
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "event_type": "Foul",
+    "foul": "Ball",
+    "steals": [],
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      1,
+      2
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "event_type": "Foul",
+    "foul": "Ball",
+    "steals": [],
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      1,
+      2
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "event_type": "Foul",
+    "foul": "Ball",
+    "steals": [],
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      2,
+      2
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "ejection": null,
+    "event_type": "Ball",
+    "steals": [],
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      2,
+      2
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "event_type": "Foul",
+    "foul": "Ball",
+    "steals": [],
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "batter": "Eva Thorsen",
+    "cheer": null,
+    "destination": "LeftField",
+    "door_prizes": [],
+    "efflorescence": [],
+    "event_type": "FairBall",
+    "fair_ball_type": "FlyBall"
+  },
+  {
+    "advances": [],
+    "batter": "Eva Thorsen",
+    "caught_by": {
+      "name": "Aline Wycliffe",
+      "place": "LF"
+    },
+    "ejection": null,
+    "event_type": "CaughtOut",
+    "fair_ball_type": "FlyBall",
+    "jetpack": false,
+    "perfect": false,
+    "sacrifice": false,
+    "scores": []
+  },
+  {
+    "batter": "Cora Huntington",
+    "event_type": "NowBatting",
+    "player_swept_away": null,
+    "stats": "FirstPA"
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "batter": "Cora Huntington",
+    "cheer": null,
+    "destination": "FirstBase",
+    "door_prizes": [],
+    "efflorescence": [],
+    "event_type": "FairBall",
+    "fair_ball_type": "GroundBall"
+  },
+  {
+    "advances": [],
+    "batter": "Cora Huntington",
+    "ejection": null,
+    "event_type": "ForceOut",
+    "fair_ball_type": "GroundBall",
+    "fielders": [
+      {
+        "name": "V. Massey",
+        "place": "1B"
+      },
+      {
+        "name": "Xander Kravchenko",
+        "place": "SS"
+      }
+    ],
+    "out": {
+      "base": "Second",
+      "runner": "Fox Sarkar"
+    },
+    "scores": []
+  },
+  {
+    "batter": "King Jacobs",
+    "event_type": "NowBatting",
+    "player_swept_away": null,
+    "stats": "FirstPA"
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      0,
+      1
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "ejection": null,
+    "event_type": "Strike",
+    "steals": [],
+    "strike": "Looking",
+    "surprise_strike": false,
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      0,
+      2
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "event_type": "Foul",
+    "foul": "Ball",
+    "steals": [],
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "batter": "King Jacobs",
+    "cheer": null,
+    "ejection": null,
+    "event_type": "StrikeOut",
+    "foul": null,
+    "steals": [],
+    "strike": "Looking",
+    "wither": null
+  },
+  {
+    "event_type": "InningEnd",
+    "number": 1,
+    "side": "Top"
+  },
+  {
+    "automatic_runner": null,
+    "batting_team": {
+      "emoji": "🌲",
+      "name": "Yosemite Valley Park Rangers"
+    },
+    "event_type": "InningStart",
+    "number": 1,
+    "pitcher_status": {
+      "Same": {
+        "emoji": "🔥",
+        "name": "Lollypop Shevchenko"
+      }
+    },
+    "side": "Bottom"
+  },
+  {
+    "batter": "Hunter Prestwickton",
+    "event_type": "NowBatting",
+    "player_swept_away": null,
+    "stats": "FirstPA"
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      1,
+      0
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "ejection": null,
+    "event_type": "Ball",
+    "steals": [],
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "batter": "Hunter Prestwickton",
+    "cheer": null,
+    "destination": "CenterField",
+    "door_prizes": [],
+    "efflorescence": [],
+    "event_type": "FairBall",
+    "fair_ball_type": "LineDrive"
+  },
+  {
+    "advances": [],
+    "batter": "Hunter Prestwickton",
+    "distance": "Double",
+    "ejection": null,
+    "event_type": "BatterToBase",
+    "fair_ball_type": "LineDrive",
+    "fielder": {
+      "name": "Hugo Ueno",
+      "place": "CF"
+    },
+    "scores": []
+  },
+  {
+    "batter": "Aline Wycliffe",
+    "event_type": "NowBatting",
+    "player_swept_away": null,
+    "stats": "FirstPA"
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      1,
+      0
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "ejection": null,
+    "event_type": "Ball",
+    "steals": [],
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      1,
+      1
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "ejection": null,
+    "event_type": "Strike",
+    "steals": [],
+    "strike": "Swinging",
+    "surprise_strike": false,
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": "HomeSupportersWhistleAndCheer",
+    "count": [
+      2,
+      1
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "ejection": null,
+    "event_type": "Ball",
+    "steals": [],
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      2,
+      2
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "event_type": "Foul",
+    "foul": "Ball",
+    "steals": [],
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "batter": "Aline Wycliffe",
+    "cheer": null,
+    "ejection": null,
+    "event_type": "StrikeOut",
+    "foul": null,
+    "steals": [],
+    "strike": "Swinging",
+    "wither": null
+  },
+  {
+    "batter": "V. Massey",
+    "event_type": "NowBatting",
+    "player_swept_away": null,
+    "stats": "FirstPA"
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      0,
+      1
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "event_type": "Foul",
+    "foul": "Ball",
+    "steals": [],
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      1,
+      1
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "ejection": null,
+    "event_type": "Ball",
+    "steals": [
+      {
+        "base": "Third",
+        "caught": false,
+        "runner": "Hunter Prestwickton"
+      }
+    ],
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      2,
+      1
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "ejection": null,
+    "event_type": "Ball",
+    "steals": [],
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "batter": "V. Massey",
+    "cheer": "TheFansScreamForTheirHeroes",
+    "destination": "RightField",
+    "door_prizes": [],
+    "efflorescence": [],
+    "event_type": "FairBall",
+    "fair_ball_type": "LineDrive"
+  },
+  {
+    "advances": [],
+    "batter": "V. Massey",
+    "distance": "Single",
+    "ejection": null,
+    "event_type": "BatterToBase",
+    "fair_ball_type": "LineDrive",
+    "fielder": {
+      "name": "Flubber Jönsson",
+      "place": "RF"
+    },
+    "scores": [
+      "Hunter Prestwickton"
+    ]
+  },
+  {
+    "batter": "Jocelyn Normal",
+    "event_type": "NowBatting",
+    "player_swept_away": null,
+    "stats": "FirstPA"
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      0,
+      1
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "event_type": "Foul",
+    "foul": "Tip",
+    "steals": [],
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      1,
+      1
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "ejection": null,
+    "event_type": "Ball",
+    "steals": [
+      {
+        "base": "Second",
+        "caught": true,
+        "runner": "V. Massey"
+      }
+    ],
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "batter": "Jocelyn Normal",
+    "cheer": null,
+    "destination": "LeftField",
+    "door_prizes": [],
+    "efflorescence": [],
+    "event_type": "FairBall",
+    "fair_ball_type": "FlyBall"
+  },
+  {
+    "advances": [],
+    "batter": "Jocelyn Normal",
+    "caught_by": {
+      "name": "Fox Sarkar",
+      "place": "LF"
+    },
+    "ejection": null,
+    "event_type": "CaughtOut",
+    "fair_ball_type": "FlyBall",
+    "jetpack": false,
+    "perfect": false,
+    "sacrifice": false,
+    "scores": []
+  },
+  {
+    "event_type": "InningEnd",
+    "number": 1,
+    "side": "Bottom"
+  },
+  {
+    "automatic_runner": null,
+    "batting_team": {
+      "emoji": "🔥",
+      "name": "Phoenix Phoenixes"
+    },
+    "event_type": "InningStart",
+    "number": 2,
+    "pitcher_status": {
+      "Same": {
+        "emoji": "🌲",
+        "name": "Khloe Sapphire"
+      }
+    },
+    "side": "Top"
+  },
+  {
+    "batter": "Lab Powell",
+    "event_type": "NowBatting",
+    "player_swept_away": null,
+    "stats": "FirstPA"
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      1,
+      0
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "ejection": null,
+    "event_type": "Ball",
+    "steals": [],
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "batter": "Lab Powell",
+    "cheer": null,
+    "destination": "ShortStop",
+    "door_prizes": [],
+    "efflorescence": [],
+    "event_type": "FairBall",
+    "fair_ball_type": "GroundBall"
+  },
+  {
+    "advances": [],
+    "amazing": false,
+    "assassinations": [],
+    "batter": "Lab Powell",
+    "ejection": null,
+    "event_type": "GroundedOut",
+    "fielders": [
+      {
+        "name": "Xander Kravchenko",
+        "place": "SS"
+      },
+      {
+        "name": "V. Massey",
+        "place": "1B"
+      }
+    ],
+    "scores": []
+  },
+  {
+    "batter": "Hugo Ueno",
+    "event_type": "NowBatting",
+    "player_swept_away": null,
+    "stats": "FirstPA"
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "batter": "Hugo Ueno",
+    "cheer": null,
+    "destination": "ThirdBase",
+    "door_prizes": [],
+    "efflorescence": [],
+    "event_type": "FairBall",
+    "fair_ball_type": "GroundBall"
+  },
+  {
+    "advances": [],
+    "amazing": false,
+    "assassinations": [],
+    "batter": "Hugo Ueno",
+    "ejection": null,
+    "event_type": "GroundedOut",
+    "fielders": [
+      {
+        "name": "Jacob Clements",
+        "place": "3B"
+      },
+      {
+        "name": "V. Massey",
+        "place": "1B"
+      }
+    ],
+    "scores": []
+  },
+  {
+    "batter": "Seraphina Gamer",
+    "event_type": "NowBatting",
+    "player_swept_away": null,
+    "stats": "FirstPA"
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      1,
+      0
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "ejection": null,
+    "event_type": "Ball",
+    "steals": [],
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      1,
+      1
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "event_type": "Foul",
+    "foul": "Ball",
+    "steals": [],
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "batter": "Seraphina Gamer",
+    "cheer": null,
+    "destination": "SecondBase",
+    "door_prizes": [],
+    "efflorescence": [],
+    "event_type": "FairBall",
+    "fair_ball_type": "GroundBall"
+  },
+  {
+    "advances": [],
+    "amazing": false,
+    "assassinations": [],
+    "batter": "Seraphina Gamer",
+    "ejection": null,
+    "event_type": "GroundedOut",
+    "fielders": [
+      {
+        "name": "Jocelyn Normal",
+        "place": "2B"
+      },
+      {
+        "name": "V. Massey",
+        "place": "1B"
+      }
+    ],
+    "scores": []
+  },
+  {
+    "event_type": "InningEnd",
+    "number": 2,
+    "side": "Top"
+  },
+  {
+    "automatic_runner": null,
+    "batting_team": {
+      "emoji": "🌲",
+      "name": "Yosemite Valley Park Rangers"
+    },
+    "event_type": "InningStart",
+    "number": 2,
+    "pitcher_status": {
+      "Same": {
+        "emoji": "🔥",
+        "name": "Lollypop Shevchenko"
+      }
+    },
+    "side": "Bottom"
+  },
+  {
+    "batter": "Xander Kravchenko",
+    "event_type": "NowBatting",
+    "player_swept_away": null,
+    "stats": "FirstPA"
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "batter": "Xander Kravchenko",
+    "cheer": null,
+    "destination": "ThirdBase",
+    "door_prizes": [],
+    "efflorescence": [],
+    "event_type": "FairBall",
+    "fair_ball_type": "GroundBall"
+  },
+  {
+    "advances": [],
+    "amazing": false,
+    "assassinations": [],
+    "batter": "Xander Kravchenko",
+    "ejection": null,
+    "event_type": "GroundedOut",
+    "fielders": [
+      {
+        "name": "Cora Huntington",
+        "place": "3B"
+      },
+      {
+        "name": "Catboy Hicks",
+        "place": "1B"
+      }
+    ],
+    "scores": []
+  },
+  {
+    "batter": "Jacob Clements",
+    "event_type": "NowBatting",
+    "player_swept_away": null,
+    "stats": "FirstPA"
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      1,
+      0
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "ejection": null,
+    "event_type": "Ball",
+    "steals": [],
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      1,
+      1
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "event_type": "Foul",
+    "foul": "Ball",
+    "steals": [],
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      2,
+      1
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "ejection": null,
+    "event_type": "Ball",
+    "steals": [],
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      2,
+      2
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "event_type": "Foul",
+    "foul": "Ball",
+    "steals": [],
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      2,
+      2
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "event_type": "Foul",
+    "foul": "Ball",
+    "steals": [],
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      2,
+      2
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "event_type": "Foul",
+    "foul": "Ball",
+    "steals": [],
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      3,
+      2
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "ejection": null,
+    "event_type": "Ball",
+    "steals": [],
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      3,
+      2
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "event_type": "Foul",
+    "foul": "Ball",
+    "steals": [],
+    "wither": null
+  },
+  {
+    "advances": [],
+    "assassinations": [],
+    "aurora_photos": null,
+    "batter": "Jacob Clements",
+    "cheer": null,
+    "ejection": null,
+    "event_type": "Walk",
+    "scores": [],
+    "wither": null
+  },
+  {
+    "batter": "Scarlett de Sousa",
+    "event_type": "NowBatting",
+    "player_swept_away": null,
+    "stats": "FirstPA"
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      1,
+      0
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "ejection": null,
+    "event_type": "Ball",
+    "steals": [],
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      2,
+      0
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "ejection": null,
+    "event_type": "Ball",
+    "steals": [],
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "batter": "Scarlett de Sousa",
+    "cheer": null,
+    "destination": "RightField",
+    "door_prizes": [],
+    "efflorescence": [],
+    "event_type": "FairBall",
+    "fair_ball_type": "LineDrive"
+  },
+  {
+    "advances": [],
+    "batter": "Scarlett de Sousa",
+    "caught_by": {
+      "name": "Flubber Jönsson",
+      "place": "RF"
+    },
+    "ejection": null,
+    "event_type": "CaughtOut",
+    "fair_ball_type": "LineDrive",
+    "jetpack": false,
+    "perfect": false,
+    "sacrifice": false,
+    "scores": []
+  },
+  {
+    "batter": "Commissioner Pavlova",
+    "event_type": "NowBatting",
+    "player_swept_away": null,
+    "stats": "FirstPA"
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      0,
+      1
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "ejection": null,
+    "event_type": "Strike",
+    "steals": [],
+    "strike": "Looking",
+    "surprise_strike": false,
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      0,
+      2
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "ejection": null,
+    "event_type": "Strike",
+    "steals": [],
+    "strike": "Swinging",
+    "surprise_strike": false,
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "batter": "Commissioner Pavlova",
+    "cheer": null,
+    "destination": "ShortStop",
+    "door_prizes": [],
+    "efflorescence": [],
+    "event_type": "FairBall",
+    "fair_ball_type": "GroundBall"
+  },
+  {
+    "advances": [],
+    "amazing": false,
+    "assassinations": [],
+    "batter": "Commissioner Pavlova",
+    "ejection": null,
+    "event_type": "GroundedOut",
+    "fielders": [
+      {
+        "name": "Eva Thorsen",
+        "place": "SS"
+      },
+      {
+        "name": "Catboy Hicks",
+        "place": "1B"
+      }
+    ],
+    "scores": []
+  },
+  {
+    "event_type": "InningEnd",
+    "number": 2,
+    "side": "Bottom"
+  },
+  {
+    "automatic_runner": null,
+    "batting_team": {
+      "emoji": "🔥",
+      "name": "Phoenix Phoenixes"
+    },
+    "event_type": "InningStart",
+    "number": 3,
+    "pitcher_status": {
+      "Same": {
+        "emoji": "🌲",
+        "name": "Khloe Sapphire"
+      }
+    },
+    "side": "Top"
+  },
+  {
+    "batter": "Flubber Jönsson",
+    "event_type": "NowBatting",
+    "player_swept_away": null,
+    "stats": "FirstPA"
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      0,
+      1
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "ejection": null,
+    "event_type": "Strike",
+    "steals": [],
+    "strike": "Looking",
+    "surprise_strike": false,
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      0,
+      2
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "ejection": null,
+    "event_type": "Strike",
+    "steals": [],
+    "strike": "Looking",
+    "surprise_strike": false,
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "batter": "Flubber Jönsson",
+    "cheer": null,
+    "destination": "CenterField",
+    "door_prizes": [],
+    "efflorescence": [],
+    "event_type": "FairBall",
+    "fair_ball_type": "LineDrive"
+  },
+  {
+    "advances": [],
+    "batter": "Flubber Jönsson",
+    "caught_by": {
+      "name": "Scarlett de Sousa",
+      "place": "CF"
+    },
+    "ejection": null,
+    "event_type": "CaughtOut",
+    "fair_ball_type": "LineDrive",
+    "jetpack": false,
+    "perfect": false,
+    "sacrifice": false,
+    "scores": []
+  },
+  {
+    "batter": "Catboy Hicks",
+    "event_type": "NowBatting",
+    "player_swept_away": null,
+    "stats": "FirstPA"
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      1,
+      0
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "ejection": null,
+    "event_type": "Ball",
+    "steals": [],
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "batter": "Catboy Hicks",
+    "cheer": null,
+    "destination": "ShortStop",
+    "door_prizes": [],
+    "efflorescence": [],
+    "event_type": "FairBall",
+    "fair_ball_type": "GroundBall"
+  },
+  {
+    "advances": [],
+    "amazing": false,
+    "assassinations": [],
+    "batter": "Catboy Hicks",
+    "ejection": null,
+    "event_type": "GroundedOut",
+    "fielders": [
+      {
+        "name": "Xander Kravchenko",
+        "place": "SS"
+      },
+      {
+        "name": "V. Massey",
+        "place": "1B"
+      }
+    ],
+    "scores": []
+  },
+  {
+    "batter": "Fox Sarkar",
+    "event_type": "NowBatting",
+    "player_swept_away": null,
+    "stats": {
+      "Stats": [
+        {
+          "stat": "BaseOnBalls",
+          "value": 1
+        }
+      ]
+    }
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      0,
+      1
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "event_type": "Foul",
+    "foul": "Ball",
+    "steals": [],
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      0,
+      2
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "ejection": null,
+    "event_type": "Strike",
+    "steals": [],
+    "strike": "Looking",
+    "surprise_strike": false,
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      1,
+      2
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "ejection": null,
+    "event_type": "Ball",
+    "steals": [],
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      2,
+      2
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "ejection": null,
+    "event_type": "Ball",
+    "steals": [],
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      3,
+      2
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "ejection": null,
+    "event_type": "Ball",
+    "steals": [],
+    "wither": null
+  },
+  {
+    "advances": [],
+    "assassinations": [],
+    "aurora_photos": null,
+    "batter": "Fox Sarkar",
+    "cheer": null,
+    "ejection": null,
+    "event_type": "Walk",
+    "scores": [],
+    "wither": null
+  },
+  {
+    "batter": "Eva Thorsen",
+    "event_type": "NowBatting",
+    "player_swept_away": null,
+    "stats": {
+      "Stats": [
+        {
+          "stat": "HitsForAtBats",
+          "value": {
+            "at_bats": 1,
+            "hits": 0
+          }
+        },
+        {
+          "stat": "ForceOuts",
+          "value": 1
+        }
+      ]
+    }
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      0,
+      1
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "ejection": null,
+    "event_type": "Strike",
+    "steals": [],
+    "strike": "Looking",
+    "surprise_strike": false,
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      1,
+      1
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "ejection": null,
+    "event_type": "Ball",
+    "steals": [],
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      2,
+      1
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "ejection": null,
+    "event_type": "Ball",
+    "steals": [],
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      3,
+      1
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "ejection": null,
+    "event_type": "Ball",
+    "steals": [],
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "batter": "Eva Thorsen",
+    "cheer": null,
+    "destination": "RightField",
+    "door_prizes": [],
+    "efflorescence": [],
+    "event_type": "FairBall",
+    "fair_ball_type": "FlyBall"
+  },
+  {
+    "advances": [],
+    "batter": "Eva Thorsen",
+    "caught_by": {
+      "name": "Hunter Prestwickton",
+      "place": "RF"
+    },
+    "ejection": null,
+    "event_type": "CaughtOut",
+    "fair_ball_type": "FlyBall",
+    "jetpack": false,
+    "perfect": false,
+    "sacrifice": false,
+    "scores": []
+  },
+  {
+    "event_type": "InningEnd",
+    "number": 3,
+    "side": "Top"
+  },
+  {
+    "automatic_runner": null,
+    "batting_team": {
+      "emoji": "🌲",
+      "name": "Yosemite Valley Park Rangers"
+    },
+    "event_type": "InningStart",
+    "number": 3,
+    "pitcher_status": {
+      "Same": {
+        "emoji": "🔥",
+        "name": "Lollypop Shevchenko"
+      }
+    },
+    "side": "Bottom"
+  },
+  {
+    "batter": "Keith Deschamps",
+    "event_type": "NowBatting",
+    "player_swept_away": null,
+    "stats": "FirstPA"
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "batter": "Keith Deschamps",
+    "cheer": null,
+    "destination": "ThirdBase",
+    "door_prizes": [],
+    "efflorescence": [],
+    "event_type": "FairBall",
+    "fair_ball_type": "Popup"
+  },
+  {
+    "advances": [],
+    "batter": "Keith Deschamps",
+    "caught_by": {
+      "name": "Cora Huntington",
+      "place": "3B"
+    },
+    "ejection": null,
+    "event_type": "CaughtOut",
+    "fair_ball_type": "Popup",
+    "jetpack": false,
+    "perfect": false,
+    "sacrifice": false,
+    "scores": []
+  },
+  {
+    "batter": "Hunter Prestwickton",
+    "event_type": "NowBatting",
+    "player_swept_away": null,
+    "stats": {
+      "Stats": [
+        {
+          "stat": "HitsForAtBats",
+          "value": {
+            "at_bats": 1,
+            "hits": 1
+          }
+        },
+        {
+          "stat": "SecondBases",
+          "value": 1
+        }
+      ]
+    }
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      0,
+      1
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "ejection": null,
+    "event_type": "Strike",
+    "steals": [],
+    "strike": "Looking",
+    "surprise_strike": false,
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      0,
+      2
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "ejection": null,
+    "event_type": "Strike",
+    "steals": [],
+    "strike": "Swinging",
+    "surprise_strike": false,
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "batter": "Hunter Prestwickton",
+    "cheer": null,
+    "destination": "FirstBase",
+    "door_prizes": [],
+    "efflorescence": [],
+    "event_type": "FairBall",
+    "fair_ball_type": "GroundBall"
+  },
+  {
+    "advances": [],
+    "amazing": false,
+    "assassinations": [],
+    "batter": "Hunter Prestwickton",
+    "ejection": null,
+    "event_type": "GroundedOut",
+    "fielders": [
+      {
+        "name": "Catboy Hicks",
+        "place": "1B"
+      }
+    ],
+    "scores": []
+  },
+  {
+    "batter": "Aline Wycliffe",
+    "event_type": "NowBatting",
+    "player_swept_away": null,
+    "stats": {
+      "Stats": [
+        {
+          "stat": "HitsForAtBats",
+          "value": {
+            "at_bats": 1,
+            "hits": 0
+          }
+        },
+        {
+          "stat": "StrikeOuts",
+          "value": 1
+        }
+      ]
+    }
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "batter": "Aline Wycliffe",
+    "cheer": null,
+    "destination": "FirstBase",
+    "door_prizes": [],
+    "efflorescence": [],
+    "event_type": "FairBall",
+    "fair_ball_type": "GroundBall"
+  },
+  {
+    "advances": [],
+    "amazing": false,
+    "assassinations": [],
+    "batter": "Aline Wycliffe",
+    "ejection": null,
+    "event_type": "GroundedOut",
+    "fielders": [
+      {
+        "name": "Catboy Hicks",
+        "place": "1B"
+      }
+    ],
+    "scores": []
+  },
+  {
+    "event_type": "InningEnd",
+    "number": 3,
+    "side": "Bottom"
+  },
+  {
+    "automatic_runner": null,
+    "batting_team": {
+      "emoji": "🔥",
+      "name": "Phoenix Phoenixes"
+    },
+    "event_type": "InningStart",
+    "number": 4,
+    "pitcher_status": {
+      "Same": {
+        "emoji": "🌲",
+        "name": "Khloe Sapphire"
+      }
+    },
+    "side": "Top"
+  },
+  {
+    "batter": "Cora Huntington",
+    "event_type": "NowBatting",
+    "player_swept_away": null,
+    "stats": {
+      "Stats": [
+        {
+          "stat": "HitsForAtBats",
+          "value": {
+            "at_bats": 1,
+            "hits": 0
+          }
+        },
+        {
+          "stat": "Fouls",
+          "value": 1
+        }
+      ]
+    }
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      0,
+      1
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "ejection": null,
+    "event_type": "Strike",
+    "steals": [],
+    "strike": "Swinging",
+    "surprise_strike": false,
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      0,
+      2
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "event_type": "Foul",
+    "foul": "Ball",
+    "steals": [],
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      1,
+      2
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "ejection": null,
+    "event_type": "Ball",
+    "steals": [],
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      1,
+      2
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "event_type": "Foul",
+    "foul": "Ball",
+    "steals": [],
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "batter": "Cora Huntington",
+    "cheer": null,
+    "ejection": null,
+    "event_type": "StrikeOut",
+    "foul": null,
+    "steals": [],
+    "strike": "Looking",
+    "wither": null
+  },
+  {
+    "batter": "King Jacobs",
+    "event_type": "NowBatting",
+    "player_swept_away": null,
+    "stats": {
+      "Stats": [
+        {
+          "stat": "HitsForAtBats",
+          "value": {
+            "at_bats": 1,
+            "hits": 0
+          }
+        },
+        {
+          "stat": "StrikeOuts",
+          "value": 1
+        }
+      ]
+    }
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "batter": "King Jacobs",
+    "cheer": null,
+    "destination": "ThirdBase",
+    "door_prizes": [],
+    "efflorescence": [],
+    "event_type": "FairBall",
+    "fair_ball_type": "GroundBall"
+  },
+  {
+    "advances": [],
+    "amazing": false,
+    "assassinations": [],
+    "batter": "King Jacobs",
+    "ejection": null,
+    "event_type": "GroundedOut",
+    "fielders": [
+      {
+        "name": "Jacob Clements",
+        "place": "3B"
+      },
+      {
+        "name": "V. Massey",
+        "place": "1B"
+      }
+    ],
+    "scores": []
+  },
+  {
+    "batter": "Lab Powell",
+    "event_type": "NowBatting",
+    "player_swept_away": null,
+    "stats": {
+      "Stats": [
+        {
+          "stat": "HitsForAtBats",
+          "value": {
+            "at_bats": 1,
+            "hits": 0
+          }
+        },
+        {
+          "stat": "GroundOuts",
+          "value": 1
+        }
+      ]
+    }
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      0,
+      1
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "event_type": "Foul",
+    "foul": "Ball",
+    "steals": [],
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      1,
+      1
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "ejection": null,
+    "event_type": "Ball",
+    "steals": [],
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      2,
+      1
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "ejection": null,
+    "event_type": "Ball",
+    "steals": [],
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      3,
+      1
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "ejection": null,
+    "event_type": "Ball",
+    "steals": [],
+    "wither": null
+  },
+  {
+    "advances": [],
+    "assassinations": [],
+    "aurora_photos": null,
+    "batter": "Lab Powell",
+    "cheer": null,
+    "ejection": null,
+    "event_type": "Walk",
+    "scores": [],
+    "wither": null
+  },
+  {
+    "batter": "Hugo Ueno",
+    "event_type": "NowBatting",
+    "player_swept_away": null,
+    "stats": {
+      "Stats": [
+        {
+          "stat": "HitsForAtBats",
+          "value": {
+            "at_bats": 1,
+            "hits": 0
+          }
+        },
+        {
+          "stat": "GroundOuts",
+          "value": 1
+        }
+      ]
+    }
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      1,
+      0
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "ejection": null,
+    "event_type": "Ball",
+    "steals": [],
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      2,
+      0
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "ejection": null,
+    "event_type": "Ball",
+    "steals": [],
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "batter": "Hugo Ueno",
+    "cheer": null,
+    "destination": "SecondBase",
+    "door_prizes": [],
+    "efflorescence": [],
+    "event_type": "FairBall",
+    "fair_ball_type": "GroundBall"
+  },
+  {
+    "advances": [],
+    "amazing": false,
+    "assassinations": [],
+    "batter": "Hugo Ueno",
+    "ejection": null,
+    "event_type": "GroundedOut",
+    "fielders": [
+      {
+        "name": "Jocelyn Normal",
+        "place": "2B"
+      },
+      {
+        "name": "V. Massey",
+        "place": "1B"
+      }
+    ],
+    "scores": []
+  },
+  {
+    "event_type": "InningEnd",
+    "number": 4,
+    "side": "Top"
+  },
+  {
+    "automatic_runner": null,
+    "batting_team": {
+      "emoji": "🌲",
+      "name": "Yosemite Valley Park Rangers"
+    },
+    "event_type": "InningStart",
+    "number": 4,
+    "pitcher_status": {
+      "Same": {
+        "emoji": "🔥",
+        "name": "Lollypop Shevchenko"
+      }
+    },
+    "side": "Bottom"
+  },
+  {
+    "batter": "V. Massey",
+    "event_type": "NowBatting",
+    "player_swept_away": null,
+    "stats": {
+      "Stats": [
+        {
+          "stat": "HitsForAtBats",
+          "value": {
+            "at_bats": 1,
+            "hits": 1
+          }
+        },
+        {
+          "stat": "FirstBases",
+          "value": 1
+        }
+      ]
+    }
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      1,
+      0
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "ejection": null,
+    "event_type": "Ball",
+    "steals": [],
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      1,
+      1
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "ejection": null,
+    "event_type": "Strike",
+    "steals": [],
+    "strike": "Swinging",
+    "surprise_strike": false,
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      1,
+      2
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "event_type": "Foul",
+    "foul": "Ball",
+    "steals": [],
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "batter": "V. Massey",
+    "cheer": null,
+    "ejection": null,
+    "event_type": "StrikeOut",
+    "foul": null,
+    "steals": [],
+    "strike": "Looking",
+    "wither": null
+  },
+  {
+    "batter": "Jocelyn Normal",
+    "event_type": "NowBatting",
+    "player_swept_away": null,
+    "stats": {
+      "Stats": [
+        {
+          "stat": "HitsForAtBats",
+          "value": {
+            "at_bats": 1,
+            "hits": 0
+          }
+        },
+        {
+          "stat": "ForceOuts",
+          "value": 1
+        }
+      ]
+    }
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      0,
+      1
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "event_type": "Foul",
+    "foul": "Ball",
+    "steals": [],
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "batter": "Jocelyn Normal",
+    "cheer": null,
+    "destination": "LeftField",
+    "door_prizes": [],
+    "efflorescence": [],
+    "event_type": "FairBall",
+    "fair_ball_type": "FlyBall"
+  },
+  {
+    "advances": [],
+    "batter": "Jocelyn Normal",
+    "caught_by": {
+      "name": "Fox Sarkar",
+      "place": "LF"
+    },
+    "ejection": null,
+    "event_type": "CaughtOut",
+    "fair_ball_type": "FlyBall",
+    "jetpack": false,
+    "perfect": false,
+    "sacrifice": false,
+    "scores": []
+  },
+  {
+    "batter": "Xander Kravchenko",
+    "event_type": "NowBatting",
+    "player_swept_away": null,
+    "stats": {
+      "Stats": [
+        {
+          "stat": "HitsForAtBats",
+          "value": {
+            "at_bats": 1,
+            "hits": 0
+          }
+        },
+        {
+          "stat": "GroundOuts",
+          "value": 1
+        }
+      ]
+    }
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "batter": "Xander Kravchenko",
+    "cheer": null,
+    "destination": "ThirdBase",
+    "door_prizes": [],
+    "efflorescence": [],
+    "event_type": "FairBall",
+    "fair_ball_type": "GroundBall"
+  },
+  {
+    "advances": [],
+    "amazing": false,
+    "assassinations": [],
+    "batter": "Xander Kravchenko",
+    "ejection": null,
+    "event_type": "GroundedOut",
+    "fielders": [
+      {
+        "name": "Cora Huntington",
+        "place": "3B"
+      },
+      {
+        "name": "Catboy Hicks",
+        "place": "1B"
+      }
+    ],
+    "scores": []
+  },
+  {
+    "event_type": "InningEnd",
+    "number": 4,
+    "side": "Bottom"
+  },
+  {
+    "automatic_runner": null,
+    "batting_team": {
+      "emoji": "🔥",
+      "name": "Phoenix Phoenixes"
+    },
+    "event_type": "InningStart",
+    "number": 5,
+    "pitcher_status": {
+      "Same": {
+        "emoji": "🌲",
+        "name": "Khloe Sapphire"
+      }
+    },
+    "side": "Top"
+  },
+  {
+    "batter": "Seraphina Gamer",
+    "event_type": "NowBatting",
+    "player_swept_away": null,
+    "stats": {
+      "Stats": [
+        {
+          "stat": "HitsForAtBats",
+          "value": {
+            "at_bats": 1,
+            "hits": 0
+          }
+        },
+        {
+          "stat": "GroundOuts",
+          "value": 1
+        }
+      ]
+    }
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      0,
+      1
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "event_type": "Foul",
+    "foul": "Ball",
+    "steals": [],
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      1,
+      1
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "ejection": null,
+    "event_type": "Ball",
+    "steals": [],
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      2,
+      1
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "ejection": null,
+    "event_type": "Ball",
+    "steals": [],
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "batter": "Seraphina Gamer",
+    "cheer": null,
+    "destination": "LeftField",
+    "door_prizes": [],
+    "efflorescence": [],
+    "event_type": "FairBall",
+    "fair_ball_type": "GroundBall"
+  },
+  {
+    "advances": [],
+    "batter": "Seraphina Gamer",
+    "distance": "Double",
+    "ejection": null,
+    "event_type": "BatterToBase",
+    "fair_ball_type": "GroundBall",
+    "fielder": {
+      "name": "Aline Wycliffe",
+      "place": "LF"
+    },
+    "scores": []
+  },
+  {
+    "batter": "Flubber Jönsson",
+    "event_type": "NowBatting",
+    "player_swept_away": null,
+    "stats": {
+      "Stats": [
+        {
+          "stat": "HitsForAtBats",
+          "value": {
+            "at_bats": 1,
+            "hits": 0
+          }
+        },
+        {
+          "stat": "LineOuts",
+          "value": 1
+        }
+      ]
+    }
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      1,
+      0
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "ejection": null,
+    "event_type": "Ball",
+    "steals": [],
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "batter": "Flubber Jönsson",
+    "cheer": null,
+    "destination": "SecondBase",
+    "door_prizes": [],
+    "efflorescence": [],
+    "event_type": "FairBall",
+    "fair_ball_type": "GroundBall"
+  },
+  {
+    "advances": [
+      {
+        "base": "Third",
+        "runner": "Seraphina Gamer"
+      }
+    ],
+    "amazing": false,
+    "assassinations": [],
+    "batter": "Flubber Jönsson",
+    "ejection": null,
+    "event_type": "GroundedOut",
+    "fielders": [
+      {
+        "name": "Jocelyn Normal",
+        "place": "2B"
+      },
+      {
+        "name": "V. Massey",
+        "place": "1B"
+      }
+    ],
+    "scores": []
+  },
+  {
+    "batter": "Catboy Hicks",
+    "event_type": "NowBatting",
+    "player_swept_away": null,
+    "stats": {
+      "Stats": [
+        {
+          "stat": "HitsForAtBats",
+          "value": {
+            "at_bats": 1,
+            "hits": 0
+          }
+        },
+        {
+          "stat": "GroundOuts",
+          "value": 1
+        }
+      ]
+    }
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "batter": "Catboy Hicks",
+    "cheer": null,
+    "destination": "RightField",
+    "door_prizes": [],
+    "efflorescence": [],
+    "event_type": "FairBall",
+    "fair_ball_type": "LineDrive"
+  },
+  {
+    "advances": [],
+    "batter": "Catboy Hicks",
+    "caught_by": {
+      "name": "Hunter Prestwickton",
+      "place": "RF"
+    },
+    "ejection": null,
+    "event_type": "CaughtOut",
+    "fair_ball_type": "LineDrive",
+    "jetpack": false,
+    "perfect": false,
+    "sacrifice": false,
+    "scores": []
+  },
+  {
+    "batter": "Fox Sarkar",
+    "event_type": "NowBatting",
+    "player_swept_away": null,
+    "stats": {
+      "Stats": [
+        {
+          "stat": "BaseOnBalls",
+          "value": 2
+        }
+      ]
+    }
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": "EveryoneIsChantingTheTeamsName",
+    "count": [
+      0,
+      1
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "ejection": null,
+    "event_type": "Strike",
+    "steals": [],
+    "strike": "Swinging",
+    "surprise_strike": false,
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      0,
+      2
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "ejection": null,
+    "event_type": "Strike",
+    "steals": [],
+    "strike": "Looking",
+    "surprise_strike": false,
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "batter": "Fox Sarkar",
+    "cheer": null,
+    "destination": "LeftField",
+    "door_prizes": [],
+    "efflorescence": [],
+    "event_type": "FairBall",
+    "fair_ball_type": "FlyBall"
+  },
+  {
+    "advances": [],
+    "batter": "Fox Sarkar",
+    "caught_by": {
+      "name": "Aline Wycliffe",
+      "place": "LF"
+    },
+    "ejection": null,
+    "event_type": "CaughtOut",
+    "fair_ball_type": "FlyBall",
+    "jetpack": false,
+    "perfect": false,
+    "sacrifice": false,
+    "scores": []
+  },
+  {
+    "event_type": "InningEnd",
+    "number": 5,
+    "side": "Top"
+  },
+  {
+    "automatic_runner": null,
+    "batting_team": {
+      "emoji": "🌲",
+      "name": "Yosemite Valley Park Rangers"
+    },
+    "event_type": "InningStart",
+    "number": 5,
+    "pitcher_status": {
+      "Same": {
+        "emoji": "🔥",
+        "name": "Lollypop Shevchenko"
+      }
+    },
+    "side": "Bottom"
+  },
+  {
+    "batter": "Jacob Clements",
+    "event_type": "NowBatting",
+    "player_swept_away": null,
+    "stats": {
+      "Stats": [
+        {
+          "stat": "BaseOnBalls",
+          "value": 1
+        }
+      ]
+    }
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      1,
+      0
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "ejection": null,
+    "event_type": "Ball",
+    "steals": [],
+    "wither": {
+      "source_name": "Jacob Clements",
+      "target": {
+        "name": "Lollypop Shevchenko",
+        "place": "SP5"
+      },
+      "team_emoji": "🔥"
+    }
+  },
+  {
+    "contained": "NoContain",
+    "corrupted": "Resisted",
+    "event_type": "WeatherWither",
+    "player": {
+      "name": "Lollypop Shevchenko",
+      "place": "SP5"
+    },
+    "team_emoji": "🔥"
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      1,
+      1
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "ejection": null,
+    "event_type": "Strike",
+    "steals": [],
+    "strike": "Swinging",
+    "surprise_strike": false,
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      2,
+      1
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "ejection": null,
+    "event_type": "Ball",
+    "steals": [],
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      3,
+      1
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "ejection": null,
+    "event_type": "Ball",
+    "steals": [],
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "batter": "Jacob Clements",
+    "cheer": null,
+    "destination": "CenterField",
+    "door_prizes": [],
+    "efflorescence": [],
+    "event_type": "FairBall",
+    "fair_ball_type": "LineDrive"
+  },
+  {
+    "advances": [],
+    "batter": "Jacob Clements",
+    "distance": "Single",
+    "ejection": null,
+    "event_type": "BatterToBase",
+    "fair_ball_type": "LineDrive",
+    "fielder": {
+      "name": "Hugo Ueno",
+      "place": "CF"
+    },
+    "scores": []
+  },
+  {
+    "batter": "Scarlett de Sousa",
+    "event_type": "NowBatting",
+    "player_swept_away": null,
+    "stats": {
+      "Stats": [
+        {
+          "stat": "HitsForAtBats",
+          "value": {
+            "at_bats": 1,
+            "hits": 0
+          }
+        },
+        {
+          "stat": "LineOuts",
+          "value": 1
+        }
+      ]
+    }
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      0,
+      1
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "ejection": null,
+    "event_type": "Strike",
+    "steals": [],
+    "strike": "Looking",
+    "surprise_strike": false,
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": "FansShoutEncouragement",
+    "count": [
+      1,
+      1
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "ejection": null,
+    "event_type": "Ball",
+    "steals": [
+      {
+        "base": "Second",
+        "caught": false,
+        "runner": "Jacob Clements"
+      }
+    ],
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "batter": "Scarlett de Sousa",
+    "cheer": null,
+    "destination": "RightField",
+    "door_prizes": [],
+    "efflorescence": [],
+    "event_type": "FairBall",
+    "fair_ball_type": "FlyBall"
+  },
+  {
+    "advances": [],
+    "batter": "Scarlett de Sousa",
+    "caught_by": {
+      "name": "Flubber Jönsson",
+      "place": "RF"
+    },
+    "ejection": null,
+    "event_type": "CaughtOut",
+    "fair_ball_type": "FlyBall",
+    "jetpack": false,
+    "perfect": false,
+    "sacrifice": false,
+    "scores": []
+  },
+  {
+    "batter": "Commissioner Pavlova",
+    "event_type": "NowBatting",
+    "player_swept_away": null,
+    "stats": {
+      "Stats": [
+        {
+          "stat": "HitsForAtBats",
+          "value": {
+            "at_bats": 1,
+            "hits": 0
+          }
+        },
+        {
+          "stat": "GroundOuts",
+          "value": 1
+        }
+      ]
+    }
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      0,
+      1
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "event_type": "Foul",
+    "foul": "Ball",
+    "steals": [],
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      1,
+      1
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "ejection": null,
+    "event_type": "Ball",
+    "steals": [],
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      1,
+      2
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "ejection": null,
+    "event_type": "Strike",
+    "steals": [],
+    "strike": "Looking",
+    "surprise_strike": false,
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": "EveryoneIsCheeringAtOnce",
+    "count": [
+      2,
+      2
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "ejection": null,
+    "event_type": "Ball",
+    "steals": [],
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "batter": "Commissioner Pavlova",
+    "cheer": null,
+    "destination": "LeftField",
+    "door_prizes": [],
+    "efflorescence": [],
+    "event_type": "FairBall",
+    "fair_ball_type": "LineDrive"
+  },
+  {
+    "advances": [],
+    "batter": "Commissioner Pavlova",
+    "caught_by": {
+      "name": "Fox Sarkar",
+      "place": "LF"
+    },
+    "ejection": null,
+    "event_type": "CaughtOut",
+    "fair_ball_type": "LineDrive",
+    "jetpack": false,
+    "perfect": false,
+    "sacrifice": false,
+    "scores": []
+  },
+  {
+    "batter": "Keith Deschamps",
+    "event_type": "NowBatting",
+    "player_swept_away": null,
+    "stats": {
+      "Stats": [
+        {
+          "stat": "HitsForAtBats",
+          "value": {
+            "at_bats": 1,
+            "hits": 0
+          }
+        },
+        {
+          "stat": "PopOuts",
+          "value": 1
+        }
+      ]
+    }
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "batter": "Keith Deschamps",
+    "cheer": null,
+    "destination": "ThirdBase",
+    "door_prizes": [],
+    "efflorescence": [],
+    "event_type": "FairBall",
+    "fair_ball_type": "GroundBall"
+  },
+  {
+    "advances": [],
+    "amazing": false,
+    "assassinations": [],
+    "batter": "Keith Deschamps",
+    "ejection": null,
+    "event_type": "GroundedOut",
+    "fielders": [
+      {
+        "name": "Cora Huntington",
+        "place": "3B"
+      },
+      {
+        "name": "Catboy Hicks",
+        "place": "1B"
+      }
+    ],
+    "scores": []
+  },
+  {
+    "event_type": "InningEnd",
+    "number": 5,
+    "side": "Bottom"
+  },
+  {
+    "automatic_runner": null,
+    "batting_team": {
+      "emoji": "🔥",
+      "name": "Phoenix Phoenixes"
+    },
+    "event_type": "InningStart",
+    "number": 6,
+    "pitcher_status": {
+      "Same": {
+        "emoji": "🌲",
+        "name": "Khloe Sapphire"
+      }
+    },
+    "side": "Top"
+  },
+  {
+    "batter": "Eva Thorsen",
+    "event_type": "NowBatting",
+    "player_swept_away": null,
+    "stats": {
+      "Stats": [
+        {
+          "stat": "HitsForAtBats",
+          "value": {
+            "at_bats": 2,
+            "hits": 0
+          }
+        },
+        {
+          "stat": "ForceOuts",
+          "value": 2
+        }
+      ]
+    }
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "batter": "Eva Thorsen",
+    "cheer": null,
+    "destination": "ThirdBase",
+    "door_prizes": [],
+    "efflorescence": [],
+    "event_type": "FairBall",
+    "fair_ball_type": "LineDrive"
+  },
+  {
+    "advances": [],
+    "batter": "Eva Thorsen",
+    "caught_by": {
+      "name": "Jacob Clements",
+      "place": "3B"
+    },
+    "ejection": null,
+    "event_type": "CaughtOut",
+    "fair_ball_type": "LineDrive",
+    "jetpack": false,
+    "perfect": false,
+    "sacrifice": false,
+    "scores": []
+  },
+  {
+    "batter": "Cora Huntington",
+    "event_type": "NowBatting",
+    "player_swept_away": null,
+    "stats": {
+      "Stats": [
+        {
+          "stat": "HitsForAtBats",
+          "value": {
+            "at_bats": 2,
+            "hits": 0
+          }
+        },
+        {
+          "stat": "Fouls",
+          "value": 1
+        },
+        {
+          "stat": "StrikeOuts",
+          "value": 1
+        }
+      ]
+    }
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "batter": "Cora Huntington",
+    "cheer": null,
+    "destination": "LeftField",
+    "door_prizes": [],
+    "efflorescence": [],
+    "event_type": "FairBall",
+    "fair_ball_type": "LineDrive"
+  },
+  {
+    "advances": [],
+    "batter": "Cora Huntington",
+    "distance": "Single",
+    "ejection": null,
+    "event_type": "BatterToBase",
+    "fair_ball_type": "LineDrive",
+    "fielder": {
+      "name": "Aline Wycliffe",
+      "place": "LF"
+    },
+    "scores": []
+  },
+  {
+    "batter": "King Jacobs",
+    "event_type": "NowBatting",
+    "player_swept_away": null,
+    "stats": {
+      "Stats": [
+        {
+          "stat": "HitsForAtBats",
+          "value": {
+            "at_bats": 2,
+            "hits": 0
+          }
+        },
+        {
+          "stat": "StrikeOuts",
+          "value": 1
+        },
+        {
+          "stat": "GroundOuts",
+          "value": 1
+        }
+      ]
+    }
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      0,
+      1
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "ejection": null,
+    "event_type": "Strike",
+    "steals": [],
+    "strike": "Swinging",
+    "surprise_strike": false,
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      0,
+      2
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "ejection": null,
+    "event_type": "Strike",
+    "steals": [],
+    "strike": "Looking",
+    "surprise_strike": false,
+    "wither": {
+      "source_name": "King Jacobs",
+      "target": {
+        "name": "Khloe Sapphire",
+        "place": "SP5"
+      },
+      "team_emoji": "🌲"
+    }
+  },
+  {
+    "contained": {
+      "FailedContain": {
+        "target_player_name": "King Jacobs"
+      }
+    },
+    "corrupted": "Resisted",
+    "event_type": "WeatherWither",
+    "player": {
+      "name": "Khloe Sapphire",
+      "place": "SP5"
+    },
+    "team_emoji": "🌲"
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      0,
+      2
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "event_type": "Foul",
+    "foul": "Ball",
+    "steals": [],
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      0,
+      2
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "event_type": "Foul",
+    "foul": "Ball",
+    "steals": [],
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "batter": "King Jacobs",
+    "cheer": null,
+    "destination": "ShortStop",
+    "door_prizes": [],
+    "efflorescence": [],
+    "event_type": "FairBall",
+    "fair_ball_type": "LineDrive"
+  },
+  {
+    "advances": [],
+    "batter": "King Jacobs",
+    "caught_by": {
+      "name": "Xander Kravchenko",
+      "place": "SS"
+    },
+    "ejection": null,
+    "event_type": "CaughtOut",
+    "fair_ball_type": "LineDrive",
+    "jetpack": false,
+    "perfect": false,
+    "sacrifice": false,
+    "scores": []
+  },
+  {
+    "batter": "Lab Powell",
+    "event_type": "NowBatting",
+    "player_swept_away": null,
+    "stats": {
+      "Stats": [
+        {
+          "stat": "HitsForAtBats",
+          "value": {
+            "at_bats": 1,
+            "hits": 0
+          }
+        },
+        {
+          "stat": "GroundOuts",
+          "value": 1
+        },
+        {
+          "stat": "BaseOnBalls",
+          "value": 1
+        }
+      ]
+    }
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      1,
+      0
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "ejection": null,
+    "event_type": "Ball",
+    "steals": [],
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      1,
+      1
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "ejection": null,
+    "event_type": "Strike",
+    "steals": [],
+    "strike": "Looking",
+    "surprise_strike": false,
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "batter": "Lab Powell",
+    "cheer": null,
+    "destination": "FirstBase",
+    "door_prizes": [],
+    "efflorescence": [],
+    "event_type": "FairBall",
+    "fair_ball_type": "GroundBall"
+  },
+  {
+    "advances": [],
+    "amazing": false,
+    "assassinations": [],
+    "batter": "Lab Powell",
+    "ejection": null,
+    "event_type": "GroundedOut",
+    "fielders": [
+      {
+        "name": "V. Massey",
+        "place": "1B"
+      }
+    ],
+    "scores": []
+  },
+  {
+    "event_type": "InningEnd",
+    "number": 6,
+    "side": "Top"
+  },
+  {
+    "automatic_runner": null,
+    "batting_team": {
+      "emoji": "🌲",
+      "name": "Yosemite Valley Park Rangers"
+    },
+    "event_type": "InningStart",
+    "number": 6,
+    "pitcher_status": {
+      "Same": {
+        "emoji": "🔥",
+        "name": "Lollypop Shevchenko"
+      }
+    },
+    "side": "Bottom"
+  },
+  {
+    "batter": "Hunter Prestwickton",
+    "event_type": "NowBatting",
+    "player_swept_away": null,
+    "stats": {
+      "Stats": [
+        {
+          "stat": "HitsForAtBats",
+          "value": {
+            "at_bats": 2,
+            "hits": 1
+          }
+        },
+        {
+          "stat": "SecondBases",
+          "value": 1
+        },
+        {
+          "stat": "GroundOuts",
+          "value": 1
+        }
+      ]
+    }
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      0,
+      1
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "ejection": null,
+    "event_type": "Strike",
+    "steals": [],
+    "strike": "Swinging",
+    "surprise_strike": false,
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "batter": "Hunter Prestwickton",
+    "cheer": null,
+    "destination": "CenterField",
+    "door_prizes": [],
+    "efflorescence": [],
+    "event_type": "FairBall",
+    "fair_ball_type": "LineDrive"
+  },
+  {
+    "advances": [],
+    "batter": "Hunter Prestwickton",
+    "distance": "Single",
+    "ejection": null,
+    "event_type": "BatterToBase",
+    "fair_ball_type": "LineDrive",
+    "fielder": {
+      "name": "Hugo Ueno",
+      "place": "CF"
+    },
+    "scores": []
+  },
+  {
+    "batter": "Aline Wycliffe",
+    "event_type": "NowBatting",
+    "player_swept_away": null,
+    "stats": {
+      "Stats": [
+        {
+          "stat": "HitsForAtBats",
+          "value": {
+            "at_bats": 2,
+            "hits": 0
+          }
+        },
+        {
+          "stat": "StrikeOuts",
+          "value": 1
+        },
+        {
+          "stat": "GroundOuts",
+          "value": 1
+        }
+      ]
+    }
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      0,
+      1
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "event_type": "Foul",
+    "foul": "Ball",
+    "steals": [],
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      1,
+      1
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "ejection": null,
+    "event_type": "Ball",
+    "steals": [],
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      2,
+      1
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "ejection": null,
+    "event_type": "Ball",
+    "steals": [],
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      2,
+      2
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "event_type": "Foul",
+    "foul": "Ball",
+    "steals": [],
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "batter": "Aline Wycliffe",
+    "cheer": null,
+    "ejection": null,
+    "event_type": "StrikeOut",
+    "foul": null,
+    "steals": [],
+    "strike": "Looking",
+    "wither": null
+  },
+  {
+    "batter": "V. Massey",
+    "event_type": "NowBatting",
+    "player_swept_away": null,
+    "stats": {
+      "Stats": [
+        {
+          "stat": "HitsForAtBats",
+          "value": {
+            "at_bats": 2,
+            "hits": 1
+          }
+        },
+        {
+          "stat": "FirstBases",
+          "value": 1
+        },
+        {
+          "stat": "StrikeOuts",
+          "value": 1
+        }
+      ]
+    }
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "batter": "V. Massey",
+    "cheer": null,
+    "destination": "SecondBase",
+    "door_prizes": [],
+    "efflorescence": [],
+    "event_type": "FairBall",
+    "fair_ball_type": "GroundBall"
+  },
+  {
+    "advances": [
+      {
+        "base": "Third",
+        "runner": "Hunter Prestwickton"
+      }
+    ],
+    "batter": "V. Massey",
+    "distance": "Single",
+    "ejection": null,
+    "event_type": "BatterToBase",
+    "fair_ball_type": "GroundBall",
+    "fielder": {
+      "name": "King Jacobs",
+      "place": "2B"
+    },
+    "scores": []
+  },
+  {
+    "batter": "Jocelyn Normal",
+    "event_type": "NowBatting",
+    "player_swept_away": null,
+    "stats": {
+      "Stats": [
+        {
+          "stat": "HitsForAtBats",
+          "value": {
+            "at_bats": 2,
+            "hits": 0
+          }
+        },
+        {
+          "stat": "ForceOuts",
+          "value": 2
+        }
+      ]
+    }
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      1,
+      0
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "ejection": null,
+    "event_type": "Ball",
+    "steals": [],
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": "EveryoneCheersAtOnce",
+    "count": [
+      2,
+      0
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "ejection": null,
+    "event_type": "Ball",
+    "steals": [],
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      3,
+      0
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "ejection": null,
+    "event_type": "Ball",
+    "steals": [],
+    "wither": null
+  },
+  {
+    "advances": [
+      {
+        "base": "Second",
+        "runner": "V. Massey"
+      }
+    ],
+    "aurora_photos": null,
+    "batter": "Jocelyn Normal",
+    "cheer": null,
+    "door_prizes": [],
+    "efflorescence": [],
+    "ejection": null,
+    "event_type": "HitByPitch",
+    "scores": [],
+    "wither": null
+  },
+  {
+    "batter": "Xander Kravchenko",
+    "event_type": "NowBatting",
+    "player_swept_away": null,
+    "stats": {
+      "Stats": [
+        {
+          "stat": "HitsForAtBats",
+          "value": {
+            "at_bats": 2,
+            "hits": 0
+          }
+        },
+        {
+          "stat": "GroundOuts",
+          "value": 2
+        }
+      ]
+    }
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      1,
+      0
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "ejection": null,
+    "event_type": "Ball",
+    "steals": [],
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      1,
+      1
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "event_type": "Foul",
+    "foul": "Ball",
+    "steals": [],
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "batter": "Xander Kravchenko",
+    "cheer": "TheFaithfulAreShoutingAtTheTopOfTheirLungs",
+    "destination": "LeftField",
+    "door_prizes": [],
+    "efflorescence": [],
+    "event_type": "FairBall",
+    "fair_ball_type": "LineDrive"
+  },
+  {
+    "advances": [],
+    "batter": "Xander Kravchenko",
+    "caught_by": {
+      "name": "Fox Sarkar",
+      "place": "LF"
+    },
+    "ejection": null,
+    "event_type": "CaughtOut",
+    "fair_ball_type": "LineDrive",
+    "jetpack": false,
+    "perfect": false,
+    "sacrifice": true,
+    "scores": [
+      "Hunter Prestwickton"
+    ]
+  },
+  {
+    "batter": "Jacob Clements",
+    "event_type": "NowBatting",
+    "player_swept_away": null,
+    "stats": {
+      "Stats": [
+        {
+          "stat": "HitsForAtBats",
+          "value": {
+            "at_bats": 1,
+            "hits": 1
+          }
+        },
+        {
+          "stat": "BaseOnBalls",
+          "value": 1
+        },
+        {
+          "stat": "FirstBases",
+          "value": 1
+        }
+      ]
+    }
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      0,
+      1
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "ejection": null,
+    "event_type": "Strike",
+    "steals": [],
+    "strike": "Swinging",
+    "surprise_strike": false,
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      1,
+      1
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "ejection": null,
+    "event_type": "Ball",
+    "steals": [],
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      2,
+      1
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "ejection": null,
+    "event_type": "Ball",
+    "steals": [],
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      2,
+      2
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "event_type": "Foul",
+    "foul": "Ball",
+    "steals": [],
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": "TheHomeTownSectionIsDeafening",
+    "count": [
+      3,
+      2
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "ejection": null,
+    "event_type": "Ball",
+    "steals": [],
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "batter": "Jacob Clements",
+    "cheer": null,
+    "ejection": null,
+    "event_type": "StrikeOut",
+    "foul": null,
+    "steals": [],
+    "strike": "Swinging",
+    "wither": null
+  },
+  {
+    "event_type": "InningEnd",
+    "number": 6,
+    "side": "Bottom"
+  },
+  {
+    "automatic_runner": null,
+    "batting_team": {
+      "emoji": "🔥",
+      "name": "Phoenix Phoenixes"
+    },
+    "event_type": "InningStart",
+    "number": 7,
+    "pitcher_status": {
+      "Same": {
+        "emoji": "🌲",
+        "name": "Khloe Sapphire"
+      }
+    },
+    "side": "Top"
+  },
+  {
+    "batter": "Hugo Ueno",
+    "event_type": "NowBatting",
+    "player_swept_away": null,
+    "stats": {
+      "Stats": [
+        {
+          "stat": "HitsForAtBats",
+          "value": {
+            "at_bats": 2,
+            "hits": 0
+          }
+        },
+        {
+          "stat": "GroundOuts",
+          "value": 2
+        }
+      ]
+    }
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      1,
+      0
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "ejection": null,
+    "event_type": "Ball",
+    "steals": [],
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      1,
+      1
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "ejection": null,
+    "event_type": "Strike",
+    "steals": [],
+    "strike": "Swinging",
+    "surprise_strike": false,
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      2,
+      1
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "ejection": null,
+    "event_type": "Ball",
+    "steals": [],
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      2,
+      2
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "ejection": null,
+    "event_type": "Strike",
+    "steals": [],
+    "strike": "Looking",
+    "surprise_strike": false,
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "batter": "Hugo Ueno",
+    "cheer": null,
+    "destination": "SecondBase",
+    "door_prizes": [],
+    "efflorescence": [],
+    "event_type": "FairBall",
+    "fair_ball_type": "FlyBall"
+  },
+  {
+    "advances": [],
+    "batter": "Hugo Ueno",
+    "caught_by": {
+      "name": "Jocelyn Normal",
+      "place": "2B"
+    },
+    "ejection": null,
+    "event_type": "CaughtOut",
+    "fair_ball_type": "FlyBall",
+    "jetpack": false,
+    "perfect": false,
+    "sacrifice": false,
+    "scores": []
+  },
+  {
+    "batter": "Seraphina Gamer",
+    "event_type": "NowBatting",
+    "player_swept_away": null,
+    "stats": {
+      "Stats": [
+        {
+          "stat": "HitsForAtBats",
+          "value": {
+            "at_bats": 2,
+            "hits": 1
+          }
+        },
+        {
+          "stat": "GroundOuts",
+          "value": 1
+        },
+        {
+          "stat": "SecondBases",
+          "value": 1
+        }
+      ]
+    }
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      1,
+      0
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "ejection": null,
+    "event_type": "Ball",
+    "steals": [],
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "batter": "Seraphina Gamer",
+    "cheer": null,
+    "destination": "LeftField",
+    "door_prizes": [],
+    "efflorescence": [],
+    "event_type": "FairBall",
+    "fair_ball_type": "LineDrive"
+  },
+  {
+    "advances": [],
+    "batter": "Seraphina Gamer",
+    "distance": "Double",
+    "ejection": null,
+    "event_type": "BatterToBase",
+    "fair_ball_type": "LineDrive",
+    "fielder": {
+      "name": "Aline Wycliffe",
+      "place": "LF"
+    },
+    "scores": []
+  },
+  {
+    "event_type": "MoundVisit",
+    "manager_name": null,
+    "mound_visit_type": "MoundVisit",
+    "team": {
+      "emoji": "🌲",
+      "name": "Yosemite Valley Park Rangers"
+    }
+  },
+  {
+    "event_type": "PitcherRemains",
+    "remaining_pitcher": {
+      "name": "Khloe Sapphire",
+      "place": "SP5"
+    }
+  },
+  {
+    "batter": "Flubber Jönsson",
+    "event_type": "NowBatting",
+    "player_swept_away": null,
+    "stats": {
+      "Stats": [
+        {
+          "stat": "HitsForAtBats",
+          "value": {
+            "at_bats": 2,
+            "hits": 0
+          }
+        },
+        {
+          "stat": "LineOuts",
+          "value": 1
+        },
+        {
+          "stat": "GroundOuts",
+          "value": 1
+        }
+      ]
+    }
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      0,
+      1
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "ejection": null,
+    "event_type": "Strike",
+    "steals": [],
+    "strike": "Looking",
+    "surprise_strike": false,
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": "EveryFanIsMakingNoise",
+    "count": [
+      1,
+      1
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "ejection": null,
+    "event_type": "Ball",
+    "steals": [],
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "batter": "Flubber Jönsson",
+    "cheer": null,
+    "destination": "LeftField",
+    "door_prizes": [],
+    "efflorescence": [],
+    "event_type": "FairBall",
+    "fair_ball_type": "FlyBall"
+  },
+  {
+    "advances": [],
+    "batter": "Flubber Jönsson",
+    "caught_by": {
+      "name": "Aline Wycliffe",
+      "place": "LF"
+    },
+    "ejection": null,
+    "event_type": "CaughtOut",
+    "fair_ball_type": "FlyBall",
+    "jetpack": false,
+    "perfect": false,
+    "sacrifice": false,
+    "scores": []
+  },
+  {
+    "batter": "Catboy Hicks",
+    "event_type": "NowBatting",
+    "player_swept_away": null,
+    "stats": {
+      "Stats": [
+        {
+          "stat": "HitsForAtBats",
+          "value": {
+            "at_bats": 2,
+            "hits": 0
+          }
+        },
+        {
+          "stat": "GroundOuts",
+          "value": 1
+        },
+        {
+          "stat": "LineOuts",
+          "value": 1
+        }
+      ]
+    }
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      1,
+      0
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "ejection": null,
+    "event_type": "Ball",
+    "steals": [],
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      1,
+      1
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "ejection": null,
+    "event_type": "Strike",
+    "steals": [],
+    "strike": "Swinging",
+    "surprise_strike": false,
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      1,
+      2
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "event_type": "Foul",
+    "foul": "Ball",
+    "steals": [],
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "batter": "Catboy Hicks",
+    "cheer": null,
+    "destination": "ThirdBase",
+    "door_prizes": [],
+    "efflorescence": [],
+    "event_type": "FairBall",
+    "fair_ball_type": "GroundBall"
+  },
+  {
+    "advances": [],
+    "amazing": false,
+    "assassinations": [],
+    "batter": "Catboy Hicks",
+    "ejection": null,
+    "event_type": "GroundedOut",
+    "fielders": [
+      {
+        "name": "Jacob Clements",
+        "place": "3B"
+      },
+      {
+        "name": "V. Massey",
+        "place": "1B"
+      }
+    ],
+    "scores": []
+  },
+  {
+    "event_type": "InningEnd",
+    "number": 7,
+    "side": "Top"
+  },
+  {
+    "automatic_runner": null,
+    "batting_team": {
+      "emoji": "🌲",
+      "name": "Yosemite Valley Park Rangers"
+    },
+    "event_type": "InningStart",
+    "number": 7,
+    "pitcher_status": {
+      "Same": {
+        "emoji": "🔥",
+        "name": "Lollypop Shevchenko"
+      }
+    },
+    "side": "Bottom"
+  },
+  {
+    "batter": "Scarlett de Sousa",
+    "event_type": "NowBatting",
+    "player_swept_away": null,
+    "stats": {
+      "Stats": [
+        {
+          "stat": "HitsForAtBats",
+          "value": {
+            "at_bats": 2,
+            "hits": 0
+          }
+        },
+        {
+          "stat": "LineOuts",
+          "value": 1
+        },
+        {
+          "stat": "ForceOuts",
+          "value": 1
+        }
+      ]
+    }
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "batter": "Scarlett de Sousa",
+    "cheer": null,
+    "destination": "ShortStop",
+    "door_prizes": [],
+    "efflorescence": [],
+    "event_type": "FairBall",
+    "fair_ball_type": "Popup"
+  },
+  {
+    "advances": [],
+    "batter": "Scarlett de Sousa",
+    "caught_by": {
+      "name": "Eva Thorsen",
+      "place": "SS"
+    },
+    "ejection": null,
+    "event_type": "CaughtOut",
+    "fair_ball_type": "Popup",
+    "jetpack": false,
+    "perfect": false,
+    "sacrifice": false,
+    "scores": []
+  },
+  {
+    "batter": "Commissioner Pavlova",
+    "event_type": "NowBatting",
+    "player_swept_away": null,
+    "stats": {
+      "Stats": [
+        {
+          "stat": "HitsForAtBats",
+          "value": {
+            "at_bats": 2,
+            "hits": 0
+          }
+        },
+        {
+          "stat": "GroundOuts",
+          "value": 1
+        },
+        {
+          "stat": "LineOuts",
+          "value": 1
+        }
+      ]
+    }
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      0,
+      1
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "ejection": null,
+    "event_type": "Strike",
+    "steals": [],
+    "strike": "Looking",
+    "surprise_strike": false,
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "batter": "Commissioner Pavlova",
+    "cheer": null,
+    "destination": "CenterField",
+    "door_prizes": [],
+    "efflorescence": [],
+    "event_type": "FairBall",
+    "fair_ball_type": "FlyBall"
+  },
+  {
+    "advances": [],
+    "batter": "Commissioner Pavlova",
+    "caught_by": {
+      "name": "Hugo Ueno",
+      "place": "CF"
+    },
+    "ejection": null,
+    "event_type": "CaughtOut",
+    "fair_ball_type": "FlyBall",
+    "jetpack": false,
+    "perfect": false,
+    "sacrifice": false,
+    "scores": []
+  },
+  {
+    "batter": "Keith Deschamps",
+    "event_type": "NowBatting",
+    "player_swept_away": null,
+    "stats": {
+      "Stats": [
+        {
+          "stat": "HitsForAtBats",
+          "value": {
+            "at_bats": 2,
+            "hits": 0
+          }
+        },
+        {
+          "stat": "PopOuts",
+          "value": 1
+        },
+        {
+          "stat": "GroundOuts",
+          "value": 1
+        }
+      ]
+    }
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      0,
+      1
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "ejection": null,
+    "event_type": "Strike",
+    "steals": [],
+    "strike": "Swinging",
+    "surprise_strike": false,
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      0,
+      2
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "ejection": null,
+    "event_type": "Strike",
+    "steals": [],
+    "strike": "Swinging",
+    "surprise_strike": false,
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "batter": "Keith Deschamps",
+    "cheer": null,
+    "ejection": null,
+    "event_type": "StrikeOut",
+    "foul": null,
+    "steals": [],
+    "strike": "Swinging",
+    "wither": null
+  },
+  {
+    "event_type": "InningEnd",
+    "number": 7,
+    "side": "Bottom"
+  },
+  {
+    "automatic_runner": null,
+    "batting_team": {
+      "emoji": "🔥",
+      "name": "Phoenix Phoenixes"
+    },
+    "event_type": "InningStart",
+    "number": 8,
+    "pitcher_status": {
+      "Same": {
+        "emoji": "🌲",
+        "name": "Khloe Sapphire"
+      }
+    },
+    "side": "Top"
+  },
+  {
+    "batter": "Fox Sarkar",
+    "event_type": "NowBatting",
+    "player_swept_away": null,
+    "stats": {
+      "Stats": [
+        {
+          "stat": "HitsForAtBats",
+          "value": {
+            "at_bats": 1,
+            "hits": 0
+          }
+        },
+        {
+          "stat": "BaseOnBalls",
+          "value": 2
+        },
+        {
+          "stat": "ForceOuts",
+          "value": 1
+        }
+      ]
+    }
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      1,
+      0
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "ejection": null,
+    "event_type": "Ball",
+    "steals": [],
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      2,
+      0
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "ejection": null,
+    "event_type": "Ball",
+    "steals": [],
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      2,
+      1
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "event_type": "Foul",
+    "foul": "Ball",
+    "steals": [],
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      2,
+      2
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "event_type": "Foul",
+    "foul": "Ball",
+    "steals": [],
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "batter": "Fox Sarkar",
+    "cheer": null,
+    "ejection": null,
+    "event_type": "StrikeOut",
+    "foul": null,
+    "steals": [],
+    "strike": "Looking",
+    "wither": null
+  },
+  {
+    "batter": "Eva Thorsen",
+    "event_type": "NowBatting",
+    "player_swept_away": null,
+    "stats": {
+      "Stats": [
+        {
+          "stat": "HitsForAtBats",
+          "value": {
+            "at_bats": 3,
+            "hits": 0
+          }
+        },
+        {
+          "stat": "ForceOuts",
+          "value": 2
+        },
+        {
+          "stat": "LineOuts",
+          "value": 1
+        }
+      ]
+    }
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      1,
+      0
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "ejection": null,
+    "event_type": "Ball",
+    "steals": [],
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      2,
+      0
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "ejection": null,
+    "event_type": "Ball",
+    "steals": [],
+    "wither": null
+  },
+  {
+    "advances": [],
+    "aurora_photos": null,
+    "batter": "Eva Thorsen",
+    "cheer": null,
+    "door_prizes": [],
+    "efflorescence": [],
+    "ejection": null,
+    "event_type": "HitByPitch",
+    "scores": [],
+    "wither": null
+  },
+  {
+    "batter": "Cora Huntington",
+    "event_type": "NowBatting",
+    "player_swept_away": null,
+    "stats": {
+      "Stats": [
+        {
+          "stat": "HitsForAtBats",
+          "value": {
+            "at_bats": 3,
+            "hits": 1
+          }
+        },
+        {
+          "stat": "Fouls",
+          "value": 1
+        },
+        {
+          "stat": "StrikeOuts",
+          "value": 1
+        },
+        {
+          "stat": "FirstBases",
+          "value": 1
+        }
+      ]
+    }
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      0,
+      1
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "event_type": "Foul",
+    "foul": "Ball",
+    "steals": [],
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      0,
+      2
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "ejection": null,
+    "event_type": "Strike",
+    "steals": [],
+    "strike": "Swinging",
+    "surprise_strike": false,
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      1,
+      2
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "ejection": null,
+    "event_type": "Ball",
+    "steals": [],
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "batter": "Cora Huntington",
+    "cheer": null,
+    "ejection": null,
+    "event_type": "StrikeOut",
+    "foul": null,
+    "steals": [],
+    "strike": "Swinging",
+    "wither": null
+  },
+  {
+    "batter": "King Jacobs",
+    "event_type": "NowBatting",
+    "player_swept_away": null,
+    "stats": {
+      "Stats": [
+        {
+          "stat": "HitsForAtBats",
+          "value": {
+            "at_bats": 3,
+            "hits": 0
+          }
+        },
+        {
+          "stat": "StrikeOuts",
+          "value": 1
+        },
+        {
+          "stat": "GroundOuts",
+          "value": 1
+        },
+        {
+          "stat": "LineOuts",
+          "value": 1
+        }
+      ]
+    }
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      0,
+      1
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "ejection": null,
+    "event_type": "Strike",
+    "steals": [],
+    "strike": "Looking",
+    "surprise_strike": false,
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      1,
+      1
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "ejection": null,
+    "event_type": "Ball",
+    "steals": [],
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      1,
+      2
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "event_type": "Foul",
+    "foul": "Ball",
+    "steals": [],
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      2,
+      2
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "ejection": null,
+    "event_type": "Ball",
+    "steals": [],
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      3,
+      2
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "ejection": null,
+    "event_type": "Ball",
+    "steals": [],
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "batter": "King Jacobs",
+    "cheer": null,
+    "destination": "ShortStop",
+    "door_prizes": [],
+    "efflorescence": [],
+    "event_type": "FairBall",
+    "fair_ball_type": "GroundBall"
+  },
+  {
+    "advances": [],
+    "batter": "King Jacobs",
+    "ejection": null,
+    "event_type": "ForceOut",
+    "fair_ball_type": "GroundBall",
+    "fielders": [
+      {
+        "name": "Xander Kravchenko",
+        "place": "SS"
+      }
+    ],
+    "out": {
+      "base": "Second",
+      "runner": "Eva Thorsen"
+    },
+    "scores": []
+  },
+  {
+    "event_type": "InningEnd",
+    "number": 8,
+    "side": "Top"
+  },
+  {
+    "automatic_runner": null,
+    "batting_team": {
+      "emoji": "🌲",
+      "name": "Yosemite Valley Park Rangers"
+    },
+    "event_type": "InningStart",
+    "number": 8,
+    "pitcher_status": {
+      "Same": {
+        "emoji": "🔥",
+        "name": "Lollypop Shevchenko"
+      }
+    },
+    "side": "Bottom"
+  },
+  {
+    "batter": "Hunter Prestwickton",
+    "event_type": "NowBatting",
+    "player_swept_away": null,
+    "stats": {
+      "Stats": [
+        {
+          "stat": "HitsForAtBats",
+          "value": {
+            "at_bats": 3,
+            "hits": 2
+          }
+        },
+        {
+          "stat": "SecondBases",
+          "value": 1
+        },
+        {
+          "stat": "GroundOuts",
+          "value": 1
+        },
+        {
+          "stat": "FirstBases",
+          "value": 1
+        }
+      ]
+    }
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      1,
+      0
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "ejection": null,
+    "event_type": "Ball",
+    "steals": [],
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "batter": "Hunter Prestwickton",
+    "cheer": null,
+    "destination": "RightField",
+    "door_prizes": [],
+    "efflorescence": [],
+    "event_type": "FairBall",
+    "fair_ball_type": "FlyBall"
+  },
+  {
+    "advances": [],
+    "batter": "Hunter Prestwickton",
+    "caught_by": {
+      "name": "Flubber Jönsson",
+      "place": "RF"
+    },
+    "ejection": null,
+    "event_type": "CaughtOut",
+    "fair_ball_type": "FlyBall",
+    "jetpack": false,
+    "perfect": false,
+    "sacrifice": false,
+    "scores": []
+  },
+  {
+    "batter": "Aline Wycliffe",
+    "event_type": "NowBatting",
+    "player_swept_away": null,
+    "stats": {
+      "Stats": [
+        {
+          "stat": "HitsForAtBats",
+          "value": {
+            "at_bats": 3,
+            "hits": 0
+          }
+        },
+        {
+          "stat": "StrikeOuts",
+          "value": 2
+        },
+        {
+          "stat": "GroundOuts",
+          "value": 1
+        }
+      ]
+    }
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      1,
+      0
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "ejection": null,
+    "event_type": "Ball",
+    "steals": [],
+    "wither": {
+      "source_name": "Aline Wycliffe",
+      "target": {
+        "name": "Lollypop Shevchenko",
+        "place": "SP5"
+      },
+      "team_emoji": "🔥"
+    }
+  },
+  {
+    "contained": {
+      "SuccessfulContain": {
+        "contained_player_name": "Aline Wycliffe",
+        "replacement_player_name": "Serenity Henriquez"
+      }
+    },
+    "corrupted": "Resisted",
+    "event_type": "WeatherWither",
+    "player": {
+      "name": "Lollypop Shevchenko",
+      "place": "SP5"
+    },
+    "team_emoji": "🔥"
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      1,
+      1
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "event_type": "Foul",
+    "foul": "Ball",
+    "steals": [],
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      2,
+      1
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "ejection": null,
+    "event_type": "Ball",
+    "steals": [],
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      2,
+      2
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "ejection": null,
+    "event_type": "Strike",
+    "steals": [],
+    "strike": "Looking",
+    "surprise_strike": false,
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      3,
+      2
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "ejection": null,
+    "event_type": "Ball",
+    "steals": [],
+    "wither": null
+  },
+  {
+    "advances": [],
+    "assassinations": [],
+    "aurora_photos": null,
+    "batter": "Serenity Henriquez",
+    "cheer": null,
+    "ejection": null,
+    "event_type": "Walk",
+    "scores": [],
+    "wither": null
+  },
+  {
+    "batter": "V. Massey",
+    "event_type": "NowBatting",
+    "player_swept_away": null,
+    "stats": {
+      "Stats": [
+        {
+          "stat": "HitsForAtBats",
+          "value": {
+            "at_bats": 3,
+            "hits": 2
+          }
+        },
+        {
+          "stat": "FirstBases",
+          "value": 2
+        },
+        {
+          "stat": "StrikeOuts",
+          "value": 1
+        }
+      ]
+    }
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "batter": "V. Massey",
+    "cheer": null,
+    "destination": "FirstBase",
+    "door_prizes": [],
+    "efflorescence": [],
+    "event_type": "FairBall",
+    "fair_ball_type": "GroundBall"
+  },
+  {
+    "advances": [
+      {
+        "base": "Second",
+        "runner": "Serenity Henriquez"
+      }
+    ],
+    "batter": "V. Massey",
+    "distance": "Single",
+    "ejection": null,
+    "event_type": "BatterToBase",
+    "fair_ball_type": "GroundBall",
+    "fielder": {
+      "name": "Catboy Hicks",
+      "place": "1B"
+    },
+    "scores": []
+  },
+  {
+    "event_type": "MoundVisit",
+    "manager_name": null,
+    "mound_visit_type": "MoundVisit",
+    "team": {
+      "emoji": "🔥",
+      "name": "Phoenix Phoenixes"
+    }
+  },
+  {
+    "event_type": "PitcherRemains",
+    "remaining_pitcher": {
+      "name": "Lollypop Shevchenko",
+      "place": "SP5"
+    }
+  },
+  {
+    "batter": "Jocelyn Normal",
+    "event_type": "NowBatting",
+    "player_swept_away": null,
+    "stats": {
+      "Stats": [
+        {
+          "stat": "HitsForAtBats",
+          "value": {
+            "at_bats": 2,
+            "hits": 0
+          }
+        },
+        {
+          "stat": "ForceOuts",
+          "value": 2
+        },
+        {
+          "stat": "HitByPitchs",
+          "value": 1
+        }
+      ]
+    }
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      0,
+      1
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "event_type": "Foul",
+    "foul": "Ball",
+    "steals": [],
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": "BannersWaveWildly",
+    "count": [
+      0,
+      2
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "ejection": null,
+    "event_type": "Strike",
+    "steals": [],
+    "strike": "Swinging",
+    "surprise_strike": false,
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      1,
+      2
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "ejection": null,
+    "event_type": "Ball",
+    "steals": [],
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      1,
+      2
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "event_type": "Foul",
+    "foul": "Ball",
+    "steals": [],
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      2,
+      2
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "ejection": null,
+    "event_type": "Ball",
+    "steals": [],
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "batter": "Jocelyn Normal",
+    "cheer": null,
+    "ejection": null,
+    "event_type": "StrikeOut",
+    "foul": null,
+    "steals": [],
+    "strike": "Looking",
+    "wither": null
+  },
+  {
+    "batter": "Xander Kravchenko",
+    "event_type": "NowBatting",
+    "player_swept_away": null,
+    "stats": {
+      "Stats": [
+        {
+          "stat": "HitsForAtBats",
+          "value": {
+            "at_bats": 2,
+            "hits": 0
+          }
+        },
+        {
+          "stat": "GroundOuts",
+          "value": 2
+        },
+        {
+          "stat": "SacrificeFlies",
+          "value": 1
+        }
+      ]
+    }
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      0,
+      1
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "ejection": null,
+    "event_type": "Strike",
+    "steals": [],
+    "strike": "Swinging",
+    "surprise_strike": false,
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      0,
+      2
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "event_type": "Foul",
+    "foul": "Ball",
+    "steals": [],
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      1,
+      2
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "ejection": null,
+    "event_type": "Ball",
+    "steals": [],
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": "TheStandsShakeWithNoise",
+    "count": [
+      2,
+      2
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "ejection": null,
+    "event_type": "Ball",
+    "steals": [],
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "batter": "Xander Kravchenko",
+    "cheer": null,
+    "destination": "ThirdBase",
+    "door_prizes": [],
+    "efflorescence": [],
+    "event_type": "FairBall",
+    "fair_ball_type": "GroundBall"
+  },
+  {
+    "advances": [],
+    "amazing": false,
+    "assassinations": [],
+    "batter": "Xander Kravchenko",
+    "ejection": null,
+    "event_type": "GroundedOut",
+    "fielders": [
+      {
+        "name": "Cora Huntington",
+        "place": "3B"
+      },
+      {
+        "name": "Catboy Hicks",
+        "place": "1B"
+      }
+    ],
+    "scores": []
+  },
+  {
+    "event_type": "InningEnd",
+    "number": 8,
+    "side": "Bottom"
+  },
+  {
+    "automatic_runner": null,
+    "batting_team": {
+      "emoji": "🔥",
+      "name": "Phoenix Phoenixes"
+    },
+    "event_type": "InningStart",
+    "number": 9,
+    "pitcher_status": {
+      "Same": {
+        "emoji": "🌲",
+        "name": "Khloe Sapphire"
+      }
+    },
+    "side": "Top"
+  },
+  {
+    "batter": "Lab Powell",
+    "event_type": "NowBatting",
+    "player_swept_away": null,
+    "stats": {
+      "Stats": [
+        {
+          "stat": "HitsForAtBats",
+          "value": {
+            "at_bats": 2,
+            "hits": 0
+          }
+        },
+        {
+          "stat": "GroundOuts",
+          "value": 2
+        },
+        {
+          "stat": "BaseOnBalls",
+          "value": 1
+        }
+      ]
+    }
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": "TheCheeringIsRelentless",
+    "count": [
+      1,
+      0
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "ejection": null,
+    "event_type": "Ball",
+    "steals": [],
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "batter": "Lab Powell",
+    "cheer": null,
+    "destination": "RightField",
+    "door_prizes": [],
+    "efflorescence": [],
+    "event_type": "FairBall",
+    "fair_ball_type": "LineDrive"
+  },
+  {
+    "advances": [],
+    "batter": "Lab Powell",
+    "caught_by": {
+      "name": "Hunter Prestwickton",
+      "place": "RF"
+    },
+    "ejection": null,
+    "event_type": "CaughtOut",
+    "fair_ball_type": "LineDrive",
+    "jetpack": false,
+    "perfect": false,
+    "sacrifice": false,
+    "scores": []
+  },
+  {
+    "batter": "Hugo Ueno",
+    "event_type": "NowBatting",
+    "player_swept_away": null,
+    "stats": {
+      "Stats": [
+        {
+          "stat": "HitsForAtBats",
+          "value": {
+            "at_bats": 3,
+            "hits": 0
+          }
+        },
+        {
+          "stat": "GroundOuts",
+          "value": 2
+        },
+        {
+          "stat": "ForceOuts",
+          "value": 1
+        }
+      ]
+    }
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      0,
+      1
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "event_type": "Foul",
+    "foul": "Ball",
+    "steals": [],
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      0,
+      2
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "ejection": null,
+    "event_type": "Strike",
+    "steals": [],
+    "strike": "Swinging",
+    "surprise_strike": false,
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      0,
+      2
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "event_type": "Foul",
+    "foul": "Ball",
+    "steals": [],
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": "TheEntireBallparkIsRocking",
+    "count": [
+      1,
+      2
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "ejection": null,
+    "event_type": "Ball",
+    "steals": [],
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "batter": "Hugo Ueno",
+    "cheer": null,
+    "destination": "ThirdBase",
+    "door_prizes": [],
+    "efflorescence": [],
+    "event_type": "FairBall",
+    "fair_ball_type": "GroundBall"
+  },
+  {
+    "advances": [],
+    "amazing": false,
+    "assassinations": [],
+    "batter": "Hugo Ueno",
+    "ejection": null,
+    "event_type": "GroundedOut",
+    "fielders": [
+      {
+        "name": "Jacob Clements",
+        "place": "3B"
+      },
+      {
+        "name": "V. Massey",
+        "place": "1B"
+      }
+    ],
+    "scores": []
+  },
+  {
+    "batter": "Seraphina Gamer",
+    "event_type": "NowBatting",
+    "player_swept_away": null,
+    "stats": {
+      "Stats": [
+        {
+          "stat": "HitsForAtBats",
+          "value": {
+            "at_bats": 3,
+            "hits": 2
+          }
+        },
+        {
+          "stat": "GroundOuts",
+          "value": 1
+        },
+        {
+          "stat": "SecondBases",
+          "value": 2
+        }
+      ]
+    }
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      0,
+      1
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "ejection": null,
+    "event_type": "Strike",
+    "steals": [],
+    "strike": "Looking",
+    "surprise_strike": false,
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      1,
+      1
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "ejection": null,
+    "event_type": "Ball",
+    "steals": [],
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      1,
+      2
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "event_type": "Foul",
+    "foul": "Ball",
+    "steals": [],
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "batter": "Seraphina Gamer",
+    "cheer": null,
+    "ejection": null,
+    "event_type": "StrikeOut",
+    "foul": null,
+    "steals": [],
+    "strike": "Swinging",
+    "wither": null
+  },
+  {
+    "event_type": "InningEnd",
+    "number": 9,
+    "side": "Top"
+  },
+  {
+    "event_type": "GameOver",
+    "message": "QuotedGAMEOVER"
+  },
+  {
+    "event_type": "Recordkeeping",
+    "losing_score": 0,
+    "losing_team": {
+      "emoji": "🔥",
+      "name": "Phoenix Phoenixes"
+    },
+    "winning_score": 2,
+    "winning_team": {
+      "emoji": "🌲",
+      "name": "Yosemite Valley Park Rangers"
+    }
+  }
+]

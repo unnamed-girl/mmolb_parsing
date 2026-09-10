@@ -1,27 +1,3 @@
-use crate::{
-    enums::{FoodName, TopBottom},
-    nom_parsing::shared::{
-        door_prizes, either_team_emoji_player_eof, emoji, emoji_food, hit_by_pitch_text, item,
-        strike_out_text, successful_ejection_tail,
-    },
-    parsed_event::{EmojiPlayer, WeatherConsumptionEvents},
-    time::is_superstar_game,
-};
-use nom::{
-    branch::alt,
-    bytes::complete::{tag, take_until},
-    character::complete::{digit1, u16, u8},
-    combinator::{all_consuming, cut, fail, opt, rest, value, verify},
-    error::context,
-    multi::{many0, many1, separated_list1},
-    sequence::{delimited, preceded, separated_pair, terminated},
-    Finish, Parser,
-};
-use nom::{bytes::complete::take_till, character::complete::u32, error::ErrorKind};
-use nom::{character::complete::space0, sequence::pair};
-use phf::phf_map;
-use std::str::FromStr;
-
 use super::{
     shared::{
         all_consuming_sentence_and, base_steal_sentence, bold, destination, emoji_team_eof,
@@ -32,13 +8,20 @@ use super::{
     ParsingContext,
 };
 use crate::nom_parsing::shared::{
-    efflorescences, either_team_emoji, failed_ejection_tail, parse_until_exclamation_point_eof,
-    parse_until_period_eof, wither,
+    assassination, double_trouble, efflorescences, either_team_emoji, failed_ejection_tail,
+    parse_until_exclamation_point_eof, parse_until_period_eof, side_team, swept_away, wither,
+    Error, IResult,
 };
-use crate::parsed_event::{ContainResult, PartyDurabilityLoss, WitherResult};
+use crate::parsed_event::{
+    AugmentedWeather, BasicPitcherSwap, ContainResult, PartyDurabilityLoss, PlacedPlayer,
+    WitherResult,
+};
+use crate::{enums::Place, nom_parsing::shared::try_all_consuming_splits_char};
+use crate::{enums::PollenCount, nom_parsing::shared::try_all_consuming_splits_str};
 use crate::{
     enums::{EventType, GameOverMessage, HomeAway, MoundVisitType, NowBattingStats},
     game::Event,
+    game_time::Breakpoints,
     nom_parsing::shared::{
         aurora, cheer, delivery, ejection, team_emoji, try_from_word, try_from_words_m_n, MyParser,
     },
@@ -46,9 +29,30 @@ use crate::{
         EmojiTeam, FallingStarOutcome, FieldingAttempt, GameEventParseError, KnownBug,
         StartOfInningPitcher,
     },
-    time::Breakpoints,
     ParsedEventMessage,
 };
+use crate::{
+    enums::{FoodName, TopBottom},
+    nom_parsing::shared::{
+        door_prizes, either_team_emoji_player_eof, emoji, emoji_food, hit_by_pitch_text, item,
+        strike_out_text, successful_ejection_tail,
+    },
+    parsed_event::{EmojiPlayer, WeatherConsumptionEvents},
+};
+use nom::{
+    branch::alt,
+    bytes::complete::{tag, take_until},
+    character::complete::{digit1, u16, u8},
+    combinator::{all_consuming, cut, fail, opt, rest, value, verify},
+    error::{context, ParseError},
+    multi::{many0, many1, separated_list1},
+    sequence::{delimited, preceded, separated_pair, terminated},
+    Finish, Parser,
+};
+use nom::{bytes::complete::take_till, character::complete::u32, error::ErrorKind};
+use nom::{character::complete::space0, sequence::pair};
+use phf::phf_map;
+use std::str::FromStr;
 
 const OVERRIDES: phf::Map<&'static str, phf::Map<u16, ParsedEventMessage<&'static str>>> =
     phf_map!();
@@ -112,9 +116,9 @@ pub fn parse_event<'parse, 'output: 'parse>(
             special_delivery(parsing_context).parse(&event.message)
         }
         EventType::WeatherProsperity => weather_prosperity(parsing_context).parse(&event.message),
-        EventType::Balk => balk().parse(&event.message),
+        EventType::Balk => balk(parsing_context).parse(&event.message),
         EventType::PhotoContest => photo_contest(parsing_context).parse(event.message.as_str()),
-        EventType::Party => party(parsing_context).parse(event.message.as_str()),
+        EventType::Party => party().parse(event.message.as_str()),
         EventType::WeatherReflection => weather_reflection(parsing_context).parse(&event.message),
         EventType::WeatherWither => weather_wither(parsing_context).parse(&event.message),
         EventType::LinealBeltTransfer => lineal_belt(parsing_context).parse(event.message.as_str()),
@@ -122,6 +126,9 @@ pub fn parse_event<'parse, 'output: 'parse>(
             weather_consumption(parsing_context).parse(event.message.as_str())
         }
         EventType::WeatherSimulacrum => weather_simulacrum().parse(event.message.as_str()),
+        EventType::WeatherNoisy => weather_noisy().parse(event.message.as_str()),
+        EventType::EndGameTokens => end_game_tokens().parse(&event.message),
+        EventType::WeatherPollen => weather_pollen().parse(&event.message),
     }
     .finish()
     .map(|(_, o)| o)
@@ -259,65 +266,132 @@ fn party_durability_loss<'parse, 'output: 'parse>(
 }
 
 fn party<'parse, 'output: 'parse>(
-    _parsing_context: &'parse ParsingContext<'parse>,
 ) -> impl MyParser<'output, ParsedEventMessage<&'output str>> + 'parse {
-    context(
-        "Party",
-        all_consuming(verify(
-            preceded(
-                tag("<strong>🥳 "),
-                (
-                    parse_terminated(" and ").and_then(verify_name),
-                    parse_terminated(" are Partying!</strong> ").and_then(verify_name),
-                    parse_terminated(" gained +").and_then(verify_name),
-                    terminated(u8, tag(" ")),
-                    terminated(try_from_word, tag(". ")), // attribute
-                    parse_terminated(" gained +").and_then(verify_name),
-                    terminated(u8, tag(" ")),
-                    try_from_word, // attribute
-                    party_durability_loss(),
-                ),
-            ),
-            |(pitcher_name_1, batter_name_1, pitcher_name_2, _, _, batter_name_2, _, _, _)| {
-                pitcher_name_1 == pitcher_name_2 && batter_name_1 == batter_name_2
-            },
-        )),
-    )
-    .map(
-        |(
-            _,
-            _,
-            pitcher_name,
-            pitcher_amount_gained,
-            pitcher_attribute,
-            batter_name,
-            batter_amount_gained,
-            batter_attribute,
-            durability_loss,
-        )| ParsedEventMessage::Party {
-            pitcher_name,
-            pitcher_amount_gained,
-            pitcher_attribute,
-            batter_name,
-            batter_amount_gained,
-            batter_attribute,
-            durability_loss,
-        },
-    )
+    alt((party_for_attributes(), party_for_friends()))
 }
 
-fn balk<'output>() -> impl MyParser<'output, ParsedEventMessage<&'output str>> {
-    context(
-        "Balk",
-        all_consuming((
-            preceded(tag("Balk. "), parse_terminated(" dropped the ball.")),
-            scores_and_advances,
-        )),
-    )
-    .map(|(pitcher, (scores, advances))| ParsedEventMessage::Balk {
-        pitcher,
-        scores,
-        advances,
+fn party_for_attributes<'parse, 'output: 'parse>(
+) -> impl MyParser<'output, ParsedEventMessage<&'output str>> + 'parse {
+    context("Party", |input: &'output str| {
+        let outer_input = input;
+        let (input, _) = tag("<strong>🥳 ").parse(input)?;
+        try_all_consuming_splits_str(
+            " and ",
+            |pitcher_name_1| verify_name(pitcher_name_1),
+            |pitcher_name_1, input| {
+                let (input, batter_name_1) = parse_terminated(" are Partying!</strong> ")
+                    .and_then(verify_name)
+                    .parse(input)?;
+
+                let (input, pitcher_name_2) = parse_terminated(" gained +")
+                    .and_then(verify_name)
+                    .parse(input)?;
+                let (input, pitcher_amount_gained) = terminated(u8, tag(" ")).parse(input)?;
+                let (input, pitcher_attribute) =
+                    terminated(try_from_word, tag(". ")).parse(input)?;
+                let (input, batter_name_2) = parse_terminated(" gained +")
+                    .and_then(verify_name)
+                    .parse(input)?;
+                let (input, batter_amount_gained) = terminated(u8, tag(" ")).parse(input)?;
+                let (input, batter_attribute) = try_from_word.parse(input)?;
+                let (input, durability_loss) = party_durability_loss().parse(input)?;
+
+                if pitcher_name_1 != pitcher_name_2 || batter_name_1 != batter_name_2 {
+                    return Err(nom::Err::Error(Error::from_error_kind(
+                        outer_input,
+                        ErrorKind::Verify,
+                    )));
+                }
+
+                Ok((
+                    input,
+                    ParsedEventMessage::Party {
+                        pitcher_name: pitcher_name_1,
+                        pitcher_amount_gained,
+                        pitcher_attribute,
+                        batter_name: batter_name_1,
+                        batter_amount_gained,
+                        batter_attribute,
+                        durability_loss,
+                    },
+                ))
+            },
+        )
+        .parse(input)
+    })
+}
+
+fn party_for_friends<'parse, 'output: 'parse>(
+) -> impl MyParser<'output, ParsedEventMessage<&'output str>> + 'parse {
+    context("Party", |input: &'output str| {
+        let (input, _) = tag("<strong>🥳 ").parse(input)?;
+        try_all_consuming_splits_str(
+            " and ",
+            |pitcher_name| verify_name(pitcher_name),
+            |pitcher_name, input| {
+                let (input, batter_name) =
+                    parse_terminated(" are Partying!</strong> They became Friends!")
+                        .and_then(verify_name)
+                        .parse(input)?;
+                Ok((
+                    input,
+                    ParsedEventMessage::PartyFriendship {
+                        pitcher_name,
+                        batter_name,
+                    },
+                ))
+            },
+        )
+        .parse(input)
+    })
+}
+
+fn balk<'parse, 'output: 'parse>(
+    parsing_context: &'parse ParsingContext<'parse>,
+) -> impl MyParser<'output, ParsedEventMessage<&'output str>> + 'parse {
+    context("Balk", move |input: &'output str| {
+        let Some(pitcher) = parsing_context.pitcher_name else {
+            return fail().parse(input);
+        };
+
+        let (input, _) = tag("Balk. ").parse(input)?;
+        // Re-bind `pitcher` to get an instance of it with the right lifetime
+        let (input, pitcher) = tag(pitcher).parse(input)?;
+        let (input, _) = tag(" ").parse(input)?;
+        let (input, (balk_reason, (scores, advances))) = if parsing_context
+            .after(Breakpoints::Season11)
+            && parsing_context.before(Breakpoints::Season11BalkMessageFix)
+        {
+            let (input, balk_reason) = tag("dropped the ball..").parse(input)?;
+            let (input, scores_advances) = scores_and_advances.parse(input)?;
+            // Need to chop off the last period. We know the length of the string will always be the same.
+            (input, (&balk_reason[..17], scores_advances))
+        } else {
+            alt((
+                // Has to be hard-coded because all_consuming_sentence_and has no chance
+                pair(
+                    tag("hit a sick 720. Where did they get a skateboard.."),
+                    preceded(tag("."), scores_and_advances),
+                ),
+                // This is semi-robust to balk messages with periods, but it can still be tripped
+                // up by something like "was distracted by Mr. Peanut. A. Player to second base."
+                // Without knowledge of either what the balk messages are (would require constant
+                // manual updates) or what the baserunner names are (doable but not implemented yet)
+                // it's impossible to parse that correctly in the general case.
+                all_consuming_sentence_and(rest, scores_and_advances),
+            ))
+            .parse(input)?
+        };
+
+        Ok((
+            input,
+            ParsedEventMessage::Balk {
+                pitcher,
+                balk_reason,
+                scores,
+                advances,
+            },
+        ))
     })
 }
 
@@ -396,6 +470,16 @@ fn weather_prosperity<'parse, 'output: 'parse>(
         "Weather Prosperity",
         all_consuming(alt((
             variations,
+            end_game_tokens_inner.map(
+                |(winning_team, winning_team_income, losing_team, losing_team_income)| {
+                    ParsedEventMessage::WeatherProsperityS13 {
+                        winning_team,
+                        winning_team_income,
+                        losing_team,
+                        losing_team_income,
+                    }
+                },
+            ),
             value(
                 ParsedEventMessage::KnownBug {
                     bug: KnownBug::NoOneProspers,
@@ -564,20 +648,34 @@ fn now_batting<'output>() -> impl MyParser<'output, ParsedEventMessage<&'output 
     context(
         "Now Batting",
         all_consuming(alt((
+            // When there are stats
             (
                 preceded(
                     tag("Now batting: "),
                     parse_terminated(" (").and_then(verify_name),
                 ),
                 terminated(now_batting_stats, tag(")")),
+                opt(preceded(tag(" "), swept_away)),
             )
-                .map(|(batter, stats)| ParsedEventMessage::NowBatting { batter, stats }),
-            preceded(tag("Now batting: "), verify_name).map(|batter| {
-                ParsedEventMessage::NowBatting {
-                    batter,
-                    stats: NowBattingStats::NoStats,
-                }
-            }),
+                .map(|(batter, stats, player_swept_away)| {
+                    ParsedEventMessage::NowBatting {
+                        batter,
+                        stats,
+                        player_swept_away,
+                    }
+                }),
+            // When there are no stats
+            (
+                preceded(tag("Now batting: "), verify_name),
+                opt(preceded(tag(" "), swept_away)),
+            )
+                .map(
+                    |(batter, player_swept_away)| ParsedEventMessage::NowBatting {
+                        batter,
+                        stats: NowBattingStats::NoStats,
+                        player_swept_away,
+                    },
+                ),
         ))),
     )
 }
@@ -643,65 +741,85 @@ fn field<'parse, 'output: 'parse>(
         },
     );
 
-    let caught_out = all_consuming_sentence_and(
-        (
-            terminated(parse_and(fly_ball_type_verb_name, " "), tag(" out ")),
-            opt(tag("on a sacrifice fly ")).map(|sacrifice| sacrifice.is_some()),
-            preceded(tag("to "), placed_player_eof),
-        ),
-        (
-            scores_and_advances,
-            opt(bold(exclamation(tag("Perfect catch")))).map(|perfect| perfect.is_some()),
-            opt(ejection(parsing_context)),
-        ),
-    )
-    .map(
-        |(
-            ((batter, fair_ball_type), sacrifice, catcher),
-            ((scores, advances), perfect, ejection),
-        )| ParsedEventMessage::CaughtOut {
-            batter,
-            fair_ball_type,
-            caught_by: catcher,
-            sacrifice,
-            scores,
-            advances,
-            perfect,
-            ejection,
+    let caught_out = try_all_consuming_splits_char(
+        &['.', '!'],
+        |sentence| {
+            let (sentence, (batter, fair_ball_type)) =
+                parse_and(fly_ball_type_verb_name, " ").parse(sentence)?;
+            let (sentence, _) = tag(" out ").parse(sentence)?;
+            let (sentence, sacrifice) = opt(tag("on a sacrifice fly ")).parse(sentence)?;
+            let sacrifice = sacrifice.is_some();
+            let (sentence, _) = tag("to ").parse(sentence)?;
+            let (sentence, jetpack) = match sentence.strip_suffix(" flying a 🚀 Jetpack") {
+                Some(sentence) => (sentence, true),
+                None => (sentence, false),
+            };
+            let (sentence, caught_by) = placed_player_eof(sentence)?;
+
+            Ok((
+                sentence,
+                (batter, fair_ball_type, sacrifice, jetpack, caught_by),
+            ))
+        },
+        |(batter, fair_ball_type, sacrifice, jetpack, caught_by), remainder| {
+            let (remainder, (scores, advances)) = scores_and_advances.parse(remainder)?;
+            let (remainder, perfect) =
+                opt(bold(exclamation(tag("Perfect catch")))).parse(remainder)?;
+            let perfect = perfect.is_some();
+            let (remainder, ejection) = opt(ejection(parsing_context)).parse(remainder)?;
+
+            Ok((
+                remainder,
+                ParsedEventMessage::CaughtOut {
+                    batter,
+                    fair_ball_type,
+                    caught_by,
+                    sacrifice,
+                    scores,
+                    advances,
+                    perfect,
+                    ejection,
+                    jetpack,
+                },
+            ))
         },
     );
 
-    let grounded_out = all_consuming_sentence_and(
-        (
-            parse_terminated(" grounds out").and_then(verify_name),
-            alt((
-                preceded(tag(" to "), placed_player_eof).map(|fielder| vec![fielder]),
-                preceded(tag(", "), fielders_eof),
-            )),
-        ),
-        (
-            scores_and_advances,
-            opt(ejection(parsing_context)),
-            opt(bold(exclamation(tag(if parsing_context.season < 5 {
-                "Perfect catch"
-            } else {
-                "Amazing throw"
-            }))))
-            .map(|perfect| perfect.is_some()),
+    let grounded_out = (
+        many0(assassination),
+        all_consuming_sentence_and(
+            (
+                parse_terminated(" grounds out").and_then(verify_name),
+                alt((
+                    preceded(tag(" to "), placed_player_eof).map(|fielder| vec![fielder]),
+                    preceded(tag(", "), fielders_eof),
+                )),
+            ),
+            (
+                scores_and_advances,
+                opt(ejection(parsing_context)),
+                opt(bold(exclamation(tag(if parsing_context.season < 5 {
+                    "Perfect catch"
+                } else {
+                    "Amazing throw"
+                }))))
+                .map(|perfect| perfect.is_some()),
+            ),
         ),
     )
-    .map(
-        |((batter, fielders), ((scores, advances), ejection, amazing))| {
-            ParsedEventMessage::GroundedOut {
-                batter,
-                fielders,
-                scores,
-                advances,
-                amazing,
-                ejection,
-            }
-        },
-    );
+        .map(
+            |(assassinations, ((batter, fielders), ((scores, advances), ejection, amazing)))| {
+                ParsedEventMessage::GroundedOut {
+                    batter,
+                    fielders,
+                    scores,
+                    advances,
+                    amazing,
+                    ejection,
+                    assassinations,
+                }
+            },
+        );
 
     let forced_out = all_consuming_sentence_and(
         (
@@ -793,6 +911,24 @@ fn field<'parse, 'output: 'parse>(
         },
     );
 
+    let reaches_on_fielders_choice_no_out = all_consuming_sentence_and(
+        (
+            parse_terminated(" reaches on a fielder's choice, fielded by ").and_then(verify_name),
+            placed_player_eof,
+        ),
+        (scores_and_advances, opt(ejection(parsing_context))),
+    )
+    .map(|((batter, fielder), ((scores, advances), ejection))| {
+        ParsedEventMessage::ReachOnFieldersChoice {
+            batter,
+            fielders: vec![fielder],
+            result: FieldingAttempt::NoOut,
+            scores,
+            advances,
+            ejection,
+        }
+    });
+
     let reaches_on_error = all_consuming_sentence_and(
         (
             parse_terminated(" reaches on a ").and_then(verify_name),
@@ -833,10 +969,14 @@ fn field<'parse, 'output: 'parse>(
             sentence(out),
             scores_and_advances,
             opt(ejection(parsing_context)),
+            opt(preceded(tag(" "), double_trouble)),
         ),
     )
     .map(
-        |((batter, sacrifice, fielders), (out_one, out_two, (scores, advances), ejection))| {
+        |(
+            (batter, sacrifice, fielders),
+            (out_one, out_two, (scores, advances), ejection, double_trouble),
+        )| {
             ParsedEventMessage::DoublePlayGrounded {
                 batter,
                 fielders,
@@ -846,6 +986,7 @@ fn field<'parse, 'output: 'parse>(
                 advances,
                 sacrifice,
                 ejection,
+                double_trouble,
             }
         },
     );
@@ -864,10 +1005,14 @@ fn field<'parse, 'output: 'parse>(
             sentence(out),
             scores_and_advances,
             opt(ejection(parsing_context)),
+            opt(preceded(tag(" "), double_trouble)),
         ),
     )
     .map(
-        |(((batter, fair_ball_type), fielders), (out_two, (scores, advances), ejection))| {
+        |(
+            ((batter, fair_ball_type), fielders),
+            (out_two, (scores, advances), ejection, double_trouble),
+        )| {
             ParsedEventMessage::DoublePlayCaught {
                 batter,
                 fair_ball_type,
@@ -876,6 +1021,7 @@ fn field<'parse, 'output: 'parse>(
                 scores,
                 advances,
                 ejection,
+                double_trouble,
             }
         },
     );
@@ -899,6 +1045,7 @@ fn field<'parse, 'output: 'parse>(
         forced_out,
         reaches_on_fielders_choice_out,
         reaches_on_fielders_choice_error,
+        reaches_on_fielders_choice_no_out,
         reaches_on_error,
         double_play_grounded,
         double_play_caught,
@@ -913,6 +1060,7 @@ fn pitch<'parse, 'output: 'parse>(
     parsing_context: &'parse ParsingContext<'parse>,
 ) -> impl MyParser<'output, ParsedEventMessage<&'output str>> + 'parse {
     let fair_ball = (
+        many0(assassination),
         sentence((
             parse_terminated(" hits a "),
             try_from_words_m_n(1, 2),
@@ -925,6 +1073,7 @@ fn pitch<'parse, 'output: 'parse>(
     )
         .map(
             |(
+                assassinations,
                 (batter, fair_ball_type, destination),
                 aurora_photos,
                 cheer,
@@ -938,10 +1087,12 @@ fn pitch<'parse, 'output: 'parse>(
                 aurora_photos,
                 door_prizes,
                 efflorescence,
+                assassinations,
             },
         );
 
     let struck_out = (
+        many0(assassination),
         opt(sentence(preceded(tag("Foul "), try_from_word))),
         sentence((
             parse_terminated(strike_out_text(
@@ -958,7 +1109,13 @@ fn pitch<'parse, 'output: 'parse>(
         .and(opt(ejection(parsing_context)))
         .and(opt(wither(parsing_context)))
         .map(
-            |((((((foul, (batter, strike)), steals), aurora_photos), cheer), ejection), wither)| {
+            |(
+                (
+                    ((((assassinations, foul, (batter, strike)), steals), aurora_photos), cheer),
+                    ejection,
+                ),
+                wither,
+            )| {
                 ParsedEventMessage::StrikeOut {
                     foul,
                     batter,
@@ -968,6 +1125,7 @@ fn pitch<'parse, 'output: 'parse>(
                     aurora_photos,
                     ejection,
                     wither,
+                    assassinations,
                 }
             },
         );
@@ -1004,30 +1162,39 @@ fn pitch<'parse, 'output: 'parse>(
         },
     );
 
-    let walks = preceded(
-        sentence(tag("Ball 4")),
-        sentence(parse_terminated(" walks")),
-    )
-    .and(scores_and_advances)
-    .and(opt(preceded(tag(" "), aurora(parsing_context))))
-    .and(opt(preceded(tag(" "), cheer(parsing_context))))
-    .and(opt(ejection(parsing_context)))
-    .and(opt(wither(parsing_context)))
-    .map(
-        |(((((batter, (scores, advances)), aurora_photos), cheer), ejection), wither)| {
-            ParsedEventMessage::Walk {
-                batter,
-                scores,
-                advances,
-                cheer,
-                aurora_photos,
-                ejection,
+    let walks = many0(assassination)
+        .and(preceded(
+            sentence(tag("Ball 4")),
+            sentence(parse_terminated(" walks")),
+        ))
+        .and(scores_and_advances)
+        .and(opt(preceded(tag(" "), aurora(parsing_context))))
+        .and(opt(preceded(tag(" "), cheer(parsing_context))))
+        .and(opt(ejection(parsing_context)))
+        .and(opt(wither(parsing_context)))
+        .map(
+            |(
+                (
+                    ((((assassinations, batter), (scores, advances)), aurora_photos), cheer),
+                    ejection,
+                ),
                 wither,
-            }
-        },
-    );
+            )| {
+                ParsedEventMessage::Walk {
+                    batter,
+                    scores,
+                    advances,
+                    cheer,
+                    aurora_photos,
+                    ejection,
+                    wither,
+                    assassinations,
+                }
+            },
+        );
 
-    let ball = (preceded(sentence(tag("Ball")), sentence(score_update)))
+    let ball = many0(assassination)
+        .and(preceded(sentence(tag("Ball")), sentence(score_update)))
         .and(many0(base_steal_sentence))
         .and(opt(preceded(tag(" "), aurora(parsing_context))))
         .and(opt(preceded(tag(" "), cheer(parsing_context))))
@@ -1037,7 +1204,13 @@ fn pitch<'parse, 'output: 'parse>(
         .and(efflorescences)
         .map(
             |(
-                ((((((count, steals), aurora_photos), cheer), ejection), door_prizes), wither),
+                (
+                    (
+                        (((((assassinations, count), steals), aurora_photos), cheer), ejection),
+                        door_prizes,
+                    ),
+                    wither,
+                ),
                 efflorescence,
             )| ParsedEventMessage::Ball {
                 steals,
@@ -1048,11 +1221,17 @@ fn pitch<'parse, 'output: 'parse>(
                 door_prizes,
                 wither,
                 efflorescence,
+                assassinations,
             },
         );
 
-    let strike = sentence(preceded(tag("Strike, "), try_from_word))
-        .and(cut((sentence(score_update), many0(base_steal_sentence))))
+    let strike = many0(assassination)
+        .and(sentence(preceded(tag("Strike, "), try_from_word)))
+        .and(cut((
+            sentence(score_update),
+            opt(tag(" 😲 Surprise Strike!")).map(|opt| opt.is_some()),
+            many0(base_steal_sentence),
+        )))
         .and(opt(preceded(tag(" "), aurora(parsing_context))))
         .and(opt(preceded(tag(" "), cheer(parsing_context))))
         .and(opt(ejection(parsing_context)))
@@ -1062,7 +1241,19 @@ fn pitch<'parse, 'output: 'parse>(
         .map(
             |(
                 (
-                    (((((strike, (count, steals)), aurora_photos), cheer), ejection), door_prizes),
+                    (
+                        (
+                            (
+                                (
+                                    ((assassinations, strike), (count, surprise_strike, steals)),
+                                    aurora_photos,
+                                ),
+                                cheer,
+                            ),
+                            ejection,
+                        ),
+                        door_prizes,
+                    ),
                     wither,
                 ),
                 efflorescence,
@@ -1076,10 +1267,13 @@ fn pitch<'parse, 'output: 'parse>(
                 door_prizes,
                 wither,
                 efflorescence,
+                surprise_strike,
+                assassinations,
             },
         );
 
-    let foul = sentence(preceded(tag("Foul "), try_from_word))
+    let foul = many0(assassination)
+        .and(sentence(preceded(tag("Foul "), try_from_word)))
         .and(sentence(score_update))
         .and(many0(base_steal_sentence))
         .and(opt(preceded(tag(" "), aurora(parsing_context))))
@@ -1089,7 +1283,13 @@ fn pitch<'parse, 'output: 'parse>(
         .and(efflorescences)
         .map(
             |(
-                ((((((foul, count), steals), aurora_photos), cheer), door_prizes), wither),
+                (
+                    (
+                        (((((assassinations, foul), count), steals), aurora_photos), cheer),
+                        door_prizes,
+                    ),
+                    wither,
+                ),
                 efflorescence,
             )| ParsedEventMessage::Foul {
                 foul,
@@ -1100,6 +1300,7 @@ fn pitch<'parse, 'output: 'parse>(
                 door_prizes,
                 wither,
                 efflorescence,
+                assassinations,
             },
         );
 
@@ -1148,15 +1349,34 @@ fn pitching_matchup<'parse, 'output: 'parse>(
     )
 }
 
+fn lineup_manager(input: &str) -> IResult<'_, &str, &str> {
+    let (input, _) = tag("Manager: ").parse(input)?;
+    let (input, manager_name) = parse_terminated("<br>").parse(input)?;
+    Ok((input, manager_name))
+}
+
 fn lineup<'output>(side: HomeAway) -> impl MyParser<'output, ParsedEventMessage<&'output str>> {
     context(
         "Lineup",
-        all_consuming(many1(delimited(
-            (digit1, tag(". ")),
-            take_until("<br>").and_then(placed_player_eof),
-            tag("<br>"),
-        )))
-        .map(move |players| ParsedEventMessage::Lineup { side, players }),
+        all_consuming(move |input| {
+            let (input, manager_name) = opt(lineup_manager).parse(input)?;
+
+            let (input, players) = many1(delimited(
+                (digit1, tag(". ")),
+                take_until("<br>").and_then(placed_player_eof),
+                tag("<br>"),
+            ))
+            .parse(input)?;
+
+            Ok((
+                input,
+                ParsedEventMessage::Lineup {
+                    side,
+                    manager_name,
+                    players,
+                },
+            ))
+        }),
     )
 }
 
@@ -1165,7 +1385,7 @@ fn inning_start<'parse, 'output: 'parse>(
     parsing_context: &'parse ParsingContext<'parse>,
 ) -> impl MyParser<'output, ParsedEventMessage<&'output str>> + 'parse {
     let parser = |input: &'output str| {
-        let pitching_team_emoji = |input| match event.inning.pitching_team() {
+        let mut pitching_team_emoji = |input| match event.inning.pitching_team() {
             Some(side) => team_emoji(side, parsing_context).parse(input),
             None => fail().parse(input),
         };
@@ -1198,6 +1418,54 @@ fn inning_start<'parse, 'output: 'parse>(
                 },
             );
 
+        // Yeah, this name is confusing with pitching_team_emoji, sorry
+        let mut pitching_emoji_team = |input| match event.inning.pitching_team() {
+            Some(side) => side_team(side, parsing_context).parse(input),
+            None => fail().parse(input),
+        };
+
+        let preempting_pitcher = move |input| {
+            let (input, _) = tag(" ").parse(input)?;
+            let (input, leaving_placed_pitcher) =
+                parse_terminated(" is leaving the game. ").parse(input)?;
+            let (_, leaving_pitcher) = placed_player_eof.parse(leaving_placed_pitcher)?;
+            let (input, _) = pitching_team_emoji.parse(input)?;
+            let (input, _) = tag(" ").parse(input)?;
+            let (input, arriving_placed_pitcher) =
+                parse_terminated(" takes the mound.").parse(input)?;
+            let (_, arriving_pitcher) = placed_player_eof.parse(arriving_placed_pitcher)?;
+
+            Ok((
+                input,
+                BasicPitcherSwap {
+                    leaving_pitcher,
+                    arriving_pitcher,
+                },
+            ))
+        };
+
+        let flooded_pitcher = move |input| {
+            let (input, _) = tag(" ").parse(input)?;
+            let (input, _) = pitching_emoji_team.parse(input)?;
+            let (input, _) = tag(" ").parse(input)?;
+            let (input, incoming_pitcher_name) = parse_terminated(" pitching. ")
+                .and_then(verify_name)
+                .parse(input)?;
+            let (input, swept_pitcher_name) = parse_terminated(" was swept away in the 🌊 Flood!")
+                .and_then(verify_name)
+                .parse(input)?;
+            let (input, preemption) = opt(preempting_pitcher).parse(input)?;
+
+            Ok((
+                input,
+                StartOfInningPitcher::Flooded {
+                    swept_pitcher_name,
+                    incoming_pitcher_name,
+                    preemption,
+                },
+            ))
+        };
+
         let mut start_inning = |input| {
             let (input, _) = space0(input)?;
             let (input, _) = tag("Start of the ").parse(input)?;
@@ -1215,51 +1483,76 @@ fn inning_start<'parse, 'output: 'parse>(
 
         let automatic_runner = sentence(parse_terminated(" starts the inning on second base"));
 
-        let mut pitcher_status = alt((keep_pitcher, swap_pitcher));
+        // flooded_pitcher needs to be before keep_pitcher or it causes a false positive
+        let pitcher_status = alt((flooded_pitcher, keep_pitcher, swap_pitcher));
 
-        if is_superstar_game(parsing_context.day)
-            || parsing_context.home_emoji_team.name == "Simulacra I"
-            || parsing_context.away_emoji_team.name == "Simulacra I"
-        {
-            let (input, (side, number, batting_team)) = start_inning.parse(input)?;
-            let (input, automatic_runner) = opt(automatic_runner).parse(input)?;
-            let (input, pitcher_status) = opt(pitcher_status).parse(input)?;
+        let (input, (side, number, batting_team)) = start_inning.parse(input)?;
+        let (input, automatic_runner) = opt(automatic_runner).parse(input)?;
+        let (input, pitcher_status) = opt(pitcher_status).parse(input)?;
 
-            Ok((
-                input,
-                ParsedEventMessage::InningStart {
-                    number,
-                    side,
-                    batting_team,
-                    automatic_runner,
-                    pitcher_status,
-                },
-            ))
-        } else {
-            let (input, (side, number, batting_team)) = start_inning.parse(input)?;
-            let (input, automatic_runner) = opt(automatic_runner).parse(input)?;
-            let (input, pitcher_status) = pitcher_status.parse(input)?;
-
-            Ok((
-                input,
-                ParsedEventMessage::InningStart {
-                    number,
-                    side,
-                    batting_team,
-                    automatic_runner,
-                    pitcher_status: Some(pitcher_status),
-                },
-            ))
-        }
+        Ok((
+            input,
+            ParsedEventMessage::InningStart {
+                number,
+                side,
+                batting_team,
+                automatic_runner,
+                pitcher_status,
+            },
+        ))
     };
 
     context("Inning Start", all_consuming(parser))
 }
 
-fn mound_visit<'parse, 'output: 'parse>(
+// TODO The below could be condensed into fewer parsers that take either
+//   "mound visit" or "pitching change" as a parameter
+fn parse_mound_visit_basic(input: &str) -> IResult<'_, &str, EmojiTeam<&str>> {
+    let (input, _) = tag("The ").parse(input)?;
+    let (input, emoji_team_str) =
+        parse_terminated(" manager is making a mound visit.").parse(input)?;
+    let (_, emoji_team) = emoji_team_eof.parse(emoji_team_str)?;
+    Ok((input, emoji_team))
+}
+
+fn parse_mound_visit_basic_with_manager(input: &str) -> IResult<'_, &str, (&str, EmojiTeam<&str>)> {
+    let (input, _) = tag("Manager ").parse(input)?;
+    // Nobody submit the name "of the" please
+    let (input, manager_name) = parse_terminated(" of the ").parse(input)?;
+    let (input, emoji_team_str) = parse_terminated(" is making a mound visit.").parse(input)?;
+    let (_, emoji_team) = emoji_team_eof.parse(emoji_team_str)?;
+    Ok((input, (manager_name, emoji_team)))
+}
+
+fn parse_mound_visit_pitching_change(input: &str) -> IResult<'_, &str, EmojiTeam<&str>> {
+    let (input, _) = tag("The ").parse(input)?;
+    let (input, emoji_team_str) =
+        parse_terminated(" manager is making a pitching change.").parse(input)?;
+    let (_, emoji_team) = emoji_team_eof.parse(emoji_team_str)?;
+    Ok((input, emoji_team))
+}
+
+fn parse_mound_visit_pitching_change_with_manager(
+    input: &str,
+) -> IResult<'_, &str, (&str, EmojiTeam<&str>)> {
+    let (input, _) = tag("Manager ").parse(input)?;
+    // Nobody submit the name "of the" please
+    let (input, manager_name) = parse_terminated(" of the ").parse(input)?;
+    let (input, emoji_team_str) = parse_terminated(" is making a pitching change.").parse(input)?;
+    let (_, emoji_team) = emoji_team_eof.parse(emoji_team_str)?;
+    Ok((input, (manager_name, emoji_team)))
+}
+
+fn parse_mound_visit_pitcher_swap<'parse, 'output: 'parse>(
     event: &'output Event,
     parsing_context: &'parse ParsingContext<'parse>,
-) -> impl MyParser<'output, ParsedEventMessage<&'output str>> + 'parse {
+) -> impl MyParser<
+    'output,
+    (
+        (Option<&'output str>, PlacedPlayer<&'output str>),
+        (Option<&'output str>, (Option<Place>, &'output str)),
+    ),
+> + 'parse {
     let leaves_player = |i| {
         if parsing_context.before(Breakpoints::S2D152) {
             (terminated(try_from_word, tag(" ")), verify_name)
@@ -1277,45 +1570,59 @@ fn mound_visit<'parse, 'output: 'parse>(
         None => fail().parse(input),
     };
 
+    (
+        sentence((
+            opt(terminated(team_emoji, tag(" "))),
+            parse_terminated(" is leaving the game").and_then(placed_player_eof),
+        )),
+        sentence((
+            opt(terminated(team_emoji, tag(" "))),
+            parse_terminated(" takes the mound").and_then(leaves_player),
+        )),
+    )
+}
+
+fn mound_visit<'parse, 'output: 'parse>(
+    event: &'output Event,
+    parsing_context: &'parse ParsingContext<'parse>,
+) -> impl MyParser<'output, ParsedEventMessage<&'output str>> + 'parse {
     let mound_visit_options = alt((
-        preceded(
-            tag("The "),
-            parse_terminated(" manager is making a mound visit.").and_then(emoji_team_eof),
-        )
-        .map(|team| ParsedEventMessage::MoundVisit {
+        parse_mound_visit_basic.map(|team| ParsedEventMessage::MoundVisit {
+            manager_name: None,
             team,
             mound_visit_type: MoundVisitType::MoundVisit,
         }),
-        preceded(
-            tag("The "),
-            parse_terminated(" manager is making a pitching change.").and_then(emoji_team_eof),
-        )
-        .map(|team| ParsedEventMessage::MoundVisit {
+        parse_mound_visit_basic_with_manager.map(|(manager_name, team)| {
+            ParsedEventMessage::MoundVisit {
+                manager_name: Some(manager_name),
+                team,
+                mound_visit_type: MoundVisitType::MoundVisit,
+            }
+        }),
+        parse_mound_visit_pitching_change.map(|team| ParsedEventMessage::MoundVisit {
+            manager_name: None,
             team,
             mound_visit_type: MoundVisitType::PitchingChange,
         }),
-        (
-            sentence((
-                opt(terminated(team_emoji, tag(" "))),
-                parse_terminated(" is leaving the game").and_then(placed_player_eof),
-            )),
-            sentence((
-                opt(terminated(team_emoji, tag(" "))),
-                parse_terminated(" takes the mound").and_then(leaves_player),
-            )),
-        )
-            .map(
-                |(
-                    (leaving_pitcher_emoji, leaving_pitcher),
-                    (arriving_pitcher_emoji, (arriving_pitcher_place, arriving_pitcher_name)),
-                )| ParsedEventMessage::PitcherSwap {
-                    leaving_pitcher_emoji,
-                    leaving_pitcher,
-                    arriving_pitcher_emoji,
-                    arriving_pitcher_place,
-                    arriving_pitcher_name,
-                },
-            ),
+        parse_mound_visit_pitching_change_with_manager.map(|(manager_name, team)| {
+            ParsedEventMessage::MoundVisit {
+                manager_name: Some(manager_name),
+                team,
+                mound_visit_type: MoundVisitType::PitchingChange,
+            }
+        }),
+        parse_mound_visit_pitcher_swap(event, parsing_context).map(
+            |(
+                (leaving_pitcher_emoji, leaving_pitcher),
+                (arriving_pitcher_emoji, (arriving_pitcher_place, arriving_pitcher_name)),
+            )| ParsedEventMessage::PitcherSwap {
+                leaving_pitcher_emoji,
+                leaving_pitcher,
+                arriving_pitcher_emoji,
+                arriving_pitcher_place,
+                arriving_pitcher_name,
+            },
+        ),
         sentence(parse_terminated(" remains in the game").and_then(placed_player_eof))
             .map(|remaining_pitcher| ParsedEventMessage::PitcherRemains { remaining_pitcher }),
     ));
@@ -1327,7 +1634,19 @@ fn live_now<'parse, 'output: 'parse>(
     parsing_context: &'parse ParsingContext<'parse>,
 ) -> impl MyParser<'output, ParsedEventMessage<&'output str>> + 'parse {
     let time_options = |input: &'output str| {
-        if parsing_context.after(Breakpoints::Season3) {
+        if parsing_context.before(Breakpoints::Season3) {
+            (
+                parse_terminated(" @ ").and_then(emoji_team_eof),
+                emoji_team_eof,
+            )
+                .map(|(away_team, home_team)| ParsedEventMessage::LiveNow {
+                    away_team,
+                    home_team,
+                    stadium: None,
+                    weather: None,
+                })
+                .parse(input)
+        } else if parsing_context.before(Breakpoints::Season15) {
             (
                 parse_terminated(" vs ").and_then(emoji_team_eof),
                 parse_terminated(" @ ").and_then(emoji_team_eof),
@@ -1338,20 +1657,48 @@ fn live_now<'parse, 'output: 'parse>(
                         away_team,
                         home_team,
                         stadium: Some(stadium),
+                        weather: None,
                     },
                 )
                 .parse(input)
         } else {
-            (
-                parse_terminated(" @ ").and_then(emoji_team_eof),
-                emoji_team_eof,
-            )
-                .map(|(away_team, home_team)| ParsedEventMessage::LiveNow {
+            let (input, away_team) = parse_terminated(" @ ")
+                .and_then(emoji_team_eof)
+                .parse(input)?;
+            let (input, home_team) = parse_terminated(" (Weather: ")
+                .and_then(emoji_team_eof)
+                .parse(input)?;
+            let (input, weather) = alt((
+                preceded(
+                    tag("Pollen - Pollen Count: "),
+                    alt((
+                        tag("LOW)").map(|_| AugmentedWeather::Pollen {
+                            pollen_count: PollenCount::Low,
+                        }),
+                        tag("MEDIUM)").map(|_| AugmentedWeather::Pollen {
+                            pollen_count: PollenCount::Medium,
+                        }),
+                        tag("HIGH)").map(|_| AugmentedWeather::Pollen {
+                            pollen_count: PollenCount::High,
+                        }),
+                        tag("EXTREME)").map(|_| AugmentedWeather::Pollen {
+                            pollen_count: PollenCount::Extreme,
+                        }),
+                    )),
+                ),
+                parse_terminated(")").map(AugmentedWeather::WeatherName),
+            ))
+            .parse(input)?;
+
+            Ok((
+                input,
+                ParsedEventMessage::LiveNow {
                     away_team,
                     home_team,
                     stadium: None,
-                })
-                .parse(input)
+                    weather: Some(weather),
+                },
+            ))
         }
     };
 
@@ -1744,6 +2091,99 @@ fn weather_simulacrum<'parse, 'output: 'parse>(
     context("Weather Simulacrum", f)
 }
 
+fn weather_noisy<'parse, 'output: 'parse>(
+) -> impl MyParser<'output, ParsedEventMessage<&'output str>> + 'parse {
+    let f = |input| {
+        let (input, player_team) = parse_terminated(" were defeated by the ").parse(input)?;
+        let (_, player_team) = emoji_team_eof(player_team)?;
+
+        let (input, ump_team) = parse_terminated(" and earned ").parse(input)?;
+        let (_, ump_team) = emoji_team_eof(ump_team)?;
+
+        let (input, tokens_earnt) = u32(input)?;
+        let (input, _) = tag(" 🪙.").parse(input)?;
+
+        Ok((
+            input,
+            ParsedEventMessage::WeatherNoisy {
+                player_team,
+                ump_team,
+                tokens_earnt,
+            },
+        ))
+    };
+
+    context("Weather Noisy", f)
+}
+
+fn end_game_tokens_inner(
+    input: &str,
+) -> IResult<'_, &str, (EmojiTeam<&str>, u32, EmojiTeam<&str>, u32)> {
+    let (input, winning_emoji_team) = parse_terminated(" earned ").parse(input)?;
+    let (_, winning_team) = emoji_team_eof(winning_emoji_team)?;
+    let (input, winning_team_income) = u32.parse(input)?;
+    let (input, _) = tag(" 🪙. ").parse(input)?;
+
+    let (input, losing_emoji_team) = parse_terminated(" earned ").parse(input)?;
+    let (_, losing_team) = emoji_team_eof(losing_emoji_team)?;
+    let (input, losing_team_income) = u32.parse(input)?;
+    let (input, _) = tag(" 🪙.").parse(input)?;
+
+    Ok((
+        input,
+        (
+            winning_team,
+            winning_team_income,
+            losing_team,
+            losing_team_income,
+        ),
+    ))
+}
+
+fn end_game_tokens<'parse, 'output: 'parse>(
+) -> impl MyParser<'output, ParsedEventMessage<&'output str>> + 'parse {
+    context("End game tokens", |input| {
+        let (input, (winning_team, winning_team_income, losing_team, losing_team_income)) =
+            end_game_tokens_inner.parse(input)?;
+
+        Ok((
+            input,
+            ParsedEventMessage::EndGameIncome {
+                winning_team,
+                winning_team_income,
+                losing_team,
+                losing_team_income,
+            },
+        ))
+    })
+}
+fn weather_pollen<'parse, 'output: 'parse>(
+) -> impl MyParser<'output, ParsedEventMessage<&'output str>> + 'parse {
+    let f = |input| {
+        let (input, winning_emoji_team) = parse_terminated(" earned ").parse(input)?;
+        let (_, winning_team) = emoji_team_eof(winning_emoji_team)?;
+        let (input, winning_team_pollen) = u32.parse(input)?;
+        let (input, _) = tag(" 🏵️. ").parse(input)?;
+
+        let (input, losing_emoji_team) = parse_terminated(" earned ").parse(input)?;
+        let (_, losing_team) = emoji_team_eof(losing_emoji_team)?;
+        let (input, losing_team_pollen) = u32.parse(input)?;
+        let (input, _) = tag(" 🏵️.").parse(input)?;
+
+        Ok((
+            input,
+            ParsedEventMessage::WeatherPollen {
+                winning_team,
+                winning_team_pollen,
+                losing_team,
+                losing_team_pollen,
+            },
+        ))
+    };
+
+    context("Weather Pollen", f)
+}
+
 #[cfg(test)]
 mod test {
     use nom::{Finish, Parser};
@@ -1772,6 +2212,7 @@ mod test {
             },
             season: 5,
             day: None,
+            pitcher_name: None,
         };
 
         assert_eq!(
@@ -1805,7 +2246,8 @@ mod test {
                     scores: Vec::new(),
                     advances: Vec::new(),
                     sacrifice: false,
-                    ejection: None
+                    ejection: None,
+                    double_trouble: None,
                 }
             ))
         );
@@ -1828,6 +2270,7 @@ mod test {
             },
             season: 5,
             day: None,
+            pitcher_name: None,
         };
 
         assert_eq!(
@@ -1871,6 +2314,7 @@ mod test {
             },
             season: 5,
             day: None,
+            pitcher_name: None,
         };
 
         assert_eq!(
@@ -1880,7 +2324,8 @@ mod test {
                 ParsedEventMessage::LiveNow {
                     away_team: parsing_context.away_emoji_team,
                     home_team: parsing_context.home_emoji_team,
-                    stadium: Some("A Big Pile of Dirt")
+                    stadium: Some("A Big Pile of Dirt"),
+                    weather: None,
                 }
             ))
         );
@@ -1920,6 +2365,7 @@ mod test {
             },
             season: 9,
             day: Some(Day::Day(0)),
+            pitcher_name: None,
         };
         super::weather_consumption_consumes(&context)
             .parse(text)
@@ -1944,6 +2390,7 @@ mod test {
             },
             season: 9,
             day: Some(Day::Day(0)),
+            pitcher_name: None,
         };
         super::weather_consumption_consumes(&context)
             .parse(text)
@@ -1968,6 +2415,7 @@ mod test {
             },
             season: 9,
             day: Some(Day::Day(106)),
+            pitcher_name: None,
         };
         let (_, event) = super::field(&parsing_context).parse(text).unwrap();
 

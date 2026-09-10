@@ -1,0 +1,5789 @@
+[
+  {
+    "away_team": {
+      "emoji": "🍉",
+      "name": "Carnegie Watermelons"
+    },
+    "event_type": "LiveNow",
+    "home_team": {
+      "emoji": "🐀",
+      "name": "Sobral Secret Saturnian Rats"
+    },
+    "stadium": "Eclipse Museum Grounds",
+    "weather": null
+  },
+  {
+    "away_pitcher": "Makena Yoshimura",
+    "away_team": {
+      "emoji": "🍉",
+      "name": "Carnegie Watermelons"
+    },
+    "event_type": "PitchingMatchup",
+    "home_pitcher": "Kibbles Boone",
+    "home_team": {
+      "emoji": "🐀",
+      "name": "Sobral Secret Saturnian Rats"
+    }
+  },
+  {
+    "event_type": "Lineup",
+    "manager_name": null,
+    "players": [
+      {
+        "name": "Null Kinoshita",
+        "place": "3B"
+      },
+      {
+        "name": "Lydia Masson",
+        "place": "DH"
+      },
+      {
+        "name": "Liqin Dixon",
+        "place": "RF"
+      },
+      {
+        "name": "Jupiter Riggs",
+        "place": "1B"
+      },
+      {
+        "name": "Kid Zuñiga",
+        "place": "2B"
+      },
+      {
+        "name": "P. Sauer",
+        "place": "SS"
+      },
+      {
+        "name": "Brooks Yasuda",
+        "place": "CF"
+      },
+      {
+        "name": "Wilma Hudson",
+        "place": "LF"
+      },
+      {
+        "name": "Hannah Greenberg",
+        "place": "C"
+      }
+    ],
+    "side": "Away"
+  },
+  {
+    "event_type": "Lineup",
+    "manager_name": null,
+    "players": [
+      {
+        "name": "Kyle van de Velde",
+        "place": "C"
+      },
+      {
+        "name": "Jaye Koppel",
+        "place": "CF"
+      },
+      {
+        "name": "V. Harrington",
+        "place": "1B"
+      },
+      {
+        "name": "Lucy Kumari",
+        "place": "RF"
+      },
+      {
+        "name": "Grumble Bertrand",
+        "place": "DH"
+      },
+      {
+        "name": "Kelli Lucas",
+        "place": "LF"
+      },
+      {
+        "name": "D. Vargas",
+        "place": "3B"
+      },
+      {
+        "name": "Ana Carolina Hayes",
+        "place": "2B"
+      },
+      {
+        "name": "Yahoo Vogel",
+        "place": "SS"
+      }
+    ],
+    "side": "Home"
+  },
+  {
+    "event_type": "PlayBall"
+  },
+  {
+    "automatic_runner": null,
+    "batting_team": {
+      "emoji": "🍉",
+      "name": "Carnegie Watermelons"
+    },
+    "event_type": "InningStart",
+    "number": 1,
+    "pitcher_status": {
+      "Same": {
+        "emoji": "🐀",
+        "name": "Kibbles Boone"
+      }
+    },
+    "side": "Top"
+  },
+  {
+    "batter": "Null Kinoshita",
+    "event_type": "NowBatting",
+    "player_swept_away": null,
+    "stats": "FirstPA"
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "batter": "Null Kinoshita",
+    "cheer": null,
+    "destination": "CenterField",
+    "door_prizes": [],
+    "efflorescence": [],
+    "event_type": "FairBall",
+    "fair_ball_type": "LineDrive"
+  },
+  {
+    "advances": [],
+    "batter": "Null Kinoshita",
+    "caught_by": {
+      "name": "Jaye Koppel",
+      "place": "CF"
+    },
+    "ejection": null,
+    "event_type": "CaughtOut",
+    "fair_ball_type": "LineDrive",
+    "jetpack": false,
+    "perfect": false,
+    "sacrifice": false,
+    "scores": []
+  },
+  {
+    "batter": "Lydia Masson",
+    "event_type": "NowBatting",
+    "player_swept_away": null,
+    "stats": "FirstPA"
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "batter": "Lydia Masson",
+    "cheer": null,
+    "destination": "LeftField",
+    "door_prizes": [],
+    "efflorescence": [],
+    "event_type": "FairBall",
+    "fair_ball_type": "LineDrive"
+  },
+  {
+    "advances": [],
+    "batter": "Lydia Masson",
+    "distance": "Double",
+    "ejection": null,
+    "event_type": "BatterToBase",
+    "fair_ball_type": "LineDrive",
+    "fielder": {
+      "name": "Kelli Lucas",
+      "place": "LF"
+    },
+    "scores": []
+  },
+  {
+    "batter": "Liqin Dixon",
+    "event_type": "NowBatting",
+    "player_swept_away": null,
+    "stats": "FirstPA"
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": "TheFaithfulAreShoutingAtTheTopOfTheirLungs",
+    "count": [
+      0,
+      1
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "ejection": null,
+    "event_type": "Strike",
+    "steals": [],
+    "strike": "Looking",
+    "surprise_strike": false,
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      0,
+      2
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "ejection": null,
+    "event_type": "Strike",
+    "steals": [],
+    "strike": "Looking",
+    "surprise_strike": false,
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      1,
+      2
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "ejection": null,
+    "event_type": "Ball",
+    "steals": [],
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      2,
+      2
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "ejection": null,
+    "event_type": "Ball",
+    "steals": [],
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "batter": "Liqin Dixon",
+    "cheer": null,
+    "ejection": null,
+    "event_type": "StrikeOut",
+    "foul": null,
+    "steals": [],
+    "strike": "Looking",
+    "wither": null
+  },
+  {
+    "batter": "Jupiter Riggs",
+    "event_type": "NowBatting",
+    "player_swept_away": null,
+    "stats": "FirstPA"
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "batter": "Jupiter Riggs",
+    "cheer": "SupportersYellAtFullVolume",
+    "destination": "LeftField",
+    "door_prizes": [],
+    "efflorescence": [],
+    "event_type": "FairBall",
+    "fair_ball_type": "LineDrive"
+  },
+  {
+    "advances": [
+      {
+        "base": "Third",
+        "runner": "Lydia Masson"
+      }
+    ],
+    "batter": "Jupiter Riggs",
+    "distance": "Single",
+    "ejection": null,
+    "event_type": "BatterToBase",
+    "fair_ball_type": "LineDrive",
+    "fielder": {
+      "name": "Kelli Lucas",
+      "place": "LF"
+    },
+    "scores": []
+  },
+  {
+    "batter": "Kid Zuñiga",
+    "event_type": "NowBatting",
+    "player_swept_away": null,
+    "stats": "FirstPA"
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "batter": "Kid Zuñiga",
+    "cheer": null,
+    "destination": "ThirdBase",
+    "door_prizes": [],
+    "efflorescence": [],
+    "event_type": "FairBall",
+    "fair_ball_type": "GroundBall"
+  },
+  {
+    "advances": [],
+    "batter": "Kid Zuñiga",
+    "ejection": null,
+    "event_type": "ForceOut",
+    "fair_ball_type": "GroundBall",
+    "fielders": [
+      {
+        "name": "D. Vargas",
+        "place": "3B"
+      },
+      {
+        "name": "Ana Carolina Hayes",
+        "place": "2B"
+      }
+    ],
+    "out": {
+      "base": "Second",
+      "runner": "Jupiter Riggs"
+    },
+    "scores": []
+  },
+  {
+    "event_type": "InningEnd",
+    "number": 1,
+    "side": "Top"
+  },
+  {
+    "automatic_runner": null,
+    "batting_team": {
+      "emoji": "🐀",
+      "name": "Sobral Secret Saturnian Rats"
+    },
+    "event_type": "InningStart",
+    "number": 1,
+    "pitcher_status": {
+      "Same": {
+        "emoji": "🍉",
+        "name": "Makena Yoshimura"
+      }
+    },
+    "side": "Bottom"
+  },
+  {
+    "batter": "Kyle van de Velde",
+    "event_type": "NowBatting",
+    "player_swept_away": null,
+    "stats": "FirstPA"
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      0,
+      1
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "ejection": null,
+    "event_type": "Strike",
+    "steals": [],
+    "strike": "Looking",
+    "surprise_strike": false,
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      1,
+      1
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "ejection": null,
+    "event_type": "Ball",
+    "steals": [],
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      2,
+      1
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "ejection": null,
+    "event_type": "Ball",
+    "steals": [],
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      3,
+      1
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "ejection": null,
+    "event_type": "Ball",
+    "steals": [],
+    "wither": null
+  },
+  {
+    "advances": [],
+    "assassinations": [],
+    "aurora_photos": null,
+    "batter": "Kyle van de Velde",
+    "cheer": null,
+    "ejection": null,
+    "event_type": "Walk",
+    "scores": [],
+    "wither": null
+  },
+  {
+    "batter": "Jaye Koppel",
+    "event_type": "NowBatting",
+    "player_swept_away": null,
+    "stats": "FirstPA"
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      1,
+      0
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "ejection": null,
+    "event_type": "Ball",
+    "steals": [],
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      1,
+      1
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "event_type": "Foul",
+    "foul": "Ball",
+    "steals": [],
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "batter": "Jaye Koppel",
+    "cheer": null,
+    "destination": "SecondBase",
+    "door_prizes": [],
+    "efflorescence": [],
+    "event_type": "FairBall",
+    "fair_ball_type": "GroundBall"
+  },
+  {
+    "advances": [],
+    "batter": "Jaye Koppel",
+    "double_trouble": null,
+    "ejection": null,
+    "event_type": "DoublePlayGrounded",
+    "fielders": [
+      {
+        "name": "Kid Zuñiga",
+        "place": "2B"
+      },
+      {
+        "name": "Jupiter Riggs",
+        "place": "1B"
+      }
+    ],
+    "out_one": {
+      "base": "SecondBase",
+      "runner": "Kyle van de Velde"
+    },
+    "out_two": {
+      "base": "FirstBase",
+      "runner": "Jaye Koppel"
+    },
+    "sacrifice": false,
+    "scores": []
+  },
+  {
+    "batter": "V. Harrington",
+    "event_type": "NowBatting",
+    "player_swept_away": null,
+    "stats": "FirstPA"
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      0,
+      1
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "ejection": null,
+    "event_type": "Strike",
+    "steals": [],
+    "strike": "Swinging",
+    "surprise_strike": false,
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      0,
+      2
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "event_type": "Foul",
+    "foul": "Ball",
+    "steals": [],
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "batter": "V. Harrington",
+    "cheer": null,
+    "ejection": null,
+    "event_type": "StrikeOut",
+    "foul": null,
+    "steals": [],
+    "strike": "Looking",
+    "wither": null
+  },
+  {
+    "event_type": "InningEnd",
+    "number": 1,
+    "side": "Bottom"
+  },
+  {
+    "automatic_runner": null,
+    "batting_team": {
+      "emoji": "🍉",
+      "name": "Carnegie Watermelons"
+    },
+    "event_type": "InningStart",
+    "number": 2,
+    "pitcher_status": {
+      "Same": {
+        "emoji": "🐀",
+        "name": "Kibbles Boone"
+      }
+    },
+    "side": "Top"
+  },
+  {
+    "batter": "P. Sauer",
+    "event_type": "NowBatting",
+    "player_swept_away": null,
+    "stats": "FirstPA"
+  },
+  {
+    "advances": [],
+    "aurora_photos": null,
+    "batter": "P. Sauer",
+    "cheer": null,
+    "door_prizes": [],
+    "efflorescence": [],
+    "ejection": null,
+    "event_type": "HitByPitch",
+    "scores": [],
+    "wither": null
+  },
+  {
+    "batter": "Brooks Yasuda",
+    "event_type": "NowBatting",
+    "player_swept_away": null,
+    "stats": "FirstPA"
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      0,
+      1
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "ejection": null,
+    "event_type": "Strike",
+    "steals": [],
+    "strike": "Swinging",
+    "surprise_strike": false,
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      1,
+      1
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "ejection": null,
+    "event_type": "Ball",
+    "steals": [],
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "batter": "Brooks Yasuda",
+    "cheer": null,
+    "destination": "LeftField",
+    "door_prizes": [],
+    "efflorescence": [],
+    "event_type": "FairBall",
+    "fair_ball_type": "LineDrive"
+  },
+  {
+    "advances": [],
+    "batter": "Brooks Yasuda",
+    "caught_by": {
+      "name": "Kelli Lucas",
+      "place": "LF"
+    },
+    "ejection": null,
+    "event_type": "CaughtOut",
+    "fair_ball_type": "LineDrive",
+    "jetpack": false,
+    "perfect": false,
+    "sacrifice": false,
+    "scores": []
+  },
+  {
+    "batter": "Wilma Hudson",
+    "event_type": "NowBatting",
+    "player_swept_away": null,
+    "stats": "FirstPA"
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      1,
+      0
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "ejection": null,
+    "event_type": "Ball",
+    "steals": [],
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      2,
+      0
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "ejection": null,
+    "event_type": "Ball",
+    "steals": [],
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      2,
+      1
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "ejection": null,
+    "event_type": "Strike",
+    "steals": [],
+    "strike": "Looking",
+    "surprise_strike": false,
+    "wither": null
+  },
+  {
+    "advances": [
+      {
+        "base": "Second",
+        "runner": "P. Sauer"
+      }
+    ],
+    "aurora_photos": null,
+    "batter": "Wilma Hudson",
+    "cheer": null,
+    "door_prizes": [],
+    "efflorescence": [],
+    "ejection": null,
+    "event_type": "HitByPitch",
+    "scores": [],
+    "wither": null
+  },
+  {
+    "batter": "Hannah Greenberg",
+    "event_type": "NowBatting",
+    "player_swept_away": null,
+    "stats": "FirstPA"
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": "CheersRollThroughTheStadium",
+    "count": [
+      0,
+      1
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "ejection": null,
+    "event_type": "Strike",
+    "steals": [],
+    "strike": "Looking",
+    "surprise_strike": false,
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      0,
+      2
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "ejection": null,
+    "event_type": "Strike",
+    "steals": [],
+    "strike": "Swinging",
+    "surprise_strike": false,
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "batter": "Hannah Greenberg",
+    "cheer": null,
+    "ejection": null,
+    "event_type": "StrikeOut",
+    "foul": null,
+    "steals": [],
+    "strike": "Swinging",
+    "wither": null
+  },
+  {
+    "batter": "Null Kinoshita",
+    "event_type": "NowBatting",
+    "player_swept_away": null,
+    "stats": {
+      "Stats": [
+        {
+          "stat": "HitsForAtBats",
+          "value": {
+            "at_bats": 1,
+            "hits": 0
+          }
+        },
+        {
+          "stat": "LineOuts",
+          "value": 1
+        }
+      ]
+    }
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      1,
+      0
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "ejection": null,
+    "event_type": "Ball",
+    "steals": [],
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      1,
+      1
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "event_type": "Foul",
+    "foul": "Ball",
+    "steals": [],
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "batter": "Null Kinoshita",
+    "cheer": "TheFansScreamForTheirHeroes",
+    "destination": "ThirdBase",
+    "door_prizes": [],
+    "efflorescence": [],
+    "event_type": "FairBall",
+    "fair_ball_type": "GroundBall"
+  },
+  {
+    "advances": [],
+    "amazing": false,
+    "assassinations": [],
+    "batter": "Null Kinoshita",
+    "ejection": null,
+    "event_type": "GroundedOut",
+    "fielders": [
+      {
+        "name": "D. Vargas",
+        "place": "3B"
+      },
+      {
+        "name": "V. Harrington",
+        "place": "1B"
+      }
+    ],
+    "scores": []
+  },
+  {
+    "event_type": "InningEnd",
+    "number": 2,
+    "side": "Top"
+  },
+  {
+    "automatic_runner": null,
+    "batting_team": {
+      "emoji": "🐀",
+      "name": "Sobral Secret Saturnian Rats"
+    },
+    "event_type": "InningStart",
+    "number": 2,
+    "pitcher_status": {
+      "Same": {
+        "emoji": "🍉",
+        "name": "Makena Yoshimura"
+      }
+    },
+    "side": "Bottom"
+  },
+  {
+    "batter": "Lucy Kumari",
+    "event_type": "NowBatting",
+    "player_swept_away": null,
+    "stats": "FirstPA"
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      0,
+      1
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "event_type": "Foul",
+    "foul": "Ball",
+    "steals": [],
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      1,
+      1
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "ejection": null,
+    "event_type": "Ball",
+    "steals": [],
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      1,
+      2
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "ejection": null,
+    "event_type": "Strike",
+    "steals": [],
+    "strike": "Looking",
+    "surprise_strike": false,
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "batter": "Lucy Kumari",
+    "cheer": null,
+    "ejection": null,
+    "event_type": "StrikeOut",
+    "foul": null,
+    "steals": [],
+    "strike": "Swinging",
+    "wither": null
+  },
+  {
+    "batter": "Grumble Bertrand",
+    "event_type": "NowBatting",
+    "player_swept_away": null,
+    "stats": "FirstPA"
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      0,
+      1
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "event_type": "Foul",
+    "foul": "Ball",
+    "steals": [],
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      0,
+      2
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "ejection": null,
+    "event_type": "Strike",
+    "steals": [],
+    "strike": "Looking",
+    "surprise_strike": false,
+    "wither": null
+  },
+  {
+    "advances": [],
+    "aurora_photos": null,
+    "batter": "Grumble Bertrand",
+    "cheer": null,
+    "door_prizes": [],
+    "efflorescence": [],
+    "ejection": null,
+    "event_type": "HitByPitch",
+    "scores": [],
+    "wither": null
+  },
+  {
+    "batter": "Kelli Lucas",
+    "event_type": "NowBatting",
+    "player_swept_away": null,
+    "stats": "FirstPA"
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "batter": "Kelli Lucas",
+    "cheer": null,
+    "destination": "ShortStop",
+    "door_prizes": [],
+    "efflorescence": [],
+    "event_type": "FairBall",
+    "fair_ball_type": "GroundBall"
+  },
+  {
+    "advances": [],
+    "batter": "Kelli Lucas",
+    "double_trouble": null,
+    "ejection": null,
+    "event_type": "DoublePlayGrounded",
+    "fielders": [
+      {
+        "name": "P. Sauer",
+        "place": "SS"
+      },
+      {
+        "name": "Kid Zuñiga",
+        "place": "2B"
+      },
+      {
+        "name": "Jupiter Riggs",
+        "place": "1B"
+      }
+    ],
+    "out_one": {
+      "base": "SecondBase",
+      "runner": "Grumble Bertrand"
+    },
+    "out_two": {
+      "base": "FirstBase",
+      "runner": "Kelli Lucas"
+    },
+    "sacrifice": false,
+    "scores": []
+  },
+  {
+    "event_type": "InningEnd",
+    "number": 2,
+    "side": "Bottom"
+  },
+  {
+    "automatic_runner": null,
+    "batting_team": {
+      "emoji": "🍉",
+      "name": "Carnegie Watermelons"
+    },
+    "event_type": "InningStart",
+    "number": 3,
+    "pitcher_status": {
+      "Same": {
+        "emoji": "🐀",
+        "name": "Kibbles Boone"
+      }
+    },
+    "side": "Top"
+  },
+  {
+    "batter": "Lydia Masson",
+    "event_type": "NowBatting",
+    "player_swept_away": null,
+    "stats": {
+      "Stats": [
+        {
+          "stat": "HitsForAtBats",
+          "value": {
+            "at_bats": 1,
+            "hits": 1
+          }
+        },
+        {
+          "stat": "SecondBases",
+          "value": 1
+        }
+      ]
+    }
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      1,
+      0
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "ejection": null,
+    "event_type": "Ball",
+    "steals": [],
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "batter": "Lydia Masson",
+    "cheer": null,
+    "destination": "RightField",
+    "door_prizes": [],
+    "efflorescence": [],
+    "event_type": "FairBall",
+    "fair_ball_type": "GroundBall"
+  },
+  {
+    "advances": [],
+    "batter": "Lydia Masson",
+    "distance": "Single",
+    "ejection": null,
+    "event_type": "BatterToBase",
+    "fair_ball_type": "GroundBall",
+    "fielder": {
+      "name": "Lucy Kumari",
+      "place": "RF"
+    },
+    "scores": []
+  },
+  {
+    "batter": "Liqin Dixon",
+    "event_type": "NowBatting",
+    "player_swept_away": null,
+    "stats": {
+      "Stats": [
+        {
+          "stat": "HitsForAtBats",
+          "value": {
+            "at_bats": 1,
+            "hits": 0
+          }
+        },
+        {
+          "stat": "StrikeOuts",
+          "value": 1
+        }
+      ]
+    }
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "batter": "Liqin Dixon",
+    "cheer": null,
+    "destination": "ThirdBase",
+    "door_prizes": [],
+    "efflorescence": [],
+    "event_type": "FairBall",
+    "fair_ball_type": "LineDrive"
+  },
+  {
+    "advances": [],
+    "batter": "Liqin Dixon",
+    "double_trouble": null,
+    "ejection": null,
+    "event_type": "DoublePlayCaught",
+    "fair_ball_type": "LineDrive",
+    "fielders": [
+      {
+        "name": "D. Vargas",
+        "place": "3B"
+      },
+      {
+        "name": "Yahoo Vogel",
+        "place": "SS"
+      }
+    ],
+    "out_two": {
+      "base": "SecondBase",
+      "runner": "Lydia Masson"
+    },
+    "scores": []
+  },
+  {
+    "batter": "Jupiter Riggs",
+    "event_type": "NowBatting",
+    "player_swept_away": null,
+    "stats": {
+      "Stats": [
+        {
+          "stat": "HitsForAtBats",
+          "value": {
+            "at_bats": 1,
+            "hits": 1
+          }
+        },
+        {
+          "stat": "FirstBases",
+          "value": 1
+        }
+      ]
+    }
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "batter": "Jupiter Riggs",
+    "cheer": null,
+    "destination": "LeftField",
+    "door_prizes": [],
+    "efflorescence": [],
+    "event_type": "FairBall",
+    "fair_ball_type": "FlyBall"
+  },
+  {
+    "advances": [],
+    "batter": "Jupiter Riggs",
+    "caught_by": {
+      "name": "Kelli Lucas",
+      "place": "LF"
+    },
+    "ejection": null,
+    "event_type": "CaughtOut",
+    "fair_ball_type": "FlyBall",
+    "jetpack": false,
+    "perfect": false,
+    "sacrifice": false,
+    "scores": []
+  },
+  {
+    "event_type": "InningEnd",
+    "number": 3,
+    "side": "Top"
+  },
+  {
+    "automatic_runner": null,
+    "batting_team": {
+      "emoji": "🐀",
+      "name": "Sobral Secret Saturnian Rats"
+    },
+    "event_type": "InningStart",
+    "number": 3,
+    "pitcher_status": {
+      "Same": {
+        "emoji": "🍉",
+        "name": "Makena Yoshimura"
+      }
+    },
+    "side": "Bottom"
+  },
+  {
+    "batter": "D. Vargas",
+    "event_type": "NowBatting",
+    "player_swept_away": null,
+    "stats": "FirstPA"
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "batter": "D. Vargas",
+    "cheer": null,
+    "destination": "LeftField",
+    "door_prizes": [],
+    "efflorescence": [],
+    "event_type": "FairBall",
+    "fair_ball_type": "LineDrive"
+  },
+  {
+    "advances": [],
+    "batter": "D. Vargas",
+    "distance": "Single",
+    "ejection": null,
+    "event_type": "BatterToBase",
+    "fair_ball_type": "LineDrive",
+    "fielder": {
+      "name": "Wilma Hudson",
+      "place": "LF"
+    },
+    "scores": []
+  },
+  {
+    "batter": "Ana Carolina Hayes",
+    "event_type": "NowBatting",
+    "player_swept_away": null,
+    "stats": "FirstPA"
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "batter": "Ana Carolina Hayes",
+    "cheer": null,
+    "destination": "LeftField",
+    "door_prizes": [],
+    "efflorescence": [],
+    "event_type": "FairBall",
+    "fair_ball_type": "FlyBall"
+  },
+  {
+    "advances": [],
+    "batter": "Ana Carolina Hayes",
+    "caught_by": {
+      "name": "Wilma Hudson",
+      "place": "LF"
+    },
+    "ejection": null,
+    "event_type": "CaughtOut",
+    "fair_ball_type": "FlyBall",
+    "jetpack": false,
+    "perfect": false,
+    "sacrifice": false,
+    "scores": []
+  },
+  {
+    "batter": "Yahoo Vogel",
+    "event_type": "NowBatting",
+    "player_swept_away": null,
+    "stats": "FirstPA"
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      0,
+      1
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "ejection": null,
+    "event_type": "Strike",
+    "steals": [],
+    "strike": "Looking",
+    "surprise_strike": false,
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "batter": "Yahoo Vogel",
+    "cheer": null,
+    "destination": "SecondBase",
+    "door_prizes": [],
+    "efflorescence": [],
+    "event_type": "FairBall",
+    "fair_ball_type": "GroundBall"
+  },
+  {
+    "advances": [],
+    "batter": "Yahoo Vogel",
+    "double_trouble": null,
+    "ejection": null,
+    "event_type": "DoublePlayGrounded",
+    "fielders": [
+      {
+        "name": "Kid Zuñiga",
+        "place": "2B"
+      },
+      {
+        "name": "P. Sauer",
+        "place": "SS"
+      },
+      {
+        "name": "Jupiter Riggs",
+        "place": "1B"
+      }
+    ],
+    "out_one": {
+      "base": "SecondBase",
+      "runner": "D. Vargas"
+    },
+    "out_two": {
+      "base": "FirstBase",
+      "runner": "Yahoo Vogel"
+    },
+    "sacrifice": false,
+    "scores": []
+  },
+  {
+    "event_type": "InningEnd",
+    "number": 3,
+    "side": "Bottom"
+  },
+  {
+    "automatic_runner": null,
+    "batting_team": {
+      "emoji": "🍉",
+      "name": "Carnegie Watermelons"
+    },
+    "event_type": "InningStart",
+    "number": 4,
+    "pitcher_status": {
+      "Same": {
+        "emoji": "🐀",
+        "name": "Kibbles Boone"
+      }
+    },
+    "side": "Top"
+  },
+  {
+    "batter": "Kid Zuñiga",
+    "event_type": "NowBatting",
+    "player_swept_away": null,
+    "stats": {
+      "Stats": [
+        {
+          "stat": "HitsForAtBats",
+          "value": {
+            "at_bats": 1,
+            "hits": 0
+          }
+        },
+        {
+          "stat": "Fouls",
+          "value": 1
+        }
+      ]
+    }
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      0,
+      1
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "ejection": null,
+    "event_type": "Strike",
+    "steals": [],
+    "strike": "Swinging",
+    "surprise_strike": false,
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "batter": "Kid Zuñiga",
+    "cheer": null,
+    "destination": "SecondBase",
+    "door_prizes": [],
+    "efflorescence": [],
+    "event_type": "FairBall",
+    "fair_ball_type": "GroundBall"
+  },
+  {
+    "advances": [],
+    "batter": "Kid Zuñiga",
+    "distance": "Single",
+    "ejection": null,
+    "event_type": "BatterToBase",
+    "fair_ball_type": "GroundBall",
+    "fielder": {
+      "name": "Ana Carolina Hayes",
+      "place": "2B"
+    },
+    "scores": []
+  },
+  {
+    "batter": "P. Sauer",
+    "event_type": "NowBatting",
+    "player_swept_away": null,
+    "stats": {
+      "Stats": [
+        {
+          "stat": "HitByPitchs",
+          "value": 1
+        }
+      ]
+    }
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "batter": "P. Sauer",
+    "cheer": null,
+    "destination": "ShortStop",
+    "door_prizes": [],
+    "efflorescence": [],
+    "event_type": "FairBall",
+    "fair_ball_type": "LineDrive"
+  },
+  {
+    "advances": [],
+    "batter": "P. Sauer",
+    "caught_by": {
+      "name": "Yahoo Vogel",
+      "place": "SS"
+    },
+    "ejection": null,
+    "event_type": "CaughtOut",
+    "fair_ball_type": "LineDrive",
+    "jetpack": false,
+    "perfect": false,
+    "sacrifice": false,
+    "scores": []
+  },
+  {
+    "batter": "Brooks Yasuda",
+    "event_type": "NowBatting",
+    "player_swept_away": null,
+    "stats": {
+      "Stats": [
+        {
+          "stat": "HitsForAtBats",
+          "value": {
+            "at_bats": 1,
+            "hits": 0
+          }
+        },
+        {
+          "stat": "LineOuts",
+          "value": 1
+        }
+      ]
+    }
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      1,
+      0
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "ejection": null,
+    "event_type": "Ball",
+    "steals": [
+      {
+        "base": "Second",
+        "caught": false,
+        "runner": "Kid Zuñiga"
+      }
+    ],
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      1,
+      1
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "event_type": "Foul",
+    "foul": "Ball",
+    "steals": [],
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": "TheStandsAreElectric",
+    "count": [
+      2,
+      1
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "ejection": null,
+    "event_type": "Ball",
+    "steals": [],
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      3,
+      1
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "ejection": null,
+    "event_type": "Ball",
+    "steals": [],
+    "wither": null
+  },
+  {
+    "advances": [],
+    "assassinations": [],
+    "aurora_photos": null,
+    "batter": "Brooks Yasuda",
+    "cheer": null,
+    "ejection": null,
+    "event_type": "Walk",
+    "scores": [],
+    "wither": null
+  },
+  {
+    "batter": "Wilma Hudson",
+    "event_type": "NowBatting",
+    "player_swept_away": null,
+    "stats": {
+      "Stats": [
+        {
+          "stat": "HitByPitchs",
+          "value": 1
+        }
+      ]
+    }
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      0,
+      1
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "ejection": null,
+    "event_type": "Strike",
+    "steals": [],
+    "strike": "Swinging",
+    "surprise_strike": false,
+    "wither": null
+  },
+  {
+    "advances": [
+      {
+        "base": "Third",
+        "runner": "Kid Zuñiga"
+      },
+      {
+        "base": "Second",
+        "runner": "Brooks Yasuda"
+      }
+    ],
+    "aurora_photos": null,
+    "batter": "Wilma Hudson",
+    "cheer": null,
+    "door_prizes": [],
+    "efflorescence": [],
+    "ejection": null,
+    "event_type": "HitByPitch",
+    "scores": [],
+    "wither": null
+  },
+  {
+    "batter": "Hannah Greenberg",
+    "event_type": "NowBatting",
+    "player_swept_away": null,
+    "stats": {
+      "Stats": [
+        {
+          "stat": "HitsForAtBats",
+          "value": {
+            "at_bats": 1,
+            "hits": 0
+          }
+        },
+        {
+          "stat": "StrikeOuts",
+          "value": 1
+        }
+      ]
+    }
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      0,
+      1
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "ejection": null,
+    "event_type": "Strike",
+    "steals": [],
+    "strike": "Swinging",
+    "surprise_strike": false,
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      1,
+      1
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "ejection": null,
+    "event_type": "Ball",
+    "steals": [],
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      2,
+      1
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "ejection": null,
+    "event_type": "Ball",
+    "steals": [],
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      3,
+      1
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "ejection": null,
+    "event_type": "Ball",
+    "steals": [],
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      3,
+      2
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "ejection": null,
+    "event_type": "Strike",
+    "steals": [],
+    "strike": "Swinging",
+    "surprise_strike": false,
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "batter": "Hannah Greenberg",
+    "cheer": null,
+    "ejection": null,
+    "event_type": "StrikeOut",
+    "foul": null,
+    "steals": [],
+    "strike": "Swinging",
+    "wither": null
+  },
+  {
+    "batter": "Null Kinoshita",
+    "event_type": "NowBatting",
+    "player_swept_away": null,
+    "stats": {
+      "Stats": [
+        {
+          "stat": "HitsForAtBats",
+          "value": {
+            "at_bats": 2,
+            "hits": 0
+          }
+        },
+        {
+          "stat": "LineOuts",
+          "value": 1
+        },
+        {
+          "stat": "GroundOuts",
+          "value": 1
+        }
+      ]
+    }
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      0,
+      1
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "ejection": null,
+    "event_type": "Strike",
+    "steals": [],
+    "strike": "Swinging",
+    "surprise_strike": false,
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      1,
+      1
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "ejection": null,
+    "event_type": "Ball",
+    "steals": [],
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": "TheEnergyInTheParkSurges",
+    "count": [
+      2,
+      1
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "ejection": null,
+    "event_type": "Ball",
+    "steals": [],
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      3,
+      1
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "ejection": null,
+    "event_type": "Ball",
+    "steals": [],
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "batter": "Null Kinoshita",
+    "cheer": null,
+    "destination": "SecondBase",
+    "door_prizes": [],
+    "efflorescence": [],
+    "event_type": "FairBall",
+    "fair_ball_type": "GroundBall"
+  },
+  {
+    "advances": [],
+    "amazing": false,
+    "assassinations": [],
+    "batter": "Null Kinoshita",
+    "ejection": null,
+    "event_type": "GroundedOut",
+    "fielders": [
+      {
+        "name": "Ana Carolina Hayes",
+        "place": "2B"
+      },
+      {
+        "name": "V. Harrington",
+        "place": "1B"
+      }
+    ],
+    "scores": []
+  },
+  {
+    "event_type": "InningEnd",
+    "number": 4,
+    "side": "Top"
+  },
+  {
+    "automatic_runner": null,
+    "batting_team": {
+      "emoji": "🐀",
+      "name": "Sobral Secret Saturnian Rats"
+    },
+    "event_type": "InningStart",
+    "number": 4,
+    "pitcher_status": {
+      "Same": {
+        "emoji": "🍉",
+        "name": "Makena Yoshimura"
+      }
+    },
+    "side": "Bottom"
+  },
+  {
+    "batter": "Kyle van de Velde",
+    "event_type": "NowBatting",
+    "player_swept_away": null,
+    "stats": {
+      "Stats": [
+        {
+          "stat": "BaseOnBalls",
+          "value": 1
+        }
+      ]
+    }
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      0,
+      1
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "ejection": null,
+    "event_type": "Strike",
+    "steals": [],
+    "strike": "Looking",
+    "surprise_strike": false,
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      0,
+      2
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "ejection": null,
+    "event_type": "Strike",
+    "steals": [],
+    "strike": "Looking",
+    "surprise_strike": false,
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      1,
+      2
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "ejection": null,
+    "event_type": "Ball",
+    "steals": [],
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "batter": "Kyle van de Velde",
+    "cheer": null,
+    "destination": "FirstBase",
+    "door_prizes": [],
+    "efflorescence": [],
+    "event_type": "FairBall",
+    "fair_ball_type": "GroundBall"
+  },
+  {
+    "advances": [],
+    "amazing": false,
+    "assassinations": [],
+    "batter": "Kyle van de Velde",
+    "ejection": null,
+    "event_type": "GroundedOut",
+    "fielders": [
+      {
+        "name": "Jupiter Riggs",
+        "place": "1B"
+      }
+    ],
+    "scores": []
+  },
+  {
+    "batter": "Jaye Koppel",
+    "event_type": "NowBatting",
+    "player_swept_away": null,
+    "stats": {
+      "Stats": [
+        {
+          "stat": "HitsForAtBats",
+          "value": {
+            "at_bats": 1,
+            "hits": 0
+          }
+        },
+        {
+          "stat": "GroundIntoDoublePlays",
+          "value": 1
+        },
+        {
+          "stat": "GroundOuts",
+          "value": 1
+        }
+      ]
+    }
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      1,
+      0
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "ejection": null,
+    "event_type": "Ball",
+    "steals": [],
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      1,
+      1
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "ejection": null,
+    "event_type": "Strike",
+    "steals": [],
+    "strike": "Looking",
+    "surprise_strike": false,
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      1,
+      2
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "event_type": "Foul",
+    "foul": "Ball",
+    "steals": [],
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      1,
+      2
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "event_type": "Foul",
+    "foul": "Ball",
+    "steals": [],
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "batter": "Jaye Koppel",
+    "cheer": null,
+    "ejection": null,
+    "event_type": "StrikeOut",
+    "foul": null,
+    "steals": [],
+    "strike": "Swinging",
+    "wither": null
+  },
+  {
+    "batter": "V. Harrington",
+    "event_type": "NowBatting",
+    "player_swept_away": null,
+    "stats": {
+      "Stats": [
+        {
+          "stat": "HitsForAtBats",
+          "value": {
+            "at_bats": 1,
+            "hits": 0
+          }
+        },
+        {
+          "stat": "StrikeOuts",
+          "value": 1
+        }
+      ]
+    }
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      1,
+      0
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "ejection": null,
+    "event_type": "Ball",
+    "steals": [],
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      2,
+      0
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "ejection": null,
+    "event_type": "Ball",
+    "steals": [],
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      2,
+      1
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "ejection": null,
+    "event_type": "Strike",
+    "steals": [],
+    "strike": "Looking",
+    "surprise_strike": false,
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      2,
+      2
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "ejection": null,
+    "event_type": "Strike",
+    "steals": [],
+    "strike": "Swinging",
+    "surprise_strike": false,
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "batter": "V. Harrington",
+    "cheer": null,
+    "destination": "CenterField",
+    "door_prizes": [],
+    "efflorescence": [],
+    "event_type": "FairBall",
+    "fair_ball_type": "FlyBall"
+  },
+  {
+    "advances": [],
+    "batter": "V. Harrington",
+    "caught_by": {
+      "name": "Brooks Yasuda",
+      "place": "CF"
+    },
+    "ejection": null,
+    "event_type": "CaughtOut",
+    "fair_ball_type": "FlyBall",
+    "jetpack": false,
+    "perfect": false,
+    "sacrifice": false,
+    "scores": []
+  },
+  {
+    "event_type": "InningEnd",
+    "number": 4,
+    "side": "Bottom"
+  },
+  {
+    "automatic_runner": null,
+    "batting_team": {
+      "emoji": "🍉",
+      "name": "Carnegie Watermelons"
+    },
+    "event_type": "InningStart",
+    "number": 5,
+    "pitcher_status": {
+      "Same": {
+        "emoji": "🐀",
+        "name": "Kibbles Boone"
+      }
+    },
+    "side": "Top"
+  },
+  {
+    "batter": "Lydia Masson",
+    "event_type": "NowBatting",
+    "player_swept_away": null,
+    "stats": {
+      "Stats": [
+        {
+          "stat": "HitsForAtBats",
+          "value": {
+            "at_bats": 2,
+            "hits": 2
+          }
+        },
+        {
+          "stat": "SecondBases",
+          "value": 1
+        },
+        {
+          "stat": "FirstBases",
+          "value": 1
+        }
+      ]
+    }
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      1,
+      0
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "ejection": null,
+    "event_type": "Ball",
+    "steals": [],
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      2,
+      0
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "ejection": null,
+    "event_type": "Ball",
+    "steals": [],
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "batter": "Lydia Masson",
+    "cheer": null,
+    "destination": "LeftField",
+    "door_prizes": [],
+    "efflorescence": [],
+    "event_type": "FairBall",
+    "fair_ball_type": "LineDrive"
+  },
+  {
+    "advances": [],
+    "batter": "Lydia Masson",
+    "distance": "Double",
+    "ejection": null,
+    "event_type": "BatterToBase",
+    "fair_ball_type": "LineDrive",
+    "fielder": {
+      "name": "Kelli Lucas",
+      "place": "LF"
+    },
+    "scores": []
+  },
+  {
+    "batter": "Liqin Dixon",
+    "event_type": "NowBatting",
+    "player_swept_away": null,
+    "stats": {
+      "Stats": [
+        {
+          "stat": "HitsForAtBats",
+          "value": {
+            "at_bats": 2,
+            "hits": 0
+          }
+        },
+        {
+          "stat": "StrikeOuts",
+          "value": 1
+        },
+        {
+          "stat": "CaughtDoublePlays",
+          "value": 1
+        }
+      ]
+    }
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      1,
+      0
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "ejection": null,
+    "event_type": "Ball",
+    "steals": [],
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      2,
+      0
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "ejection": null,
+    "event_type": "Ball",
+    "steals": [],
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      3,
+      0
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "ejection": null,
+    "event_type": "Ball",
+    "steals": [],
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      3,
+      1
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "ejection": null,
+    "event_type": "Strike",
+    "steals": [],
+    "strike": "Swinging",
+    "surprise_strike": false,
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      3,
+      2
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "ejection": null,
+    "event_type": "Strike",
+    "steals": [],
+    "strike": "Looking",
+    "surprise_strike": false,
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      3,
+      2
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "event_type": "Foul",
+    "foul": "Ball",
+    "steals": [],
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "batter": "Liqin Dixon",
+    "cheer": "NoiseLevelsSpike",
+    "destination": "RightField",
+    "door_prizes": [],
+    "efflorescence": [],
+    "event_type": "FairBall",
+    "fair_ball_type": "FlyBall"
+  },
+  {
+    "advances": [],
+    "batter": "Liqin Dixon",
+    "caught_by": {
+      "name": "Lucy Kumari",
+      "place": "RF"
+    },
+    "ejection": null,
+    "event_type": "CaughtOut",
+    "fair_ball_type": "FlyBall",
+    "jetpack": false,
+    "perfect": false,
+    "sacrifice": false,
+    "scores": []
+  },
+  {
+    "batter": "Jupiter Riggs",
+    "event_type": "NowBatting",
+    "player_swept_away": null,
+    "stats": {
+      "Stats": [
+        {
+          "stat": "HitsForAtBats",
+          "value": {
+            "at_bats": 2,
+            "hits": 1
+          }
+        },
+        {
+          "stat": "FirstBases",
+          "value": 1
+        },
+        {
+          "stat": "ForceOuts",
+          "value": 1
+        }
+      ]
+    }
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      1,
+      0
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "ejection": null,
+    "event_type": "Ball",
+    "steals": [],
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      2,
+      0
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "ejection": null,
+    "event_type": "Ball",
+    "steals": [],
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      3,
+      0
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "ejection": null,
+    "event_type": "Ball",
+    "steals": [],
+    "wither": null
+  },
+  {
+    "advances": [],
+    "assassinations": [],
+    "aurora_photos": null,
+    "batter": "Jupiter Riggs",
+    "cheer": "TheFansBellowEncouragement",
+    "ejection": null,
+    "event_type": "Walk",
+    "scores": [],
+    "wither": null
+  },
+  {
+    "batter": "Kid Zuñiga",
+    "event_type": "NowBatting",
+    "player_swept_away": null,
+    "stats": {
+      "Stats": [
+        {
+          "stat": "HitsForAtBats",
+          "value": {
+            "at_bats": 2,
+            "hits": 1
+          }
+        },
+        {
+          "stat": "Fouls",
+          "value": 1
+        },
+        {
+          "stat": "FirstBases",
+          "value": 1
+        }
+      ]
+    }
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      1,
+      0
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "ejection": null,
+    "event_type": "Ball",
+    "steals": [],
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      1,
+      1
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "ejection": null,
+    "event_type": "Strike",
+    "steals": [],
+    "strike": "Looking",
+    "surprise_strike": false,
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      1,
+      2
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "ejection": null,
+    "event_type": "Strike",
+    "steals": [],
+    "strike": "Looking",
+    "surprise_strike": false,
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "batter": "Kid Zuñiga",
+    "cheer": null,
+    "ejection": null,
+    "event_type": "StrikeOut",
+    "foul": null,
+    "steals": [],
+    "strike": "Looking",
+    "wither": null
+  },
+  {
+    "batter": "P. Sauer",
+    "event_type": "NowBatting",
+    "player_swept_away": null,
+    "stats": {
+      "Stats": [
+        {
+          "stat": "HitsForAtBats",
+          "value": {
+            "at_bats": 1,
+            "hits": 0
+          }
+        },
+        {
+          "stat": "HitByPitchs",
+          "value": 1
+        },
+        {
+          "stat": "LineOuts",
+          "value": 1
+        }
+      ]
+    }
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      0,
+      1
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "ejection": null,
+    "event_type": "Strike",
+    "steals": [],
+    "strike": "Looking",
+    "surprise_strike": false,
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": "TheCheeringIsRelentless",
+    "count": [
+      0,
+      2
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "ejection": null,
+    "event_type": "Strike",
+    "steals": [],
+    "strike": "Looking",
+    "surprise_strike": false,
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "batter": "P. Sauer",
+    "cheer": null,
+    "ejection": null,
+    "event_type": "StrikeOut",
+    "foul": null,
+    "steals": [],
+    "strike": "Swinging",
+    "wither": null
+  },
+  {
+    "event_type": "InningEnd",
+    "number": 5,
+    "side": "Top"
+  },
+  {
+    "automatic_runner": null,
+    "batting_team": {
+      "emoji": "🐀",
+      "name": "Sobral Secret Saturnian Rats"
+    },
+    "event_type": "InningStart",
+    "number": 5,
+    "pitcher_status": {
+      "Same": {
+        "emoji": "🍉",
+        "name": "Makena Yoshimura"
+      }
+    },
+    "side": "Bottom"
+  },
+  {
+    "batter": "Lucy Kumari",
+    "event_type": "NowBatting",
+    "player_swept_away": null,
+    "stats": {
+      "Stats": [
+        {
+          "stat": "HitsForAtBats",
+          "value": {
+            "at_bats": 1,
+            "hits": 0
+          }
+        },
+        {
+          "stat": "StrikeOuts",
+          "value": 1
+        }
+      ]
+    }
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      0,
+      1
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "ejection": null,
+    "event_type": "Strike",
+    "steals": [],
+    "strike": "Swinging",
+    "surprise_strike": false,
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      1,
+      1
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "ejection": null,
+    "event_type": "Ball",
+    "steals": [],
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      1,
+      2
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "ejection": null,
+    "event_type": "Strike",
+    "steals": [],
+    "strike": "Swinging",
+    "surprise_strike": false,
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      2,
+      2
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "ejection": null,
+    "event_type": "Ball",
+    "steals": [],
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "batter": "Lucy Kumari",
+    "cheer": null,
+    "destination": "RightField",
+    "door_prizes": [],
+    "efflorescence": [],
+    "event_type": "FairBall",
+    "fair_ball_type": "FlyBall"
+  },
+  {
+    "advances": [],
+    "batter": "Lucy Kumari",
+    "caught_by": {
+      "name": "Liqin Dixon",
+      "place": "RF"
+    },
+    "ejection": null,
+    "event_type": "CaughtOut",
+    "fair_ball_type": "FlyBall",
+    "jetpack": false,
+    "perfect": false,
+    "sacrifice": false,
+    "scores": []
+  },
+  {
+    "batter": "Grumble Bertrand",
+    "event_type": "NowBatting",
+    "player_swept_away": null,
+    "stats": {
+      "Stats": [
+        {
+          "stat": "HitByPitchs",
+          "value": 1
+        }
+      ]
+    }
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      1,
+      0
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "ejection": null,
+    "event_type": "Ball",
+    "steals": [],
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "batter": "Grumble Bertrand",
+    "cheer": null,
+    "destination": "FirstBase",
+    "door_prizes": [],
+    "efflorescence": [],
+    "event_type": "FairBall",
+    "fair_ball_type": "GroundBall"
+  },
+  {
+    "advances": [],
+    "amazing": false,
+    "assassinations": [],
+    "batter": "Grumble Bertrand",
+    "ejection": null,
+    "event_type": "GroundedOut",
+    "fielders": [
+      {
+        "name": "Jupiter Riggs",
+        "place": "1B"
+      }
+    ],
+    "scores": []
+  },
+  {
+    "batter": "Kelli Lucas",
+    "event_type": "NowBatting",
+    "player_swept_away": null,
+    "stats": {
+      "Stats": [
+        {
+          "stat": "HitsForAtBats",
+          "value": {
+            "at_bats": 1,
+            "hits": 0
+          }
+        },
+        {
+          "stat": "GroundIntoDoublePlays",
+          "value": 1
+        },
+        {
+          "stat": "GroundOuts",
+          "value": 1
+        }
+      ]
+    }
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      0,
+      1
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "event_type": "Foul",
+    "foul": "Ball",
+    "steals": [],
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      1,
+      1
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "ejection": null,
+    "event_type": "Ball",
+    "steals": [],
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      2,
+      1
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "ejection": null,
+    "event_type": "Ball",
+    "steals": [],
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      2,
+      2
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "ejection": null,
+    "event_type": "Strike",
+    "steals": [],
+    "strike": "Swinging",
+    "surprise_strike": false,
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      3,
+      2
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "ejection": null,
+    "event_type": "Ball",
+    "steals": [],
+    "wither": null
+  },
+  {
+    "advances": [],
+    "assassinations": [],
+    "aurora_photos": null,
+    "batter": "Kelli Lucas",
+    "cheer": null,
+    "ejection": null,
+    "event_type": "Walk",
+    "scores": [],
+    "wither": null
+  },
+  {
+    "batter": "D. Vargas",
+    "event_type": "NowBatting",
+    "player_swept_away": null,
+    "stats": {
+      "Stats": [
+        {
+          "stat": "HitsForAtBats",
+          "value": {
+            "at_bats": 1,
+            "hits": 1
+          }
+        },
+        {
+          "stat": "FirstBases",
+          "value": 1
+        }
+      ]
+    }
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      0,
+      1
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "event_type": "Foul",
+    "foul": "Ball",
+    "steals": [],
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      0,
+      2
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "event_type": "Foul",
+    "foul": "Ball",
+    "steals": [],
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      0,
+      2
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "event_type": "Foul",
+    "foul": "Ball",
+    "steals": [],
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "batter": "D. Vargas",
+    "cheer": null,
+    "ejection": null,
+    "event_type": "StrikeOut",
+    "foul": null,
+    "steals": [],
+    "strike": "Looking",
+    "wither": null
+  },
+  {
+    "event_type": "InningEnd",
+    "number": 5,
+    "side": "Bottom"
+  },
+  {
+    "automatic_runner": null,
+    "batting_team": {
+      "emoji": "🍉",
+      "name": "Carnegie Watermelons"
+    },
+    "event_type": "InningStart",
+    "number": 6,
+    "pitcher_status": {
+      "Same": {
+        "emoji": "🐀",
+        "name": "Kibbles Boone"
+      }
+    },
+    "side": "Top"
+  },
+  {
+    "batter": "Brooks Yasuda",
+    "event_type": "NowBatting",
+    "player_swept_away": null,
+    "stats": {
+      "Stats": [
+        {
+          "stat": "HitsForAtBats",
+          "value": {
+            "at_bats": 1,
+            "hits": 0
+          }
+        },
+        {
+          "stat": "LineOuts",
+          "value": 1
+        },
+        {
+          "stat": "BaseOnBalls",
+          "value": 1
+        }
+      ]
+    }
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      1,
+      0
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "ejection": null,
+    "event_type": "Ball",
+    "steals": [],
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      1,
+      1
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "event_type": "Foul",
+    "foul": "Tip",
+    "steals": [],
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      1,
+      2
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "ejection": null,
+    "event_type": "Strike",
+    "steals": [],
+    "strike": "Looking",
+    "surprise_strike": false,
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "batter": "Brooks Yasuda",
+    "cheer": null,
+    "ejection": null,
+    "event_type": "StrikeOut",
+    "foul": null,
+    "steals": [],
+    "strike": "Looking",
+    "wither": null
+  },
+  {
+    "batter": "Wilma Hudson",
+    "event_type": "NowBatting",
+    "player_swept_away": null,
+    "stats": {
+      "Stats": [
+        {
+          "stat": "HitByPitchs",
+          "value": 2
+        }
+      ]
+    }
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      0,
+      1
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "event_type": "Foul",
+    "foul": "Ball",
+    "steals": [],
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      0,
+      2
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "event_type": "Foul",
+    "foul": "Ball",
+    "steals": [],
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      0,
+      2
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "event_type": "Foul",
+    "foul": "Ball",
+    "steals": [],
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      0,
+      2
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "event_type": "Foul",
+    "foul": "Ball",
+    "steals": [],
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      1,
+      2
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "ejection": null,
+    "event_type": "Ball",
+    "steals": [],
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "batter": "Wilma Hudson",
+    "cheer": null,
+    "destination": "ShortStop",
+    "door_prizes": [],
+    "efflorescence": [],
+    "event_type": "FairBall",
+    "fair_ball_type": "GroundBall"
+  },
+  {
+    "advances": [],
+    "batter": "Wilma Hudson",
+    "distance": "Single",
+    "ejection": null,
+    "event_type": "BatterToBase",
+    "fair_ball_type": "GroundBall",
+    "fielder": {
+      "name": "Yahoo Vogel",
+      "place": "SS"
+    },
+    "scores": []
+  },
+  {
+    "batter": "Hannah Greenberg",
+    "event_type": "NowBatting",
+    "player_swept_away": null,
+    "stats": {
+      "Stats": [
+        {
+          "stat": "HitsForAtBats",
+          "value": {
+            "at_bats": 2,
+            "hits": 0
+          }
+        },
+        {
+          "stat": "StrikeOuts",
+          "value": 2
+        }
+      ]
+    }
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      1,
+      0
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "ejection": null,
+    "event_type": "Ball",
+    "steals": [],
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      1,
+      1
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "event_type": "Foul",
+    "foul": "Ball",
+    "steals": [],
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      1,
+      2
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "event_type": "Foul",
+    "foul": "Ball",
+    "steals": [],
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      1,
+      2
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "event_type": "Foul",
+    "foul": "Ball",
+    "steals": [],
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "batter": "Hannah Greenberg",
+    "cheer": null,
+    "destination": "ShortStop",
+    "door_prizes": [],
+    "efflorescence": [],
+    "event_type": "FairBall",
+    "fair_ball_type": "GroundBall"
+  },
+  {
+    "advances": [],
+    "batter": "Hannah Greenberg",
+    "double_trouble": null,
+    "ejection": null,
+    "event_type": "DoublePlayGrounded",
+    "fielders": [
+      {
+        "name": "Yahoo Vogel",
+        "place": "SS"
+      },
+      {
+        "name": "Ana Carolina Hayes",
+        "place": "2B"
+      },
+      {
+        "name": "V. Harrington",
+        "place": "1B"
+      }
+    ],
+    "out_one": {
+      "base": "SecondBase",
+      "runner": "Wilma Hudson"
+    },
+    "out_two": {
+      "base": "FirstBase",
+      "runner": "Hannah Greenberg"
+    },
+    "sacrifice": false,
+    "scores": []
+  },
+  {
+    "event_type": "InningEnd",
+    "number": 6,
+    "side": "Top"
+  },
+  {
+    "automatic_runner": null,
+    "batting_team": {
+      "emoji": "🐀",
+      "name": "Sobral Secret Saturnian Rats"
+    },
+    "event_type": "InningStart",
+    "number": 6,
+    "pitcher_status": {
+      "Same": {
+        "emoji": "🍉",
+        "name": "Makena Yoshimura"
+      }
+    },
+    "side": "Bottom"
+  },
+  {
+    "batter": "Ana Carolina Hayes",
+    "event_type": "NowBatting",
+    "player_swept_away": null,
+    "stats": {
+      "Stats": [
+        {
+          "stat": "HitsForAtBats",
+          "value": {
+            "at_bats": 1,
+            "hits": 0
+          }
+        },
+        {
+          "stat": "ForceOuts",
+          "value": 1
+        }
+      ]
+    }
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      0,
+      1
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "event_type": "Foul",
+    "foul": "Ball",
+    "steals": [],
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      0,
+      2
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "ejection": null,
+    "event_type": "Strike",
+    "steals": [],
+    "strike": "Looking",
+    "surprise_strike": false,
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      1,
+      2
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "ejection": null,
+    "event_type": "Ball",
+    "steals": [],
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      2,
+      2
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "ejection": null,
+    "event_type": "Ball",
+    "steals": [],
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      3,
+      2
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "ejection": null,
+    "event_type": "Ball",
+    "steals": [],
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "batter": "Ana Carolina Hayes",
+    "cheer": null,
+    "ejection": null,
+    "event_type": "StrikeOut",
+    "foul": null,
+    "steals": [],
+    "strike": "Looking",
+    "wither": null
+  },
+  {
+    "batter": "Yahoo Vogel",
+    "event_type": "NowBatting",
+    "player_swept_away": null,
+    "stats": {
+      "Stats": [
+        {
+          "stat": "HitsForAtBats",
+          "value": {
+            "at_bats": 1,
+            "hits": 0
+          }
+        },
+        {
+          "stat": "GroundIntoDoublePlays",
+          "value": 1
+        },
+        {
+          "stat": "GroundOuts",
+          "value": 1
+        }
+      ]
+    }
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      1,
+      0
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "ejection": null,
+    "event_type": "Ball",
+    "steals": [],
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      1,
+      1
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "ejection": null,
+    "event_type": "Strike",
+    "steals": [],
+    "strike": "Swinging",
+    "surprise_strike": false,
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      1,
+      2
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "event_type": "Foul",
+    "foul": "Ball",
+    "steals": [],
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      1,
+      2
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "event_type": "Foul",
+    "foul": "Ball",
+    "steals": [],
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "batter": "Yahoo Vogel",
+    "cheer": null,
+    "ejection": null,
+    "event_type": "StrikeOut",
+    "foul": null,
+    "steals": [],
+    "strike": "Swinging",
+    "wither": null
+  },
+  {
+    "batter": "Kyle van de Velde",
+    "event_type": "NowBatting",
+    "player_swept_away": null,
+    "stats": {
+      "Stats": [
+        {
+          "stat": "HitsForAtBats",
+          "value": {
+            "at_bats": 1,
+            "hits": 0
+          }
+        },
+        {
+          "stat": "BaseOnBalls",
+          "value": 1
+        },
+        {
+          "stat": "GroundOuts",
+          "value": 1
+        }
+      ]
+    }
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      1,
+      0
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "ejection": null,
+    "event_type": "Ball",
+    "steals": [],
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      2,
+      0
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "ejection": null,
+    "event_type": "Ball",
+    "steals": [],
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      3,
+      0
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "ejection": null,
+    "event_type": "Ball",
+    "steals": [],
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      3,
+      1
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "event_type": "Foul",
+    "foul": "Ball",
+    "steals": [],
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      3,
+      2
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "ejection": null,
+    "event_type": "Strike",
+    "steals": [],
+    "strike": "Swinging",
+    "surprise_strike": false,
+    "wither": null
+  },
+  {
+    "advances": [],
+    "assassinations": [],
+    "aurora_photos": null,
+    "batter": "Kyle van de Velde",
+    "cheer": null,
+    "ejection": null,
+    "event_type": "Walk",
+    "scores": [],
+    "wither": null
+  },
+  {
+    "batter": "Jaye Koppel",
+    "event_type": "NowBatting",
+    "player_swept_away": null,
+    "stats": {
+      "Stats": [
+        {
+          "stat": "HitsForAtBats",
+          "value": {
+            "at_bats": 2,
+            "hits": 0
+          }
+        },
+        {
+          "stat": "GroundIntoDoublePlays",
+          "value": 1
+        },
+        {
+          "stat": "GroundOuts",
+          "value": 1
+        },
+        {
+          "stat": "StrikeOuts",
+          "value": 1
+        }
+      ]
+    }
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      1,
+      0
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "ejection": null,
+    "event_type": "Ball",
+    "steals": [],
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      2,
+      0
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "ejection": null,
+    "event_type": "Ball",
+    "steals": [],
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      3,
+      0
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "ejection": null,
+    "event_type": "Ball",
+    "steals": [],
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "batter": "Jaye Koppel",
+    "cheer": null,
+    "destination": "ShortStop",
+    "door_prizes": [],
+    "efflorescence": [],
+    "event_type": "FairBall",
+    "fair_ball_type": "GroundBall"
+  },
+  {
+    "advances": [],
+    "batter": "Jaye Koppel",
+    "ejection": null,
+    "event_type": "ForceOut",
+    "fair_ball_type": "GroundBall",
+    "fielders": [
+      {
+        "name": "P. Sauer",
+        "place": "SS"
+      }
+    ],
+    "out": {
+      "base": "Second",
+      "runner": "Kyle van de Velde"
+    },
+    "scores": []
+  },
+  {
+    "event_type": "InningEnd",
+    "number": 6,
+    "side": "Bottom"
+  },
+  {
+    "automatic_runner": null,
+    "batting_team": {
+      "emoji": "🍉",
+      "name": "Carnegie Watermelons"
+    },
+    "event_type": "InningStart",
+    "number": 7,
+    "pitcher_status": {
+      "Same": {
+        "emoji": "🐀",
+        "name": "Kibbles Boone"
+      }
+    },
+    "side": "Top"
+  },
+  {
+    "batter": "Null Kinoshita",
+    "event_type": "NowBatting",
+    "player_swept_away": null,
+    "stats": {
+      "Stats": [
+        {
+          "stat": "HitsForAtBats",
+          "value": {
+            "at_bats": 3,
+            "hits": 0
+          }
+        },
+        {
+          "stat": "LineOuts",
+          "value": 1
+        },
+        {
+          "stat": "GroundOuts",
+          "value": 2
+        }
+      ]
+    }
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "batter": "Null Kinoshita",
+    "cheer": null,
+    "destination": "ThirdBase",
+    "door_prizes": [],
+    "efflorescence": [],
+    "event_type": "FairBall",
+    "fair_ball_type": "GroundBall"
+  },
+  {
+    "advances": [],
+    "amazing": false,
+    "assassinations": [],
+    "batter": "Null Kinoshita",
+    "ejection": null,
+    "event_type": "GroundedOut",
+    "fielders": [
+      {
+        "name": "D. Vargas",
+        "place": "3B"
+      },
+      {
+        "name": "V. Harrington",
+        "place": "1B"
+      }
+    ],
+    "scores": []
+  },
+  {
+    "batter": "Lydia Masson",
+    "event_type": "NowBatting",
+    "player_swept_away": null,
+    "stats": {
+      "Stats": [
+        {
+          "stat": "HitsForAtBats",
+          "value": {
+            "at_bats": 3,
+            "hits": 3
+          }
+        },
+        {
+          "stat": "SecondBases",
+          "value": 2
+        },
+        {
+          "stat": "FirstBases",
+          "value": 1
+        }
+      ]
+    }
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      0,
+      1
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "ejection": null,
+    "event_type": "Strike",
+    "steals": [],
+    "strike": "Swinging",
+    "surprise_strike": false,
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      0,
+      2
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "ejection": null,
+    "event_type": "Strike",
+    "steals": [],
+    "strike": "Looking",
+    "surprise_strike": false,
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "batter": "Lydia Masson",
+    "cheer": null,
+    "ejection": null,
+    "event_type": "StrikeOut",
+    "foul": null,
+    "steals": [],
+    "strike": "Looking",
+    "wither": null
+  },
+  {
+    "batter": "Liqin Dixon",
+    "event_type": "NowBatting",
+    "player_swept_away": null,
+    "stats": {
+      "Stats": [
+        {
+          "stat": "HitsForAtBats",
+          "value": {
+            "at_bats": 3,
+            "hits": 0
+          }
+        },
+        {
+          "stat": "StrikeOuts",
+          "value": 1
+        },
+        {
+          "stat": "CaughtDoublePlays",
+          "value": 1
+        },
+        {
+          "stat": "ForceOuts",
+          "value": 1
+        }
+      ]
+    }
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      0,
+      1
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "ejection": null,
+    "event_type": "Strike",
+    "steals": [],
+    "strike": "Swinging",
+    "surprise_strike": false,
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      1,
+      1
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "ejection": null,
+    "event_type": "Ball",
+    "steals": [],
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "batter": "Liqin Dixon",
+    "cheer": null,
+    "destination": "RightField",
+    "door_prizes": [],
+    "efflorescence": [],
+    "event_type": "FairBall",
+    "fair_ball_type": "FlyBall"
+  },
+  {
+    "advances": [],
+    "batter": "Liqin Dixon",
+    "caught_by": {
+      "name": "Lucy Kumari",
+      "place": "RF"
+    },
+    "ejection": null,
+    "event_type": "CaughtOut",
+    "fair_ball_type": "FlyBall",
+    "jetpack": false,
+    "perfect": false,
+    "sacrifice": false,
+    "scores": []
+  },
+  {
+    "event_type": "InningEnd",
+    "number": 7,
+    "side": "Top"
+  },
+  {
+    "automatic_runner": null,
+    "batting_team": {
+      "emoji": "🐀",
+      "name": "Sobral Secret Saturnian Rats"
+    },
+    "event_type": "InningStart",
+    "number": 7,
+    "pitcher_status": {
+      "Same": {
+        "emoji": "🍉",
+        "name": "Makena Yoshimura"
+      }
+    },
+    "side": "Bottom"
+  },
+  {
+    "batter": "V. Harrington",
+    "event_type": "NowBatting",
+    "player_swept_away": null,
+    "stats": {
+      "Stats": [
+        {
+          "stat": "HitsForAtBats",
+          "value": {
+            "at_bats": 2,
+            "hits": 0
+          }
+        },
+        {
+          "stat": "StrikeOuts",
+          "value": 1
+        },
+        {
+          "stat": "ForceOuts",
+          "value": 1
+        }
+      ]
+    }
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "batter": "V. Harrington",
+    "cheer": null,
+    "destination": "ShortStop",
+    "door_prizes": [],
+    "efflorescence": [],
+    "event_type": "FairBall",
+    "fair_ball_type": "GroundBall"
+  },
+  {
+    "advances": [],
+    "amazing": false,
+    "assassinations": [],
+    "batter": "V. Harrington",
+    "ejection": null,
+    "event_type": "GroundedOut",
+    "fielders": [
+      {
+        "name": "P. Sauer",
+        "place": "SS"
+      },
+      {
+        "name": "Jupiter Riggs",
+        "place": "1B"
+      }
+    ],
+    "scores": []
+  },
+  {
+    "batter": "Lucy Kumari",
+    "event_type": "NowBatting",
+    "player_swept_away": null,
+    "stats": {
+      "Stats": [
+        {
+          "stat": "HitsForAtBats",
+          "value": {
+            "at_bats": 2,
+            "hits": 0
+          }
+        },
+        {
+          "stat": "StrikeOuts",
+          "value": 1
+        },
+        {
+          "stat": "ForceOuts",
+          "value": 1
+        }
+      ]
+    }
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      1,
+      0
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "ejection": null,
+    "event_type": "Ball",
+    "steals": [],
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      1,
+      1
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "event_type": "Foul",
+    "foul": "Ball",
+    "steals": [],
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      2,
+      1
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "ejection": null,
+    "event_type": "Ball",
+    "steals": [],
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      2,
+      2
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "ejection": null,
+    "event_type": "Strike",
+    "steals": [],
+    "strike": "Swinging",
+    "surprise_strike": false,
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "batter": "Lucy Kumari",
+    "cheer": null,
+    "destination": "RightField",
+    "door_prizes": [],
+    "efflorescence": [],
+    "event_type": "FairBall",
+    "fair_ball_type": "FlyBall"
+  },
+  {
+    "advances": [],
+    "batter": "Lucy Kumari",
+    "caught_by": {
+      "name": "Liqin Dixon",
+      "place": "RF"
+    },
+    "ejection": null,
+    "event_type": "CaughtOut",
+    "fair_ball_type": "FlyBall",
+    "jetpack": false,
+    "perfect": false,
+    "sacrifice": false,
+    "scores": []
+  },
+  {
+    "batter": "Grumble Bertrand",
+    "event_type": "NowBatting",
+    "player_swept_away": null,
+    "stats": {
+      "Stats": [
+        {
+          "stat": "HitsForAtBats",
+          "value": {
+            "at_bats": 1,
+            "hits": 0
+          }
+        },
+        {
+          "stat": "HitByPitchs",
+          "value": 1
+        },
+        {
+          "stat": "GroundOuts",
+          "value": 1
+        }
+      ]
+    }
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      1,
+      0
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "ejection": null,
+    "event_type": "Ball",
+    "steals": [],
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "batter": "Grumble Bertrand",
+    "cheer": null,
+    "destination": "RightField",
+    "door_prizes": [],
+    "efflorescence": [],
+    "event_type": "FairBall",
+    "fair_ball_type": "GroundBall"
+  },
+  {
+    "advances": [],
+    "batter": "Grumble Bertrand",
+    "distance": "Single",
+    "ejection": null,
+    "event_type": "BatterToBase",
+    "fair_ball_type": "GroundBall",
+    "fielder": {
+      "name": "Liqin Dixon",
+      "place": "RF"
+    },
+    "scores": []
+  },
+  {
+    "batter": "Kelli Lucas",
+    "event_type": "NowBatting",
+    "player_swept_away": null,
+    "stats": {
+      "Stats": [
+        {
+          "stat": "HitsForAtBats",
+          "value": {
+            "at_bats": 1,
+            "hits": 0
+          }
+        },
+        {
+          "stat": "GroundIntoDoublePlays",
+          "value": 1
+        },
+        {
+          "stat": "GroundOuts",
+          "value": 1
+        },
+        {
+          "stat": "BaseOnBalls",
+          "value": 1
+        }
+      ]
+    }
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      0,
+      1
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "ejection": null,
+    "event_type": "Strike",
+    "steals": [],
+    "strike": "Looking",
+    "surprise_strike": false,
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      0,
+      2
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "event_type": "Foul",
+    "foul": "Ball",
+    "steals": [],
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      1,
+      2
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "ejection": null,
+    "event_type": "Ball",
+    "steals": [
+      {
+        "base": "Second",
+        "caught": false,
+        "runner": "Grumble Bertrand"
+      }
+    ],
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      2,
+      2
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "ejection": null,
+    "event_type": "Ball",
+    "steals": [],
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      2,
+      2
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "event_type": "Foul",
+    "foul": "Ball",
+    "steals": [],
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "batter": "Kelli Lucas",
+    "cheer": null,
+    "destination": "LeftField",
+    "door_prizes": [],
+    "efflorescence": [],
+    "event_type": "FairBall",
+    "fair_ball_type": "LineDrive"
+  },
+  {
+    "advances": [],
+    "batter": "Kelli Lucas",
+    "distance": "Single",
+    "ejection": null,
+    "event_type": "BatterToBase",
+    "fair_ball_type": "LineDrive",
+    "fielder": {
+      "name": "Wilma Hudson",
+      "place": "LF"
+    },
+    "scores": [
+      "Grumble Bertrand"
+    ]
+  },
+  {
+    "batter": "D. Vargas",
+    "event_type": "NowBatting",
+    "player_swept_away": null,
+    "stats": {
+      "Stats": [
+        {
+          "stat": "HitsForAtBats",
+          "value": {
+            "at_bats": 2,
+            "hits": 1
+          }
+        },
+        {
+          "stat": "FirstBases",
+          "value": 1
+        },
+        {
+          "stat": "StrikeOuts",
+          "value": 1
+        }
+      ]
+    }
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      0,
+      1
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "ejection": null,
+    "event_type": "Strike",
+    "steals": [],
+    "strike": "Swinging",
+    "surprise_strike": false,
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      0,
+      2
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "event_type": "Foul",
+    "foul": "Ball",
+    "steals": [],
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "batter": "D. Vargas",
+    "cheer": null,
+    "destination": "RightField",
+    "door_prizes": [],
+    "efflorescence": [],
+    "event_type": "FairBall",
+    "fair_ball_type": "LineDrive"
+  },
+  {
+    "advances": [
+      {
+        "base": "Third",
+        "runner": "Kelli Lucas"
+      }
+    ],
+    "batter": "D. Vargas",
+    "distance": "Double",
+    "ejection": null,
+    "event_type": "BatterToBase",
+    "fair_ball_type": "LineDrive",
+    "fielder": {
+      "name": "Liqin Dixon",
+      "place": "RF"
+    },
+    "scores": []
+  },
+  {
+    "event_type": "MoundVisit",
+    "manager_name": null,
+    "mound_visit_type": "MoundVisit",
+    "team": {
+      "emoji": "🍉",
+      "name": "Carnegie Watermelons"
+    }
+  },
+  {
+    "event_type": "PitcherRemains",
+    "remaining_pitcher": {
+      "name": "Makena Yoshimura",
+      "place": "SP3"
+    }
+  },
+  {
+    "batter": "Ana Carolina Hayes",
+    "event_type": "NowBatting",
+    "player_swept_away": null,
+    "stats": {
+      "Stats": [
+        {
+          "stat": "HitsForAtBats",
+          "value": {
+            "at_bats": 2,
+            "hits": 0
+          }
+        },
+        {
+          "stat": "ForceOuts",
+          "value": 1
+        },
+        {
+          "stat": "StrikeOuts",
+          "value": 1
+        }
+      ]
+    }
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      1,
+      0
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "ejection": null,
+    "event_type": "Ball",
+    "steals": [],
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "batter": "Ana Carolina Hayes",
+    "cheer": null,
+    "destination": "SecondBase",
+    "door_prizes": [],
+    "efflorescence": [],
+    "event_type": "FairBall",
+    "fair_ball_type": "GroundBall"
+  },
+  {
+    "advances": [
+      {
+        "base": "Third",
+        "runner": "D. Vargas"
+      }
+    ],
+    "batter": "Ana Carolina Hayes",
+    "ejection": null,
+    "error": "Fielding",
+    "event_type": "ReachOnFieldingError",
+    "fielder": {
+      "name": "Kid Zuñiga",
+      "place": "2B"
+    },
+    "scores": [
+      "Kelli Lucas"
+    ]
+  },
+  {
+    "batter": "Yahoo Vogel",
+    "event_type": "NowBatting",
+    "player_swept_away": null,
+    "stats": {
+      "Stats": [
+        {
+          "stat": "HitsForAtBats",
+          "value": {
+            "at_bats": 2,
+            "hits": 0
+          }
+        },
+        {
+          "stat": "GroundIntoDoublePlays",
+          "value": 1
+        },
+        {
+          "stat": "GroundOuts",
+          "value": 1
+        },
+        {
+          "stat": "StrikeOuts",
+          "value": 1
+        }
+      ]
+    }
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      0,
+      1
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "event_type": "Foul",
+    "foul": "Ball",
+    "steals": [],
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      0,
+      2
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "ejection": null,
+    "event_type": "Strike",
+    "steals": [],
+    "strike": "Swinging",
+    "surprise_strike": false,
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "batter": "Yahoo Vogel",
+    "cheer": "FansWaveTheirArmsWildly",
+    "destination": "ShortStop",
+    "door_prizes": [],
+    "efflorescence": [],
+    "event_type": "FairBall",
+    "fair_ball_type": "LineDrive"
+  },
+  {
+    "advances": [],
+    "batter": "Yahoo Vogel",
+    "caught_by": {
+      "name": "P. Sauer",
+      "place": "SS"
+    },
+    "ejection": null,
+    "event_type": "CaughtOut",
+    "fair_ball_type": "LineDrive",
+    "jetpack": false,
+    "perfect": false,
+    "sacrifice": false,
+    "scores": []
+  },
+  {
+    "event_type": "InningEnd",
+    "number": 7,
+    "side": "Bottom"
+  },
+  {
+    "automatic_runner": null,
+    "batting_team": {
+      "emoji": "🍉",
+      "name": "Carnegie Watermelons"
+    },
+    "event_type": "InningStart",
+    "number": 8,
+    "pitcher_status": {
+      "Same": {
+        "emoji": "🐀",
+        "name": "Kibbles Boone"
+      }
+    },
+    "side": "Top"
+  },
+  {
+    "batter": "Jupiter Riggs",
+    "event_type": "NowBatting",
+    "player_swept_away": null,
+    "stats": {
+      "Stats": [
+        {
+          "stat": "HitsForAtBats",
+          "value": {
+            "at_bats": 2,
+            "hits": 1
+          }
+        },
+        {
+          "stat": "FirstBases",
+          "value": 1
+        },
+        {
+          "stat": "ForceOuts",
+          "value": 1
+        },
+        {
+          "stat": "BaseOnBalls",
+          "value": 1
+        }
+      ]
+    }
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      0,
+      1
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "ejection": null,
+    "event_type": "Strike",
+    "steals": [],
+    "strike": "Swinging",
+    "surprise_strike": false,
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      0,
+      2
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "ejection": null,
+    "event_type": "Strike",
+    "steals": [],
+    "strike": "Swinging",
+    "surprise_strike": false,
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "batter": "Jupiter Riggs",
+    "cheer": null,
+    "destination": "LeftField",
+    "door_prizes": [],
+    "efflorescence": [],
+    "event_type": "FairBall",
+    "fair_ball_type": "LineDrive"
+  },
+  {
+    "advances": [],
+    "batter": "Jupiter Riggs",
+    "distance": "Single",
+    "ejection": null,
+    "event_type": "BatterToBase",
+    "fair_ball_type": "LineDrive",
+    "fielder": {
+      "name": "Kelli Lucas",
+      "place": "LF"
+    },
+    "scores": []
+  },
+  {
+    "batter": "Kid Zuñiga",
+    "event_type": "NowBatting",
+    "player_swept_away": null,
+    "stats": {
+      "Stats": [
+        {
+          "stat": "HitsForAtBats",
+          "value": {
+            "at_bats": 3,
+            "hits": 1
+          }
+        },
+        {
+          "stat": "Fouls",
+          "value": 1
+        },
+        {
+          "stat": "FirstBases",
+          "value": 1
+        },
+        {
+          "stat": "StrikeOuts",
+          "value": 1
+        }
+      ]
+    }
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "batter": "Kid Zuñiga",
+    "cheer": null,
+    "destination": "LeftField",
+    "door_prizes": [],
+    "efflorescence": [],
+    "event_type": "FairBall",
+    "fair_ball_type": "FlyBall"
+  },
+  {
+    "advances": [],
+    "batter": "Kid Zuñiga",
+    "caught_by": {
+      "name": "Kelli Lucas",
+      "place": "LF"
+    },
+    "ejection": null,
+    "event_type": "CaughtOut",
+    "fair_ball_type": "FlyBall",
+    "jetpack": false,
+    "perfect": false,
+    "sacrifice": false,
+    "scores": []
+  },
+  {
+    "batter": "P. Sauer",
+    "event_type": "NowBatting",
+    "player_swept_away": null,
+    "stats": {
+      "Stats": [
+        {
+          "stat": "HitsForAtBats",
+          "value": {
+            "at_bats": 2,
+            "hits": 0
+          }
+        },
+        {
+          "stat": "HitByPitchs",
+          "value": 1
+        },
+        {
+          "stat": "LineOuts",
+          "value": 1
+        },
+        {
+          "stat": "StrikeOuts",
+          "value": 1
+        }
+      ]
+    }
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      0,
+      1
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "event_type": "Foul",
+    "foul": "Ball",
+    "steals": [],
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      0,
+      2
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "event_type": "Foul",
+    "foul": "Ball",
+    "steals": [],
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      1,
+      2
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "ejection": null,
+    "event_type": "Ball",
+    "steals": [],
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "batter": "P. Sauer",
+    "cheer": null,
+    "ejection": null,
+    "event_type": "StrikeOut",
+    "foul": null,
+    "steals": [],
+    "strike": "Looking",
+    "wither": null
+  },
+  {
+    "batter": "Brooks Yasuda",
+    "event_type": "NowBatting",
+    "player_swept_away": null,
+    "stats": {
+      "Stats": [
+        {
+          "stat": "HitsForAtBats",
+          "value": {
+            "at_bats": 2,
+            "hits": 0
+          }
+        },
+        {
+          "stat": "LineOuts",
+          "value": 1
+        },
+        {
+          "stat": "BaseOnBalls",
+          "value": 1
+        },
+        {
+          "stat": "StrikeOuts",
+          "value": 1
+        }
+      ]
+    }
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      0,
+      1
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "ejection": null,
+    "event_type": "Strike",
+    "steals": [],
+    "strike": "Looking",
+    "surprise_strike": false,
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      1,
+      1
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "ejection": null,
+    "event_type": "Ball",
+    "steals": [],
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      1,
+      2
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "ejection": null,
+    "event_type": "Strike",
+    "steals": [],
+    "strike": "Swinging",
+    "surprise_strike": false,
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "batter": "Brooks Yasuda",
+    "cheer": null,
+    "destination": "CenterField",
+    "door_prizes": [],
+    "efflorescence": [],
+    "event_type": "FairBall",
+    "fair_ball_type": "GroundBall"
+  },
+  {
+    "advances": [
+      {
+        "base": "Third",
+        "runner": "Jupiter Riggs"
+      }
+    ],
+    "batter": "Brooks Yasuda",
+    "distance": "Single",
+    "ejection": null,
+    "event_type": "BatterToBase",
+    "fair_ball_type": "GroundBall",
+    "fielder": {
+      "name": "Jaye Koppel",
+      "place": "CF"
+    },
+    "scores": []
+  },
+  {
+    "event_type": "MoundVisit",
+    "manager_name": null,
+    "mound_visit_type": "MoundVisit",
+    "team": {
+      "emoji": "🐀",
+      "name": "Sobral Secret Saturnian Rats"
+    }
+  },
+  {
+    "event_type": "PitcherRemains",
+    "remaining_pitcher": {
+      "name": "Kibbles Boone",
+      "place": "SP3"
+    }
+  },
+  {
+    "batter": "Wilma Hudson",
+    "event_type": "NowBatting",
+    "player_swept_away": null,
+    "stats": {
+      "Stats": [
+        {
+          "stat": "HitsForAtBats",
+          "value": {
+            "at_bats": 1,
+            "hits": 1
+          }
+        },
+        {
+          "stat": "HitByPitchs",
+          "value": 2
+        },
+        {
+          "stat": "FirstBases",
+          "value": 1
+        }
+      ]
+    }
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      0,
+      1
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "ejection": null,
+    "event_type": "Strike",
+    "steals": [],
+    "strike": "Looking",
+    "surprise_strike": false,
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "batter": "Wilma Hudson",
+    "cheer": null,
+    "destination": "LeftField",
+    "door_prizes": [],
+    "efflorescence": [],
+    "event_type": "FairBall",
+    "fair_ball_type": "FlyBall"
+  },
+  {
+    "advances": [],
+    "batter": "Wilma Hudson",
+    "caught_by": {
+      "name": "Kelli Lucas",
+      "place": "LF"
+    },
+    "ejection": null,
+    "event_type": "CaughtOut",
+    "fair_ball_type": "FlyBall",
+    "jetpack": false,
+    "perfect": false,
+    "sacrifice": false,
+    "scores": []
+  },
+  {
+    "event_type": "InningEnd",
+    "number": 8,
+    "side": "Top"
+  },
+  {
+    "automatic_runner": null,
+    "batting_team": {
+      "emoji": "🐀",
+      "name": "Sobral Secret Saturnian Rats"
+    },
+    "event_type": "InningStart",
+    "number": 8,
+    "pitcher_status": {
+      "Same": {
+        "emoji": "🍉",
+        "name": "Makena Yoshimura"
+      }
+    },
+    "side": "Bottom"
+  },
+  {
+    "batter": "Kyle van de Velde",
+    "event_type": "NowBatting",
+    "player_swept_away": null,
+    "stats": {
+      "Stats": [
+        {
+          "stat": "HitsForAtBats",
+          "value": {
+            "at_bats": 1,
+            "hits": 0
+          }
+        },
+        {
+          "stat": "BaseOnBalls",
+          "value": 2
+        },
+        {
+          "stat": "GroundOuts",
+          "value": 1
+        }
+      ]
+    }
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      1,
+      0
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "ejection": null,
+    "event_type": "Ball",
+    "steals": [],
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      1,
+      1
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "ejection": null,
+    "event_type": "Strike",
+    "steals": [],
+    "strike": "Looking",
+    "surprise_strike": false,
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      2,
+      1
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "ejection": null,
+    "event_type": "Ball",
+    "steals": [],
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "batter": "Kyle van de Velde",
+    "cheer": null,
+    "destination": "ThirdBase",
+    "door_prizes": [],
+    "efflorescence": [],
+    "event_type": "FairBall",
+    "fair_ball_type": "GroundBall"
+  },
+  {
+    "advances": [],
+    "amazing": false,
+    "assassinations": [],
+    "batter": "Kyle van de Velde",
+    "ejection": null,
+    "event_type": "GroundedOut",
+    "fielders": [
+      {
+        "name": "Null Kinoshita",
+        "place": "3B"
+      },
+      {
+        "name": "Jupiter Riggs",
+        "place": "1B"
+      }
+    ],
+    "scores": []
+  },
+  {
+    "batter": "Jaye Koppel",
+    "event_type": "NowBatting",
+    "player_swept_away": null,
+    "stats": {
+      "Stats": [
+        {
+          "stat": "HitsForAtBats",
+          "value": {
+            "at_bats": 3,
+            "hits": 0
+          }
+        },
+        {
+          "stat": "GroundIntoDoublePlays",
+          "value": 1
+        },
+        {
+          "stat": "GroundOuts",
+          "value": 1
+        },
+        {
+          "stat": "StrikeOuts",
+          "value": 1
+        },
+        {
+          "stat": "Fouls",
+          "value": 1
+        }
+      ]
+    }
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      1,
+      0
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "ejection": null,
+    "event_type": "Ball",
+    "steals": [],
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      1,
+      1
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "ejection": null,
+    "event_type": "Strike",
+    "steals": [],
+    "strike": "Swinging",
+    "surprise_strike": false,
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "batter": "Jaye Koppel",
+    "cheer": null,
+    "destination": "ShortStop",
+    "door_prizes": [],
+    "efflorescence": [],
+    "event_type": "FairBall",
+    "fair_ball_type": "GroundBall"
+  },
+  {
+    "advances": [],
+    "amazing": false,
+    "assassinations": [],
+    "batter": "Jaye Koppel",
+    "ejection": null,
+    "event_type": "GroundedOut",
+    "fielders": [
+      {
+        "name": "P. Sauer",
+        "place": "SS"
+      },
+      {
+        "name": "Jupiter Riggs",
+        "place": "1B"
+      }
+    ],
+    "scores": []
+  },
+  {
+    "batter": "V. Harrington",
+    "event_type": "NowBatting",
+    "player_swept_away": null,
+    "stats": {
+      "Stats": [
+        {
+          "stat": "HitsForAtBats",
+          "value": {
+            "at_bats": 3,
+            "hits": 0
+          }
+        },
+        {
+          "stat": "StrikeOuts",
+          "value": 1
+        },
+        {
+          "stat": "ForceOuts",
+          "value": 1
+        },
+        {
+          "stat": "GroundOuts",
+          "value": 1
+        }
+      ]
+    }
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      0,
+      1
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "ejection": null,
+    "event_type": "Strike",
+    "steals": [],
+    "strike": "Looking",
+    "surprise_strike": false,
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      1,
+      1
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "ejection": null,
+    "event_type": "Ball",
+    "steals": [],
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      2,
+      1
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "ejection": null,
+    "event_type": "Ball",
+    "steals": [],
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      2,
+      2
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "event_type": "Foul",
+    "foul": "Ball",
+    "steals": [],
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "batter": "V. Harrington",
+    "cheer": null,
+    "ejection": null,
+    "event_type": "StrikeOut",
+    "foul": null,
+    "steals": [],
+    "strike": "Looking",
+    "wither": null
+  },
+  {
+    "event_type": "InningEnd",
+    "number": 8,
+    "side": "Bottom"
+  },
+  {
+    "automatic_runner": null,
+    "batting_team": {
+      "emoji": "🍉",
+      "name": "Carnegie Watermelons"
+    },
+    "event_type": "InningStart",
+    "number": 9,
+    "pitcher_status": {
+      "Same": {
+        "emoji": "🐀",
+        "name": "Kibbles Boone"
+      }
+    },
+    "side": "Top"
+  },
+  {
+    "batter": "Hannah Greenberg",
+    "event_type": "NowBatting",
+    "player_swept_away": null,
+    "stats": {
+      "Stats": [
+        {
+          "stat": "HitsForAtBats",
+          "value": {
+            "at_bats": 3,
+            "hits": 0
+          }
+        },
+        {
+          "stat": "StrikeOuts",
+          "value": 2
+        },
+        {
+          "stat": "GroundIntoDoublePlays",
+          "value": 1
+        },
+        {
+          "stat": "GroundOuts",
+          "value": 1
+        }
+      ]
+    }
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      0,
+      1
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "ejection": null,
+    "event_type": "Strike",
+    "steals": [],
+    "strike": "Swinging",
+    "surprise_strike": false,
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": "EveryonesClappingInRhythm",
+    "count": [
+      1,
+      1
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "ejection": null,
+    "event_type": "Ball",
+    "steals": [],
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "batter": "Hannah Greenberg",
+    "cheer": null,
+    "destination": "CenterField",
+    "door_prizes": [],
+    "efflorescence": [],
+    "event_type": "FairBall",
+    "fair_ball_type": "LineDrive"
+  },
+  {
+    "advances": [],
+    "batter": "Hannah Greenberg",
+    "caught_by": {
+      "name": "Jaye Koppel",
+      "place": "CF"
+    },
+    "ejection": null,
+    "event_type": "CaughtOut",
+    "fair_ball_type": "LineDrive",
+    "jetpack": false,
+    "perfect": false,
+    "sacrifice": false,
+    "scores": []
+  },
+  {
+    "batter": "Null Kinoshita",
+    "event_type": "NowBatting",
+    "player_swept_away": null,
+    "stats": {
+      "Stats": [
+        {
+          "stat": "HitsForAtBats",
+          "value": {
+            "at_bats": 4,
+            "hits": 0
+          }
+        },
+        {
+          "stat": "LineOuts",
+          "value": 1
+        },
+        {
+          "stat": "GroundOuts",
+          "value": 3
+        }
+      ]
+    }
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "batter": "Null Kinoshita",
+    "cheer": null,
+    "destination": "SecondBase",
+    "door_prizes": [],
+    "efflorescence": [],
+    "event_type": "FairBall",
+    "fair_ball_type": "LineDrive"
+  },
+  {
+    "advances": [],
+    "batter": "Null Kinoshita",
+    "caught_by": {
+      "name": "Ana Carolina Hayes",
+      "place": "2B"
+    },
+    "ejection": null,
+    "event_type": "CaughtOut",
+    "fair_ball_type": "LineDrive",
+    "jetpack": false,
+    "perfect": false,
+    "sacrifice": false,
+    "scores": []
+  },
+  {
+    "batter": "Lydia Masson",
+    "event_type": "NowBatting",
+    "player_swept_away": null,
+    "stats": {
+      "Stats": [
+        {
+          "stat": "HitsForAtBats",
+          "value": {
+            "at_bats": 4,
+            "hits": 3
+          }
+        },
+        {
+          "stat": "SecondBases",
+          "value": 2
+        },
+        {
+          "stat": "FirstBases",
+          "value": 1
+        },
+        {
+          "stat": "StrikeOuts",
+          "value": 1
+        }
+      ]
+    }
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      0,
+      1
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "ejection": null,
+    "event_type": "Strike",
+    "steals": [],
+    "strike": "Looking",
+    "surprise_strike": false,
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      1,
+      1
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "ejection": null,
+    "event_type": "Ball",
+    "steals": [],
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      2,
+      1
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "ejection": null,
+    "event_type": "Ball",
+    "steals": [],
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": "FansShoutEncouragement",
+    "count": [
+      2,
+      2
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "event_type": "Foul",
+    "foul": "Ball",
+    "steals": [],
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "cheer": null,
+    "count": [
+      2,
+      2
+    ],
+    "door_prizes": [],
+    "efflorescence": [],
+    "event_type": "Foul",
+    "foul": "Ball",
+    "steals": [],
+    "wither": null
+  },
+  {
+    "assassinations": [],
+    "aurora_photos": null,
+    "batter": "Lydia Masson",
+    "cheer": null,
+    "destination": "ShortStop",
+    "door_prizes": [],
+    "efflorescence": [],
+    "event_type": "FairBall",
+    "fair_ball_type": "GroundBall"
+  },
+  {
+    "advances": [],
+    "amazing": false,
+    "assassinations": [],
+    "batter": "Lydia Masson",
+    "ejection": null,
+    "event_type": "GroundedOut",
+    "fielders": [
+      {
+        "name": "Yahoo Vogel",
+        "place": "SS"
+      },
+      {
+        "name": "V. Harrington",
+        "place": "1B"
+      }
+    ],
+    "scores": []
+  },
+  {
+    "event_type": "InningEnd",
+    "number": 9,
+    "side": "Top"
+  },
+  {
+    "event_type": "GameOver",
+    "message": "QuotedGAMEOVER"
+  },
+  {
+    "claimed_by": {
+      "emoji": "🐀",
+      "name": "Sobral Secret Saturnian Rats"
+    },
+    "claimed_from": {
+      "emoji": "🍉",
+      "name": "Carnegie Watermelons"
+    },
+    "event_type": "LinealBeltTransfer"
+  },
+  {
+    "event_type": "Recordkeeping",
+    "losing_score": 0,
+    "losing_team": {
+      "emoji": "🍉",
+      "name": "Carnegie Watermelons"
+    },
+    "winning_score": 2,
+    "winning_team": {
+      "emoji": "🐀",
+      "name": "Sobral Secret Saturnian Rats"
+    }
+  }
+]

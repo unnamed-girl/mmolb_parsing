@@ -1,12 +1,15 @@
-use std::collections::HashMap;
-
+use crate::utils::TimestampHelper;
+use chrono::{DateTime, Utc};
 use serde::{Deserialize, Serialize};
 use serde_with::serde_as;
+use std::collections::HashMap;
 
 use super::raw_team::RawTeamPlayer;
+use crate::enums::{Attribute, BenchRole, FullSlot, FullSlotLabel, SlotType};
+use crate::player::{BoonCollection, FoodBuff, Modification, PendingLevelUp};
 use crate::utils::{maybe_recognized_from_str, MaybeRecognizedHelper, SometimesMissingHelper};
 use crate::{
-    enums::{BallparkSuffix, GameStat, Position, PositionType, RecordType, Slot},
+    enums::{BallparkSuffix, GameStat, Position, PositionType, RecordType},
     feed_event::FeedEvent,
     player::PlayerEquipment,
     utils::{
@@ -179,6 +182,76 @@ pub struct Team {
     #[serde(skip_serializing_if = "Option::is_none", default)]
     pub fund: Option<i32>,
 
+    // This appears to have been `null` (rather than just missing)
+    // for newly created teams during the first half of Season 10.
+    // Whatever caused this seems to have been fixed during the
+    // Season 10 Superstar Break.
+    #[serde(
+        default = "SometimesMissingHelper::default_result",
+        skip_serializing_if = "AddedLaterResult::is_err"
+    )]
+    #[serde_as(as = "SometimesMissingHelper<_>")]
+    pub away_games: AddedLaterResult<Option<u32>>,
+    #[serde(
+        default = "SometimesMissingHelper::default_result",
+        skip_serializing_if = "AddedLaterResult::is_err"
+    )]
+    #[serde_as(as = "SometimesMissingHelper<_>")]
+    pub bench: AddedLaterResult<Bench>,
+
+    #[serde(
+        default = "SometimesMissingHelper::default_result",
+        skip_serializing_if = "Result::is_err"
+    )]
+    #[serde_as(as = "SometimesMissingHelper<_>")]
+    pub manager: AddedLaterResult<String>,
+
+    #[serde(
+        default = "SometimesMissingHelper::default_result",
+        skip_serializing_if = "Result::is_err"
+    )]
+    #[serde_as(as = "SometimesMissingHelper<_>")]
+    pub auto_accept_exhibitions: AddedLaterResult<bool>,
+
+    #[serde(
+        default = "SometimesMissingHelper::default_result",
+        skip_serializing_if = "Result::is_err"
+    )]
+    #[serde_as(as = "SometimesMissingHelper<_>")]
+    pub is_playing: AddedLaterResult<bool>,
+
+    #[serde(
+        default = "SometimesMissingHelper::default_result",
+        skip_serializing_if = "Result::is_err"
+    )]
+    #[serde_as(as = "SometimesMissingHelper<Option<TimestampHelper>>")]
+    pub last_roster_swap_at: AddedLaterResult<Option<DateTime<Utc>>>,
+
+    // Err(_) => key does not exist
+    // Ok(None) => key exists with value `null`
+    // Ok(Some(Err())) => key exists with unrecognized value
+    // Ok(Some(Ok())) => key exists with recognized value
+    #[serde(
+        default = "SometimesMissingHelper::default_result",
+        skip_serializing_if = "Result::is_err"
+    )]
+    #[serde_as(as = "SometimesMissingHelper<Option<MaybeRecognizedHelper<_>>>")]
+    pub lineup_priority: AddedLaterResult<Option<MaybeRecognizedResult<Attribute>>>,
+
+    #[serde(
+        default = "SometimesMissingHelper::default_result",
+        skip_serializing_if = "Result::is_err"
+    )]
+    #[serde_as(as = "SometimesMissingHelper<_>")]
+    pub swap_available: AddedLaterResult<bool>,
+
+    #[serde(
+        default = "SometimesMissingHelper::default_result",
+        skip_serializing_if = "Result::is_err"
+    )]
+    #[serde_as(as = "SometimesMissingHelper<_>")]
+    pub swap_season_restricted: AddedLaterResult<bool>,
+
     #[serde(flatten, deserialize_with = "extra_fields_deserialize")]
     pub extra_fields: serde_json::Map<String, serde_json::Value>,
 }
@@ -197,6 +270,7 @@ pub struct TeamPlayer {
     pub emoji: String,
     pub first_name: String,
     pub last_name: String,
+    pub suffix: AddedLaterResult<Option<String>>,
     pub number: u8,
     pub player_id: String,
 
@@ -204,12 +278,36 @@ pub struct TeamPlayer {
     pub position: Option<MaybeRecognizedResult<Position>>,
     pub(crate) actual_position: String,
 
-    pub slot: AddedLaterResult<MaybeRecognizedResult<Slot>>,
+    pub slot_type: AddedLaterResult<MaybeRecognizedResult<SlotType>>,
+    pub slot: AddedLaterResult<MaybeRecognizedResult<FullSlot>>,
+    pub slot_label: AddedLaterResult<MaybeRecognizedResult<FullSlotLabel>>,
 
     pub position_type: AddedLaterResult<MaybeRecognizedResult<PositionType>>,
 
     pub stats: AddedLaterResult<HashMap<MaybeRecognizedResult<GameStat>, i32>>,
 
+    pub bench_index: AddedLaterResult<Option<u32>>,
+    pub bench_role: AddedLaterResult<Option<BenchRole>>,
+
+    pub food_buffs: AddedLaterResult<Vec<FoodBuff>>,
+
+    pub greater_boon: AddedLaterResult<BoonCollection>,
+    pub lesser_boon: AddedLaterResult<BoonCollection>,
+    pub modifications: AddedLaterResult<Vec<Modification>>,
+
+    pub level: AddedLaterResult<u32>,
+    pub pending_level_ups: AddedLaterResult<Vec<PendingLevelUp>>,
+    pub free_recomp: Option<bool>,
+
+    #[serde(flatten, deserialize_with = "extra_fields_deserialize")]
+    pub extra_fields: serde_json::Map<String, serde_json::Value>,
+}
+
+#[derive(Serialize, Deserialize, Clone, Debug)]
+#[serde(rename_all = "PascalCase")]
+pub struct Bench {
+    pub batters: Vec<TeamPlayer>,
+    pub pitchers: Vec<TeamPlayer>,
     #[serde(flatten, deserialize_with = "extra_fields_deserialize")]
     pub extra_fields: serde_json::Map<String, serde_json::Value>,
 }

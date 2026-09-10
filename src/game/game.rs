@@ -32,6 +32,20 @@ pub struct Game {
     pub home_team_id: String,
     pub home_team_name: String,
 
+    #[serde(
+        default = "SometimesMissingHelper::default_result",
+        skip_serializing_if = "Result::is_err"
+    )]
+    #[serde_as(as = "SometimesMissingHelper<_>")]
+    pub hype_active: AddedLaterResult<bool>,
+
+    #[serde(
+        default = "SometimesMissingHelper::default_result",
+        skip_serializing_if = "Result::is_err"
+    )]
+    #[serde_as(as = "SometimesMissingHelper<_>")]
+    pub half_inning_errors: AddedLaterResult<u8>,
+
     pub season: u32,
     #[serde_as(as = "MaybeRecognizedHelper<_>")]
     pub day: MaybeRecognizedResult<Day>,
@@ -51,6 +65,15 @@ pub struct Game {
     /// TeamID -> PlayerID -> Stat -> Value
     #[serde_as(as = "HashMap<_, HashMap<_, HashMap<MaybeRecognizedHelper<_>, _>>>")]
     pub stats: HashMap<String, HashMap<String, HashMap<MaybeRecognizedResult<GameStat>, i32>>>,
+
+    /// TeamID -> Stat -> Value. Added in s16
+    #[serde(
+        default = "SometimesMissingHelper::default_result",
+        skip_serializing_if = "AddedLaterResult::is_err"
+    )]
+    #[serde_as(as = "SometimesMissingHelper<HashMap<_, HashMap<MaybeRecognizedHelper<_>, _>>>")]
+    pub team_stats:
+        AddedLaterResult<HashMap<String, HashMap<MaybeRecognizedResult<GameStat>, i32>>>,
 
     /// PitcherEntries were not retroactively added to old games
     ///
@@ -156,6 +179,13 @@ pub struct Game {
     pub(super) hold_candidates: AddedLaterResult<HashMap<String, Vec<serde_json::Value>>>,
 
     pub event_log: Vec<Event>,
+
+    #[serde(
+        default = "SometimesMissingHelper::default_result",
+        skip_serializing_if = "Result::is_err"
+    )]
+    #[serde_as(as = "SometimesMissingHelper<HashMap<_, MaybeRecognizedHelper<_>>>")]
+    pub temp_flood_pitcher_restore: AddedLaterResult<HashMap<String, MaybeRecognizedResult<Slot>>>,
 
     #[serde(flatten, deserialize_with = "extra_fields_deserialize")]
     pub extra_fields: serde_json::Map<String, serde_json::Value>,

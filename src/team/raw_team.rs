@@ -4,9 +4,10 @@ use serde::{Deserialize, Serialize};
 use serde_with::serde_as;
 
 use super::team::TeamPlayer;
+use crate::player::{BoonCollection, FoodBuff, Modification, PendingLevelUp};
 use crate::utils::{MaybeRecognizedHelper, SometimesMissingHelper};
 use crate::{
-    enums::{GameStat, PositionType, Slot},
+    enums::{BenchRole, FullSlot, FullSlotLabel, GameStat, PositionType, SlotType},
     utils::{
         extra_fields_deserialize, maybe_recognized_from_str, AddedLaterResult,
         MaybeRecognizedResult,
@@ -20,6 +21,13 @@ pub(crate) struct RawTeamPlayer {
     pub emoji: String,
     pub first_name: String,
     pub last_name: String,
+    /// E.g. "IV"
+    #[serde(
+        default = "SometimesMissingHelper::default_result",
+        skip_serializing_if = "AddedLaterResult::is_err"
+    )]
+    #[serde_as(as = "SometimesMissingHelper<_>")]
+    pub suffix: AddedLaterResult<Option<String>>,
     pub number: u8,
     #[serde(rename = "PlayerID")]
     pub player_id: String,
@@ -29,7 +37,19 @@ pub(crate) struct RawTeamPlayer {
         default = "SometimesMissingHelper::default_result",
         skip_serializing_if = "AddedLaterResult::is_err"
     )]
-    pub slot: AddedLaterResult<MaybeRecognizedResult<Slot>>,
+    pub slot_type: AddedLaterResult<MaybeRecognizedResult<SlotType>>,
+    #[serde_as(as = "SometimesMissingHelper<MaybeRecognizedHelper<_>>")]
+    #[serde(
+        default = "SometimesMissingHelper::default_result",
+        skip_serializing_if = "AddedLaterResult::is_err"
+    )]
+    pub slot: AddedLaterResult<MaybeRecognizedResult<FullSlot>>,
+    #[serde_as(as = "SometimesMissingHelper<MaybeRecognizedHelper<_>>")]
+    #[serde(
+        default = "SometimesMissingHelper::default_result",
+        skip_serializing_if = "AddedLaterResult::is_err"
+    )]
+    pub slot_label: AddedLaterResult<MaybeRecognizedResult<FullSlotLabel>>,
     #[serde_as(as = "SometimesMissingHelper<MaybeRecognizedHelper<_>>")]
     #[serde(
         default = "SometimesMissingHelper::default_result",
@@ -43,6 +63,64 @@ pub(crate) struct RawTeamPlayer {
         skip_serializing_if = "AddedLaterResult::is_err"
     )]
     pub stats: AddedLaterResult<HashMap<MaybeRecognizedResult<GameStat>, i32>>,
+    #[serde(
+        default = "SometimesMissingHelper::default_result",
+        skip_serializing_if = "AddedLaterResult::is_err"
+    )]
+    #[serde_as(as = "SometimesMissingHelper<_>")]
+    pub bench_index: AddedLaterResult<Option<u32>>,
+    #[serde(
+        default = "SometimesMissingHelper::default_result",
+        skip_serializing_if = "AddedLaterResult::is_err"
+    )]
+    #[serde_as(as = "SometimesMissingHelper<_>")]
+    pub bench_role: AddedLaterResult<Option<BenchRole>>,
+
+    // Added in s11
+    #[serde(
+        default = "SometimesMissingHelper::default_result",
+        skip_serializing_if = "AddedLaterResult::is_err"
+    )]
+    #[serde_as(as = "SometimesMissingHelper<_>")]
+    pub food_buffs: AddedLaterResult<Vec<FoodBuff>>,
+
+    #[serde(
+        default = "SometimesMissingHelper::default_result",
+        skip_serializing_if = "AddedLaterResult::is_err"
+    )]
+    #[serde_as(as = "SometimesMissingHelper<_>")]
+    pub greater_boon: AddedLaterResult<BoonCollection>,
+
+    #[serde(
+        default = "SometimesMissingHelper::default_result",
+        skip_serializing_if = "AddedLaterResult::is_err"
+    )]
+    #[serde_as(as = "SometimesMissingHelper<_>")]
+    pub lesser_boon: AddedLaterResult<BoonCollection>,
+
+    #[serde(
+        default = "SometimesMissingHelper::default_result",
+        skip_serializing_if = "AddedLaterResult::is_err"
+    )]
+    #[serde_as(as = "SometimesMissingHelper<_>")]
+    pub modifications: AddedLaterResult<Vec<Modification>>,
+
+    #[serde(
+        default = "SometimesMissingHelper::default_result",
+        skip_serializing_if = "AddedLaterResult::is_err"
+    )]
+    #[serde_as(as = "SometimesMissingHelper<_>")]
+    pub level: AddedLaterResult<u32>,
+
+    // Added in s11
+    #[serde(
+        default = "SometimesMissingHelper::default_result",
+        skip_serializing_if = "AddedLaterResult::is_err"
+    )]
+    #[serde_as(as = "SometimesMissingHelper<_>")]
+    pub pending_level_ups: AddedLaterResult<Vec<PendingLevelUp>>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub free_recomp: Option<bool>,
 
     #[serde(flatten, deserialize_with = "extra_fields_deserialize")]
     pub extra_fields: serde_json::Map<String, serde_json::Value>,
@@ -54,13 +132,25 @@ impl From<RawTeamPlayer> for TeamPlayer {
             emoji,
             first_name,
             last_name,
+            suffix,
             number,
             player_id,
             position,
+            slot_type,
             slot,
+            slot_label,
             position_type,
             stats,
             extra_fields,
+            bench_index,
+            bench_role,
+            food_buffs,
+            greater_boon,
+            lesser_boon,
+            modifications,
+            level,
+            pending_level_ups,
+            free_recomp,
         } = value;
 
         // Undrafted player's positions are deeply unreliable
@@ -70,14 +160,26 @@ impl From<RawTeamPlayer> for TeamPlayer {
             emoji,
             first_name,
             last_name,
+            suffix,
             number,
             player_id,
             actual_position: position,
             position: filtered_position,
+            slot_type,
             slot,
+            slot_label,
             position_type,
             stats,
+            bench_index,
+            bench_role,
             extra_fields,
+            food_buffs,
+            greater_boon,
+            lesser_boon,
+            modifications,
+            level,
+            pending_level_ups,
+            free_recomp,
         }
     }
 }
@@ -88,27 +190,51 @@ impl From<TeamPlayer> for RawTeamPlayer {
             emoji,
             first_name,
             last_name,
+            suffix,
             number,
             player_id,
             actual_position,
             position: _,
+            slot_type,
             slot,
+            slot_label,
             position_type,
             stats,
             extra_fields,
+            bench_index,
+            bench_role,
+            food_buffs,
+            greater_boon,
+            lesser_boon,
+            modifications,
+            level,
+            pending_level_ups,
+            free_recomp,
         } = value;
 
         RawTeamPlayer {
             emoji,
             first_name,
             last_name,
+            suffix,
             number,
             player_id,
             position: actual_position,
+            slot_type,
             slot,
+            slot_label,
             position_type,
             stats,
+            bench_index,
+            bench_role,
             extra_fields,
+            food_buffs,
+            greater_boon,
+            lesser_boon,
+            modifications,
+            level,
+            pending_level_ups,
+            free_recomp,
         }
     }
 }
