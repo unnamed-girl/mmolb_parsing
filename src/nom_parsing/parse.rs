@@ -325,19 +325,24 @@ fn party_for_friends<'parse, 'output: 'parse>(
 ) -> impl MyParser<'output, ParsedEventMessage<&'output str>> + 'parse {
     context("Party", |input: &'output str| {
         let (input, _) = tag("<strong>🥳 ").parse(input)?;
-        let (input, pitcher_name) = parse_terminated(" and ")
-            .and_then(verify_name)
-            .parse(input)?;
-        let (input, batter_name) = parse_terminated(" are Partying!</strong> They became Friends!")
-            .and_then(verify_name)
-            .parse(input)?;
-        Ok((
-            input,
-            ParsedEventMessage::PartyFriendship {
-                pitcher_name,
-                batter_name,
+        try_all_consuming_splits_str(
+            " and ",
+            |name| verify_name(name),
+            |pitcher_name, input| {
+                let (input, batter_name) =
+                    parse_terminated(" are Partying!</strong> They became Friends!")
+                        .and_then(verify_name)
+                        .parse(input)?;
+                Ok((
+                    input,
+                    ParsedEventMessage::PartyFriendship {
+                        pitcher_name,
+                        batter_name,
+                    },
+                ))
             },
-        ))
+        )
+        .parse(input)
     })
 }
 

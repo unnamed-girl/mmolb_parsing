@@ -609,7 +609,11 @@ pub(super) fn verify_name(input: &str) -> IResult<'_, &str, &str> {
         ![' '].contains(&name.chars().last().unwrap()) && // Names shouldn't end with these, and this catches some common logic errors (e.g. forgetting to parse the space after the name)
         // Cleanest fix for https://mmolb.com/watch/68aab8a3318f19d301830b7c?event=316
         // "to 2B" etc. are exceedingly unlikely as a prefix to name
-        name.strip_prefix("to ").map(|rest| try_from_word::<Place>(rest).is_err()).unwrap_or(true) 
+        name.strip_prefix("to ").map(|rest| try_from_word::<Place>(rest).is_err()).unwrap_or(true) &&
+        // If your name contains "and ", it must be followed by "Friends" or "Joe"
+        // 
+        // In order to disambiguate "Christine and Joe II and Mollie Delgado"
+        name.find(" and ").map(|i| &name[i+" and ".len()..]).is_none_or(|remainder| remainder.starts_with("Joe") || remainder.starts_with("Friends"))
     )
     .parse(input)
 }
@@ -2153,7 +2157,9 @@ mod test {
     use crate::{
         enums::{BaseNameVariant, Day, FairBallType, TopBottom},
         nom_parsing::{
-            shared::{delivery, emoji, out, parse_and, try_from_word, try_from_words_m_n},
+            shared::{
+                delivery, emoji, out, parse_and, try_from_word, try_from_words_m_n, verify_name,
+            },
             ParsingContext,
         },
         parsed_event::{EmojiTeam, RunnerOut},
@@ -2223,5 +2229,10 @@ mod test {
         );
 
         parser.parse(text).unwrap();
+    }
+
+    #[test]
+    fn and_joe_ii() {
+        verify_name("Christine and Joe II").unwrap();
     }
 }
