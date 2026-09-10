@@ -1,8 +1,5 @@
 mod feed_event;
-mod feed_event_text;
+mod shared_feed_event_types;
 
-pub use feed_event::{FeedEvent, FeedFallingStarOutcome};
-pub use feed_event_text::{
-    AttributeChange, EmojilessItem, FeedDelivery, FeedEventParseError, GreaterAugment,
-    ParsedFeedEventText, PlayerGreaterAugment,
-};
+pub use feed_event::{FeedEvent, Link};
+pub use shared_feed_event_types::*;

@@ -1,16 +1,14 @@
-use crate::game_time::Breakpoints;
-use crate::utils::SometimesMissingHelper;
+use crate::utils::{
+    extra_fields_deserialize, MaybeRecognizedHelper, SometimesMissingHelper, TimestampHelper,
+};
 use crate::{
-    enums::{CelestialEnergyTier, Day, FeedEventType, LinkType, SeasonStatus},
-    utils::{
-        extra_fields_deserialize, MaybeRecognizedHelper, MaybeRecognizedResult, TimestampHelper,
-    },
+    enums::{Day, FeedEventType, LinkType, SeasonStatus},
+    utils::MaybeRecognizedResult,
     AddedLaterResult,
 };
 use chrono::{DateTime, Utc};
 use serde::{Deserialize, Serialize};
 use serde_with::serde_as;
-use std::fmt::Display;
 use strum::{Display, EnumIter, EnumString, IntoStaticStr};
 
 #[derive(
@@ -97,55 +95,6 @@ pub struct Link {
 
     #[serde(flatten, deserialize_with = "extra_fields_deserialize")]
     pub extra_fields: serde_json::Map<String, serde_json::Value>,
-}
-
-#[derive(Debug, Clone, Copy, Serialize, Deserialize, PartialEq)]
-pub enum FeedFallingStarOutcome {
-    Injury,
-    Infusion(CelestialEnergyTier),
-    DeflectedHarmlessly,
-}
-
-impl FeedFallingStarOutcome {
-    pub fn unparse<S: Display>(&self, event: &FeedEvent, player_name: S) -> String {
-        let was_is = if event.before(Breakpoints::Season5TenseChange) {
-            "was"
-        } else {
-            "is"
-        };
-
-        match self {
-            FeedFallingStarOutcome::Injury => {
-                if event.after(Breakpoints::EternalBattle) {
-                    format!("{player_name} {was_is} injured by the extreme force of the impact!")
-                } else {
-                    format!("{player_name} {was_is} hit by a Falling Star!")
-                }
-            }
-            FeedFallingStarOutcome::Infusion(infusion_tier) => match infusion_tier {
-                CelestialEnergyTier::BeganToGlow => {
-                    if event.before(Breakpoints::Season5TenseChange) {
-                        format!("{player_name} began to glow brightly with celestial energy!")
-                    } else {
-                        format!("{player_name} begins to glow brightly with celestial energy!")
-                    }
-                }
-                CelestialEnergyTier::Infused => {
-                    format!("{player_name} {was_is} infused with a glimmer of celestial energy!")
-                }
-                CelestialEnergyTier::FullyCharged => format!(
-                    "{player_name} {was_is} fully charged with an abundance of celestial energy!"
-                ),
-            },
-            FeedFallingStarOutcome::DeflectedHarmlessly => {
-                if event.before(Breakpoints::Season5TenseChange) {
-                    format!("It deflected off {player_name} harmlessly.")
-                } else {
-                    format!("It deflects off {player_name} harmlessly.")
-                }
-            }
-        }
-    }
 }
 
 #[cfg(test)]
